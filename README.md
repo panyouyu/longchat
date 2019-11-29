@@ -60,3 +60,5 @@ The source code is published under GPLv3 with OpenSSL exception, the license is 
 [cmake]: docs/building-cmake.md
 [preview_image]: https://github.com/telegramdesktop/tdesktop/blob/dev/docs/assets/preview.png "Preview of Telegram Desktop"
 [preview_image_url]: https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/docs/assets/preview.png
+
+Initial Create longchat-tdesktop project
