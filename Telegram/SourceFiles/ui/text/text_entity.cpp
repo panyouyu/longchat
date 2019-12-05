@@ -2007,7 +2007,7 @@ EntityInText::EntityInText(
 int EntityInText::FirstMonospaceOffset(
 		const EntitiesInText &entities,
 		int textLength) {
-	auto &&monospace = ranges::make_iterator_range(
+	auto &&monospace = ranges::subrange(
 		entities.begin(),
 		entities.end()
 	) | ranges::view::filter([](const EntityInText & entity) {

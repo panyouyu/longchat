@@ -1626,7 +1626,7 @@ void ApiWrap::applyAdminsList(
 		not_null<ChannelData*> channel,
 		int availableCount,
 		const QVector<MTPChannelParticipant> &list) {
-	auto admins = ranges::make_iterator_range(
+	auto admins = ranges::subrange(
 		list.begin(), list.end()
 	) | ranges::view::transform([](const MTPChannelParticipant &p) {
 		return p.match([](const auto &data) { return data.vuser_id.v; });

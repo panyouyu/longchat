@@ -762,7 +762,7 @@ struct FormattingAction {
 
 QString ExpandCustomLinks(const TextWithTags &text) {
 	const auto entities = ConvertTextTagsToEntities(text.tags);
-	auto &&urls = ranges::make_iterator_range(
+	auto &&urls = ranges::subrange(
 		entities.begin(),
 		entities.end()
 	) | ranges::view::filter([](const EntityInText &entity) {

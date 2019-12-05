@@ -231,7 +231,7 @@ auto Reader::Slice::prepareFill(int from, int till) -> PrepareFillResult {
 		ranges::less(),
 		&base::flat_map<int, QByteArray>::value_type::first);
 	const auto haveTill = FindNotLoadedStart(
-		ranges::make_iterator_range(start, finish),
+		ranges::subrange(start, finish),
 		fromOffset);
 	if (haveTill < till) {
 		result.offsetsFromLoader = offsetsFromLoader(
@@ -483,14 +483,14 @@ auto Reader::Slices::fill(int offset, bytes::span buffer) -> FillResult {
 		markSliceUsed(fromSlice);
 		CopyLoaded(
 			buffer,
-			ranges::make_iterator_range(first.start, first.finish),
+			ranges::subrange(first.start, first.finish),
 			firstFrom,
 			firstTill);
 		if (fromSlice + 1 < tillSlice) {
 			markSliceUsed(fromSlice + 1);
 			CopyLoaded(
 				buffer.subspan(firstTill - firstFrom),
-				ranges::make_iterator_range(second.start, second.finish),
+				ranges::subrange(second.start, second.finish),
 				secondFrom,
 				secondTill);
 		}
@@ -520,7 +520,7 @@ auto Reader::Slices::fillFromHeader(int offset, bytes::span buffer)
 	if (prepared.ready) {
 		CopyLoaded(
 			buffer,
-			ranges::make_iterator_range(prepared.start, prepared.finish),
+			ranges::subrange(prepared.start, prepared.finish),
 			from,
 			till);
 		result.filled = true;
