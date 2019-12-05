@@ -19,8 +19,8 @@ if sys.platform == 'win32' and not 'COMSPEC' in os.environ:
 executePath = os.getcwd()
 scriptPath = os.path.dirname(os.path.realpath(__file__))
 
-apiId = ''
-apiHash = ''
+apiId = '1120172'
+apiHash = '983c2677ba16541d23792b65989cb670'
 nextApiId = False
 nextApiHash = False
 for arg in sys.argv:
