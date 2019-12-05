@@ -7,6 +7,14 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #pragma once
 
+#ifndef TDESKTOP_DISABLE_AUTOUPDATE
+#define TDESKTOP_DISABLE_AUTOUPDATE
+#endif
+
+#ifndef TDESKTOP_DISABLE_NETWORK_PROXY
+#define TDESKTOP_DISABLE_NETWORK_PROXY
+#endif
+
 namespace Core {
 
 class Launcher {
