@@ -528,8 +528,10 @@ void TopBarWidget::updateControlsGeometry() {
 	if (!_infoToggle->isHidden()) {
 		_rightTaken += _infoToggle->width() + st::topBarSkip;
 	}
-	_search->moveToRight(_rightTaken, otherButtonsTop);
-	_rightTaken += _search->width() + st::topBarCallSkip;
+	if (!_search->isHidden()) {
+		_search->moveToRight(_rightTaken, otherButtonsTop);
+		_rightTaken += _search->width() + st::topBarCallSkip;
+	}
 	_call->moveToRight(_rightTaken, otherButtonsTop);
 	_rightTaken += _call->width();
 
@@ -568,7 +570,7 @@ void TopBarWidget::updateControlsVisibility() {
 	if (_unreadBadge) {
 		_unreadBadge->show();
 	}
-	_search->show();
+	_search->hide();
 	_menuToggle->show();
 	_infoToggle->setVisible(!Adaptive::OneColumn()
 		&& _controller->canShowThirdSection());
