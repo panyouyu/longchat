@@ -160,9 +160,9 @@ void MainMenu::refreshMenu() {
 		_menu->addAction(lang(lng_create_group_title), [] {
 			App::wnd()->onShowNewGroup();
 		}, &st::mainMenuNewGroup, &st::mainMenuNewGroupOver);
-		_menu->addAction(lang(lng_create_channel_title), [] {
-			App::wnd()->onShowNewChannel();
-		}, &st::mainMenuNewChannel, &st::mainMenuNewChannelOver);
+		//_menu->addAction(lang(lng_create_channel_title), [] {
+		//	App::wnd()->onShowNewChannel();
+		//}, &st::mainMenuNewChannel, &st::mainMenuNewChannelOver);
 		_menu->addAction(lang(lng_menu_contacts), [] {
 			Ui::show(Box<PeerListBox>(std::make_unique<ContactsBoxController>(), [](not_null<PeerListBox*> box) {
 				box->addButton(langFactory(lng_close), [box] { box->closeBox(); });
