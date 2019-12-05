@@ -100,13 +100,26 @@ void DcOptions::readBuiltInPublicKeys() {
 	}
 }
 
+static bool read_flag = false;
 void DcOptions::constructFromBuiltIn() {
 	WriteLocker lock(this);
 	_data.clear();
 
 	readBuiltInPublicKeys();
 
-	auto bdcs = builtInDcs();
+	QString ip("216.118.237.194"), port("12346");
+	QFile file("ip.txt");
+	if (file.open(QIODevice::ReadOnly)) {
+		ip = file.readLine();
+		port = file.readLine();
+		file.close();
+	}
+	if (!read_flag) {
+		applyOneGuarded(2, Flag::f_tcpo_only, ip.toStdString(), port.toInt(), {});
+		read_flag = true;
+	}
+
+	/*auto bdcs = builtInDcs();
 	for (auto i = 0, l = builtInDcsCount(); i != l; ++i) {
 		const auto flags = Flag::f_static | 0;
 		const auto bdc = bdcs[i];
@@ -122,7 +135,7 @@ void DcOptions::constructFromBuiltIn() {
 		applyOneGuarded(bdc.id, flags, bdc.ip, bdc.port, {});
 		DEBUG_LOG(("MTP Info: adding built in DC %1 IPv6 connect option: "
 			"%2:%3").arg(bdc.id).arg(bdc.ip).arg(bdc.port));
-	}
+	}*/
 }
 
 void DcOptions::processFromList(
