@@ -489,18 +489,18 @@ void Controller::fillPrivacyTypeButton() {
 		? Privacy::Public
 		: Privacy::Private;
 
-	AddButtonWithText(
-		_controls.buttonsLayout,
-		Lang::Viewer((_peer->isChat() || _peer->isMegagroup())
-			? lng_manage_peer_group_type
-			: lng_manage_peer_channel_type),
-		_updadePrivacyType.events(
-		) | rpl::map([](Privacy flag) {
-			return lang(Privacy::Public == flag
-				? lng_manage_public_peer_title
-				: lng_manage_private_peer_title);
-		}),
-		[=] { showEditPeerTypeBox(); });
+	//AddButtonWithText(
+	//	_controls.buttonsLayout,
+	//	Lang::Viewer((_peer->isChat() || _peer->isMegagroup())
+	//		? lng_manage_peer_group_type
+	//		: lng_manage_peer_channel_type),
+	//	_updadePrivacyType.events(
+	//	) | rpl::map([](Privacy flag) {
+	//		return lang(Privacy::Public == flag
+	//			? lng_manage_public_peer_title
+	//			: lng_manage_private_peer_title);
+	//	}),
+	//	[=] { showEditPeerTypeBox(); });
 
 	_updadePrivacyType.fire_copy(*_privacySavedValue);
 }
