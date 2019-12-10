@@ -229,7 +229,7 @@ void SetupRows(
 		Lang::Viewer(lng_settings_phone_label),
 		Info::Profile::PhoneValue(self),
 		lang(lng_profile_copy_phone),
-		[] { Ui::show(Box<ChangePhoneBox>()); },
+		[] { /*Ui::show(Box<ChangePhoneBox>());*/ },
 		st::settingsInfoPhone);
 
 	auto username = Info::Profile::UsernameValue(self);
