@@ -6,14 +6,14 @@
    xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
    xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
    IgnorableNamespaces="uap uap2 uap3 rescap">
-  <Identity Name="TelegramMessengerLLP.TelegramDesktop"
+  <Identity Name="深圳乐思迪科技有限公司.闪聊"
     ProcessorArchitecture="ARCHITECTURE"
     Publisher="CN=536BC709-8EE1-4478-AF22-F0F0F26FF64A"
-    Version="1.6.7.0" />
+    Version="1.0.0.0" />
   <Properties>
-    <DisplayName>Telegram Desktop</DisplayName>
-    <PublisherDisplayName>Telegram Messenger LLP</PublisherDisplayName>
-    <Description>Telegram Desktop official messenger</Description>
+    <DisplayName>闪聊</DisplayName>
+    <PublisherDisplayName>深圳乐思迪科技有限公司</PublisherDisplayName>
+    <Description>深圳乐思迪科技有限公司</Description>
     <Logo>Assets\logo\logo.png</Logo>
   </Properties>
   <Resources>
