@@ -7,6 +7,10 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #pragma once
 
+#ifndef TDESKTOP_DISABLE_CRASH_REPORTS
+#define TDESKTOP_DISABLE_CRASH_REPORTS
+#endif
+
 namespace Core {
 class Launcher;
 } // namespace Core
