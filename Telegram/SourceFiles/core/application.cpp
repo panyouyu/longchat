@@ -246,9 +246,9 @@ void Application::showPhoto(not_null<PhotoData*> photo, HistoryItem *item) {
 void Application::showPhoto(
 		not_null<PhotoData*> photo,
 		not_null<PeerData*> peer) {
-	_mediaView->showPhoto(photo, peer);
-	_mediaView->activateWindow();
-	_mediaView->setFocus();
+	//_mediaView->showPhoto(photo, peer);
+	//_mediaView->activateWindow();
+	//_mediaView->setFocus();
 }
 
 void Application::showDocument(not_null<DocumentData*> document, HistoryItem *item) {
