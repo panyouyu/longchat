@@ -56,6 +56,8 @@ class SilentToggle;
 class FlatButton;
 class LinkButton;
 class RoundButton;
+class ScreenShotButton;
+class ShotScreen;
 } // namespace Ui
 
 namespace Window {
@@ -358,6 +360,8 @@ private slots:
 
 	void onModerateKeyActivate(int index, bool *outHandled);
 
+	void destoryScreenShot();
+
 private:
 	using TabbedPanel = ChatHelpers::TabbedPanel;
 	using TabbedSelector = ChatHelpers::TabbedSelector;
@@ -407,6 +411,7 @@ private:
 	void recordStopCallback(bool active);
 	void recordUpdateCallback(QPoint globalPos);
 	void chooseAttach();
+	void createScreenShot();	
 	void historyDownAnimationFinish();
 	void unreadMentionsAnimationFinish();
 	void sendButtonClicked();
@@ -760,6 +765,8 @@ private:
 	object_ptr<Ui::RpWidget> _aboutProxyPromotion = { nullptr };
 	mtpRequestId _reportSpamRequest = 0;
 	object_ptr<Ui::IconButton> _attachToggle;
+	object_ptr<Ui::ScreenShotButton> _screenShotToggle;
+	object_ptr<Ui::ShotScreen> _shotScreen = { nullptr };
 	object_ptr<Ui::EmojiButton> _tabbedSelectorToggle;
 	object_ptr<Ui::ImportantTooltip> _tabbedSelectorToggleTooltip = { nullptr };
 	bool _tabbedSelectorToggleTooltipShown = false;

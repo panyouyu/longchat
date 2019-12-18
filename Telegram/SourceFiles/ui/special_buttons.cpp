@@ -14,6 +14,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/effects/radial_animation.h"
 #include "ui/image/image_prepare.h"
 #include "ui/empty_userpic.h"
+#include "ui/widgets/checkbox.h"
 #include "data/data_photo.h"
 #include "data/data_session.h"
 #include "data/data_feed.h"
@@ -25,9 +26,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/confirm_box.h"
 #include "window/window_controller.h"
 #include "lang/lang_keys.h"
+#include "storage/localstorage.h"
 #include "auth_session.h"
 #include "apiwrap.h"
 #include "mainwidget.h"
+#include "settings.h"
 #include "observer_peer.h"
 
 namespace Ui {
@@ -1029,6 +1032,52 @@ QString SilentToggle::tooltipText() const {
 
 QPoint SilentToggle::tooltipPos() const {
 	return QCursor::pos();
+}
+
+ScreenShotButton::ScreenShotButton(QWidget* parent)
+	: RpWidget(parent)
+	, _screenShotAttach(this, st::historyScreenShotAttach)
+	, _screenShotSelection(this, st::historyScreenShotSelection)
+	, _screenShotOptions(this, lang(lng_setting_screenshot_tip), cHideAppWindow())
+{
+	resize(st::historyScreenShotAttach.width + st::historyScreenShotSelection.width,
+		   qMax(st::historyScreenShotAttach.height, st::historyScreenShotSelection.height));
+
+	_screenShotAttach->move(0, 0);
+	_screenShotSelection->move(st::historyScreenShotAttach.width, (st::historyAttach.height - st::historyScreenShotSelection.height) / 2);
+
+	_screenShotSelection->setClickedCallback([this] { 
+		showOptions();
+	});
+
+	_screenShotOptions->setWindowFlags(Qt::ToolTip);
+	_screenShotOptions->checkedChanges() |
+		rpl::start_with_next([this] { cSetHideAppWindow(_screenShotOptions->checked()); }, lifetime());
+	_screenShotOptions->checkedChanges() |
+		rpl::start_with_next([this] { _screenShotOptions->hide(); }, lifetime());
+
+	_screenShotOptions->checkedChanges() |
+		rpl::start_with_next([] { Local::writeSettings(); }, lifetime());
+}
+
+ScreenShotButton::~ScreenShotButton()
+{}
+
+void ScreenShotButton::setClickedCallback(Fn<void()> callback)
+{
+	_screenShotAttach->setClickedCallback(callback);
+}
+
+void ScreenShotButton::showOptions()
+{
+	_screenShotOptions->move(mapToGlobal(QPoint(width() - _screenShotSelection->width(), height())));
+	_screenShotOptions->show();
+	QTimer::singleShot(2000, this, [this] {
+		QRect optionRect = QRect(QPoint(_screenShotOptions->x(), _screenShotOptions->y()), _screenShotOptions->size());
+		if (!optionRect.contains(QCursor::pos())) {
+			_screenShotOptions->hide();
+		}
+	});
 }
 
 } // namespace Ui

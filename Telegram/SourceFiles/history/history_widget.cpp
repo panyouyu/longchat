@@ -20,8 +20,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/widgets/dropdown_menu.h"
 #include "ui/widgets/labels.h"
 #include "ui/widgets/shadow.h"
+#include "ui/widgets/shotscreen.h"
 #include "ui/effects/ripple_animation.h"
-#include "ui/special_buttons.h"
 #include "ui/image/image.h"
 #include "inline_bots/inline_bot_result.h"
 #include "data/data_drafts.h"
@@ -196,6 +196,7 @@ HistoryWidget::HistoryWidget(
 	st::historyComposeButton)
 , _muteUnmute(this, lang(lng_channel_mute).toUpper(), st::historyComposeButton)
 , _attachToggle(this, st::historyAttach)
+, _screenShotToggle(this)
 , _tabbedSelectorToggle(this, st::historyAttachEmoji)
 , _botKeyboardShow(this, st::historyBotKeyboardShow)
 , _botKeyboardHide(this, st::historyBotKeyboardHide)
@@ -250,6 +251,8 @@ HistoryWidget::HistoryWidget(
 	_attachToggle->setClickedCallback(App::LambdaDelayed(st::historyAttach.ripple.hideDuration, this, [this] {
 		chooseAttach();
 	}));
+
+	_screenShotToggle->setClickedCallback([this] { createScreenShot(); });
 
 	_updateHistoryItems.setSingleShot(true);
 	connect(&_updateHistoryItems, SIGNAL(timeout()), this, SLOT(onUpdateHistoryItems()));
@@ -337,6 +340,7 @@ HistoryWidget::HistoryWidget(
 	_send->setRecordAnimationCallback([this] { updateField(); });
 
 	_attachToggle->hide();
+	_screenShotToggle->hide();
 	_tabbedSelectorToggle->hide();
 	_botKeyboardShow->hide();
 	_botKeyboardHide->hide();
@@ -1997,6 +2001,7 @@ void HistoryWidget::updateControlsVisibility() {
 		_kbScroll->hide();
 		_fieldBarCancel->hide();
 		_attachToggle->hide();
+		_screenShotToggle->hide();
 		_tabbedSelectorToggle->hide();
 		_botKeyboardShow->hide();
 		_botKeyboardHide->hide();
@@ -2027,6 +2032,7 @@ void HistoryWidget::updateControlsVisibility() {
 			_botKeyboardHide->hide();
 			_botCommandStart->hide();
 			_attachToggle->hide();
+			_screenShotToggle->hide();
 			if (_silent) {
 				_silent->hide();
 			}
@@ -2066,6 +2072,7 @@ void HistoryWidget::updateControlsVisibility() {
 				}
 			}
 			_attachToggle->show();
+			_screenShotToggle->show();
 			if (_silent) {
 				_silent->show();
 			}
@@ -2091,12 +2098,14 @@ void HistoryWidget::updateControlsVisibility() {
 		_joinChannel->hide();
 		_muteUnmute->hide();
 		_attachToggle->hide();
+		_screenShotToggle->hide();
 		if (_silent) {
 			_silent->hide();
 		}
 		_kbScroll->hide();
 		_fieldBarCancel->hide();
 		_attachToggle->hide();
+		_screenShotToggle->hide();
 		_tabbedSelectorToggle->hide();
 		_botKeyboardShow->hide();
 		_botKeyboardHide->hide();
@@ -3062,6 +3071,27 @@ void HistoryWidget::chooseAttach() {
 	}));
 }
 
+void HistoryWidget::createScreenShot()
+{
+	_shotScreen.create(nullptr);
+	_shotScreen->hide();
+	if (cHideAppWindow()) {
+		App::wnd()->showMinimized();
+		QTimer::singleShot(300, this, [&] { _shotScreen->init(); _shotScreen->show(); });
+		connect(_shotScreen.data(), SIGNAL(finished()), App::wnd(), SLOT(showNormal()));
+	}
+	else {
+		_shotScreen->init(); 
+		_shotScreen->show();
+	}
+	connect(_shotScreen.data(), SIGNAL(finished()), this, SLOT(destoryScreenShot()));
+}
+
+void HistoryWidget::destoryScreenShot()
+{
+	_shotScreen.destroyDelayed();
+}
+
 void HistoryWidget::sendButtonClicked() {
 	auto type = _send->type();
 	if (type == Ui::SendButton::Type::Cancel) {
@@ -3782,6 +3812,7 @@ void HistoryWidget::moveFieldControls() {
 	auto buttonsBottom = bottom - _attachToggle->height();
 	auto left = 0;
 	_attachToggle->moveToLeft(left, buttonsBottom); left += _attachToggle->width();
+	_screenShotToggle->moveToLeft(left, buttonsBottom); left += _screenShotToggle->width();
 	_field->moveToLeft(left, bottom - _field->height() - st::historySendPadding);
 	auto right = st::historySendRight;
 	_send->moveToRight(right, buttonsBottom); right += _send->width();
@@ -3830,7 +3861,7 @@ void HistoryWidget::updateTabbedSelectorToggleTooltipGeometry() {
 
 void HistoryWidget::updateFieldSize() {
 	auto kbShowShown = _history && !_kbShown && _keyboard->hasMarkup();
-	auto fieldWidth = width() - _attachToggle->width() - st::historySendRight;
+	auto fieldWidth = width() - _attachToggle->width() - _screenShotToggle->width() - st::historySendRight;
 	fieldWidth -= _send->width();
 	fieldWidth -= _tabbedSelectorToggle->width();
 	if (kbShowShown) fieldWidth -= _botKeyboardShow->width();

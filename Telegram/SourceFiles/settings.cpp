@@ -30,7 +30,7 @@ bool gStartInTray = false;
 bool gAutoStart = false;
 bool gSendToMenu = false;
 bool gUseExternalVideoPlayer = false;
-bool gAutoUpdate = true;
+bool gAutoUpdate = false;
 TWindowPos gWindowPos;
 LaunchMode gLaunchMode = LaunchModeNormal;
 bool gSupportTray = true;
@@ -95,3 +95,5 @@ int32 gAutoDownloadPhoto = 0; // all auto download
 int32 gAutoDownloadAudio = 0;
 int32 gAutoDownloadGif = 0;
 bool gAutoPlayGif = true;
+
+bool gHideAppWindow = true;		// weather hide app window when screenshot

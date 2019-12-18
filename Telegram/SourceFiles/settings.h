@@ -174,6 +174,7 @@ typedef QMap<uint64, DBIPeerReportSpamStatus> ReportSpamStatuses;
 DeclareRefSetting(ReportSpamStatuses, ReportSpamStatuses);
 
 DeclareSetting(bool, AutoPlayGif);
+DeclareSetting(bool, HideAppWindow);
 
 constexpr auto kInterfaceScaleAuto = 0;
 constexpr auto kInterfaceScaleMin = 100;

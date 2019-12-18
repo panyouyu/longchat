@@ -221,6 +221,19 @@ historyAttach: IconButton {
 	}
 }
 
+historyScreenShotAttach: IconButton(historyAttach) {
+	icon: icon {{ "screen_shot_attach", historyComposeIconFg }};
+	iconOver: icon {{ "screen_shot_attach", historyComposeIconFgOver }};
+}
+
+historyScreenShotSelection: IconButton(historyAttach) {
+	width: 8px;
+	height: 8px;
+	icon: icon {{ "screen_shot_select", historyComposeIconFg }};
+	iconOver: icon {{ "screen_shot_select", historyComposeIconFgOver }};
+	iconPosition: point(-1px, -1px);
+}
+
 historyAttachEmoji: IconButton(historyAttach) {
 	icon: icon {{ "send_control_emoji", historyComposeIconFg }};
 	iconOver: icon {{ "send_control_emoji", historyComposeIconFgOver }};
