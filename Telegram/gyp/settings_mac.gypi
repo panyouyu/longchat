@@ -79,6 +79,9 @@
           'sources': [ '__Wrong_Official_Build_Target__' ],
         }],
       ],
+	  'defines': [
+        'TDESKTOP_DISABLE_AUTOUPDATE',
+      ],
     }],
     [ 'build_macold', {
       'xcode_settings': {
