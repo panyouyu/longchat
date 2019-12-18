@@ -614,6 +614,8 @@ enum {
 	dbiCallSettings = 0x5b,
 	dbiCacheSettings = 0x5c,
 
+	dbiHideAppWindow = 0x5d,
+
 	dbiEncryptedWithSalt = 333,
 	dbiEncrypted = 444,
 
@@ -1872,6 +1874,14 @@ bool _readSetting(quint32 blockId, QDataStream &stream, int version, ReadSetting
 		deserializeCallSettings(callSettings);
 	} break;
 
+	case dbiHideAppWindow: {
+		qint32 v;
+		stream >> v;
+		if (!_checkStreamStatus(stream)) return false;
+
+		cSetHideAppWindow(v == 1);
+	} break;
+
 	default:
 	LOG(("App Error: unknown blockId in _readSetting: %1").arg(blockId));
 	return false;
@@ -2681,7 +2691,7 @@ void writeSettings() {
 
 	auto dcOptionsSerialized = Core::App().dcOptions()->serialize();
 
-	quint32 size = 12 * (sizeof(quint32) + sizeof(qint32));
+	quint32 size = 14 * (sizeof(quint32) + sizeof(qint32));
 	size += sizeof(quint32) + Serialize::bytearraySize(dcOptionsSerialized);
 	size += sizeof(quint32) + Serialize::stringSize(cLoggedPhoneNumber());
 	size += sizeof(quint32) + Serialize::stringSize(Global::TxtDomainString());
@@ -2694,17 +2704,22 @@ void writeSettings() {
 		proxies.push_back(proxy);
 		proxyIt = end(proxies) - 1;
 	}
-	size += sizeof(quint32) + sizeof(qint32) + sizeof(qint32) + sizeof(qint32);
+	size += 8 * sizeof(quint32);
 	for (const auto &proxy : proxies) {
 		size += sizeof(qint32) + Serialize::stringSize(proxy.host) + sizeof(qint32) + Serialize::stringSize(proxy.user) + Serialize::stringSize(proxy.password);
 	}
 
+	// dbiTryIPv6
+	size += sizeof(quint32) * 2;
 	// Theme keys and night mode.
 	size += sizeof(quint32) + sizeof(quint64) * 2 + sizeof(quint32);
 	if (_langPackKey) {
 		size += sizeof(quint32) + sizeof(quint64);
 	}
-	size += sizeof(quint32) + sizeof(qint32) * 8;
+	if (_languagesKey) {
+		size += sizeof(quint32) + sizeof(quint64);
+	}
+	size += sizeof(qint32) * 7;
 
 	EncryptedDescriptor data(size);
 	data.stream << quint32(dbiChatSizeMax) << qint32(Global::ChatSizeMax());
@@ -2713,6 +2728,7 @@ void writeSettings() {
 	data.stream << quint32(dbiStickersRecentLimit) << qint32(Global::StickersRecentLimit());
 	data.stream << quint32(dbiStickersFavedLimit) << qint32(Global::StickersFavedLimit());
 	data.stream << quint32(dbiAutoStart) << qint32(cAutoStart());
+	data.stream << quint32(dbiHideAppWindow) << qint32(cHideAppWindow());
 	data.stream << quint32(dbiStartMinimized) << qint32(cStartMinimized());
 	data.stream << quint32(dbiSendToMenu) << qint32(cSendToMenu());
 	data.stream << quint32(dbiWorkMode) << qint32(Global::WorkMode().value());

@@ -754,6 +754,8 @@
 <(src_loc)/ui/widgets/scroll_area.h
 <(src_loc)/ui/widgets/shadow.cpp
 <(src_loc)/ui/widgets/shadow.h
+<(src_loc)/ui/widgets/shotscreen.cpp
+<(src_loc)/ui/widgets/shotscreen.h
 <(src_loc)/ui/widgets/tooltip.cpp
 <(src_loc)/ui/widgets/tooltip.h
 <(src_loc)/ui/wrap/fade_wrap.cpp

@@ -17,6 +17,7 @@ class PeerData;
 
 namespace Ui {
 class InfiniteRadialAnimation;
+class Checkbox;
 } // namespace Ui
 
 namespace Data {
@@ -277,6 +278,21 @@ private:
 	not_null<ChannelData*> _channel;
 	bool _checked = false;
 
+};
+
+class ScreenShotButton : public RpWidget
+{
+public:
+	ScreenShotButton(QWidget* parent);
+	~ScreenShotButton();
+	void setClickedCallback(Fn<void()> callback);
+
+private:
+	void showOptions();
+private:	
+	object_ptr<Ui::IconButton> _screenShotAttach;
+	object_ptr<Ui::IconButton> _screenShotSelection;
+	object_ptr<Ui::Checkbox> _screenShotOptions;
 };
 
 } // namespace Ui

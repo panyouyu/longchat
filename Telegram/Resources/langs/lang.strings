@@ -1970,6 +1970,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_polls_create_maximum" = "You have added the maximum number of options.";
 "lng_polls_create_button" = "Create";
 
+// and by panyouyu
+"lng_setting_screenshot_tip" = "Hide current window when taking screenshot";
+
 // Wnd specific
 
 "lng_wnd_choose_program_menu" = "Choose Default Program...";
