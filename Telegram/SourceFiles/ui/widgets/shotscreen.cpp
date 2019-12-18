@@ -74,4 +74,8 @@ QPainterPath ShotScreen::MaskPath()
     return globalPath.subtracted(path);
 }
 
+ControlWidget::ControlWidget(parent)
+    : QWidget(parent)
+{}
+
 }

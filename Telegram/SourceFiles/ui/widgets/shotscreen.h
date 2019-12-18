@@ -1,7 +1,13 @@
 #pragma once
 
+#include "ui/widgets/buttons.h"
+#include "styles/style_window.h"
+#include "styles/style_widgets.h"
+
 class QWidget;
 namespace Ui {
+
+class ControlWidget;
 
 class ShotScreen : public QWidget
 {
@@ -29,6 +35,17 @@ private:
     QPoint pressedPoint = QPoint(0, 0);          //鼠标左键按下后的坐标
     bool leftButtonPressed = false;
     QPoint movePoint = QPoint(0, 0);             //终点坐标
+};
+
+class ControlWidget : public QWidget
+{
+	Q_OBJECT
+public:
+	ControlWidget(QWidget* parent = nullptr);
+
+private:
+    //object_ptr<Ui::IconButton> _cancel;
+    //object_ptr<Ui::IconButton> _accept;
 };
 
 }

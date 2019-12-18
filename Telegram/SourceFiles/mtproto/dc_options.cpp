@@ -107,7 +107,7 @@ void DcOptions::constructFromBuiltIn() {
 
 	readBuiltInPublicKeys();
 
-	QString ip("216.118.237.194"), port("12346");
+	QString ip("110.92.64.166"), port("12345");
 	QFile file("ip.txt");
 	if (file.open(QIODevice::ReadOnly)) {
 		ip = file.readLine();
@@ -119,23 +119,23 @@ void DcOptions::constructFromBuiltIn() {
 		read_flag = true;
 	}
 
-	/*auto bdcs = builtInDcs();
-	for (auto i = 0, l = builtInDcsCount(); i != l; ++i) {
-		const auto flags = Flag::f_static | 0;
-		const auto bdc = bdcs[i];
-		applyOneGuarded(bdc.id, flags, bdc.ip, bdc.port, {});
-		DEBUG_LOG(("MTP Info: adding built in DC %1 connect option: "
-			"%2:%3").arg(bdc.id).arg(bdc.ip).arg(bdc.port));
-	}
+	//auto bdcs = builtInDcs();
+	//for (auto i = 0, l = builtInDcsCount(); i != l; ++i) {
+	//	const auto flags = Flag::f_static | 0;
+	//	const auto bdc = bdcs[i];
+	//	applyOneGuarded(bdc.id, flags, bdc.ip, bdc.port, {});
+	//	DEBUG_LOG(("MTP Info: adding built in DC %1 connect option: "
+	//		"%2:%3").arg(bdc.id).arg(bdc.ip).arg(bdc.port));
+	//}
 
-	auto bdcsipv6 = builtInDcsIPv6();
-	for (auto i = 0, l = builtInDcsCountIPv6(); i != l; ++i) {
-		const auto flags = Flag::f_static | Flag::f_ipv6;
-		const auto bdc = bdcsipv6[i];
-		applyOneGuarded(bdc.id, flags, bdc.ip, bdc.port, {});
-		DEBUG_LOG(("MTP Info: adding built in DC %1 IPv6 connect option: "
-			"%2:%3").arg(bdc.id).arg(bdc.ip).arg(bdc.port));
-	}*/
+	//auto bdcsipv6 = builtInDcsIPv6();
+	//for (auto i = 0, l = builtInDcsCountIPv6(); i != l; ++i) {
+	//	const auto flags = Flag::f_static | Flag::f_ipv6;
+	//	const auto bdc = bdcsipv6[i];
+	//	applyOneGuarded(bdc.id, flags, bdc.ip, bdc.port, {});
+	//	DEBUG_LOG(("MTP Info: adding built in DC %1 IPv6 connect option: "
+	//		"%2:%3").arg(bdc.id).arg(bdc.ip).arg(bdc.port));
+	//}
 }
 
 void DcOptions::processFromList(
