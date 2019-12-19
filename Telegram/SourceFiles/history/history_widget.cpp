@@ -3980,9 +3980,10 @@ bool HistoryWidget::showSendingFilesError(
 		case Error::NonLocalUrl: return lng_send_image_empty(
 			lt_name,
 			list.errorData);
-		case Error::TooLargeFile: return lng_send_image_too_large(
+		case Error::TooLargeFile: return /*lng_send_image_too_large(
 			lt_name,
-			list.errorData);
+			list.errorData);*/
+			QString("Could not send a file, because it is larger than 100 MB: %1").arg(list.errorData);
 		}
 		return lang(lng_forward_send_files_cant);
 	}();
