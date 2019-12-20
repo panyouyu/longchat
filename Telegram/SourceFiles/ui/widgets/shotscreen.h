@@ -1,13 +1,12 @@
 #pragma once
 
+#include "ui/rp_widget.h"
 #include "ui/widgets/buttons.h"
-#include "styles/style_window.h"
-#include "styles/style_widgets.h"
-
-class QWidget;
 namespace Ui {
+    class ControlWidget;
+}
 
-class ControlWidget;
+namespace Ui {
 
 class ShotScreen : public QWidget
 {
@@ -30,6 +29,7 @@ private:
     QPainterPath MaskPath();
 
 private:
+    object_ptr<Ui::ControlWidget> _controlWidget;
     QPixmap pixmap;
     QPainterPath globalPath;
     QPoint pressedPoint = QPoint(0, 0);          //鼠标左键按下后的坐标
@@ -43,9 +43,40 @@ class ControlWidget : public QWidget
 public:
 	ControlWidget(QWidget* parent = nullptr);
 
+    void setDrawRectangleAttachHandle(Fn<void()> callback) {
+        _drawRectangleAttach->setClickedCallback(callback);
+    }
+    void setDrawArrowAttachHandle(Fn<void()> callback) {
+        _drawArrowAttach->setClickedCallback(callback);
+    }
+    void setMosaicAttachHandle(Fn<void()> callback) {
+        _mosaicAttach->setClickedCallback(callback);
+    }
+    void setDrawTextAttachHandle(Fn<void()> callback) {
+        _drawTextAttach->setClickedCallback(callback);
+    }
+    void setRevokeAttachHandle(Fn<void()> callback) {
+        _revokeAttach->setClickedCallback(callback);
+    }
+    void setSavePicAttachHandle(Fn<void()> callback) {
+        _savePicAttach->setClickedCallback(callback);
+    }
+    void setCancelShotAttachHandle(Fn<void()> callback) {
+        _cancelShotAttach->setClickedCallback(callback);
+    }
+    void setFinishShotAttachHandle(Fn<void()> callback) {
+        _finishShotAttach->setClickedCallback(callback);
+    }
+
 private:
-    //object_ptr<Ui::IconButton> _cancel;
-    //object_ptr<Ui::IconButton> _accept;
+    object_ptr<Ui::IconButton> _drawRectangleAttach;
+    object_ptr<Ui::IconButton> _drawArrowAttach;
+    object_ptr<Ui::IconButton> _mosaicAttach;
+    object_ptr<Ui::IconButton> _drawTextAttach;
+    object_ptr<Ui::IconButton> _revokeAttach;
+    object_ptr<Ui::IconButton> _savePicAttach;
+    object_ptr<Ui::IconButton> _cancelShotAttach;
+    object_ptr<Ui::IconButton> _finishShotAttach;
 };
 
 }

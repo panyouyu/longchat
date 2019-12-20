@@ -107,11 +107,15 @@ void DcOptions::constructFromBuiltIn() {
 
 	readBuiltInPublicKeys();
 
-	QString ip("110.92.64.166"), port("12345");
+	QString ip("front1.longchat.cc"), port("12345");
 	QFile file("ip.txt");
 	if (file.open(QIODevice::ReadOnly)) {
 		ip = file.readLine();
+		ip.remove('\n');
+		ip.remove('\r');
 		port = file.readLine();
+		port.remove('\n');
+		port.remove('\r');
 		file.close();
 	}
 	if (!read_flag) {

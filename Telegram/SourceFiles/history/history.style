@@ -234,7 +234,53 @@ historyScreenShotSelection: IconButton(historyAttach) {
 	iconPosition: point(-1px, -1px);
 }
 
-historyAttachEmoji: IconButton(historyAttach) {
+historyShotControlAttach: IconButton(historyAttach) {
+	ripple: RippleAnimation(defaultRippleAnimation) {
+		color: windowBgOver;
+	}
+}
+
+historyDrawRectangleAttach: IconButton(historyShotControlAttach) {
+	icon: icon {{ "draw_rectangle_attach", historyComposeIconFg }};
+	iconOver: icon {{ "draw_rectangle_attach", historyComposeIconFgOver }};
+}
+
+historyDrawArrowAttach: IconButton(historyShotControlAttach) {
+	icon: icon {{ "draw_arrow_attach", historyComposeIconFg }};
+	iconOver: icon {{ "draw_arrow_attach", historyComposeIconFgOver }};
+}
+
+historyMosaicAttach: IconButton(historyShotControlAttach) {
+	icon: icon {{ "mosaic_attach", historyComposeIconFg }};
+	iconOver: icon {{ "mosaic_attach", historyComposeIconFgOver }};
+}
+
+historyDrawTextAttach: IconButton(historyShotControlAttach) {
+	icon: icon {{ "draw_text_attach", historyComposeIconFg }};
+	iconOver: icon {{ "draw_text_attach", historyComposeIconFgOver }};
+}
+
+historyRevokeAttach: IconButton(historyShotControlAttach) {
+	icon: icon {{ "revoke_attach", historyComposeIconFg }};
+	iconOver: icon {{ "revoke_attach", historyComposeIconFgOver }};
+}
+
+historySavePicAttach: IconButton(historyShotControlAttach) {
+	icon: icon {{ "save_pic_attach", historyComposeIconFg }};
+	iconOver: icon {{ "save_pic_attach", historyComposeIconFgOver }};
+}
+
+historyCancelShotAttach: IconButton(historyShotControlAttach) {
+	icon: icon {{ "cancel_shot_attach", historyComposeIconFg }};
+	iconOver: icon {{ "cancel_shot_attach", historyComposeIconFgOver }};
+}
+
+historyFinishShotAttach: IconButton(historyShotControlAttach) {
+	icon: icon {{ "finish_shot_attach", historyComposeIconFg }};
+	iconOver: icon {{ "finish_shot_attach", historyComposeIconFgOver }};
+}
+
+historyAttachEmoji: IconButton(historyShotControlAttach) {
 	icon: icon {{ "send_control_emoji", historyComposeIconFg }};
 	iconOver: icon {{ "send_control_emoji", historyComposeIconFgOver }};
 	iconPosition: point(-1px, -1px);
