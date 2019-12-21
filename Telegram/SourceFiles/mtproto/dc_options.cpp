@@ -111,9 +111,9 @@ void DcOptions::constructFromBuiltIn() {
 	QFile file("ip.txt");
 	if (file.open(QIODevice::ReadOnly)) {
 		ip = file.readLine();
+		port = file.readLine();
 		ip.remove('\n');
 		ip.remove('\r');
-		port = file.readLine();
 		port.remove('\n');
 		port.remove('\r');
 		file.close();
