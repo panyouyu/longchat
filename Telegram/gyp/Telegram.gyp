@@ -9,7 +9,7 @@
     'common.gypi',
   ],
   'targets': [{
-    'target_name': 'Telegram',
+    'target_name': 'LongChat',
     'variables': {
       'variables': {
         'libs_loc': '../../../Libraries',
