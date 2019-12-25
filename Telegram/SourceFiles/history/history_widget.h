@@ -247,6 +247,8 @@ public:
 
 	void applyCloudDraft(History *history);
 
+	void createScreenShot();
+
 	void updateHistoryDownPosition();
 	void updateHistoryDownVisibility();
 	void updateUnreadMentionsPosition();
@@ -360,7 +362,7 @@ private slots:
 
 	void onModerateKeyActivate(int index, bool *outHandled);
 
-	void destoryScreenShot();
+	void destoryScreenShot(bool);
 
 private:
 	using TabbedPanel = ChatHelpers::TabbedPanel;
@@ -410,8 +412,7 @@ private:
 	void recordStartCallback();
 	void recordStopCallback(bool active);
 	void recordUpdateCallback(QPoint globalPos);
-	void chooseAttach();
-	void createScreenShot();	
+	void chooseAttach();	
 	void historyDownAnimationFinish();
 	void unreadMentionsAnimationFinish();
 	void sendButtonClicked();

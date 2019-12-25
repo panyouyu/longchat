@@ -23,6 +23,8 @@
     <file alias="images/media_video@2x.png">../export_html/images/media_video@2x.png</file>
     <file alias="images/media_voice.png">../export_html/images/media_voice.png</file>
     <file alias="images/media_voice@2x.png">../export_html/images/media_voice@2x.png</file>
+	<file alias="images/mosaic_cursor.png">../export_html/images/mosaic_cursor.png</file>
+    <file alias="images/mosaic_cursor@2x.png">../export_html/images/mosaic_cursor@2x.png</file>	
     <file alias="images/section_calls.png">../export_html/images/section_calls.png</file>
     <file alias="images/section_calls@2x.png">../export_html/images/section_calls@2x.png</file>
     <file alias="images/section_chats.png">../export_html/images/section_chats.png</file>

@@ -3073,22 +3073,27 @@ void HistoryWidget::chooseAttach() {
 
 void HistoryWidget::createScreenShot()
 {
+	if (_shotScreen.data()) return;
 	_shotScreen.create(nullptr);
 	_shotScreen->hide();
 	if (cHideAppWindow()) {
-		App::wnd()->showMinimized();
+		App::wnd()->hide();
 		QTimer::singleShot(300, this, [&] { _shotScreen->init(); _shotScreen->show(); });
-		connect(_shotScreen.data(), SIGNAL(finished()), App::wnd(), SLOT(showNormal()));
+		connect(_shotScreen.data(), SIGNAL(finished(bool)), App::wnd(), SLOT(show()));
 	}
 	else {
 		_shotScreen->init(); 
 		_shotScreen->show();
 	}
-	connect(_shotScreen.data(), SIGNAL(finished()), this, SLOT(destoryScreenShot()));
+	connect(_shotScreen.data(), SIGNAL(finished(bool)), this, SLOT(destoryScreenShot(bool)));
 }
 
-void HistoryWidget::destoryScreenShot()
+void HistoryWidget::destoryScreenShot(bool send)
 {
+	if (send) {
+		confirmSendingFiles(QGuiApplication::clipboard()->mimeData(), CompressConfirm::Yes);
+		ActivateWindow(this->controller());
+	}
 	_shotScreen.destroyDelayed();
 }
 

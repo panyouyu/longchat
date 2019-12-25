@@ -1972,6 +1972,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 // and by panyouyu
 "lng_setting_screenshot_tip" = "Hide current window when taking screenshot";
+"lng_save_screenshot_image" = "Save screenshot";
 
 // Wnd specific
 
