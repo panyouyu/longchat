@@ -2921,7 +2921,7 @@ void DialogsInner::setupShortcuts() {
 			Command::ChatPinned4,
 			Command::ChatPinned5,
 		};
-		auto &&pinned = ranges::view::zip(kPinned, ranges::view::ints(0));
+		auto &&pinned = ranges::view::zip(kPinned, ranges::view::ints(0, ranges::unreachable));
 		for (const auto [command, index] : pinned) {
 			request->check(command) && request->handle([=, index = index] {
 				const auto count = shownPinnedCount();
