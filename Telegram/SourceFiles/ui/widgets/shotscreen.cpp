@@ -95,13 +95,13 @@ void ShotScreen::ontextchanged()
     int max_height = _highLightRect.y() + _highLightRect.height() - pressedPoint.y();
     QFontMetrics fontMetrics(_textEdit->font());
     QStringList strList = _textEdit->toPlainText().split('\n');
-    int width = 30;
+    int width = 0;
     for (int i = 0; i < strList.size(); i++) {
         width = std::max(width, fontMetrics.width(strList.at(i)));
     }
     width += 30;
     width = width < max_width ? width : max_width;
-    int height = _textEdit->document()->size().rheight() + 5 < max_height ? _textEdit->document()->size().rheight() + 5 : max_height;
+    int height = _textEdit->document()->size().rheight() + 2 < max_height ? _textEdit->document()->size().rheight() + 2 : max_height;
     _textEdit->resize(width, height);
 }
 
@@ -117,7 +117,7 @@ void ShotScreen::mousePressEvent(QMouseEvent* event)
     if (event->button() == Qt::RightButton) {
         if (!_textEdit->toPlainText().isEmpty())
         {
-            QRect rect = QRect(QPoint(_textEdit->x(), _textEdit->y()), QSize(_textEdit->width(), _textEdit->height()));
+            QRect rect = QRect(QPoint(_textEdit->x(), _textEdit->y()), _textEdit->size());
             _list.append(new Text(rect, _textEdit->toPlainText()));
             update();
         }
@@ -142,7 +142,8 @@ void ShotScreen::mousePressEvent(QMouseEvent* event)
             if (!_highLightRect.contains(pressedPoint)) return;
             auto x = pressedPoint.x() / Mosaic::length;
             auto y = pressedPoint.y() / Mosaic::length;
-            if (_pointArray[x][y] == false) {
+            if (_pointArray[x][y] == false && 
+                _highLightRect.contains(QRect(QPoint(x * Mosaic::length, y * Mosaic::length), QSize(Mosaic::length, Mosaic::length)))) {
                 _mosaicList.append(QPoint(x * Mosaic::length, y * Mosaic::length));
                 _pointArray[x][y] = true;
             }
@@ -152,7 +153,7 @@ void ShotScreen::mousePressEvent(QMouseEvent* event)
             if (!_highLightRect.contains(pressedPoint)) return;
             if (!_textEdit->toPlainText().isEmpty())
             {
-                QRect rect = QRect(QPoint(_textEdit->x(), _textEdit->y()), QSize(_textEdit->width(), _textEdit->height()));
+                QRect rect = QRect(QPoint(_textEdit->x(), _textEdit->y()), _textEdit->size());
                 _list.append(new Text(rect, _textEdit->toPlainText()));
                 update();
             }
@@ -219,7 +220,8 @@ void ShotScreen::mouseMoveEvent(QMouseEvent* event)
         if (!_highLightRect.contains(movePoint)) return;
         auto x = movePoint.x() / Mosaic::length;
         auto y = movePoint.y() / Mosaic::length;
-        if (_pointArray[x][y] == false) {
+        if (_pointArray[x][y] == false && 
+            _highLightRect.contains(QRect(QPoint(x * Mosaic::length, y * Mosaic::length), QSize(Mosaic::length, Mosaic::length)))) {
             _mosaicList.append(QPoint(x * Mosaic::length, y * Mosaic::length));
             _pointArray[x][y] = true;
             update();
@@ -360,10 +362,10 @@ void ControlWidget::paintEvent(QPaintEvent* event)
 {
     (void)event;
     QPainter painter(this);
-    painter.fillRect(rect(), Qt::white);
+    painter.fillRect(rect(), qRgb(247, 245, 218));
     if (_type != None) {
         auto button = _optionsGroup.at(_type);
-        painter.fillRect(QRect(button->x(), button->y(), button->width(), button->height()), qRgb(200, 0, 0));
+        painter.fillRect(QRect(button->x(), button->y(), button->width(), button->height()), qRgb(255, 147, 70));
     }
 }
 
@@ -410,7 +412,7 @@ void drawText(QRect& rect, QString& text, QPainter& p)
 {
     p.save();
     p.setFont(textFont());
-    p.drawText(rect, Qt::TextWrapAnywhere, text);
+    p.drawText(rect.adjusted(5, 5, -5, -5), Qt::TextWrapAnywhere, text);
     p.restore();
 }
 
