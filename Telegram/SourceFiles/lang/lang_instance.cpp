@@ -20,7 +20,7 @@ namespace {
 
 const auto kSerializeVersionTag = qsl("#new");
 constexpr auto kSerializeVersion = 1;
-constexpr auto kDefaultLanguage = str_const("classic_zh_cn");
+constexpr auto kDefaultLanguage = str_const("classic-zh-cn");
 constexpr auto kCloudLangPackName = str_const("tdesktop");
 constexpr auto kCustomLanguage = str_const("#custom");
 constexpr auto kLangValuesLimit = 20000;
@@ -227,7 +227,7 @@ QString CustomLanguageId() {
 
 Language DefaultLanguage() {
 	return Language{
-		qsl("classic_zh_cn"),
+		qsl("classic-zh-cn"),
 		QString(),
 		QString(),
 		qsl("zh_CN"),
