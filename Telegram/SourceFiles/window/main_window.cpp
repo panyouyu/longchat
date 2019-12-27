@@ -106,7 +106,7 @@ MainWindow::MainWindow()
 : _positionUpdatedTimer([=] { savePosition(); })
 , _body(this)
 , _icon(CreateIcon())
-, _titleText(qsl("Telegram")) {
+, _titleText(qsl("LongChat")) {
 	subscribe(Theme::Background(), [=](
 			const Theme::BackgroundUpdate &data) {
 		if (data.paletteChanged()) {
@@ -450,7 +450,7 @@ void MainWindow::updateUnreadCounter() {
 	const auto counter = AuthSession::Exists()
 		? Auth().data().unreadBadge()
 		: 0;
-	_titleText = (counter > 0) ? qsl("Telegram (%1)").arg(counter) : qsl("Telegram");
+	_titleText = (counter > 0) ? qsl("LongChat (%1)").arg(counter) : qsl("LongChat");
 
 	unreadCounterChangedHook();
 }
