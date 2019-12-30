@@ -14,7 +14,7 @@ ShotScreen::ShotScreen(QWidget* parent)
     , _textEdit(this)
 {
     setWindowFlags(Qt::ToolTip);
-    showFullScreen();
+    resize(QApplication::desktop()->screenGeometry().size());
     _controlWidget->hide();
     _textEdit->hide();
     QPalette p1 = _textEdit->palette();

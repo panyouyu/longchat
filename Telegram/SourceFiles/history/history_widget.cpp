@@ -3077,9 +3077,23 @@ void HistoryWidget::createScreenShot()
 	_shotScreen.create(nullptr);
 	_shotScreen->hide();
 	if (cHideAppWindow()) {
-		App::wnd()->hide();
-		QTimer::singleShot(300, this, [&] { _shotScreen->init(); _shotScreen->show(); });
-		connect(_shotScreen.data(), SIGNAL(finished(bool)), App::wnd(), SLOT(show()));
+		switch (App::wnd()->windowState()) {
+		case Qt::WindowMaximized:
+			App::wnd()->showMinimized();
+			QTimer::singleShot(300, this, [&] { _shotScreen->init(); _shotScreen->show(); });
+			connect(_shotScreen.data(), SIGNAL(finished(bool)), App::wnd(), SLOT(showMaximized()));
+			break;
+		case Qt::WindowFullScreen:
+			App::wnd()->showMinimized();
+			QTimer::singleShot(600, this, [&] { _shotScreen->init(); _shotScreen->show(); });
+			connect(_shotScreen.data(), SIGNAL(finished(bool)), App::wnd(), SLOT(showFullScreen()));
+			break;
+		default :
+			App::wnd()->showMinimized();
+			QTimer::singleShot(600, this, [&] { _shotScreen->init(); _shotScreen->show(); });
+			connect(_shotScreen.data(), SIGNAL(finished(bool)), App::wnd(), SLOT(showNormal()));
+			break;
+		}
 	}
 	else {
 		_shotScreen->init(); 
