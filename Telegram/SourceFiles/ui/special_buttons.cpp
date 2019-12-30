@@ -1070,7 +1070,7 @@ void ScreenShotButton::setClickedCallback(Fn<void()> callback)
 
 void ScreenShotButton::showOptions()
 {
-	_screenShotOptions->move(mapToGlobal(QPoint(width() - _screenShotSelection->width(), height())));
+	_screenShotOptions->move(mapToGlobal(QPoint(width() - _screenShotSelection->width(), -_screenShotOptions->height())));
 	_screenShotOptions->show();
 	QTimer::singleShot(2000, this, [this] {
 		QRect optionRect = QRect(QPoint(_screenShotOptions->x(), _screenShotOptions->y()), _screenShotOptions->size());
