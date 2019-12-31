@@ -1971,8 +1971,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_polls_create_button" = "创建";
 
 // and by panyouyu
-"lng_setting_screenshot_tip" = "Hide current window when taking screenshot";
-"lng_save_screenshot_image" = "Save screenshot";
+"lng_setting_screenshot_tip" = "隐藏当前窗口";
+"lng_save_screenshot_image" = "保存截图";
 
 // Wnd specific
 
