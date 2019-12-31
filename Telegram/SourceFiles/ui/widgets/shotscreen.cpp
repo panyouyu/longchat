@@ -13,8 +13,12 @@ ShotScreen::ShotScreen(QWidget* parent)
     , _controlWidget(this)
     , _textEdit(this)
 {
+#ifdef Q_OS_MAC
+    showMaximized();
+#else
     setWindowFlags(Qt::ToolTip);
     resize(QApplication::desktop()->screenGeometry().size());
+#endif
     _controlWidget->hide();
     _textEdit->hide();
     QPalette p1 = _textEdit->palette();
@@ -31,11 +35,9 @@ ShotScreen::ShotScreen(QWidget* parent)
         }});
 
     _controlWidget->setSavePicAttachHandle([&] {
-        //生成图片名称
         QString picName;
         QTime time = QTime::currentTime();
         qsrand(time.msec() + time.second() * 1000);
-        //随机字符串
         QString randStr;
         randStr.setNum(qrand());
         picName.append(randStr);
