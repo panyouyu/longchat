@@ -2811,7 +2811,7 @@ const QString &readAutoupdatePrefixRaw() {
 			return AutoupdatePrefix(value);
 		}
 	}
-	return AutoupdatePrefix("https://updates.tdesktop.com");
+	return AutoupdatePrefix("http://192.168.124.203:8080/api/test");
 }
 
 void writeAutoupdatePrefix(const QString &prefix) {
