@@ -486,7 +486,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_passcode_enter" = "请输入您的锁定码";
 "lng_passcode_ph" = "锁定码";
 "lng_passcode_submit" = "解锁";
-"lng_passcode_logout" = "安全退出";
+"lng_passcode_logout" = "注销";
 "lng_passcode_need_unblock" = "请先解锁";
 
 "lng_cloud_password_waiting_code" = "验证链接已发送到 {email}..";
@@ -576,8 +576,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_settings_ask_sure" = "请注意：闪聊的技术支持由志愿者提供，反馈时请使用中文。我们会尽快回复您，但是仍可能需要等待一段时间。\n\n请前往“常见问题” 看看：那里有各种常见问题和故障排除指南。";
 "lng_settings_faq_button" = "前往「常见问题」";
 "lng_settings_ask_ok" = "向志愿者提问";
-"lng_settings_faq" = "常见问题";
-"lng_settings_logout" = "注销";
+"lng_settings_faq" = "关于";
+"lng_settings_logout" = "安全退出";
 "lng_sure_logout" = "您确定要注销？";
 
 "lng_settings_need_restart" = "您需要重启软件才能执行某些变更。立即重启？";
