@@ -365,11 +365,11 @@ void Filler::addChatActions(not_null<ChatData*> chat) {
 				lang(lng_profile_add_participant),
 				[chat] { AddChatMembers(chat); });
 		}
-		if (chat->canSendPolls()) {
-			_addAction(
-				lang(lng_polls_create),
-				[=] { PeerMenuCreatePoll(chat); });
-		}
+		//if (chat->canSendPolls()) {
+		//	_addAction(
+		//		lang(lng_polls_create),
+		//		[=] { PeerMenuCreatePoll(chat); });
+		//}
 		if (chat->canExportChatHistory()) {
 			_addAction(
 				lang(lng_profile_export_chat),
@@ -409,11 +409,11 @@ void Filler::addChannelActions(not_null<ChannelData*> channel) {
 				lang(lng_channel_add_members),
 				[channel] { PeerMenuAddChannelMembers(channel); });
 		}
-		if (channel->canSendPolls()) {
-			_addAction(
-				lang(lng_polls_create),
-				[=] { PeerMenuCreatePoll(channel); });
-		}
+		//if (channel->canSendPolls()) {
+		//	_addAction(
+		//		lang(lng_polls_create),
+		//		[=] { PeerMenuCreatePoll(channel); });
+		//}
 		if (channel->canExportChatHistory()) {
 			_addAction(
 				lang(isGroup
