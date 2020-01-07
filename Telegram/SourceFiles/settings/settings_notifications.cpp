@@ -562,23 +562,23 @@ void SetupNotificationsContent(not_null<Ui::VerticalLayout*> container) {
 
 
 	AddSkip(container, st::settingsCheckboxesSkip);
-	AddDivider(container);
-	AddSkip(container, st::settingsCheckboxesSkip);
-	AddSubsectionTitle(container, lng_settings_events_title);
-	const auto joined = addCheckbox(
-		lng_settings_events_joined,
-		!Auth().api().contactSignupSilentCurrent().value_or(false));
-	Auth().api().contactSignupSilent(
-	) | rpl::start_with_next([=](bool silent) {
-		joined->setChecked(!silent);
-	}, joined->lifetime());
-	joined->checkedChanges(
-	) | rpl::filter([](bool enabled) {
-		const auto silent = Auth().api().contactSignupSilentCurrent();
-		return (enabled == silent.value_or(false));
-	}) | rpl::start_with_next([=](bool enabled) {
-		Auth().api().saveContactSignupSilent(!enabled);
-	}, joined->lifetime());
+	//AddDivider(container);
+	//AddSkip(container, st::settingsCheckboxesSkip);
+	//AddSubsectionTitle(container, lng_settings_events_title);
+	//const auto joined = addCheckbox(
+	//	lng_settings_events_joined,
+	//	!Auth().api().contactSignupSilentCurrent().value_or(false));
+	//Auth().api().contactSignupSilent(
+	//) | rpl::start_with_next([=](bool silent) {
+	//	joined->setChecked(!silent);
+	//}, joined->lifetime());
+	//joined->checkedChanges(
+	//) | rpl::filter([](bool enabled) {
+	//	const auto silent = Auth().api().contactSignupSilentCurrent();
+	//	return (enabled == silent.value_or(false));
+	//}) | rpl::start_with_next([=](bool enabled) {
+	//	Auth().api().saveContactSignupSilent(!enabled);
+	//}, joined->lifetime());
 
 	const auto nativeKey = [&] {
 		if (!Platform::Notifications::Supported()) {

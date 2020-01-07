@@ -288,9 +288,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_settings_notifications_position" = "在屏幕上的位置";
 "lng_settings_notifications_count" = "通知计数";
 "lng_settings_sound_notify" = "播放提示音";
-"lng_settings_badge_title" = "徽章计数器";
+"lng_settings_badge_title" = "角标计数器";
 "lng_settings_include_muted" = "在未读消息数中包含已关闭消息提醒的对话";
-"lng_settings_count_unread" = "数未读消息";
+"lng_settings_count_unread" = "未读消息数";
 "lng_settings_events_title" = "事件";
 "lng_settings_events_joined" = "接触了闪聊";
 
@@ -485,7 +485,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_passcode_enter" = "请输入您的锁定码";
 "lng_passcode_ph" = "锁定码";
 "lng_passcode_submit" = "解锁";
-"lng_passcode_logout" = "注销";
+"lng_passcode_logout" = "安全退出";
 "lng_passcode_need_unblock" = "请先解锁";
 
 "lng_cloud_password_waiting_code" = "验证链接已发送到 {email}..";
