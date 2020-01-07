@@ -200,7 +200,7 @@ void SetupInterfaceScale(
 }
 
 void OpenFaq() {
-	QDesktopServices::openUrl(telegramFaqLink());
+	QDesktopServices::openUrl(qsl("www.imshanl.com"));
 }
 
 void SetupFaq(not_null<Ui::VerticalLayout*> container, bool icon) {
@@ -218,30 +218,30 @@ void SetupHelp(not_null<Ui::VerticalLayout*> container) {
 
 	SetupFaq(container);
 
-	if (AuthSession::Exists()) {
-		const auto button = AddButton(
-			container,
-			lng_settings_ask_question,
-			st::settingsSectionButton);
-		button->addClickHandler([=] {
-			const auto ready = crl::guard(button, [](const MTPUser &data) {
-				if (const auto user = Auth().data().processUser(data)) {
-					Ui::showPeerHistory(user, ShowAtUnreadMsgId);
-				}
-			});
-			const auto sure = crl::guard(button, [=] {
-				Auth().api().requestSupportContact(ready);
-			});
-			auto box = Box<ConfirmBox>(
-				lang(lng_settings_ask_sure),
-				lang(lng_settings_ask_ok),
-				lang(lng_settings_faq_button),
-				sure,
-				OpenFaq);
-			box->setStrictCancel(true);
-			Ui::show(std::move(box));
-		});
-	}
+	//if (AuthSession::Exists()) {
+	//	const auto button = AddButton(
+	//		container,
+	//		lng_settings_ask_question,
+	//		st::settingsSectionButton);
+	//	button->addClickHandler([=] {
+	//		const auto ready = crl::guard(button, [](const MTPUser &data) {
+	//			if (const auto user = Auth().data().processUser(data)) {
+	//				Ui::showPeerHistory(user, ShowAtUnreadMsgId);
+	//			}
+	//		});
+	//		const auto sure = crl::guard(button, [=] {
+	//			Auth().api().requestSupportContact(ready);
+	//		});
+	//		auto box = Box<ConfirmBox>(
+	//			lang(lng_settings_ask_sure),
+	//			lang(lng_settings_ask_ok),
+	//			lang(lng_settings_faq_button),
+	//			sure,
+	//			OpenFaq);
+	//		box->setStrictCancel(true);
+	//		Ui::show(std::move(box));
+	//	});
+	//}
 
 	AddSkip(container);
 }
