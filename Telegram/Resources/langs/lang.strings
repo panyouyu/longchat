@@ -166,6 +166,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_edit_media_album_error" = "此文件不能作为相册的一部分保存.";
 "lng_edit_media_invalid_file" = "对不起，这个文件不能用.";
 
+"lng_intro_name" = "闪聊 桌面版";
 "lng_intro_about" = "欢迎使用闪聊官方桌面版客户端。\n它快速且安全。";
 "lng_start_msgs" = "开始使用";
 

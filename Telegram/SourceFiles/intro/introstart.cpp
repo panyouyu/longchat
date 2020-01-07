@@ -16,7 +16,7 @@ namespace Intro {
 
 StartWidget::StartWidget(QWidget *parent, Widget::Data *data) : Step(parent, data, true) {
 	setMouseTracking(true);
-	setTitleText([] { return qsl("LongChat Desktop"); });
+	setTitleText(langFactory(lng_intro_name));
 	setDescriptionText(langFactory(lng_intro_about));
 	show();
 }
