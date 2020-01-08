@@ -3074,26 +3074,16 @@ void HistoryWidget::chooseAttach() {
 void HistoryWidget::createScreenShot()
 {
 	if (_shotScreen.data()) return;
+    
 	_shotScreen.create(nullptr);
 	_shotScreen->hide();
 	if (cHideAppWindow()) {
-		switch (App::wnd()->windowState()) {
-		case Qt::WindowMaximized:
-			App::wnd()->showMinimized();
-			QTimer::singleShot(300, this, [&] { _shotScreen->init(); _shotScreen->show(); });
-			connect(_shotScreen.data(), SIGNAL(finished(bool)), App::wnd(), SLOT(showMaximized()));
-			break;
-		case Qt::WindowFullScreen:
-			App::wnd()->showMinimized();
-			QTimer::singleShot(600, this, [&] { _shotScreen->init(); _shotScreen->show(); });
-			connect(_shotScreen.data(), SIGNAL(finished(bool)), App::wnd(), SLOT(showFullScreen()));
-			break;
-		default :
-			App::wnd()->showMinimized();
-			QTimer::singleShot(600, this, [&] { _shotScreen->init(); _shotScreen->show(); });
-			connect(_shotScreen.data(), SIGNAL(finished(bool)), App::wnd(), SLOT(showNormal()));
-			break;
-		}
+        if (App::wnd()->windowState() == Qt::WindowFullScreen) {
+            App::wnd()->showMaximized();
+        }
+        App::wnd()->hideForMoment();
+        QTimer::singleShot(300, this, [&]{ _shotScreen->init(); _shotScreen->show();});
+        connect(_shotScreen.data(), SIGNAL(finished(bool)), App::wnd(), SLOT(show()));
 	}
 	else {
 		_shotScreen->init(); 
@@ -3108,6 +3098,7 @@ void HistoryWidget::destoryScreenShot(bool send)
 		confirmSendingFiles(QGuiApplication::clipboard()->mimeData(), CompressConfirm::Yes);
 		ActivateWindow(this->controller());
 	}
+    _shotScreen->close();
 	_shotScreen.destroyDelayed();
 }
 

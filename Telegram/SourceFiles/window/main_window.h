@@ -37,6 +37,8 @@ public:
 	bool wasInactivePress() const {
 		return _wasInactivePress;
 	}
+    
+    void hideForMoment();
 
 	bool hideNoQuit();
 

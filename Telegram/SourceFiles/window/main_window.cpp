@@ -220,6 +220,13 @@ void MainWindow::showTermsDelete() {
 		LayerOption::KeepOther);
 }
 
+void MainWindow::hideForMoment() {
+    if (App::quitting()) {
+        return;
+    }
+    closeWithoutDestroy();
+}
+    
 bool MainWindow::hideNoQuit() {
 	if (App::quitting()) {
 		return false;
