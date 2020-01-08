@@ -379,7 +379,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_settings_close_sure" = "您确定要关闭此页面吗?您没有保存更改。";
 //"lng_settings_peer_to_peer" = "点对点";
 "lng_settings_peer_to_peer_about" = "禁用点对点将通过闪聊服务器中继所有呼叫，以避免暴露您的IP地址，但可能会略微降低音频质量。";
-"lng_settings_advanced" = "先进的";
+"lng_settings_advanced" = "高级设置";
 "lng_settings_stickers_emoji" = "贴纸和emoji动画";
 "lng_settings_messages" = "消息";
 "lng_settings_themes" = "主题";
