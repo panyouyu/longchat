@@ -42,6 +42,7 @@ private:
     QPainterPath maskPath();
     QRect activeRect();
     QRect controlWidgetRect();
+    void appendText();
 private:
     object_ptr<Ui::ControlWidget> _controlWidget;
     object_ptr<QTextEdit> _textEdit;
@@ -53,6 +54,7 @@ private:
     QPoint pressedPoint = QPoint(0, 0);          //鼠标左键按下后的坐标
     bool leftButtonPressed = false;
     QPoint movePoint = QPoint(0, 0);             //终点坐标
+    QPoint arrowEndPoint = QPoint(0, 0);
     QVector<QVector<bool>> _pointArray;
     QList<QPoint> _mosaicList;
 };
@@ -76,6 +78,8 @@ public:
         return _type;
     }
 
+    void setTypeChangedHandle(Fn<void()> callback);
+
     void setRevokeAttachHandle(Fn<void()> callback) {
         _revokeAttach->setClickedCallback(callback);
     }
@@ -94,7 +98,8 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
-    Type _type;    
+    Type _type;
+    Fn<void()> _callback;
     object_ptr<Ui::IconButton> _drawRectangleAttach;
     object_ptr<Ui::IconButton> _drawArrowAttach;
     object_ptr<Ui::IconButton> _mosaicAttach;

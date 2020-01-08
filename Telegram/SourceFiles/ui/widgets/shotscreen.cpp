@@ -25,11 +25,14 @@ ShotScreen::ShotScreen(QWidget* parent)
     _textEdit->setTextColor(Qt::red);
     connect(_textEdit, SIGNAL(textChanged()), this, SLOT(ontextchanged()));
 
+    _controlWidget->setTypeChangedHandle([&] { appendText(); });
+
     _controlWidget->setRevokeAttachHandle([&] {
         if (!_list.isEmpty()) {
             _list.takeLast();            
             update();
-        }});
+        }}
+    );
 
     _controlWidget->setSavePicAttachHandle([&] {
         QString picName;
@@ -42,18 +45,22 @@ ShotScreen::ShotScreen(QWidget* parent)
         QString filename = QFileDialog::getSaveFileName(this, lang(lng_save_screenshot_image), picName, "JPEG Files(*.jpg)");
 
         if (filename.length() > 0) {
+            appendText();
             QImage pimage = QPixmap::grabWidget(this, _highLightRect).toImage();
             pimage.save(filename, "jpg");
         }
-        });
+        }
+    );
 
     _controlWidget->setCancelShotAttachHandle([&] { emit finished(false); });
 
     _controlWidget->setFinishShotAttachHandle([&] { 
+        appendText();
         QClipboard* clipboard = QGuiApplication::clipboard();
         clipboard->setImage(QPixmap::grabWidget(this, _highLightRect).toImage());
         emit finished(true); 
-        });
+        }
+    );
 
     setMouseTracking(true);
     _globalPath.lineTo(width(), 0);
@@ -109,19 +116,18 @@ void ShotScreen::keyPressEvent(QKeyEvent* e)
     if (e->key() == Qt::Key_Escape) {
         emit finished(false);
     }
+    else if (e->key() == Qt::Key_Enter) {
+        appendText();
+        QClipboard* clipboard = QGuiApplication::clipboard();
+        clipboard->setImage(QPixmap::grabWidget(this, _highLightRect).toImage());
+        emit finished(true);
+    }
 }
 
 void ShotScreen::mousePressEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::RightButton) {
-        if (!_textEdit->toPlainText().isEmpty())
-        {
-            QRect rect = QRect(QPoint(_textEdit->x(), _textEdit->y()), _textEdit->size());
-            _list.append(new Text(rect, _textEdit->toPlainText()));
-            update();
-        }
-        _textEdit->hide();
-        _textEdit->clear();
+        appendText();
     }
     else if (event->button() == Qt::LeftButton) {
         pressedPoint = event->pos();
@@ -150,15 +156,11 @@ void ShotScreen::mousePressEvent(QMouseEvent* event)
         break;
         case ControlWidget::Text:
             if (!_highLightRect.contains(pressedPoint)) return;
-            if (!_textEdit->toPlainText().isEmpty())
-            {
-                QRect rect = QRect(QPoint(_textEdit->x(), _textEdit->y()), _textEdit->size());
-                _list.append(new Text(rect, _textEdit->toPlainText()));
-                update();
-            }
+            appendText();
             _textEdit->move(pressedPoint);
-            _textEdit->show();
             _textEdit->clear();
+            _textEdit->show();
+            _textEdit->setFocus();
             break;
         }
         leftButtonPressed = true;
@@ -179,7 +181,7 @@ void ShotScreen::mouseReleaseEvent(QMouseEvent* event)
         _rectAngleRect = QRect();
         break;
     case ControlWidget::Arrow:
-        _list.append(new Arrow(pressedPoint, movePoint));
+        _list.append(new Arrow(pressedPoint, arrowEndPoint));
         break;
     case ControlWidget::Mosaic:
         _list.append(new Mosaic(_mosaicList));
@@ -212,6 +214,7 @@ void ShotScreen::mouseMoveEvent(QMouseEvent* event)
         break;
     case ControlWidget::Arrow:
         if (!_highLightRect.contains(movePoint)) return;
+        arrowEndPoint = movePoint;
         update();
         break;
     case ControlWidget::Mosaic:
@@ -298,9 +301,20 @@ QRect ShotScreen::controlWidgetRect()
     return QRect(x, y, _controlWidget->width(), _controlWidget->height());
 }
 
+void ShotScreen::appendText() {
+    if (!_textEdit->toPlainText().isEmpty())
+    {
+        QRect rect = QRect(QPoint(_textEdit->x(), _textEdit->y()), _textEdit->size());
+        _list.append(new Text(rect, _textEdit->toPlainText()));
+        update();
+    }
+    _textEdit->hide();
+}
+
 ControlWidget::ControlWidget(QWidget *parent)
     : QWidget(parent)
     , _type(None)
+    , _callback(nullptr)
     , _drawRectangleAttach(this, st::historyDrawRectangleAttach)
     , _drawArrowAttach(this, st::historyDrawArrowAttach)
     , _mosaicAttach(this, st::historyMosaicAttach)
@@ -332,6 +346,8 @@ ControlWidget::ControlWidget(QWidget *parent)
         else {
             _type = type;
         }
+        if (_callback)
+            _callback();
         update();
     };
 
@@ -339,6 +355,11 @@ ControlWidget::ControlWidget(QWidget *parent)
     _drawArrowAttach->setClickedCallback([=] { callback(Arrow); });
     _mosaicAttach->setClickedCallback([=] { callback(Mosaic); });
     _drawTextAttach->setClickedCallback([=] { callback(Text); });
+}
+
+void ControlWidget::setTypeChangedHandle(Fn<void()> callback) {
+    if (callback) 
+        _callback = callback;
 }
 
 void ControlWidget::resizeEvent(QResizeEvent* event)
