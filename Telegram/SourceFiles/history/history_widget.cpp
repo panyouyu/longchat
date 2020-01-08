@@ -3210,7 +3210,7 @@ void HistoryWidget::recordUpdateCallback(QPoint globalPos) {
 void HistoryWidget::mouseReleaseEvent(QMouseEvent *e) {
 	if (_replyForwardPressed) {
 		_replyForwardPressed = false;
-		update(0, _field->y() - st::historySendPadding - st::historyReplyHeight, width(), st::historyReplyHeight);
+		update(0, _attachToggle->y() - st::historyReplyHeight, width(), st::historyReplyHeight);
 	}
 	if (_attachDragState != DragState::None || !_attachDragPhoto->isHidden() || !_attachDragDocument->isHidden()) {
 		_attachDragState = DragState::None;
@@ -3818,25 +3818,22 @@ void HistoryWidget::moveFieldControls() {
 	auto bottom = height();
 	auto maxKeyboardHeight = st::historyComposeFieldMaxHeight - _field->height();
 	_keyboard->resizeToWidth(width(), maxKeyboardHeight);
+
 	if (_kbShown) {
 		keyboardHeight = qMin(_keyboard->height(), maxKeyboardHeight);
 		bottom -= keyboardHeight;
 		_kbScroll->setGeometryToLeft(0, bottom, width(), keyboardHeight);
 	}
-
-// _attachToggle --------- _inlineResults -------------------------------------- _tabbedPanel --------- _fieldBarCancel
-// (_attachDocument|_attachPhoto) _field (_silent|_cmdStart|_kbShow) (_kbHide|_tabbedSelectorToggle) [_broadcast] _send
-// (_botStart|_unblock|_joinChannel|_muteUnmute)
-
-	auto buttonsBottom = bottom - _attachToggle->height();
+	
+	// _attachToggle ----- _screenShotToggle ----
+	auto buttonsBottom = bottom - _attachToggle->height() - _field->height() - st::historySendPadding * 2 - _send->height();
 	auto left = 0;
 	_attachToggle->moveToLeft(left, buttonsBottom); left += _attachToggle->width();
 	_screenShotToggle->moveToLeft(left, buttonsBottom); left += _screenShotToggle->width();
-	_field->moveToLeft(left, bottom - _field->height() - st::historySendPadding);
-	auto right = st::historySendRight;
-	_send->moveToRight(right, buttonsBottom); right += _send->width();
-	_tabbedSelectorToggle->moveToRight(right, buttonsBottom);
+	_tabbedSelectorToggle->moveToLeft(left, buttonsBottom);
 	updateTabbedSelectorToggleTooltipGeometry();
+
+	auto right = st::historySendRight + _send->width();
 	_botKeyboardHide->moveToRight(right, buttonsBottom); right += _botKeyboardHide->width();
 	_botKeyboardShow->moveToRight(right, buttonsBottom);
 	_botCommandStart->moveToRight(right, buttonsBottom);
@@ -3844,12 +3841,21 @@ void HistoryWidget::moveFieldControls() {
 		_silent->moveToRight(right, buttonsBottom);
 	}
 
-	_fieldBarCancel->moveToRight(0, _field->y() - st::historySendPadding - _fieldBarCancel->height());
+	if (_tabbedPanel) {
+		_tabbedPanel->moveBottomRight(buttonsBottom, _tabbedPanel->width());
+	}
+
+	_fieldBarCancel->moveToRight(0, _attachToggle->y() - st::historySendPadding - _fieldBarCancel->height());
+
+	buttonsBottom += _attachToggle->height() + st::historySendPadding;
+	_field->moveToLeft(0, buttonsBottom);
+
+	buttonsBottom += _field->height() + st::historySendPadding;
+	
+	_send->moveToRight(st::historySendRight, buttonsBottom);
+
 	if (_inlineResults) {
 		_inlineResults->moveBottom(_field->y() - st::historySendPadding);
-	}
-	if (_tabbedPanel) {
-		_tabbedPanel->moveBottomRight(buttonsBottom, width());
 	}
 
 	auto fullWidthButtonRect = myrtlrect(
@@ -3861,7 +3867,6 @@ void HistoryWidget::moveFieldControls() {
 	_unblock->setGeometry(fullWidthButtonRect);
 	_joinChannel->setGeometry(fullWidthButtonRect);
 	_muteUnmute->setGeometry(fullWidthButtonRect);
-
 	if (_aboutProxyPromotion) {
 		_aboutProxyPromotion->moveToLeft(
 			0,
@@ -3875,6 +3880,9 @@ void HistoryWidget::updateTabbedSelectorToggleTooltipGeometry() {
 		auto margin = st::historyAttachEmojiTooltipDelta;
 		auto margins = QMargins(margin, margin, margin, margin);
 		_tabbedSelectorToggleTooltip->pointAt(toggle.marginsRemoved(margins));
+		qDebug("_tabbedSelectorToggleTooltip : x = %d, y = %d, width = %d, height = %d",
+			_tabbedSelectorToggleTooltip->geometry().x(), _tabbedSelectorToggleTooltip->geometry().y(), 
+			_tabbedSelectorToggleTooltip->geometry().width(), _tabbedSelectorToggleTooltip->geometry().height());
 	}
 }
 
@@ -4744,6 +4752,10 @@ void HistoryWidget::updateControlsGeometry() {
 		_topBar->bottomNoMargins(),
 		width() - topShadowLeft - topShadowRight,
 		st::lineWidth);
+
+	qDebug("width = %d, height = %d", width(), height());
+	qDebug("_scroll : x = %d, y = %d, width = %d, height = %d",
+		_scroll->geometry().x(), _scroll->geometry().y(), _scroll->geometry().width(), _scroll->geometry().height());
 }
 
 void HistoryWidget::itemRemoved(not_null<const HistoryItem*> item) {
@@ -4861,7 +4873,7 @@ void HistoryWidget::updateHistoryGeometry(bool initial, bool loadedDown, const S
 		}
 	} else {
 		if (editingMessage() || _canSendMessages) {
-			newScrollHeight -= (_field->height() + 2 * st::historySendPadding);
+			newScrollHeight -= (_field->height() + 2 * st::historySendPadding + _attachToggle->height() + _send->height());
 		} else if (writeRestrictionKey().has_value()) {
 			newScrollHeight -= _unblock->height();
 		}
@@ -6422,8 +6434,8 @@ void HistoryWidget::updateField() {
 }
 
 void HistoryWidget::drawField(Painter &p, const QRect &rect) {
-	auto backy = _field->y() - st::historySendPadding;
-	auto backh = _field->height() + 2 * st::historySendPadding;
+	auto backy = _attachToggle->y();
+	auto backh = _attachToggle->height() + _field->height() + 2 * st::historySendPadding + _send->height();
 	auto hasForward = readyToForward();
 	auto drawMsgText = (_editMsgId || _replyToId) ? _replyEditMsg : _kbReplyTo;
 	if (_editMsgId || _replyToId || (!hasForward && _kbReplyTo)) {

@@ -172,7 +172,7 @@ historyComposeField: InputField(defaultInputField) {
 historyComposeFieldMaxHeight: 224px;
 // historyMinHeight: 56px;
 
-historySendPadding: 9px;
+historySendPadding: 1px;
 historySendRight: 2px;
 
 historyComposeButton: FlatButton {
