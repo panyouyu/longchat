@@ -143,7 +143,7 @@ emojiPanAnimation: PanelAnimation(defaultPanelAnimation) {
 emojiPanPadding: 12px;
 emojiPanWidth: 345px;
 emojiPanMinHeight: 278px;
-emojiPanMaxHeight: 640px;
+emojiPanMaxHeight: 540px;
 emojiPanHeightRatio: 0.75;
 emojiPanShowDuration: 200;
 emojiPanDuration: 200;

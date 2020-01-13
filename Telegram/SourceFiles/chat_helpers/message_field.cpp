@@ -317,7 +317,7 @@ Fn<bool(
 void InitMessageField(
 		not_null<Window::Controller*> controller,
 		not_null<Ui::InputField*> field) {
-	field->setMinHeight(st::historySendSize.height() - 2 * st::historySendPadding);
+	field->setMinHeight(st::historyMinHeight - 2 * st::historySendPadding);
 	field->setMaxHeight(st::historyComposeFieldMaxHeight);
 
 	field->setTagMimeProcessor(std::make_unique<FieldTagMimeProcessor>());

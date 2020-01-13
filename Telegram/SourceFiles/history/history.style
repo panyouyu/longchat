@@ -151,7 +151,7 @@ historyViewsInvertedIcon: icon {{ "history_views", historySendingInvertedIconFg 
 
 historyComposeField: InputField(defaultInputField) {
 	font: msgFont;
-	textMargins: margins(0px, 0px, 0px, 0px);
+	textMargins: margins(10px, 0px, 10px, 0px);
 	textAlign: align(left);
 	textFg: historyComposeAreaFg;
 	textBg: historyComposeAreaBg;
@@ -170,10 +170,10 @@ historyComposeField: InputField(defaultInputField) {
 	duration: 100;
 }
 historyComposeFieldMaxHeight: 224px;
-// historyMinHeight: 56px;
+historyMinHeight: 56px;
 
-historySendPadding: 1px;
-historySendRight: 2px;
+historySendPadding: 0px;
+historySendRight: 0px;
 
 historyComposeButton: FlatButton {
 	color: windowActiveTextFg;

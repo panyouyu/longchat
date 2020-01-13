@@ -284,7 +284,7 @@ void TabbedPanel::startShowAnimation() {
 	if (!_a_show.animating()) {
 		auto image = grabForAnimation();
 
-		_showAnimation = std::make_unique<Ui::PanelAnimation>(st::emojiPanAnimation, Ui::PanelAnimation::Origin::BottomRight);
+		_showAnimation = std::make_unique<Ui::PanelAnimation>(st::emojiPanAnimation, Ui::PanelAnimation::Origin::BottomLeft);
 		auto inner = rect().marginsRemoved(st::emojiPanMargins);
 		_showAnimation->setFinalImage(std::move(image), QRect(inner.topLeft() * cIntRetinaFactor(), inner.size() * cIntRetinaFactor()));
 		auto corners = App::cornersMask(ImageRoundRadius::Small);

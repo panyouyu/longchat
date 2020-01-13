@@ -3819,12 +3819,12 @@ void HistoryWidget::moveFieldControls() {
 	// _attachToggle ----- _screenShotToggle ----
 	auto buttonsBottom = bottom - _attachToggle->height() - _field->height() - st::historySendPadding * 2 - _send->height();
 	auto left = 0;
+	_tabbedSelectorToggle->moveToLeft(left, buttonsBottom); left += _tabbedSelectorToggle->width();
 	_attachToggle->moveToLeft(left, buttonsBottom); left += _attachToggle->width();
-	_screenShotToggle->moveToLeft(left, buttonsBottom); left += _screenShotToggle->width();
-	_tabbedSelectorToggle->moveToLeft(left, buttonsBottom);
+	_screenShotToggle->moveToLeft(left, buttonsBottom);	
 	updateTabbedSelectorToggleTooltipGeometry();
 
-	auto right = st::historySendRight + _send->width();
+	auto right = 0;
 	_botKeyboardHide->moveToRight(right, buttonsBottom); right += _botKeyboardHide->width();
 	_botKeyboardShow->moveToRight(right, buttonsBottom);
 	_botCommandStart->moveToRight(right, buttonsBottom);
@@ -3871,23 +3871,12 @@ void HistoryWidget::updateTabbedSelectorToggleTooltipGeometry() {
 		auto margin = st::historyAttachEmojiTooltipDelta;
 		auto margins = QMargins(margin, margin, margin, margin);
 		_tabbedSelectorToggleTooltip->pointAt(toggle.marginsRemoved(margins));
-		qDebug("_tabbedSelectorToggleTooltip : x = %d, y = %d, width = %d, height = %d",
-			_tabbedSelectorToggleTooltip->geometry().x(), _tabbedSelectorToggleTooltip->geometry().y(), 
-			_tabbedSelectorToggleTooltip->geometry().width(), _tabbedSelectorToggleTooltip->geometry().height());
 	}
 }
 
 void HistoryWidget::updateFieldSize() {
-	auto kbShowShown = _history && !_kbShown && _keyboard->hasMarkup();
-	auto fieldWidth = width() - _attachToggle->width() - _screenShotToggle->width() - st::historySendRight;
-	fieldWidth -= _send->width();
-	fieldWidth -= _tabbedSelectorToggle->width();
-	if (kbShowShown) fieldWidth -= _botKeyboardShow->width();
-	if (_cmdStartShown) fieldWidth -= _botCommandStart->width();
-	if (_silent) fieldWidth -= _silent->width();
-
-	if (_field->width() != fieldWidth) {
-		_field->resize(fieldWidth, _field->height());
+	if (_field->width() != width()) {
+		_field->resize(width(), _field->height());
 	} else {
 		moveFieldControls();
 	}
