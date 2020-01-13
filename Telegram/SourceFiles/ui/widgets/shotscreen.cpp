@@ -382,10 +382,10 @@ void ControlWidget::paintEvent(QPaintEvent* event)
 {
     (void)event;
     QPainter painter(this);
-    painter.fillRect(rect(), qRgb(247, 245, 218));
+    painter.fillRect(rect(), qRgba(53, 53, 53, 100));
     if (_type != None) {
         auto button = _optionsGroup.at(_type);
-        painter.fillRect(QRect(button->x(), button->y(), button->width(), button->height()), qRgb(255, 147, 70));
+        painter.fillRect(QRect(button->x(), button->y(), button->width(), button->height()), qRgba(98, 97, 97, 100));
     }
 }
 
