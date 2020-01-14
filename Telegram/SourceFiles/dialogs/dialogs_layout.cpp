@@ -57,7 +57,7 @@ void paintRowDate(Painter &p, QDateTime date, QRect &rectForName, bool active, b
 			&& lastDate.weekNumber() == nowDate.weekNumber()) {
 			return langDayOfWeek(lastDate);
 		} else {
-			return lastDate.toString(qsl("d.MM.yy"));
+			return lastDate.toString(qsl("yy/MM/dd"));
 		}
 	}();
 	paintRowTopRight(p, dt, rectForName, active, selected);
