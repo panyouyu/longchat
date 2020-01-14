@@ -187,6 +187,7 @@ HistoryWidget::HistoryWidget(
 , _supportAutocomplete(Auth().supportMode()
 	? object_ptr<Support::Autocomplete>(this, &Auth())
 	: nullptr)
+, _record(this)
 , _send(this)
 , _unblock(this, lang(lng_unblock_button).toUpper(), st::historyUnblock)
 , _botStart(this, lang(lng_bot_start).toUpper(), st::historyComposeButton)
@@ -226,6 +227,7 @@ HistoryWidget::HistoryWidget(
 	_unreadMentions->setClickedCallback([this] { showNextUnreadMention(); });
 	connect(_fieldBarCancel, SIGNAL(clicked()), this, SLOT(onFieldBarCancel()));
 	_send->setClickedCallback([this] { sendButtonClicked(); });
+	_record->setClickedCallback([this] { sendButtonClicked(); });
 	connect(_unblock, SIGNAL(clicked()), this, SLOT(onUnblock()));
 	connect(_botStart, SIGNAL(clicked()), this, SLOT(onBotStart()));
 	connect(_joinChannel, SIGNAL(clicked()), this, SLOT(onJoinChannel()));
@@ -329,6 +331,7 @@ HistoryWidget::HistoryWidget(
 
 	_field->hide();
 	_send->hide();
+	_record->hide();
 	_unblock->hide();
 	_botStart->hide();
 	_joinChannel->hide();
@@ -338,6 +341,11 @@ HistoryWidget::HistoryWidget(
 	_send->setRecordStopCallback([this](bool active) { recordStopCallback(active); });
 	_send->setRecordUpdateCallback([this](QPoint globalPos) { recordUpdateCallback(globalPos); });
 	_send->setRecordAnimationCallback([this] { updateField(); });
+
+	_record->setRecordStartCallback([this] { recordStartCallback(); });
+	_record->setRecordStopCallback([this](bool active) { recordStopCallback(active); });
+	_record->setRecordUpdateCallback([this](QPoint globalPos) { recordUpdateCallback(globalPos); });
+	_record->setRecordAnimationCallback([this] { updateField(); });
 
 	_attachToggle->hide();
 	_screenShotToggle->hide();
@@ -1556,6 +1564,7 @@ void HistoryWidget::showHistory(
 						_history->clearLocalDraft();
 						applyDraft();
 						_send->finishAnimating();
+						_record->finishAnimating();
 					}
 				}
 			}
@@ -1704,6 +1713,7 @@ void HistoryWidget::showHistory(
 		}
 		applyDraft();
 		_send->finishAnimating();
+		_record->finishAnimating();
 
 		_tabbedSelector->showMegagroupSet(_peer->asMegagroup());
 
@@ -1995,6 +2005,7 @@ void HistoryWidget::updateControlsVisibility() {
 			_supportAutocomplete->hide();
 		}
 		_send->hide();
+		_record->hide();
 		if (_silent) {
 			_silent->hide();
 		}
@@ -2024,6 +2035,10 @@ void HistoryWidget::updateControlsVisibility() {
 		_joinChannel->hide();
 		_muteUnmute->hide();
 		_send->show();
+		if (showRecordButton()) {
+			_record->show();
+		}
+		updateRecorddButtonType();
 		updateSendButtonType();
 		if (_recording) {
 			_field->hide();
@@ -2079,6 +2094,7 @@ void HistoryWidget::updateControlsVisibility() {
 			_supportAutocomplete->hide();
 		}
 		_send->hide();
+		_record->hide();
 		_unblock->hide();
 		_botStart->hide();
 		_joinChannel->hide();
@@ -3138,7 +3154,7 @@ void HistoryWidget::updateOverStates(QPoint pos) {
 	auto inClickable = inReplyEditForward || inPinnedMsg;
 	if (inField != _inField && _recording) {
 		_inField = inField;
-		_send->setRecordActive(_inField);
+		_record->setRecordActive(_inField);
 	}
 	_inReplyEditForward = inReplyEditForward;
 	_inPinnedMsg = inPinnedMsg;
@@ -3173,7 +3189,7 @@ void HistoryWidget::recordStartCallback() {
 
 	updateField();
 
-	_send->setRecordActive(true);
+	_record->setRecordActive(true);
 }
 
 void HistoryWidget::recordStopCallback(bool active) {
@@ -3214,7 +3230,7 @@ void HistoryWidget::stopRecording(bool send) {
 	activate();
 
 	updateField();
-	_send->setRecordActive(false);
+	_record->setRecordActive(false);
 }
 
 void HistoryWidget::sendBotCommand(PeerData *peer, UserData *bot, const QString &cmd, MsgId replyTo) { // replyTo != 0 from ReplyKeyboardMarkup, == 0 from cmd links
@@ -3566,6 +3582,10 @@ bool HistoryWidget::showInlineBotCancel() const {
 	return _inlineBot && !_inlineLookingUpBot;
 }
 
+void HistoryWidget::updateRecorddButtonType() {
+	_record->setType(Ui::SendButton::Type::Record);
+}
+
 void HistoryWidget::updateSendButtonType() {
 	auto type = [this] {
 		using Type = Ui::SendButton::Type;
@@ -3573,9 +3593,9 @@ void HistoryWidget::updateSendButtonType() {
 			return Type::Save;
 		} else if (_isInlineBot) {
 			return Type::Cancel;
-		} else if (showRecordButton()) {
+		} /*else if (showRecordButton()) {
 			return Type::Record;
-		}
+		}*/
 		return Type::Send;
 	};
 	_send->setType(type());
@@ -3807,7 +3827,10 @@ void HistoryWidget::moveFieldControls() {
 	auto left = 0;
 	_tabbedSelectorToggle->moveToLeft(left, buttonsBottom); left += _tabbedSelectorToggle->width();
 	_attachToggle->moveToLeft(left, buttonsBottom); left += _attachToggle->width();
-	_screenShotToggle->moveToLeft(left, buttonsBottom);	
+	_screenShotToggle->moveToLeft(left, buttonsBottom);	left += _screenShotToggle->width();
+	if (showRecordButton()) {
+		_record->moveToLeft(left, buttonsBottom);
+	}
 	updateTabbedSelectorToggleTooltipGeometry();
 
 	auto right = 0;
@@ -5693,7 +5716,7 @@ void HistoryWidget::editMessage(not_null<HistoryItem*> item) {
 
 	if (_recording) {
 		// Just fix some strange inconsistency.
-		_send->clearState();
+		_record->clearState();
 	}
 	if (!_editMsgId) {
 		if (_replyToId || !_field->empty()) {

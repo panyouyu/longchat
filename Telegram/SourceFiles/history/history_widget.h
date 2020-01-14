@@ -751,6 +751,7 @@ private:
 	bool isJoinChannel() const;
 	bool isMuteUnmute() const;
 	bool updateCmdStartShown();
+	void updateRecorddButtonType();
 	void updateSendButtonType();
 	bool showRecordButton() const;
 	bool showInlineBotCancel() const;
@@ -758,6 +759,7 @@ private:
 
 	object_ptr<ReportSpamPanel> _reportSpamPanel = { nullptr };
 
+	object_ptr<Ui::SendButton> _record;
 	object_ptr<Ui::SendButton> _send;
 	object_ptr<Ui::FlatButton> _unblock;
 	object_ptr<Ui::FlatButton> _botStart;
