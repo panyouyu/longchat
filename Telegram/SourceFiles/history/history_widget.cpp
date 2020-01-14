@@ -2027,20 +2027,6 @@ void HistoryWidget::updateControlsVisibility() {
 		updateSendButtonType();
 		if (_recording) {
 			_field->hide();
-			_tabbedSelectorToggle->hide();
-			_botKeyboardShow->hide();
-			_botKeyboardHide->hide();
-			_botCommandStart->hide();
-			_attachToggle->hide();
-			_screenShotToggle->hide();
-			if (_silent) {
-				_silent->hide();
-			}
-			if (_kbShown) {
-				_kbScroll->show();
-			} else {
-				_kbScroll->hide();
-			}
 		} else {
 			_field->show();
 			if (_kbShown) {
@@ -6571,20 +6557,20 @@ void HistoryWidget::drawRecording(Painter &p, float64 recordActive) {
 	auto d = 2 * qRound(st::historyRecordSignalMin + (delta * (st::historyRecordSignalMax - st::historyRecordSignalMin)));
 	{
 		PainterHighQualityEnabler hq(p);
-		p.drawEllipse(_attachToggle->x() + (_tabbedSelectorToggle->width() - d) / 2, _attachToggle->y() + (_attachToggle->height() - d) / 2, d, d);
+		p.drawEllipse(_field->x() + (_tabbedSelectorToggle->width() - d) / 2, _field->y() + (_tabbedSelectorToggle->height() - d) / 2, d, d);
 	}
 
 	auto duration = formatDurationText(_recordingSamples / Media::Player::kDefaultFrequency);
 	p.setFont(st::historyRecordFont);
 
 	p.setPen(st::historyRecordDurationFg);
-	p.drawText(_attachToggle->x() + _tabbedSelectorToggle->width(), _attachToggle->y() + st::historyRecordTextTop + st::historyRecordFont->ascent, duration);
+	p.drawText(_field->x() + _tabbedSelectorToggle->width(), _field->y() + st::historyRecordTextTop + st::historyRecordFont->ascent, duration);
 
-	int32 left = _attachToggle->x() + _tabbedSelectorToggle->width() + st::historyRecordFont->width(duration) + ((_send->width() - st::historyRecordVoice.width()) / 2);
+	int32 left = _field->x() + _tabbedSelectorToggle->width() + st::historyRecordFont->width(duration) + ((_send->width() - st::historyRecordVoice.width()) / 2);
 	int32 right = width() - _send->width();
 
 	p.setPen(anim::pen(st::historyRecordCancel, st::historyRecordCancelActive, 1. - recordActive));
-	p.drawText(left + (right - left - _recordCancelWidth) / 2, _attachToggle->y() + st::historyRecordTextTop + st::historyRecordFont->ascent, lang(lng_record_cancel));
+	p.drawText(left + (right - left - _recordCancelWidth) / 2, _field->y() + st::historyRecordTextTop + st::historyRecordFont->ascent, lang(lng_record_cancel));
 }
 
 void HistoryWidget::drawPinnedBar(Painter &p) {
