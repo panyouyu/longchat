@@ -578,7 +578,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_settings_ask_ok" = "向志愿者提问";
 "lng_settings_faq" = "关于";
 "lng_settings_logout" = "安全退出";
-"lng_sure_logout" = "您确定要注销？";
+"lng_sure_logout" = "您确定要安全退出？";
 
 "lng_settings_need_restart" = "您需要重启软件才能执行某些变更。立即重启？";
 "lng_settings_restart_now" = "立即重启";

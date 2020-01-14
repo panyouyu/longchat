@@ -4732,10 +4732,6 @@ void HistoryWidget::updateControlsGeometry() {
 		_topBar->bottomNoMargins(),
 		width() - topShadowLeft - topShadowRight,
 		st::lineWidth);
-
-	qDebug("width = %d, height = %d", width(), height());
-	qDebug("_scroll : x = %d, y = %d, width = %d, height = %d",
-		_scroll->geometry().x(), _scroll->geometry().y(), _scroll->geometry().width(), _scroll->geometry().height());
 }
 
 void HistoryWidget::itemRemoved(not_null<const HistoryItem*> item) {
