@@ -221,6 +221,11 @@ historyAttach: IconButton {
 	}
 }
 
+recordButton: IconButton(historyAttach) {
+	icon: icon {{ "call_record_active", historyComposeIconFg }};
+	iconOver: icon {{ "call_record_active", historyComposeIconFgOver }};
+}
+
 historyScreenShotAttach: IconButton(historyAttach) {
 	icon: icon {{ "screen_shot_attach", historyComposeIconFg }};
 	iconOver: icon {{ "screen_shot_attach", historyComposeIconFgOver }};

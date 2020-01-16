@@ -187,7 +187,7 @@ HistoryWidget::HistoryWidget(
 , _supportAutocomplete(Auth().supportMode()
 	? object_ptr<Support::Autocomplete>(this, &Auth())
 	: nullptr)
-, _record(this)
+, _record(this, st::recordButton)
 , _send(this)
 , _unblock(this, lang(lng_unblock_button).toUpper(), st::historyUnblock)
 , _botStart(this, lang(lng_bot_start).toUpper(), st::historyComposeButton)
@@ -226,8 +226,8 @@ HistoryWidget::HistoryWidget(
 	_historyDown->setClickedCallback([this] { historyDownClicked(); });
 	_unreadMentions->setClickedCallback([this] { showNextUnreadMention(); });
 	connect(_fieldBarCancel, SIGNAL(clicked()), this, SLOT(onFieldBarCancel()));
-	_send->setClickedCallback([this] { sendButtonClicked(); });
 	_record->setClickedCallback([this] { sendButtonClicked(); });
+	_send->setClickedCallback([this] { sendButtonClicked(); });
 	connect(_unblock, SIGNAL(clicked()), this, SLOT(onUnblock()));
 	connect(_botStart, SIGNAL(clicked()), this, SLOT(onBotStart()));
 	connect(_joinChannel, SIGNAL(clicked()), this, SLOT(onJoinChannel()));
@@ -336,11 +336,6 @@ HistoryWidget::HistoryWidget(
 	_botStart->hide();
 	_joinChannel->hide();
 	_muteUnmute->hide();
-
-	_send->setRecordStartCallback([this] { recordStartCallback(); });
-	_send->setRecordStopCallback([this](bool active) { recordStopCallback(active); });
-	_send->setRecordUpdateCallback([this](QPoint globalPos) { recordUpdateCallback(globalPos); });
-	_send->setRecordAnimationCallback([this] { updateField(); });
 
 	_record->setRecordStartCallback([this] { recordStartCallback(); });
 	_record->setRecordStopCallback([this](bool active) { recordStopCallback(active); });
@@ -2038,7 +2033,6 @@ void HistoryWidget::updateControlsVisibility() {
 		if (showRecordButton()) {
 			_record->show();
 		}
-		updateRecorddButtonType();
 		updateSendButtonType();
 		if (_recording) {
 			_field->hide();
@@ -3108,7 +3102,7 @@ void HistoryWidget::sendButtonClicked() {
 	auto type = _send->type();
 	if (type == Ui::SendButton::Type::Cancel) {
 		onInlineBotCancel();
-	} else if (type != Ui::SendButton::Type::Record) {
+	} else {
 		send();
 	}
 }
@@ -3582,10 +3576,6 @@ bool HistoryWidget::showInlineBotCancel() const {
 	return _inlineBot && !_inlineLookingUpBot;
 }
 
-void HistoryWidget::updateRecorddButtonType() {
-	_record->setType(Ui::SendButton::Type::Record);
-}
-
 void HistoryWidget::updateSendButtonType() {
 	auto type = [this] {
 		using Type = Ui::SendButton::Type;
@@ -3593,9 +3583,7 @@ void HistoryWidget::updateSendButtonType() {
 			return Type::Save;
 		} else if (_isInlineBot) {
 			return Type::Cancel;
-		} /*else if (showRecordButton()) {
-			return Type::Record;
-		}*/
+		} 
 		return Type::Send;
 	};
 	_send->setType(type());
@@ -6678,7 +6666,7 @@ void HistoryWidget::paintEvent(QPaintEvent *e) {
 		if (!_field->isHidden() || _recording) {
 			drawField(p, clip);
 			if (!_send->isHidden() && _recording) {
-				drawRecording(p, _send->recordActiveRatio());
+				drawRecording(p, _record->recordActiveRatio());
 			}
 		} else if (const auto errorKey = writeRestrictionKey()) {
 			drawRestrictedWrite(p, lang(*errorKey));

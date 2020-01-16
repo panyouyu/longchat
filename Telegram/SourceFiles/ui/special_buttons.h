@@ -79,20 +79,10 @@ private:
 
 };
 
-class SendButton : public RippleButton {
+class RecordButton : public IconButton {
 public:
-	SendButton(QWidget *parent);
+	RecordButton(QWidget* parent, const style::IconButton& st);
 
-	enum class Type {
-		Send,
-		Save,
-		Record,
-		Cancel,
-	};
-	Type type() const {
-		return _type;
-	}
-	void setType(Type state);
 	void setRecordActive(bool recordActive);
 	void finishAnimating();
 
@@ -114,22 +104,14 @@ public:
 	}
 
 protected:
-	void mouseMoveEvent(QMouseEvent *e) override;
-	void paintEvent(QPaintEvent *e) override;
-	void onStateChanged(State was, StateChangeSource source) override;
-
-	QImage prepareRippleMask() const override;
-	QPoint prepareRippleStartPosition() const override;
+	void mouseMoveEvent(QMouseEvent* e) override;
+    void onStateChanged(State was, StateChangeSource source) override;
 
 private:
 	void recordAnimationCallback();
-	QPixmap grabContent();
 
-	Type _type = Type::Send;
 	bool _recordActive = false;
-	QPixmap _contentFrom, _contentTo;
 
-	Ui::Animations::Simple _a_typeChanged;
 	Ui::Animations::Simple _a_recordActive;
 
 	bool _recording = false;
@@ -138,6 +120,36 @@ private:
 	Fn<void(QPoint globalPos)> _recordUpdateCallback;
 	Fn<void()> _recordAnimationCallback;
 
+};
+
+class SendButton : public RippleButton {
+public:
+	SendButton(QWidget *parent);
+
+	enum class Type {
+		Send,
+		Save,
+		Cancel,
+	};
+	Type type() const {
+		return _type;
+	}
+	void setType(Type state);
+	void finishAnimating();
+protected:
+	void paintEvent(QPaintEvent *e) override;
+	void onStateChanged(State was, StateChangeSource source) override;
+
+	QImage prepareRippleMask() const override;
+	QPoint prepareRippleStartPosition() const override;
+
+private:
+	QPixmap grabContent();
+
+	Type _type = Type::Send;
+	QPixmap _contentFrom, _contentTo;
+
+	Ui::Animations::Simple _a_typeChanged;
 };
 
 class UserpicButton : public RippleButton {
