@@ -384,7 +384,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_settings_messages" = "消息";
 "lng_settings_themes" = "主题";
 "lng_settings_data_storage" = "数据和存储";
-"lng_settings_information" = "编辑文件";
+"lng_settings_information" = "编辑信息";
 "lng_settings_passcode_title" = "本地密码";
 "lng_settings_password_title" = "二步验证";
 "lng_settings_sessions_title" = "活动会话";
