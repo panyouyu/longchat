@@ -80,9 +80,6 @@
           'sources': [ '__Wrong_Official_Build_Target__' ],
         }],
       ],
-	  'defines': [
-        'TDESKTOP_DISABLE_AUTOUPDATE',
-      ],
     }],
     [ 'build_macold', {
       'xcode_settings': {
@@ -112,7 +109,6 @@
     }],
     [ 'build_macstore', {
       'defines': [
-        'TDESKTOP_DISABLE_AUTOUPDATE',
         'OS_MAC_STORE',
       ],
     }]

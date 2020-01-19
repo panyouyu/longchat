@@ -76,6 +76,7 @@
       'codegen.gyp:codegen_style',
       'tests/tests.gyp:tests',
       'utils.gyp:Updater',
+	  'utils.gyp:Packer',
       '../ThirdParty/libtgvoip/libtgvoip.gyp:libtgvoip',
       'crl.gyp:crl',
       'lib_base.gyp:lib_base',

@@ -16,7 +16,6 @@
         'ZLIB_WINAPI',
         '_SCL_SECURE_NO_WARNINGS',
         '_USING_V110_SDK71_',
-		'TDESKTOP_DISABLE_AUTOUPDATE'
       ],
       'msbuild_toolset': 'v142',
       'msvs_cygwin_shell': 0,

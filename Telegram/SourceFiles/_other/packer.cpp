@@ -18,17 +18,17 @@ quint64 AlphaVersion = 0;
 
 const char *PublicKey = "\
 -----BEGIN RSA PUBLIC KEY-----\n\
-MIGJAoGBAMA4ViQrjkPZ9xj0lrer3r23JvxOnrtE8nI69XLGSr+sRERz9YnUptnU\n\
-BZpkIfKaRcl6XzNJiN28cVwO1Ui5JSa814UAiDHzWUqCaXUiUEQ6NmNTneiGx2sQ\n\
-+9PKKlb8mmr3BB9A45ZNwLT6G9AK3+qkZLHojeSA+m84/a6GP4svAgMBAAE=\n\
+MIGJAoGBAK7QEhOiS23dOxWbu+I+nOAhu4rFV7rkxnIBC2l27eHr2ixdQzME3XF8\n\
+6pW1UEAJ1Bb8pSSw6qDwkpo7hAacKrmChZhqFodTQ8grfj7bSuO0K6VnBNr05i07\n\
+BgJpCugBFefCe4Hd7Xa7MXNiV8TgBw0ZeONoZT/CkEnmQ8o+qdiNAgMBAAE=\n\
 -----END RSA PUBLIC KEY-----\
 ";
 
 const char *PublicBetaKey = "\
 -----BEGIN RSA PUBLIC KEY-----\n\
-MIGJAoGBALWu9GGs0HED7KG7BM73CFZ6o0xufKBRQsdnq3lwA8nFQEvmdu+g/I1j\n\
-0LQ+0IQO7GW4jAgzF/4+soPDb6uHQeNFrlVx1JS9DZGhhjZ5rf65yg11nTCIHZCG\n\
-w/CVnbwQOw0g5GBwwFV3r0uTTvy44xx8XXxk+Qknu4eBCsmrAFNnAgMBAAE=\n\
+MIGJAoGBALkc/1M17U7YwzlCyQPnfevBj/3wDNVkHn6fASOicY84cIDedOSGcxQB\n\
+Knei1+/iTlCB2Io+KDDVlTZnAPDThD/gi+FAa+1wqjEKT3y31rk0DJvmvM66y0pB\n\
+rnHXOm840a3+vUCjYrehGKebaOPxo2pmDwZhgQUk2zxSAZ/oWusXAgMBAAE=\n\
 -----END RSA PUBLIC KEY-----\
 ";
 
@@ -128,13 +128,14 @@ QString AlphaSignature;
 
 int main(int argc, char *argv[])
 {
-	QString workDir;
+	QString workDir = "C:\\Users\\levy\\Desktop\\test\\tsetup\\";
 
 	QString remove;
 	int version = 0;
 	bool target32 = false;
 	QFileInfoList files;
 	for (int i = 0; i < argc; ++i) {
+		qDebug("argv[%d] = %s", i, argv[i]);
 		if (string("-path") == argv[i] && i + 1 < argc) {
 			QString path = workDir + QString(argv[i + 1]);
 			QFileInfo info(path);
@@ -430,7 +431,8 @@ int main(int argc, char *argv[])
 	}
 
 	cout << "Checking signature..\n";
-	RSA *pbKey = PEM_read_bio_RSAPublicKey(BIO_new_mem_buf(const_cast<char*>((BetaChannel || AlphaVersion) ? PublicBetaKey : PublicKey), -1), 0, 0, 0);
+	BIO* bio = BIO_new_mem_buf(const_cast<char*>((BetaChannel || AlphaVersion) ? PublicBetaKey : PublicKey), -1);
+	RSA *pbKey = PEM_read_bio_RSAPublicKey(bio, 0, 0, 0);
 	if (!pbKey) {
 		cout << "Could not read RSA public key!\n";
 		return -1;
