@@ -74,7 +74,7 @@ introPlaneHeight: 38px;
 introHeight: 406px;
 introStepTopMin: 76px;
 introStepWidth: 380px;
-introStepHeight: 266px;
+introStepHeight: 346px;
 introStepHeightAdd: 30px;
 introStepHeightFull: 590px;
 introSlideDuration: 200;
@@ -111,9 +111,56 @@ introPassword: introCountry;
 introPasswordTop: 74px;
 introPasswordHintTop: 151px;
 
+introUserLoginLogoIconWidth: 155px;
+introUserLoginLogoIconLeft: 73px;
+
+introUserLoginName:InputField(defaultInputField) {
+	textMargins: margins(3px, 27px, 3px, 6px);
+	font: font(16px);
+	width: 300px;
+	heightMin: 61px;
+}
+introUserLoginCode:InputField(introUserLoginName) {
+	width: 100px;
+}
+introUserLoginPicCode: LabelVerificationCode(defaultLabelVerificationCode){
+	width: 100px;
+	height: 60px;
+	margin: margins(1px, 10px, 1px, 1px);
+	style: TextStyle(defaultTextStyle) {
+		font: font(15px);
+		linkFont: font(15px);
+		linkFontOver: font(15px underline);
+		lineHeight: 24px;
+	}
+}
+
+
+introUserLoginNameTop: 94px;
+introUserLoginPwdTop: 176px;
+introUserLoginCodeTop: 260px;
+introUserLoginLoginTop: 318px;
+introUserLoginCodePicLeft: 145px;
+introUserLoginCodeChangeLeft: 270px;
+introUserLoginCodeMarginTop: 30px;
+introUserLoginBoxTextStyle: TextStyle(defaultTextStyle) {
+	font: font(12px);
+	linkFont: font(boxFontSize);
+	linkFontOver: font(boxFontSize underline);
+}
+introUserLoginCheckbox: Checkbox(defaultCheckbox) {
+	width: -46px;
+	textPosition: point(15px, 1px);
+	style: introUserLoginBoxTextStyle;
+	checkPosition: point(16px, 16px);
+}
+introUserLoginRemberUserTop: 90px;
+introUserLoginRemberUserLeft: 24px;
+
 introPasswordHint: FlatLabel(introDescription) {
 	textFg: windowFg;
 }
+
 
 introResetButton: RoundButton(defaultLightButton) {
 	textFg: attentionButtonFg;

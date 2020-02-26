@@ -615,6 +615,8 @@ enum {
 	dbiCacheSettings = 0x5c,
 
 	dbiHideAppWindow = 0x5d,
+	dbiRemberUserName = 0x5e,
+	
 
 	dbiEncryptedWithSalt = 333,
 	dbiEncrypted = 444,
@@ -1194,6 +1196,14 @@ bool _readSetting(quint32 blockId, QDataStream &stream, int version, ReadSetting
 		if (!_checkStreamStatus(stream)) return false;
 
 		Global::SetModerateModeEnabled(enabled == 1);
+	} break;
+
+	case dbiRemberUserName: {
+		qint32 enabled;
+		stream >> enabled;
+		if (!_checkStreamStatus(stream)) return false;
+
+		Global::SetRemberUserName(enabled == 1);
 	} break;
 
 	case dbiIncludeMutedOld: {
@@ -2172,6 +2182,8 @@ void _writeUserSettings() {
 		data.stream << quint32(dbiHiddenPinnedMessages) << Global::HiddenPinnedMessages();
 	}
 	data.stream << qint32(dbiCallSettings) << callSettings;
+
+	data.stream << qint32(dbiRemberUserName) << qint32(Global::RemberUserName() ? 1 : 0);
 
 	FileWriteDescriptor file(_userSettingsKey);
 	file.writeEncrypted(data);

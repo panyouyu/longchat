@@ -14,6 +14,8 @@ LabelSimple {
 	textFg: color;
 }
 
+
+
 FlatLabel {
 	margin: margins;
 	minWidth: pixels;
@@ -22,6 +24,19 @@ FlatLabel {
 	maxHeight: pixels;
 	style: TextStyle;
 	palette: TextPalette;
+}
+
+LabelVerificationCode {
+	
+	margin: margins;
+	minWidth: pixels;
+	align: align;
+	textFg: color;
+	maxHeight: pixels;
+	style: TextStyle;
+	palette: TextPalette;
+	height: pixels;
+	width: pixels;
 }
 
 LinkButton {
@@ -555,6 +570,8 @@ defaultLabelSimple: LabelSimple {
 	textFg: windowFg;
 }
 
+
+
 defaultFlatLabel: FlatLabel {
 	minWidth: 0px;
 	maxHeight: 0px;
@@ -563,6 +580,20 @@ defaultFlatLabel: FlatLabel {
 	style: defaultTextStyle;
 	palette: defaultTextPalette;
 }
+
+defaultLabelVerificationCode: LabelVerificationCode {
+	style: TextStyle(defaultTextStyle) {
+		font: font(14px);
+		linkFont: font(14px);
+		linkFontOver: font(14px underline);
+	}
+	textFg: importantTooltipFg;
+	palette: TextPalette(defaultTextPalette) {
+		linkFg: importantTooltipFgLink;
+		selectLinkFg: importantTooltipFgLink;
+	}
+}
+
 
 defaultLinkButton: LinkButton {
 	color: windowActiveTextFg;

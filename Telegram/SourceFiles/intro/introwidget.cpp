@@ -12,6 +12,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "lang/lang_file_parser.h"
 #include "intro/introstart.h"
 #include "intro/introphone.h"
+#include "intro/introuserlogin.h"
 #include "intro/introcode.h"
 #include "intro/introsignup.h"
 #include "intro/intropwdcheck.h"
@@ -82,7 +83,8 @@ Widget::Widget(QWidget *parent) : RpWidget(parent)
 	getNearestDC();
 	setupConnectingWidget();
 
-	appendStep(new StartWidget(this, getData()));
+	//appendStep(new StartWidget(this, getData()));
+	appendStep(new UserLoginWidget(this, getData()));
 	fixOrder();
 
 	subscribe(Lang::CurrentCloudManager().firstLanguageSuggestion(), [this] { createLanguageLink(); });
@@ -780,6 +782,7 @@ void Widget::Step::showDescription() {
 void Widget::Step::hideDescription() {
 	_description->hide(anim::type::normal);
 }
+
 
 void Widget::Step::paintContentSnapshot(Painter &p, const QPixmap &snapshot, float64 alpha, float64 howMuchHidden) {
 	if (!snapshot.isNull()) {

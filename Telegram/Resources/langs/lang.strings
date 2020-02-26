@@ -200,6 +200,14 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_bad_name" = "请输入您的姓名";
 "lng_bad_photo" = "抱歉，闪聊无法处理此类图片。";
 
+"lng_login_input_title" = "让沟通更有效";
+"lng_login_input_email" = "请输入邮箱地址";
+"lng_login_input_password" = "请输入密码";
+"lng_login_input_code" = "请输入验证码";
+"lng_login_code_change" = "换一个";
+"lng_login_login" = "登录";
+"lng_login_keep_pwd" = "记住账号";
+
 "lng_signin_title" = "两步验证";
 "lng_signin_desc" = "请输入两步验证密码";
 "lng_signin_recover_desc" = "请输入此邮箱里收到的验证码\n{email}";

@@ -404,6 +404,8 @@
 <(src_loc)/intro/introphone.h
 <(src_loc)/intro/intropwdcheck.cpp
 <(src_loc)/intro/intropwdcheck.h
+<(src_loc)/intro/introuserlogin.cpp
+<(src_loc)/intro/introuserlogin.h
 <(src_loc)/intro/introsignup.cpp
 <(src_loc)/intro/introsignup.h
 <(src_loc)/intro/introstart.cpp

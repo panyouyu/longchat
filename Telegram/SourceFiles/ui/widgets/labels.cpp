@@ -87,6 +87,110 @@ void CrossFadeAnimation::paintLine(Painter &p, const Line &line, float64 positio
 	}
 }
 
+LabelVerificationCode::LabelVerificationCode(QWidget* parent, const style::LabelVerificationCode& st, const QString& value )
+	: RpWidget(parent)
+	, _st(st)
+{
+	//生成随机种子
+	qsrand(QTime::currentTime().second() * 1000 + QTime::currentTime().msec());
+	colorArray = new QColor[letter_number];
+	verificationCode = new QChar[letter_number];
+	noice_point_number = _st.width;
+	onReflushVerification();
+}
+
+
+
+QString LabelVerificationCode::getVerificationCode() const
+{
+	QString s;
+	QChar cTemp;
+	for (int i = 0; i < letter_number; ++i)
+	{
+		cTemp = verificationCode[i];
+		s += cTemp > 97 ? cTemp.toUpper() : cTemp;
+	}
+	return s;
+}
+
+void LabelVerificationCode::onReflushVerification()
+{
+	resize(_st.width, _st.height);
+	qDebug() << this->width() << this->height();
+	update();
+}
+
+void LabelVerificationCode::paintEvent(QPaintEvent* e)
+{
+	Painter painter(this);
+	painter.setOpacity(_opacity);
+	painter.setTextPalette(_st.palette);
+	auto width = _st.width;
+	auto height = _st.height;
+	QPoint p;
+	//背景设为白色
+	painter.fillRect(this->rect(), Qt::white);
+	//产生4个不同的字符
+	produceVerificationCode();
+	//产生4个不同的颜色
+	produceRandomColor();
+	//绘制验证码
+	for (int i = 0; i < letter_number; ++i)
+	{
+		p.setX(i * (width / letter_number) + width / 8);
+		p.setY(height / 2);
+		qDebug() << width << height ;
+		painter.setPen(colorArray[i]);
+		painter.setFont(_st.style.font);
+		painter.drawText(p, QString(verificationCode[i]));
+	}
+	//绘制噪点
+	for (int j = 0; j < noice_point_number; ++j) //noice_point_number噪声点数
+	{
+		p.setX(qrand() % width);
+		p.setY(qrand() % height);
+		painter.setPen(colorArray[j % 4]);
+		painter.drawPoint(p);
+	}
+	return;
+}
+
+void LabelVerificationCode::produceVerificationCode() const
+{
+	for (int i = 0; i < letter_number; ++i)
+		verificationCode[i] = produceRandomLetter();
+	return;
+}
+
+QChar LabelVerificationCode::produceRandomLetter() const
+{
+	QChar c;
+	int flag = qrand() % letter_number;
+	switch (flag)
+	{
+	case NUMBER_FLAG:c = '0' + qrand() % 10; break;
+	case UPLETTER_FLAG:c = 'A' + qrand() % 26; break;
+	case LOWLETTER_FLAG:c = 'a' + qrand() % 26; break;
+	default:c = qrand() % 2 ? 'W' : 'D';
+	}
+	return c;
+}
+
+void LabelVerificationCode::produceRandomColor() const
+{
+	for (int i = 0; i < letter_number; ++i)
+		colorArray[i] = QColor(qrand() % 255, qrand() % 255, qrand() % 255);
+	return;
+}
+
+QFont LabelVerificationCode::textFont()
+{
+	QFont font;
+	font.setFamily("Microsoft YaHei");
+	font.setPixelSize(15);
+	return font;
+}
+
 LabelSimple::LabelSimple(
 	QWidget *parent,
 	const style::LabelSimple &st,
