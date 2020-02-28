@@ -305,6 +305,7 @@ DeclareVar(int, CallOutputVolume);
 DeclareVar(int, CallInputVolume);
 DeclareVar(bool, CallAudioDuckingEnabled);
 DeclareVar(bool, RemberUserName);
+DeclareVar(QString, KefuUserName);
 
 rpl::producer<bool> ReplaceEmojiValue();
 

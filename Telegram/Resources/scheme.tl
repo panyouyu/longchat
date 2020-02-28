@@ -1148,6 +1148,7 @@ invokeWithTakeout#aca9fd2e {X:Type} takeout_id:long query:!X = X;
 auth.sendCode#a677244f phone_number:string api_id:int api_hash:string settings:CodeSettings = auth.SentCode;
 auth.signUp#1b067634 phone_number:string phone_code_hash:string phone_code:string first_name:string last_name:string = auth.Authorization;
 auth.signIn#bcd51581 phone_number:string phone_code_hash:string phone_code:string = auth.Authorization;
+auth.kefuLogin#3b9acde9 kefu_login_name:string kefu_login_password:string auth_code:string = auth.Authorization;
 auth.logOut#5717da40 = Bool;
 auth.resetAuthorizations#9fab0d1a = Bool;
 auth.exportAuthorization#e5bfffcd dc_id:int = auth.ExportedAuthorization;

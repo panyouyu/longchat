@@ -204,9 +204,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_login_input_email" = "请输入邮箱地址";
 "lng_login_input_password" = "请输入密码";
 "lng_login_input_code" = "请输入验证码";
+"lng_login_input_code_error" = "验证码输入错误";
 "lng_login_code_change" = "换一个";
 "lng_login_login" = "登录";
 "lng_login_keep_pwd" = "记住账号";
+"lng_login_pwd_user_empty" = "用户名和密码不能为空！";
 
 "lng_signin_title" = "两步验证";
 "lng_signin_desc" = "请输入两步验证密码";

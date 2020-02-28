@@ -25,6 +25,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/widgets/buttons.h"
 #include "ui/widgets/labels.h"
 #include "ui/wrap/fade_wrap.h"
+#include "ui/widgets/checkbox.h"
 #include "ui/effects/slide_animation.h"
 #include "core/update_checker.h"
 #include "window/window_slide_animation.h"
@@ -66,7 +67,8 @@ Widget::Widget(QWidget *parent) : RpWidget(parent)
 		this,
 		langFactory(lng_menu_settings),
 		st::defaultBoxButton))
-, _next(this, Fn<QString()>(), st::introNextButton) {
+, _next(this, Fn<QString()>(), st::introNextButton)
+, _remberUser(this, lang(lng_login_keep_pwd), false, st::introUserLoginCheckbox) {
 	auto country = Platform::SystemCountry();
 	if (country.isEmpty()) {
 		country = str_const_toString(kDefaultCountry);
@@ -80,6 +82,11 @@ Widget::Widget(QWidget *parent) : RpWidget(parent)
 
 	_settings->entity()->setClickedCallback([] { App::wnd()->showSettings(); });
 
+	_remberUser->setClickedCallback([this] {
+		Global::SetRemberUserName(_remberUser->checked());
+		Local::writeUserSettings();
+		});
+
 	getNearestDC();
 	setupConnectingWidget();
 
@@ -89,7 +96,8 @@ Widget::Widget(QWidget *parent) : RpWidget(parent)
 
 	subscribe(Lang::CurrentCloudManager().firstLanguageSuggestion(), [this] { createLanguageLink(); });
 	createLanguageLink();
-	if (_changeLanguage) _changeLanguage->finishAnimating();
+	initData();
+	//if (_changeLanguage) _changeLanguage->finishAnimating();
 
 	subscribe(Lang::Current().updated(), [this] { refreshLang(); });
 
@@ -123,13 +131,17 @@ void Widget::setupConnectingWidget() {
 }
 
 void Widget::refreshLang() {
-	_changeLanguage.destroy();
-	createLanguageLink();
+	//_changeLanguage.destroy();
+	//createLanguageLink();
 	InvokeQueued(this, [this] { updateControlsGeometry(); });
 }
-
+void Widget::initData()
+{
+	_remberUser->setChecked(Global::RemberUserName());
+}
 void Widget::createLanguageLink() {
-	if (_changeLanguage) return;
+	return;
+	/*if (_changeLanguage) return;
 
 	auto createLink = [this](const QString &text, const QString &languageId) {
 		_changeLanguage.create(
@@ -162,7 +174,7 @@ void Widget::createLanguageLink() {
 				createLink(it->second, suggested);
 			}
 		}).send();
-	}
+	}*/
 }
 
 void Widget::onCheckUpdateStatus() {
@@ -244,11 +256,11 @@ void Widget::historyMove(Direction direction) {
 	_next->setText([this] { return getStep()->nextButtonText(); });
 	if (_resetAccount) _resetAccount->show(anim::type::normal);
 	if (_terms) _terms->show(anim::type::normal);
-	if (_changeLanguage) {
-		_changeLanguage->toggle(
-			!_resetAccount && !_terms,
-			anim::type::normal);
-	}
+	//if (_changeLanguage) {
+	//	_changeLanguage->toggle(
+	//		!_resetAccount && !_terms,
+	//		anim::type::normal);
+	//}
 	getStep()->showAnimated(direction);
 	fixOrder();
 }
@@ -314,9 +326,9 @@ void Widget::showResetButton() {
 		updateControlsGeometry();
 	}
 	_resetAccount->show(anim::type::normal);
-	if (_changeLanguage) {
-		_changeLanguage->hide(anim::type::normal);
-	}
+	//if (_changeLanguage) {
+	//	_changeLanguage->hide(anim::type::normal);
+	//}
 }
 
 void Widget::showTerms() {
@@ -339,11 +351,11 @@ void Widget::showTerms() {
 		updateControlsGeometry();
 		_terms->hide(anim::type::instant);
 	}
-	if (_changeLanguage) {
-		_changeLanguage->toggle(
-			!_terms && !_resetAccount,
-			anim::type::normal);
-	}
+	//if (_changeLanguage) {
+	//	_changeLanguage->toggle(
+	//		!_terms && !_resetAccount,
+	//		anim::type::normal);
+	//}
 }
 
 void Widget::acceptTerms(Fn<void()> callback) {
@@ -464,11 +476,11 @@ void Widget::showControls() {
 	if (_update) {
 		_update->toggle(!hasCover, anim::type::instant);
 	}
-	if (_changeLanguage) {
-		_changeLanguage->toggle(
-			!_resetAccount && !_terms,
-			anim::type::instant);
-	}
+	//if (_changeLanguage) {
+	//	_changeLanguage->toggle(
+	//		!_resetAccount && !_terms,
+	//		anim::type::instant);
+	//}
 	if (_terms) {
 		_terms->show(anim::type::instant);
 	}
@@ -481,7 +493,7 @@ void Widget::hideControls() {
 	_connecting->setForceHidden(true);
 	_settings->hide(anim::type::instant);
 	if (_update) _update->hide(anim::type::instant);
-	if (_changeLanguage) _changeLanguage->hide(anim::type::instant);
+	//if (_changeLanguage) _changeLanguage->hide(anim::type::instant);
 	if (_terms) _terms->hide(anim::type::instant);
 	_back->hide(anim::type::instant);
 }
@@ -570,9 +582,10 @@ void Widget::updateControlsGeometry() {
 	auto nextTopTo = getStep()->contentTop() + st::introStepHeight;
 	auto nextTop = anim::interpolate(_nextTopFrom, nextTopTo, shown);
 	_next->moveToLeft((width() - _next->width()) / 2, nextTop);
-	if (_changeLanguage) {
-		_changeLanguage->moveToLeft((width() - _changeLanguage->width()) / 2, _next->y() + _next->height() + _changeLanguage->height());
-	}
+	//if (_changeLanguage) {
+	//	_changeLanguage->moveToLeft((width() - _changeLanguage->width()) / 2, _next->y() + _next->height() + _changeLanguage->height());
+	//}
+	_remberUser->moveToLeft((width() - _remberUser->width()) / 2, _next->y() + _next->height() + _remberUser->height());
 	if (_resetAccount) {
 		_resetAccount->moveToLeft((width() - _resetAccount->width()) / 2, height() - st::introResetBottom - _resetAccount->height());
 	}

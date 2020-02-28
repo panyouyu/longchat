@@ -20,6 +20,7 @@ class LinkButton;
 class SlideAnimation;
 class CrossFadeAnimation;
 class FlatLabel;
+class Checkbox;
 template <typename Widget>
 class FadeWrap;
 } // namespace Ui
@@ -232,6 +233,7 @@ private:
 	void refreshLang();
 	void animationCallback();
 	void createLanguageLink();
+	void initData();
 
 	void updateControlsGeometry();
 	Data *getData() {
@@ -278,7 +280,8 @@ private:
 	object_ptr<Ui::FadeWrap<Ui::RoundButton>> _settings;
 
 	object_ptr<Ui::RoundButton> _next;
-	object_ptr<Ui::FadeWrap<Ui::LinkButton>> _changeLanguage = { nullptr };
+	//object_ptr<Ui::FadeWrap<Ui::LinkButton>> _changeLanguage = { nullptr };
+	object_ptr<Ui::Checkbox> _remberUser; //¼Ç×¡ÕËºÅ
 	object_ptr<Ui::FadeWrap<Ui::RoundButton>> _resetAccount = { nullptr };
 	object_ptr<Ui::FadeWrap<Ui::FlatLabel>> _terms = { nullptr };
 

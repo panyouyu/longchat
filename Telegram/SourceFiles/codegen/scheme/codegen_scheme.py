@@ -59,6 +59,8 @@ countedTypeIdExceptions['channel#c88974ac'] = True
 countedTypeIdExceptions['ipPortSecret#37982646'] = True
 countedTypeIdExceptions['accessPointRule#4679b65f'] = True
 countedTypeIdExceptions['help.configSimple#5a592a6c'] = True
+countedTypeIdExceptions['auth.kefuLogin#3b9acde9'] = True
+
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';
@@ -154,7 +156,7 @@ for line in lines:
       if (typeid != countTypeId):
           key = originalname + '#' + typeid;
           if (not key in countedTypeIdExceptions):
-            print('Warning: counted ' + countTypeId + ' mismatch with provided ' + typeid + ' (' + key + ', ' + cleanline + ')');
+            print('Warning: counted ' + countTypeId + ' mismatch with provided ' + typeid + ' (' + key + ', ' + cleanline + ')' + '-->' +countTypeId);
             continue;
     else:
       typeid = countTypeId;

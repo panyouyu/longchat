@@ -615,7 +615,7 @@ enum {
 	dbiCacheSettings = 0x5c,
 
 	dbiHideAppWindow = 0x5d,
-	dbiRemberUserName = 0x5e,
+	dbiKefuLoginSet = 0x5e,
 	
 
 	dbiEncryptedWithSalt = 333,
@@ -912,6 +912,32 @@ void applyReadContext(ReadSettingsContext &&context) {
 	}
 }
 
+QByteArray serializeKefuSettings() {
+	QByteArray result = QByteArray();
+	uint32 size = sizeof(qint32) + Serialize::stringSize(Global::KefuUserName());
+	result.reserve(size);
+	QDataStream stream(&result, QIODevice::WriteOnly);
+	stream.setVersion(QDataStream::Qt_5_1);
+	stream << Global::KefuUserName();
+	stream << qint32(Global::RemberUserName() ? 1 : 0);
+	return result;
+}
+
+void deserializeKefuSettings(QByteArray& settings) {
+	QDataStream stream(&settings, QIODevice::ReadOnly);
+	stream.setVersion(QDataStream::Qt_5_1);
+	QString kefuUserName;
+	qint32 remberUserName;
+
+	stream >> kefuUserName;
+	stream >> remberUserName;
+	if (_checkStreamStatus(stream)) {
+		Global::SetKefuUserName(kefuUserName);
+		Global::SetRemberUserName(remberUserName);
+	}
+}
+
+
 QByteArray serializeCallSettings(){
 	QByteArray result=QByteArray();
 	uint32 size = 3*sizeof(qint32) + Serialize::stringSize(Global::CallOutputDeviceID()) + Serialize::stringSize(Global::CallInputDeviceID());
@@ -1198,13 +1224,6 @@ bool _readSetting(quint32 blockId, QDataStream &stream, int version, ReadSetting
 		Global::SetModerateModeEnabled(enabled == 1);
 	} break;
 
-	case dbiRemberUserName: {
-		qint32 enabled;
-		stream >> enabled;
-		if (!_checkStreamStatus(stream)) return false;
-
-		Global::SetRemberUserName(enabled == 1);
-	} break;
 
 	case dbiIncludeMutedOld: {
 		qint32 v;
@@ -1884,6 +1903,14 @@ bool _readSetting(quint32 blockId, QDataStream &stream, int version, ReadSetting
 		deserializeCallSettings(callSettings);
 	} break;
 
+	case dbiKefuLoginSet: {
+		QByteArray kefuSettings;
+		stream >> kefuSettings;
+		if (!_checkStreamStatus(stream)) return false;
+
+		deserializeKefuSettings(kefuSettings);
+	} break;
+
 	case dbiHideAppWindow: {
 		qint32 v;
 		stream >> v;
@@ -2109,6 +2136,7 @@ void _writeUserSettings() {
 		? userDataInstance->serialize()
 		: QByteArray();
 	auto callSettings = serializeCallSettings();
+	auto kefuSettings = serializeKefuSettings();
 
 	uint32 size = 23 * (sizeof(quint32) + sizeof(qint32));
 	size += sizeof(quint32) + Serialize::stringSize(Global::AskDownloadPath() ? QString() : Global::DownloadPath()) + Serialize::bytearraySize(Global::AskDownloadPath() ? QByteArray() : Global::DownloadPathBookmark());
@@ -2132,6 +2160,7 @@ void _writeUserSettings() {
 		size += sizeof(quint32) + Serialize::bytearraySize(userData);
 	}
 	size += sizeof(quint32) + Serialize::bytearraySize(callSettings);
+	size += sizeof(quint32) + Serialize::bytearraySize(kefuSettings);
 
 	EncryptedDescriptor data(size);
 	data.stream
@@ -2183,7 +2212,7 @@ void _writeUserSettings() {
 	}
 	data.stream << qint32(dbiCallSettings) << callSettings;
 
-	data.stream << qint32(dbiRemberUserName) << qint32(Global::RemberUserName() ? 1 : 0);
+	data.stream << qint32(dbiKefuLoginSet) << kefuSettings;
 
 	FileWriteDescriptor file(_userSettingsKey);
 	file.writeEncrypted(data);

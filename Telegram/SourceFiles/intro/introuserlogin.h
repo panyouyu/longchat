@@ -1,6 +1,5 @@
 #pragma once
 #include "intro/introwidget.h"
-#include "mtproto/sender.h"
 
 namespace Ui {
 	class IconButton;
@@ -16,11 +15,12 @@ namespace Ui {
 } // namespace Ui
 
 namespace Intro {
-	class UserLoginWidget : public Widget::Step, private MTP::Sender {
+	class UserLoginWidget : public Widget::Step {
 		Q_OBJECT
 
 	public:
 		UserLoginWidget(QWidget* parent, Widget::Data* data);
+		~UserLoginWidget();
 
 		virtual void setInnerFocus() override;
 
@@ -49,11 +49,18 @@ namespace Intro {
 		void onChangeCode();
 		void onRemberUser();
 		void onInputUnameChange();
+		void onCheckRequest();
 
 	private:
 		void refreshLang();
 		void updateControlsGeometry();
 		void initData();
+		void saveSets();
+
+		void codeSubmitDone(const MTPauth_Authorization& result);
+		bool codeSubmitFail(const RPCError& error);
+		void showCodeError(Fn<QString()> textFactory);
+		void stopCheck();
 
 		QImage _imageLogo;
 		object_ptr<Ui::InputField> _unameField;//用户名输入框
@@ -62,7 +69,12 @@ namespace Intro {
 		object_ptr<Ui::LabelVerificationCode> _picCode;//图片验证码
 		//object_ptr<Ui::FlatLabel> _picCode;//图片验证码
 		object_ptr<Ui::LinkButton> _changeCode; //换一个
-		object_ptr<Ui::Checkbox> _remberUser; //记住账号
+		
+
+		mtpRequestId _kefuLoginRequest = 0;
+
+		//object_ptr<QTimer> _checkRequest;
+		QTimer* _checkRequest;
 
 	};
 }// namespace Intro
