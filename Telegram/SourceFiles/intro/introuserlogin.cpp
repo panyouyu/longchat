@@ -170,7 +170,8 @@ void UserLoginWidget::codeSubmitDone(const MTPauth_Authorization& result)
 		showCodeError(&Lang::Hard::ServerError);
 		return;
 	}
-	//cSetLoggedPhoneNumber(getData()->phone);
+	QString phone = qs(d.vuser.c_user().vphone);
+	cSetLoggedPhoneNumber(phone);//getData()->phone
 	finish(d.vuser);
 }
 

@@ -691,7 +691,7 @@ void Widget::Step::setTitleText(Fn<QString()> richTitleTextFactory) {
 }
 
 void Widget::Step::refreshTitle() {
-	_title->setRichText(_titleTextFactory());
+	//_title->setRichText(_titleTextFactory());
 }
 
 void Widget::Step::setDescriptionText(Fn<QString()> richDescriptionTextFactory) {
@@ -701,7 +701,7 @@ void Widget::Step::setDescriptionText(Fn<QString()> richDescriptionTextFactory) 
 }
 
 void Widget::Step::refreshDescription() {
-	_description->entity()->setRichText(_descriptionTextFactory());
+	//_description->entity()->setRichText(_descriptionTextFactory());
 }
 
 void Widget::Step::refreshLang() {
