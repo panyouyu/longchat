@@ -47,7 +47,6 @@ namespace Intro {
 	private slots:
 		void onInputPwdChange();
 		void onChangeCode();
-		void onRemberUser();
 		void onInputUnameChange();
 		void onCheckRequest();
 

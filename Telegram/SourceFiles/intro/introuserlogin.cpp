@@ -33,7 +33,6 @@ UserLoginWidget::UserLoginWidget(QWidget* parent, Widget::Data* data)
 			connect(_unameField, SIGNAL(changed()), this, SLOT(onInputUnameChange()));
 			connect(_pwdField, SIGNAL(changed()), this, SLOT(onInputPwdChange()));
 			connect(_changeCode, SIGNAL(clicked()), this, SLOT(onChangeCode()));
-			//connect(_remberUser, SIGNAL(clicked()), this, SLOT(onRemberUser()));
 		    connect(_checkRequest, SIGNAL(timeout()), this, SLOT(onCheckRequest()));
 			hideDescription();
 			//setTitleText(langFactory(lng_login_input_title));
@@ -68,12 +67,6 @@ void UserLoginWidget::onChangeCode()
 	_codeField->setText(_picCode->getVerificationCode());
 }
 
-void UserLoginWidget::onRemberUser()
-{
-		//Ui::show(Box<InformBox>(QString("%d").arg(_remberUser->checked())));
-//	Global::SetRemberUserName(_remberUser->checked());
-	Local::writeUserSettings();
-}
 
 void UserLoginWidget::onInputUnameChange()
 {
@@ -129,7 +122,7 @@ void UserLoginWidget::initData()
 		_unameField->setText(Global::KefuUserName());
 	}
 	
-	_pwdField->setText("123");
+	_pwdField->setText("kf123");
 	
 }
 
@@ -171,7 +164,9 @@ void UserLoginWidget::codeSubmitDone(const MTPauth_Authorization& result)
 		return;
 	}
 	QString phone = qs(d.vuser.c_user().vphone);
-	cSetLoggedPhoneNumber(phone);//getData()->phone
+	cSetLoggedPhoneNumber(phone);
+	Global::SetKefuBotId(1);
+	
 	finish(d.vuser);
 }
 
@@ -188,7 +183,7 @@ bool UserLoginWidget::codeSubmitFail(const RPCError& error)
 	stopCheck();
 	_kefuLoginRequest = 0;
 	auto& err = error.type();
-	if (err == qstr("PASSWORD_ERROR")) {
+	if (err == qstr("PASSWORD_WRONG")) {
 		showCodeError(langFactory(lng_signin_bad_password));
 		return true;
 	}
@@ -237,14 +232,15 @@ void UserLoginWidget::submit()
 		Ui::show(Box<InformBox>(lang(lng_login_pwd_user_empty)));
 		return;
 	}
-	saveSets();
-	HashMd5 md5;
+	//saveSets();
+	char h[33] = { 0 };
 	QByteArray dataPwd = userPwd.toLatin1();
-	md5.feed(dataPwd.constData(), dataPwd.size());
+	hashMd5Hex(dataPwd.constData(), dataPwd.size(), h);
+	
 	_checkRequest->start(1000);
 	//(const char*)md5.result()
 
-	_kefuLoginRequest = MTP::send(MTPauth_KefuLogin(MTP_string(userName), MTP_string(userPwd), MTP_string(veriCode)), rpcDone(&UserLoginWidget::codeSubmitDone), rpcFail(&UserLoginWidget::codeSubmitFail));
+	_kefuLoginRequest = MTP::send(MTPauth_KefuLogin(MTP_string(userName), MTP_string(h), MTP_string(veriCode)), rpcDone(&UserLoginWidget::codeSubmitDone), rpcFail(&UserLoginWidget::codeSubmitFail));
 }
 
 
