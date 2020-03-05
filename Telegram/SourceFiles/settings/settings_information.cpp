@@ -264,7 +264,7 @@ void SetupRows(
 		std::move(label),
 		std::move(value),
 		lang(lng_context_copy_mention),
-		[=] { Ui::show(Box<UsernameBox>()); },
+		[=] { /*Ui::show(Box<UsernameBox>());*/ },
 		st::settingsInfoUsername);
 
 	AddSkip(container, st::settingsInfoAfterSkip);

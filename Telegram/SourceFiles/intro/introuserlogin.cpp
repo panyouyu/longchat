@@ -165,7 +165,6 @@ void UserLoginWidget::codeSubmitDone(const MTPauth_Authorization& result)
 	}
 	QString phone = qs(d.vuser.c_user().vphone);
 	cSetLoggedPhoneNumber(phone);
-	Global::SetKefuBotId(1);
 	
 	finish(d.vuser);
 }

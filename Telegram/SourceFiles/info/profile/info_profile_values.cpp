@@ -74,7 +74,7 @@ rpl::producer<TextWithEntities> UsernameValue(not_null<UserData*> user) {
 	) | rpl::map([](QString &&username) {
 		return username.isEmpty()
 			? QString()
-			: ('@' + username);
+			: (/*'@' +*/ username);
 	}) | WithEmptyEntities();
 }
 
