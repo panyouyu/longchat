@@ -55,7 +55,7 @@ Open **x86 Native Tools Command Prompt for VS 2019.bat**, go to ***BuildPath*** 
     mkdir Libraries
     cd Libraries
 
-    git clone https://github.com/ericniebler/range-v3 range-v3
+    git clone --branch 0.9.1 https://github.com/ericniebler/range-v3 range-v3
 
     git clone https://github.com/telegramdesktop/lzma.git
     cd lzma\C\Util\LzmaLib
@@ -99,7 +99,7 @@ Open **x86 Native Tools Command Prompt for VS 2019.bat**, go to ***BuildPath*** 
     git clone https://github.com/google/breakpad
     cd breakpad
     git checkout a1dbcdcb43
-    git apply ../../tdesktop/Telegram/Patches/breakpad.diff
+    git apply ../../longchat-tdesktop/Telegram/Patches/breakpad.diff
     cd src
     git clone https://github.com/google/googletest testing
     cd client\windows
@@ -143,7 +143,7 @@ Open **x86 Native Tools Command Prompt for VS 2019.bat**, go to ***BuildPath*** 
     git checkout v5.6.2
     cd ..\qtbase
     git checkout v5.6.2
-    git apply ../../../tdesktop/Telegram/Patches/qtbase_5_6_2.diff
+    git apply ../../../longchat-tdesktop/Telegram/Patches/qtbase_5_6_2.diff
     cd ..
 
     configure -debug-and-release -force-debug-info -opensource -confirm-license -static -I "%cd%\..\openssl\Release\include" -no-opengl -openssl-linked OPENSSL_LIBS_DEBUG="%cd%\..\openssl\Debug\lib\ssleay32.lib %cd%\..\openssl\Debug\lib\libeay32.lib" OPENSSL_LIBS_RELEASE="%cd%\..\openssl\Release\lib\ssleay32.lib %cd%\..\openssl\Release\lib\libeay32.lib" -mp -nomake examples -nomake tests -platform win32-msvc2015
@@ -152,7 +152,7 @@ Open **x86 Native Tools Command Prompt for VS 2019.bat**, go to ***BuildPath*** 
     jom -j4 install
     cd ..
 
-    cd ../tdesktop/Telegram
+    cd ../longchat-tdesktop/Telegram
     gyp\refresh.bat
 
 ## Build the project
