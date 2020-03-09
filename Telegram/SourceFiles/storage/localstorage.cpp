@@ -615,6 +615,7 @@ enum {
 	dbiCacheSettings = 0x5c,
 
 	dbiHideAppWindow = 0x5d,
+	dbiKefuLoginSet = 0x5e,
 	dbiQuickReplyStrings = 0x5f,
 	dbiEncryptedWithSalt = 333,
 	dbiEncrypted = 444,
