@@ -550,3 +550,23 @@ callBarFg: dialogsNameFgActive; // phone call bar text and icons
 importantTooltipBg: toastBg;
 importantTooltipFg: toastFg;
 importantTooltipFgLink: mediaviewTextLinkFg;
+
+quickReplyFrame: #b9c3d4;
+
+quickReplyTitleTextBg: #ffffff;
+quickReplyTitleTextBgOver: #ffffff;
+quickReplyTitleTextBgHover: #f3f3f3;
+quickReplyTitleTextFg: #979797;
+quickReplyTitleTextFgOver: #2e78f5;
+quickReplyTitleTextFgHover: #000000;
+quickReplyTitleRipple: #e7e7e7;
+quickReplyTitleRippleOver: #e7e7e7;
+
+quickReplyContentTextBg: quickReplyTitleTextBg;
+quickReplyContentTextBgOver: #e8f1ff;
+quickReplyContentTextBgHover: quickReplyTitleTextBgHover;
+quickReplyContentTextFg: quickReplyTitleTextFg;
+quickReplyContentTextFgOver: #000000;
+quickReplyContentTextFgHover: #000000;
+quickReplyContentRipple: #e8f1ff;
+quickReplyContentRippleOver: #e8f1ff;

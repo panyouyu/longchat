@@ -969,3 +969,71 @@ backgroundCheck: ServiceCheck {
 	color: msgServiceFg;
 	duration: 200;
 }
+
+quickReplyAddWordsWidth: 294px;
+quickReplygroupLabelMargin: margins(16px, 12px, 16px, 4px);
+quickReplygroupComboMargin: margins(24px, 8px, 24px, 8px);
+quickReplycontentLabelMargin: margins(16px, 8px, 16px, 8px);
+quickReplyInputMargin: margins(24px, 8px, 24px, 10px);
+
+quickReplyInput: InputField(defaultInputField) {
+	font: msgFont;
+	textMargins: margins(0px, 0px, 10px, 0px);
+	textAlign: align(left);
+	heightMin: 90px;
+	heightMax: 90px;
+	placeholderMargins: margins(0px, 0px, 0px, 0px);
+	placeholderAlign: align(topleft);
+	placeholderScale: 0.;
+	placeholderFont: normalFont;
+	placeholderShift: -50px;
+	duration: 100;
+}
+
+quickReplyGroupInput: InputField(quickReplyInput) {
+	textMargins: margins(4px, 10px, 32px, 10px);
+	heightMin: 40px;
+	heightMax: 40px;
+}
+
+quickReplyLabel: LabelSimple(defaultLabelSimple) {
+	font: font(15px);
+}
+
+quickReplyRemainLabel: LabelSimple(defaultLabelSimple) {
+	textFg: windowSubTextFg;
+}
+
+dropDownButton: IconButton {
+	width: 32px;
+	height: 32px;
+
+	icon: icon {{ "combo_drop_down", dialogsMenuIconFg }};
+	iconOver: icon {{ "combo_drop_down", dialogsMenuIconFgOver }};
+	iconPosition: point(5px, 10px);
+	rippleAreaPosition: point(4px, 4px);
+	rippleAreaSize: 24px;
+
+	duration: 150;
+	ripple: emptyRippleAnimation;
+}
+
+dropDownListMaxHeight: 120px;
+dropDownList: DropdownMenu {
+	wrap: InnerDropdown {
+		scrollPadding: margins(0px, 8px, 0px, 8px);	
+		padding: margins(4px, 4px, 4px, 4px);
+		shadow: defaultRoundShadow;
+		animation: defaultPanelAnimation;
+
+		duration: 150;
+		showDuration: 200;
+
+		bg: menuBg;
+		scroll: defaultSolidScroll;
+	}
+	menu: defaultMenu;
+}
+
+quickReplyGroupInputWidth: 294px;
+quickReplyRenameGroupMargin: margins(16px, 8px, 16px, 8px);

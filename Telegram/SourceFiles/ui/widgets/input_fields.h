@@ -236,6 +236,7 @@ public:
 	const QString &getLastText() const {
 		return _lastTextWithTags.text;
 	}
+
 	void setPlaceholder(
 		Fn<QString()> placeholderFactory,
 		int afterSymbols = 0);

@@ -178,7 +178,6 @@ public:
 
 	int32 dlgsWidth() const;
 
-	void showScreenShot();
 	void showForwardLayer(MessageIdsList &&items);
 	void showSendPathsLayer();
 	void cancelUploadLayer(not_null<HistoryItem*> item);

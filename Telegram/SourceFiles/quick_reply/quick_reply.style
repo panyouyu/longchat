@@ -1,0 +1,117 @@
+using "basic.style";
+
+using "ui/widgets/widgets.style";
+using "intro/intro.style";
+
+quickReplyDesireWidth: 596px;
+quickReplyWidgetWidth: 500px;
+quickReplyWidgetHeight: 400px;
+
+quickReplyImport: IconTextButton(defaultIconTextButton) {
+	margin: margins(20px, 2px, 2px, 2px);
+	icon: icon {{"quick_reply_import", menuIconFg}};
+}
+
+quickReplyExport: IconTextButton(defaultIconTextButton) {
+	icon: icon {{"quick_reply_export", menuIconFg}};
+}
+
+quickReplyTipPadding : margins(0px, 10px, 20px, 10px);
+
+quickReplyTitleScroll: ScrollArea(defaultScrollArea) {
+	bottomsh: 0px;
+	topsh: 0px;
+}
+
+quickReplyContentScroll: ScrollArea(defaultScrollArea) {
+	bottomsh: 0px;
+	topsh: 0px;
+}
+
+quickReplyTitleList: TextList(defaultTextList) {
+	item: TextListItem(defaultTextListItem) {
+		textBg: quickReplyTitleTextBg;
+		textBgOver: quickReplyTitleTextBgOver;
+		textBgHover: quickReplyTitleTextBgHover;
+
+		textFg: quickReplyTitleTextFg;
+		textFgOver: quickReplyTitleTextFgOver;
+		textFgHover: quickReplyTitleTextFgHover;	
+	
+		ripple: RippleAnimation(defaultRippleAnimation) {
+			color: quickReplyTitleRipple;
+		}
+		rippleOver: RippleAnimation(defaultRippleAnimation) {
+			color:quickReplyTitleRippleOver;
+		}
+	}
+}
+
+quickReplyContentList: TextList(defaultTextList) {
+	item: TextListItem(defaultTextListItem) {
+		textBg: quickReplyContentTextBg;
+		textBgOver: quickReplyContentTextBgOver;
+		textBgHover: quickReplyContentTextBgHover;
+
+		textFg: quickReplyContentTextFg;
+		textFgOver: quickReplyContentTextFgOver;
+		textFgHover: quickReplyContentTextFgHover;
+	
+		ripple: RippleAnimation(defaultRippleAnimation) {
+			color: quickReplyContentRipple;
+		}
+		rippleOver: RippleAnimation(defaultRippleAnimation) {
+			color:quickReplyContentRippleOver;
+		}
+	}
+}
+
+quickReplyManager: IconTextButton(defaultIconTextButton) {
+	icon: icon {{"quick_reply_manager", menuIconFg}};
+}
+
+quickReplyAdd: IconTextButton(defaultIconTextButton) {
+	icon: icon {{"quick_reply_add", menuIconFg}};
+}
+
+quickReplyDelete: IconTextButton(defaultIconTextButton) {
+	icon: icon {{"quick_reply_delete", menuIconFg}};
+}
+
+quickReplyModify: IconTextButton(defaultIconTextButton) {
+	margin: margins(2px, 2px, 20px, 2px);
+	icon: icon {{"quick_reply_modify", menuIconFg}};
+}
+
+quickReplyScroll: ScrollArea(defaultScrollArea) {
+	bottomsh: 0px;
+	topsh: 0px;
+}
+
+quickReplyTipLabel: LabelSimple(defaultLabelSimple) {
+	textFg: windowSubTextFg;
+}
+
+quickReplyPopupMenu: PopupMenu(defaultPopupMenu) {
+	menu: Menu(defaultMenu){
+		itemIconPosition: point(10px, 10px);
+		itemPadding: margins(32px, 8px, 17px, 7px);
+		widthMin: 80px;
+		widthMax: 200px;
+	}
+}
+
+quickReplyCreateGroup: icon {{"quick_reply_create_group", menuIconFg}};
+quickReplyCreateGroupOver: icon {{"quick_reply_create_group", menuIconFg}};
+
+quickReplyRenameGroup: icon {{"quick_reply_rename_group", menuIconFg}};
+quickReplyRenameGroupOver: icon {{"quick_reply_rename_group", menuIconFg}};
+
+quickReplyRemoveGroup: icon {{"quick_reply_remove_group", menuIconFg}};
+quickReplyRemoveGroupOver: icon {{"quick_reply_remove_group", menuIconFg}};
+
+quickReplyMoveUp: icon {{"quick_reply_move_up", menuIconFg}};
+quickReplyMoveUpOver: icon {{"quick_reply_move_up", menuIconFg}};
+
+quickReplyMoveDown: icon {{"quick_reply_move_down", menuIconFg}};
+quickReplyMoveDownOver: icon {{"quick_reply_move_down", menuIconFg}};

@@ -248,8 +248,6 @@ public:
 
 	void applyCloudDraft(History *history);
 
-	void createScreenShot();
-
 	void updateHistoryDownPosition();
 	void updateHistoryDownVisibility();
 	void updateUnreadMentionsPosition();
@@ -355,6 +353,9 @@ public slots:
 	// in the scroll area and preloads history if needed
 	void preloadHistoryIfNeeded();
 
+	void createScreenShot();
+	void destoryScreenShot(bool = false);
+
 private slots:
 	void onHashtagOrBotCommandInsert(QString str, FieldAutocomplete::ChooseMethod method);
 	void onMentionInsert(UserData *user);
@@ -362,9 +363,6 @@ private slots:
 	void onMembersDropdownShow();
 
 	void onModerateKeyActivate(int index, bool *outHandled);
-
-	void destoryScreenShot(bool);
-
 private:
 	using TabbedPanel = ChatHelpers::TabbedPanel;
 	using TabbedSelector = ChatHelpers::TabbedSelector;

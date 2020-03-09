@@ -615,9 +615,7 @@ enum {
 	dbiCacheSettings = 0x5c,
 
 	dbiHideAppWindow = 0x5d,
-	dbiKefuLoginSet = 0x5e,
-	
-
+	dbiQuickReplyStrings = 0x5f,
 	dbiEncryptedWithSalt = 333,
 	dbiEncrypted = 444,
 
@@ -1919,6 +1917,14 @@ bool _readSetting(quint32 blockId, QDataStream &stream, int version, ReadSetting
 		cSetHideAppWindow(v == 1);
 	} break;
 
+	case dbiQuickReplyStrings: {
+		QuickReplyString v;
+		stream >> v;
+		if (!_checkStreamStatus(stream)) return false;
+
+		cSetQuickReplyStrings(v);
+	}break;
+
 	default:
 	LOG(("App Error: unknown blockId in _readSetting: %1").arg(blockId));
 	return false;
@@ -2750,6 +2756,15 @@ void writeSettings() {
 		size += sizeof(qint32) + Serialize::stringSize(proxy.host) + sizeof(qint32) + Serialize::stringSize(proxy.user) + Serialize::stringSize(proxy.password);
 	}
 
+	size += sizeof(quint32);
+	auto& quickReplyStrings = cRefQuickReplyStrings();
+	for (int i = 0; i != quickReplyStrings.size(); i++) {
+		size += Serialize::stringSize(quickReplyStrings.at(i).group);
+		for (int j = 0; j < quickReplyStrings.at(i).content.size(); j++) {
+			size += Serialize::stringSize(quickReplyStrings.at(i).content.at(j));
+		}
+	}
+
 	// dbiTryIPv6
 	size += sizeof(quint32) * 2;
 	// Theme keys and night mode.
@@ -2791,6 +2806,8 @@ void writeSettings() {
 		data.stream << qint32(kProxyTypeShift + int(proxy.type));
 		data.stream << proxy.host << qint32(proxy.port) << proxy.user << proxy.password;
 	}
+
+	data.stream << quint32(dbiQuickReplyStrings) << cQuickReplyStrings();
 
 	data.stream << quint32(dbiTryIPv6) << qint32(Global::TryIPv6());
 	data.stream

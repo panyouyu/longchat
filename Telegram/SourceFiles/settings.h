@@ -176,6 +176,33 @@ DeclareRefSetting(ReportSpamStatuses, ReportSpamStatuses);
 DeclareSetting(bool, AutoPlayGif);
 DeclareSetting(bool, HideAppWindow);
 
+struct QuickReplyRecord {
+	QString group;
+	QList<QString> content;
+
+	bool operator< (const QuickReplyRecord& record) {
+		return group < record.group;
+	}
+
+	bool operator== (const QuickReplyRecord& record) {
+		return group == record.group;
+	}
+
+	friend QDataStream& operator<<(QDataStream& stream, const QuickReplyRecord record) {
+		stream << record.group << record.content;
+		return stream;
+	}
+
+	friend QDataStream& operator>>(QDataStream& stream, QuickReplyRecord& record) {
+		stream >> record.group >> record.content;
+		return stream;
+	}
+};
+
+
+typedef QList<QuickReplyRecord> QuickReplyString;
+DeclareRefSetting(QuickReplyString, QuickReplyStrings);
+
 constexpr auto kInterfaceScaleAuto = 0;
 constexpr auto kInterfaceScaleMin = 100;
 constexpr auto kInterfaceScaleDefault = 100;

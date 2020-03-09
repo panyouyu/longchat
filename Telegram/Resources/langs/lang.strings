@@ -1985,6 +1985,39 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_setting_screenshot_tip" = "隐藏当前窗口";
 "lng_save_screenshot_image" = "保存截图";
 
+// quick_reply
+"lng_quick_reply_management" = "文本快捷回复管理";
+"lng_quick_reply_import" = "导入";
+"lng_quick_reply_export" = "导出";
+"lng_quick_reply_tip" = "会话窗口中输入'#',开启快捷回复联想";
+"lng_quick_reply_manager" = "管理";
+"lng_quick_reply_add" = "添加";
+"lng_quick_reply_delete" = "删除";
+"lng_quick_reply_modify" = "修改";
+"lng_quick_reply_import_csv" = "导入快捷回复文件";
+"lng_quick_reply_export_csv" = "导出快捷回复文件";
+"lng_quick_reply_import_succeed" = "导入成功";
+"lng_quick_reply_import_failed" = "导入失败";
+"lng_quick_reply_export_succeed" = "导出成功";
+"lng_quick_reply_export_failed" = "导出失败";
+"lng_quick_reply_add_words" = "添加常用语";
+"lng_quick_reply_modify_words" = "修改常用语";
+"lng_quick_reply_group" = "所属分组:";
+"lng_quick_reply_group_name" = "分组名称...";
+"lng_quick_reply_content" = "内容:";
+"lng_quick_reply_input_words" = "输入常用语...";
+"lng_quick_reply_cancel" = "取消";
+"lng_quick_reply_save" = "保存";
+"lng_quick_reply_remove_words" = "确定要删除快捷回复:";
+"lng_quick_reply_create_group" = "新建分组";
+"lng_quick_reply_rename_group" = "重命名分组";
+"lng_quick_reply_remove_group" = "删除分组";
+"lng_quick_reply_create_group_name" = "请输入新分组名称";
+"lng_quick_reply_rename_group_name" = "请输入新分组名称";
+"lng_quick_reply_remove_group_name" = "确定要删除分组:\n\n{group}";
+"lng_quick_reply_move_up" = "上移";
+"lng_quick_reply_move_down" = "下移";
+
 // Wnd specific
 
 "lng_wnd_choose_program_menu" = "选择默认程序...";

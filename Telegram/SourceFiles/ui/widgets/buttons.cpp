@@ -664,4 +664,34 @@ QImage CrossButton::prepareRippleMask() const {
 	return RippleAnimation::ellipseMask(QSize(_st.cross.size, _st.cross.size));
 }
 
+IconTextButton::IconTextButton(QWidget* parent, QString text, const style::IconTextButton& st)
+	: RippleButton(parent, st.ripple)
+	, _text(text)
+	, _st(st)
+{
+	_textw = _st.font->width(_text) + _st.textPaddingX * 2;
+	resize(_st.width >= (_textw + _st.height) ? _st.width : (_textw + _st.height), _st.height);
+}
+
+void IconTextButton::paintEvent(QPaintEvent* e)
+{
+	Painter p(this);
+
+	p.setFont(_st.font);
+	if (!isDisabled())
+		paintRipple(p, 0, 0);
+	
+	auto position = _st.iconPosition;
+	if (position.x() < 0) {
+		position.setX((height() - _st.icon.width()) / 2);
+	}
+	if (position.y() < 0) {
+		position.setY((height() - _st.icon.height()) / 2);
+	}
+	_st.icon.paint(p, position, width());
+	
+	p.setPen((isDisabled() ? _st.itemFgDisabled : isDown() ? _st.itemFgOver : _st.itemFg));
+	auto rect = QRect(_st.height, 0, width() - _st.height, height());
+	p.drawText(rect, Qt::AlignLeft | Qt::AlignVCenter, _text);
+}
 } // namespace Ui

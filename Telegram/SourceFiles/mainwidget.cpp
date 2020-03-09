@@ -770,12 +770,6 @@ void MainWidget::clearHider(not_null<Window::HistoryHider*> instance) {
 	}
 }
 
-void MainWidget::showScreenShot() {
-	if (_history.data()) {
-		_history->createScreenShot();
-	}
-}
-
 void MainWidget::hiderLayer(base::unique_qptr<Window::HistoryHider> hider) {
 	if (Core::App().locked()) {
 		return;

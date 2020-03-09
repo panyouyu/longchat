@@ -97,3 +97,5 @@ int32 gAutoDownloadGif = 0;
 bool gAutoPlayGif = true;
 
 bool gHideAppWindow = true;		// weather hide app window when screenshot
+
+QuickReplyString gQuickReplyStrings;

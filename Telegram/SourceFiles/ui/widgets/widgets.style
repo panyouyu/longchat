@@ -285,6 +285,24 @@ IconButton {
 	ripple: RippleAnimation;
 }
 
+IconTextButton {
+	width: pixels;
+	height: pixels;
+	margin: margins;
+	icon: icon;
+	iconPosition: point;
+
+	font: font;
+	textPaddingX: pixels;
+	textPaddingY: pixels;
+
+	itemFg: color;
+	itemFgOver: color;
+	itemFgDisabled: color;
+
+	ripple: RippleAnimation;
+}
+
 Shadow {
 	left: icon;
 	topLeft: icon;
@@ -827,6 +845,22 @@ defaultIconButton: IconButton {
 	iconPosition: point(-1px, -1px);
 }
 
+defaultIconTextButton: IconTextButton {
+	width: 75px;
+	height: 34px;
+	margin: margins(2px, 2px, 2px, 2px);
+	iconPosition: point(-1px, -1px);
+	font: semiboldFont;
+	textPaddingX: 0px;
+	textPaddingY: 0px;
+
+	itemFg: windowFg;
+	itemFgOver: windowFgOver;
+	itemFgDisabled: menuFgDisabled;
+
+	ripple: defaultRippleAnimation;
+}
+
 defaultMultiSelectItem: MultiSelectItem {
 	padding: margins(6px, 7px, 12px, 0px);
 	maxWidth: 128px;
@@ -1256,4 +1290,67 @@ defaultLevelMeter: LevelMeter {
 	lineCount: 44;
 	activeFg: mediaPlayerActiveFg;
 	inactiveFg: mediaPlayerInactiveFg;
+}
+
+TextListItem {
+	left: pixels;
+	height: pixels;
+	textPosition: point;
+	textStyle: TextStyle;
+
+	textBg: color;
+	textBgOver: color;
+	textBgHover: color;
+
+	textFg: color;
+	textFgOver: color;
+	textFgHover: color;
+	
+	ripple: RippleAnimation;
+	rippleOver: RippleAnimation;
+}
+
+defaultTextListItem: TextListItem {
+	left: 12px;
+	height: 36px;
+	textPosition: point(10px, 8px);
+	textStyle: TextStyle(defaultTextStyle) {
+		font: semiboldFont;
+		linkFont: semiboldFont;
+		linkFontOver: semiboldFont;
+	}
+	textBg: windowBg;
+	textBgOver: windowBgActive;
+	textBgHover: windowBgOver;
+
+	textFg: windowFg;
+	textFgOver: windowFg;
+	textFgHover: windowFg;	
+	
+	ripple: RippleAnimation(defaultRippleAnimation) {
+		color: windowBgRipple;
+	}
+	rippleOver: RippleAnimation(defaultRippleAnimation) {
+		color:windowActiveTextFg;
+	}
+}
+
+TextList {
+	padding: margins;
+	listBg: color;
+	item: TextListItem;
+}
+
+defaultTextList: TextList {
+	padding: margins(0px, 0px, 0px, 0px);
+	listBg: windowBg;
+	item: defaultTextListItem;
+}
+
+quickReplyBox {
+	quickReplyFrameColor: color;
+}
+
+defaultQuickReplyBox: quickReplyBox{
+	quickReplyFrameColor: quickReplyFrame;
 }

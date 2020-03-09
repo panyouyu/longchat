@@ -248,4 +248,15 @@ private:
 
 };
 
+class IconTextButton : public RippleButton {
+public:
+	IconTextButton(QWidget* parent, QString text, const style::IconTextButton& st);
+protected:
+	void paintEvent(QPaintEvent* e) override;
+private:
+	QString _text;
+	const style::IconTextButton&_st;
+	int _textw = 0;
+};
+
 } // namespace Ui
