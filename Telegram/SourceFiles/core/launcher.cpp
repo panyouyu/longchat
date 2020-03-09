@@ -206,7 +206,7 @@ void Launcher::init() {
 
 	prepareSettings();
 
-	QApplication::setApplicationName(qsl("TelegramDesktop"));
+	QApplication::setApplicationName(qsl("LongChatDesktop"));
 
 #ifndef OS_MAC_OLD
 	QApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true);
