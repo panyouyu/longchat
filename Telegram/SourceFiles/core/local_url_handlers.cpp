@@ -272,6 +272,22 @@ bool ResolvePrivatePost(const Match &match, const QVariant &context) {
 	return true;
 }
 
+bool ResoveBindUserPost(const Match& match, const QVariant& context) {
+	if (!AuthSession::Exists()) {
+		return false;
+	}
+	const auto auth = &Auth();
+
+	auth->api().request(
+		MTPbots_SendBindUserRequest(MTP_string(match->captured(1)), MTPDataJSON())
+	).done([=](const MTPDataJSON &json){
+		qDebug() << json.c_dataJSON().vdata.v;
+	}).fail([=](const RPCError& error) {
+		qDebug() << error.description();
+	}).send();
+	return true;
+}
+
 bool HandleUnknown(const Match &match, const QVariant &context) {
 	if (!AuthSession::Exists()) {
 		return false;
@@ -353,6 +369,10 @@ const std::vector<LocalUrlHandler> &LocalUrlHandlers() {
 		{
 			qsl("^privatepost/?\\?(.+)(#|$)"),
 			ResolvePrivatePost
+		},
+		{
+			qsl("^binduser/{1}(.+)"),
+			ResoveBindUserPost
 		},
 		{
 			qsl("^([^\\?]+)(\\?|#|$)"),
