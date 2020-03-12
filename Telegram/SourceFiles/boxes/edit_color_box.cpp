@@ -707,7 +707,7 @@ void EditColorBox::saveColor() {
 	if (_saveCallback) {
 		_saveCallback(_new.toRgb());
 	}
-	closeBox();
+	//closeBox();
 }
 
 void EditColorBox::updateHSVFields() {
