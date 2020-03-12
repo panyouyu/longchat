@@ -53,6 +53,8 @@
     <file alias="art/logo_256_no_margin.png">../art/logo_256_no_margin.png</file>
     <file alias="art/sunrise.jpg">../art/sunrise.jpg</file>
     <file alias="icons/pic_signin_logo.png">../icons/pic_signin_logo.png</file>
+    <file alias="art/ic_arrow_close.png">../art/ic_arrow_close.png</file>
+    <file alias="art/ic_arrow_open.png">../art/ic_arrow_open.png</file>
     <file alias="day-blue.tdesktop-theme">../day-blue.tdesktop-theme</file>
     <file alias="night.tdesktop-theme">../night.tdesktop-theme</file>
     <file alias="night-green.tdesktop-theme">../night-green.tdesktop-theme</file>
@@ -79,4 +81,7 @@
     <file alias="lang_pt_BR.strings">../langs/lang_pt_BR.strings</file>
     <file alias="lang_ko.strings">../langs/lang_ko.strings</file>
   </qresource>
+    <qresource prefix="/style">
+        <file>qss/contactdialog.qss</file>
+    </qresource>
 </RCC>

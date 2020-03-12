@@ -1376,6 +1376,13 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_edit_group" = "编辑群组";
 "lng_edit_self_title" = "编辑您的姓名";
 "lng_confirm_contact_data" = "添加联系人";
+"lng_dlg_contact_close" = "关闭";
+"lng_dlg_contact_group_asking" = "正在咨询";
+"lng_dlg_contact_group_askover" = "咨询结束";
+"lng_dlg_contact_group_pay" = "充值问题";
+"lng_dlg_contact_group_add" = "添加分组";
+"lng_dlg_contact_group_rename" = "重命名";
+"lng_dlg_contact_group_del" = "删除分组";
 "lng_add_contact" = "添加";
 "lng_add_contact_button" = "添加联系人";
 "lng_contacts_header" = "联系人";

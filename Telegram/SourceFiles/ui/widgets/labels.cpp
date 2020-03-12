@@ -116,7 +116,7 @@ QString LabelVerificationCode::getVerificationCode() const
 void LabelVerificationCode::onReflushVerification()
 {
 	resize(_st.width, _st.height);
-	qDebug() << this->width() << this->height();
+	//qDebug() << this->width() << this->height();
 	update();
 }
 

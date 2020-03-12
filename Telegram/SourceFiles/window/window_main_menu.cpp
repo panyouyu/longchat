@@ -18,6 +18,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "storage/localstorage.h"
 #include "support/support_templates.h"
 #include "settings/settings_common.h"
+#include "contact/contactdialog.h"
 #include "core/qt_signal_producer.h"
 #include "boxes/about_box.h"
 #include "boxes/peer_list_controllers.h"
@@ -158,7 +159,12 @@ void MainMenu::refreshMenu() {
 	_menu->clearActions();
 	if (!Auth().supportMode()) {
 		_menu->addAction(lang(lng_create_group_title), [] {
-			App::wnd()->onShowNewGroup();
+			//App::wnd()->onShowNewGroup();
+			/*Contact::Widget widget(App::wnd());
+			widget.show();*/
+			Contact::Dialog widget;
+			//widget.show();
+			widget.exec();
 		}, &st::mainMenuNewGroup, &st::mainMenuNewGroupOver);
 		//_menu->addAction(lang(lng_create_channel_title), [] {
 		//	App::wnd()->onShowNewChannel();

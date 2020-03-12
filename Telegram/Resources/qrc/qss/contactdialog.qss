@@ -1,0 +1,37 @@
+﻿QDialog {
+ background:#ffffff;
+ border:none;
+}
+
+QTreeView {
+    border:none;
+    background:#ffffff;
+}
+
+QTreeView::branch:closed:has-children{
+    image: url(:/gui/art/ic_arrow_close.png);
+}
+QTreeView::branch:open:has-children{
+    image: url(:/gui/art/ic_arrow_open.png);
+}
+
+QPushButton {
+  background-color:#ffffff;
+  border: none;
+  color: #2E78F5;
+  font: bold 15px;
+  width: 150px;
+  height: 37px;
+}
+QPushButton:hover {
+  background-color:#e3f1fa;
+}
+
+
+/**********QLabel**********/
+QLabel#_labTitle {
+    height:25px;
+	width:90px;
+	font-size: 18px;
+	font-weight:bold;
+}
