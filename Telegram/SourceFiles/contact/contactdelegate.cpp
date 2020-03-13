@@ -57,6 +57,8 @@
 
 #include "contactdelegate.h"
 #include "delegatehelper.h"
+#include "ui/image/image.h"
+
 namespace Contact {
 	const QRect GroupArrorIconRect{ 5,12,10,10 }; // 分组折叠箭头区域
 	const int ArrorRectWidth = 20;
@@ -166,8 +168,9 @@ namespace Contact {
 		avatarRect.setHeight(m_si.avatarHeight);
 		if (pCI->hasAvatar)
 		{
-			QPixmap pic = rixmapToRound(QPixmap(":/gui/art/sunrise.jpg"), 24);
-			painter->drawPixmap(avatarRect, pic);//.scaled(48, 48)
+			//QPixmap pic = rixmapToRound(QPixmap(":/gui/art/sunrise.jpg"), 24);
+			//QPixmap pic(pCI->pAvatarImage->pixCircled(userpicOrigin(), m_si.avatarWidth, m_si.avatarHeight));
+			painter->drawPixmap(avatarRect, pCI->peerData->genUserpic(m_si.avatarWidth));//.scaled(48, 48)
 		}
 		else
 		{

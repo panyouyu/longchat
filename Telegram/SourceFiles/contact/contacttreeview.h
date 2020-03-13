@@ -25,6 +25,9 @@ public:
 	// ¸³Öµ
 	void loadDatas(const QVector<ContactInfo*> _vecContactPData);
 	void setSearchKey(const QString& searchKey);
+
+signals:
+	void startChat();
 private:
 	void initConnection();
 

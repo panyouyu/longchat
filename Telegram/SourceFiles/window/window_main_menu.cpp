@@ -159,21 +159,18 @@ void MainMenu::refreshMenu() {
 	_menu->clearActions();
 	if (!Auth().supportMode()) {
 		_menu->addAction(lang(lng_create_group_title), [] {
-			//App::wnd()->onShowNewGroup();
-			/*Contact::Widget widget(App::wnd());
-			widget.show();*/
-			Contact::Dialog widget;
-			//widget.show();
-			widget.exec();
+			App::wnd()->onShowNewGroup();
 		}, &st::mainMenuNewGroup, &st::mainMenuNewGroupOver);
 		//_menu->addAction(lang(lng_create_channel_title), [] {
 		//	App::wnd()->onShowNewChannel();
 		//}, &st::mainMenuNewChannel, &st::mainMenuNewChannelOver);
 		_menu->addAction(lang(lng_menu_contacts), [] {
-			Ui::show(Box<PeerListBox>(std::make_unique<ContactsBoxController>(), [](not_null<PeerListBox*> box) {
-				box->addButton(langFactory(lng_close), [box] { box->closeBox(); });
-				box->addLeftButton(langFactory(lng_profile_add_contact), [] { App::wnd()->onShowAddContact(); });
-			}));
+			Contact::Dialog widget;
+			widget.exec();
+			//Ui::show(Box<PeerListBox>(std::make_unique<ContactsBoxController>(), [](not_null<PeerListBox*> box) {
+			//	box->addButton(langFactory(lng_close), [box] { box->closeBox(); });
+			//	box->addLeftButton(langFactory(lng_profile_add_contact), [] { App::wnd()->onShowAddContact(); });
+			//}));
 		}, &st::mainMenuContacts, &st::mainMenuContactsOver);
 		if (Global::PhoneCallsEnabled()) {
 			_menu->addAction(lang(lng_menu_calls), [] {

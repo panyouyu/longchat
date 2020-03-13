@@ -43,8 +43,11 @@ private:
 protected:
 	virtual void closeEvent(QCloseEvent* event) override;
 
-private:
 
+private:
+	void init();
+	void freshData();
+	void freshData_test();
 };
 
 } // namespace Intro

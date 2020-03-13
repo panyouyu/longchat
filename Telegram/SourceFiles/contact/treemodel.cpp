@@ -59,7 +59,7 @@ namespace Contact {
     {
        /* QList<QVariant> rootData;
         rootData << "col1" << "col2";*/
-        ContactInfo* pCIHead = new ContactInfo();
+        pCIHead = new ContactInfo();
         pCIHead->firstName = "header";
         headItem = new TreeItem(pCIHead);
         //qDebug() << "---" << pCIHead << pCIHead->firstName << " :" << pCIHead->expanded;
@@ -69,7 +69,16 @@ namespace Contact {
     //! [1]
     TreeModel::~TreeModel()
     {
-        delete headItem;
+        if (nullptr != pCIHead) 
+        {
+            delete pCIHead;
+        }
+        if (nullptr != headItem)
+        {
+            delete headItem;
+        }
+        
+        
     }
     //! [1]
 
@@ -106,7 +115,9 @@ namespace Contact {
         if (!index.isValid())
             return QVariant();
 
-        if (role != Qt::DisplayRole && CustomRole::IsExpandedRole != role && CustomRole::IsGroupRole != role)
+        if (role != Qt::DisplayRole && CustomRole::IsExpandedRole != role
+            && CustomRole::IsGroupRole != role 
+            && CustomRole::PeerRole != role)
             return QVariant();
 
         TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
@@ -122,6 +133,12 @@ namespace Contact {
             ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
             return pCI->parentId == DEFAULT_VALUE_ZERO;
         }
+        else if (CustomRole::PeerRole == role)
+        {
+			ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
+			return QVariant::fromValue((void*)pCI->peerData);
+        }
+
         return item->data(index.column());
     }
     //! [3]

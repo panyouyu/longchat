@@ -76,7 +76,8 @@ namespace Contact {
         TreeItem* getItem(const QModelIndex& index) const;
         void PrintNodeData(TreeItem* item);
     private:
-        TreeItem* headItem;
+        TreeItem* headItem{ nullptr };
+        ContactInfo* pCIHead{ nullptr };
     };
 }
 #endif // TREEMODEL_H

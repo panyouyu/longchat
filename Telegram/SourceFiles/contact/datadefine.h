@@ -1,6 +1,8 @@
 ﻿#ifndef DATADEFINE
 #define DATADEFINE
-#include "dataType.h"
+#include "base/basic_types.h"
+#include "ui/image/image_location.h"
+#include "data/data_peer.h"
 #include <QString>
 namespace Contact {
 #define DEFAULT_VALUE_ZERO    0
@@ -13,21 +15,26 @@ namespace Contact {
             , parentId(DEFAULT_VALUE_ZERO)
             , userTotalCount(0)
             , userOnlineCount(0)
+            //, pAvatarImage(nullptr)
+            , peerData(nullptr)
             , hasAvatar(false)
             , online(false)
             , expanded(false)
+            
         {
         }
 
-        uint32_t id;
-        uint32_t parentId;
+        uint64 id;
+        uint64 parentId;
         QString firstName; //名 Give Name
         QString lastName;  //姓 Family Name
         QString phoneNum; //手机号码
         QString lastLoginTime; //最后一次上线时间
         QString showUserCount; //分组内用户数信息 在线数/总数
-        int userTotalCount; //总用户数
-        int userOnlineCount; //在线用户数
+        int32 userTotalCount; //总用户数
+        int32 userOnlineCount; //在线用户数
+        //Image* pAvatarImage; //头像数据
+        PeerData* peerData;
         bool hasAvatar; //是否有头像
         bool online; //是否在线
         bool expanded;
@@ -43,10 +50,10 @@ namespace Contact {
 
         QString fontName;
         QColor fontColor;
-        int fontSize;
+        int32 fontSize;
         QColor userCountFontColor;
-        int avatarWidth;
-        int avatarHeight;
+        int32 avatarWidth;
+        int32 avatarHeight;
 
     };
 
@@ -61,6 +68,7 @@ namespace Contact {
     {
         IsExpandedRole = Qt::UserRole + 1000, // 是否展开
         IsGroupRole, // 是否是群组
+        PeerRole, // 获取peer
     };
 
     QString getAllFileContent(const QString& path);

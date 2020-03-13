@@ -12,6 +12,8 @@ namespace Contact {
 	typedef unsigned short uint16_t;
 	typedef unsigned char uint8_t;
 	typedef unsigned long long uint64_t;
+
+	//using uint64 = quint64;
 }
 
 #endif // DATATYPE

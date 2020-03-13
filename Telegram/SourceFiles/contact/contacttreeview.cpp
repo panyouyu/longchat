@@ -54,6 +54,25 @@ void ContactTreeView::initConnection()
 		{
 			setExpanded(index, !isExpanded(index)); // 单击展开/收缩列表
 		}
+		else //打开聊天
+		{
+			PeerData* peer = (PeerData*)index.data(static_cast<int>(CustomRole::PeerRole)).value<void*>();
+			if (peer)
+			{
+				Ui::showPeerHistory(peer, ShowAtUnreadMsgId);
+				emit startChat();
+			}
+			
+		}
+	});
+
+	// 双击打开聊天
+	connect(this, &QTreeView::doubleClicked, [&](const QModelIndex& index)
+	{
+		if (!index.data(static_cast<int>(CustomRole::IsGroupRole)).toBool())
+		{
+			
+		}
 	});
 
 	// 展开时更换左侧的展开图标
