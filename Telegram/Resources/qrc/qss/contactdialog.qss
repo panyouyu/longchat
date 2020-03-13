@@ -3,6 +3,11 @@
  border:none;
 }
 
+QLineEdit {
+ background:#ffffff;
+ border:none;
+}
+
 QTreeView {
     border:none;
     background:#ffffff;

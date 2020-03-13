@@ -15,6 +15,7 @@ namespace Contact {
             , userOnlineCount(0)
             , hasAvatar(false)
             , online(false)
+            , expanded(false)
         {
         }
 
@@ -29,6 +30,7 @@ namespace Contact {
         int userOnlineCount; //在线用户数
         bool hasAvatar; //是否有头像
         bool online; //是否在线
+        bool expanded;
 
     };
 
@@ -49,10 +51,10 @@ namespace Contact {
     };
 
     // 借用隐藏列存储的数据
-    enum CustomColumn
-    {
-        IsExpandedColn = 1,// 是否展开
-    };
+    //enum CustomColumn
+    //{
+    //    IsExpandedColn = 1,// 是否展开
+    //};
 
     // 绘制角色
     enum CustomRole

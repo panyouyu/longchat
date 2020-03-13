@@ -1,12 +1,22 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** BSD License Usage
+** Alternatively, you may use this file under the terms of the BSD license
+** as follows:
 **
 ** "Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions are
@@ -38,45 +48,37 @@
 **
 ****************************************************************************/
 
-#ifndef TREEMODEL_H
-#define TREEMODEL_H
+#ifndef MYSORTFILTERPROXYMODEL_H
+#define MYSORTFILTERPROXYMODEL_H
 
-#include <QAbstractItemModel>
-#include <QModelIndex>
-#include <QVariant>
-#include "datadefine.h"
-#include "treeitem.h"
-
+#include <QDate>
+#include <QSortFilterProxyModel>
 namespace Contact {
-    class TreeModel : public QAbstractItemModel
+    //! [0]
+    class MySortFilterProxyModel : public QSortFilterProxyModel
     {
         Q_OBJECT
 
     public:
-        explicit TreeModel(QObject* parent = 0);
-        ~TreeModel();
+        MySortFilterProxyModel(QObject* parent = 0);
 
-        QVariant data(const QModelIndex& index, int role) const Q_DECL_OVERRIDE;
-        Qt::ItemFlags flags(const QModelIndex& index) const Q_DECL_OVERRIDE;
-        QVariant headerData(int section, Qt::Orientation orientation,
-            int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-        QModelIndex index(int row, int column,
-            const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
-        QModelIndex parent(const QModelIndex& index) const Q_DECL_OVERRIDE;
-        int rowCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
-        int columnCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
+        QString searchKey() const { return m_searchKey; }
+        void setSearchKey(const QString& searchKey);
 
+		bool setExtDataExpanded(const QModelIndex& index, bool value);
 
-        bool setExtDataExpanded(const QModelIndex& index, bool value);
-        QVariant extData(const QModelIndex& index, int column);
+        virtual QModelIndex mapToSource(const QModelIndex& proxyIndex) const override;
 
-    public:
-        void setupModelData(const QVector<ContactInfo*>& vecData);
+    protected:
+        bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
+        bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+
     private:
-        TreeItem* getItem(const QModelIndex& index) const;
-        void PrintNodeData(TreeItem* item);
-    private:
-        TreeItem* headItem;
+        QString m_searchKey;
     };
+
+
+    //! [0]
 }
-#endif // TREEMODEL_H
+
+#endif // MYSORTFILTERPROXYMODEL_H

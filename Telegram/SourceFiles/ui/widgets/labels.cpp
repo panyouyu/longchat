@@ -139,7 +139,7 @@ void LabelVerificationCode::paintEvent(QPaintEvent* e)
 	{
 		p.setX(i * (width / letter_number) + width / 8);
 		p.setY(height / 2);
-		qDebug() << width << height ;
+		//qDebug() << width << height ;
 		painter.setPen(colorArray[i]);
 		painter.setFont(_st.style.font);
 		painter.drawText(p, QString(verificationCode[i]));

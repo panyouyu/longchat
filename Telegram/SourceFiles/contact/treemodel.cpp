@@ -45,7 +45,7 @@
     models.
 */
 
-#include "treeitem.h"
+
 #include "treemodel.h"
 
 #include <QStringList>
@@ -57,9 +57,12 @@ namespace Contact {
     TreeModel::TreeModel(QObject* parent)
         : QAbstractItemModel(parent)
     {
-        QList<QVariant> rootData;
-        rootData << "col1" << "col2_expanded";
-        headItem = new TreeItem(rootData);
+       /* QList<QVariant> rootData;
+        rootData << "col1" << "col2";*/
+        ContactInfo* pCIHead = new ContactInfo();
+        pCIHead->firstName = "header";
+        headItem = new TreeItem(pCIHead);
+        //qDebug() << "---" << pCIHead << pCIHead->firstName << " :" << pCIHead->expanded;
     }
     //! [0]
 
@@ -79,16 +82,17 @@ namespace Contact {
             return headItem->columnCount();
     }
 
-    bool TreeModel::setExtColnData(const QModelIndex& index, const QVariant& value, int column)
+    bool TreeModel::setExtDataExpanded(const QModelIndex& index, bool value)
     {
+        //qDebug() << "TreeModel::setExtDataExpanded" << index ;
         bool result = false;
         TreeItem* item = getItem(index);
-        result = item->setExtColnData(column, value);
+        result = item->setExtDataExpanded(index.column(), value);
         return result;
     }
 
 
-    QVariant TreeModel::extColnData(const QModelIndex& index, int column)
+    QVariant TreeModel::extData(const QModelIndex& index, int column)
     {
         if (!index.isValid())
             return QVariant();
@@ -108,7 +112,10 @@ namespace Contact {
         TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
         if (CustomRole::IsExpandedRole == role)
         {
-            return item->data(CustomColumn::IsExpandedColn);
+			//ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
+            ContactInfo* pCI = item->data();
+            //qDebug() <<"paint:" << pCI << pCI->expanded << pCI->firstName;
+            return item->data()->expanded;
         }
         else if (CustomRole::IsGroupRole == role)
         {
@@ -201,29 +208,31 @@ namespace Contact {
         //添加第一级目录数据
         QList<TreeItem*> top1List;
         for (int i = 0; i < vecData.size(); ++i) {
-            ContactInfo* pMfi = static_cast<ContactInfo*>(vecData.at(i));
+            //ContactInfo* pMfi = static_cast<ContactInfo*>(vecData.at(i));
+            ContactInfo* pMfi = vecData.at(i);
             if (pMfi->parentId == DEFAULT_VALUE_ZERO) {
                 QList<QVariant> columnData;
                 //只显示2两列，第1列firstName 第2列为是否展开
-                columnData << QVariant::fromValue((void*)pMfi) << 0;
+                //columnData << QVariant::fromValue((void*)pMfi) << 0;
                 //qDebug() << mfi.firstName << mfi.id;
-                TreeItem* _item = new TreeItem(columnData, parents.last());
+                TreeItem* _item = new TreeItem(pMfi, parents.last());
                 parents.last()->appendChild(_item);
                 top1List << _item;
             }
         }
         //添加第二级目录数据
         for (int i = 0; i < top1List.size(); ++i) {
-            ContactInfo* pCI = (ContactInfo*)top1List.at(i)->data(0).value<void*>();
+            //ContactInfo* pCI = (ContactInfo*)top1List.at(i)->data(0).value<void*>();
+            ContactInfo* pCI = top1List.at(i)->data();
             uint32_t curId = pCI->id;
             //qDebug() << top1List.at(i)->data(0).toString() << top1List.at(i)->data(1).toString() << curId;
             for (int j = 0; j < vecData.size(); ++j) {
                 ContactInfo* mfi = vecData.at(j);
                 if (mfi->parentId == curId) {
-                    QList<QVariant> columnData;
+                    //QList<QVariant> columnData;
                     //只显示2两列，第1列firstName 第2列为是否展开
-                    columnData << QVariant::fromValue((void*)mfi) << 0;
-                    TreeItem* _item = new TreeItem(columnData, top1List.at(i));
+                    //columnData << QVariant::fromValue((void*)mfi) << 0;
+                    TreeItem* _item = new TreeItem(mfi, top1List.at(i));
                     top1List[i]->appendChild(_item);
                 }
 
@@ -237,7 +246,10 @@ namespace Contact {
         if (index.isValid()) {
             TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
             if (item)
+            {
+                //qDebug() << "TreeModel::getItem[" << item << item->m_pCI << "]";
                 return item;
+            }
         }
         return headItem;
     }
@@ -246,20 +258,14 @@ namespace Contact {
     void TreeModel::PrintNodeData(TreeItem* item)
     {
         Q_ASSERT(item);
+        //ContactInfo* pCIHeader = (ContactInfo*)item->data(0).value<void*>();
+        ContactInfo* pCIHeader = item->data();
+        //qDebug() << "***["<< item << item->m_pCI <<"]" << pCIHeader << pCIHeader->firstName << " :" << pCIHeader->expanded;
         if (item->childCount() > 0)
         {
             for (int i = 0; i < item->childCount(); i++)
             {
                 TreeItem* childitem = item->child(i);
-                ContactInfo* pCI = (ContactInfo*)childitem->data(0).value<void*>();
-                if (pCI->parentId != 0)
-                {
-                    qDebug() << "    " << pCI->firstName << " :" << childitem->data(1).toBool();
-                }
-                else {
-                    qDebug() << pCI->firstName << " :" << childitem->data(1).toBool();
-                }
-
                 PrintNodeData(childitem);
             }
         }

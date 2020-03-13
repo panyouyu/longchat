@@ -6,6 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "contact/contacttreeview.h"
+#include "contact/mysortfilterproxymodel.h"
 
 
 namespace Contact {
@@ -18,7 +19,9 @@ ContactTreeView::ContactTreeView(QWidget *parent) : QTreeView(parent) {
 	
 
 	_contactModel = new TreeModel();
-	setModel(_contactModel);
+	_sortFilterProxyModel = new MySortFilterProxyModel();
+	setModel(_sortFilterProxyModel);
+
 	_contactDelegate = new ContactDelegate(this);
 	setItemDelegate(_contactDelegate);
 
@@ -31,9 +34,14 @@ ContactTreeView::~ContactTreeView() {
 
 void ContactTreeView::loadDatas(const QVector<ContactInfo*> _vecContactPData)
 {
-
 	_contactModel->setupModelData(_vecContactPData);
+	_sortFilterProxyModel->setSourceModel(_contactModel);
 	hideColumn(1);
+}
+
+void ContactTreeView::setSearchKey(const QString& searchKey)
+{
+	_sortFilterProxyModel->setSearchKey(searchKey);
 }
 
 void ContactTreeView::initConnection()
@@ -51,13 +59,13 @@ void ContactTreeView::initConnection()
 	// 展开时更换左侧的展开图标
 	connect(this, &QTreeView::expanded, [&](const QModelIndex& index)
 	{
-		_contactModel->setExtColnData(index, true, static_cast<int>(CustomColumn::IsExpandedColn));
+			_sortFilterProxyModel->setExtDataExpanded(index, true);  //_contactModel _sortFilterProxyModel
 	});
 
 	// 收起时更换左侧的展开图标
 	connect(this, &QTreeView::collapsed, [&](const QModelIndex& index)
 	{
-		_contactModel->setExtColnData(index, false, static_cast<int>(CustomColumn::IsExpandedColn));
+			_sortFilterProxyModel->setExtDataExpanded(index, false); //_contactModel _sortFilterProxyModel
 	});
 }
 

@@ -45,11 +45,13 @@
 #include <QVariant>
 
 namespace Contact {
+
+    class ContactInfo;
     //! [0]
     class TreeItem
     {
     public:
-        explicit TreeItem(const QList<QVariant>& data, TreeItem* parentItem = 0);
+        explicit TreeItem(ContactInfo* pCI, TreeItem* parentItem = 0);
         ~TreeItem();
 
         void appendChild(TreeItem* child);
@@ -58,13 +60,15 @@ namespace Contact {
         int childCount() const;
         int columnCount() const;
         QVariant data(int column) const;
+        ContactInfo* data() const;
         int row() const;
         TreeItem* parentItem();
-        bool setExtColnData(int column, const QVariant& value);
-
+        bool setExtDataExpanded(int column, bool value);
+        ContactInfo* m_pCI;
     private:
         QList<TreeItem*> m_childItems;
-        QList<QVariant> m_itemData;
+        //QList<QVariant> m_itemData;
+        
         TreeItem* m_parentItem;
     };
     //! [0]

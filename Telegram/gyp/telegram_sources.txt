@@ -102,6 +102,10 @@
 <(src_loc)/contact/contactdelegate.h
 <(src_loc)/contact/delegatehelper.cpp
 <(src_loc)/contact/delegatehelper.h
+<(src_loc)/contact/filterwidget.cpp
+<(src_loc)/contact/filterwidget.h
+<(src_loc)/contact/mysortfilterproxymodel.cpp
+<(src_loc)/contact/mysortfilterproxymodel.h
 <(src_loc)/contact/datadefine.cpp
 <(src_loc)/contact/datadefine.h
 <(src_loc)/contact/treeitem.cpp

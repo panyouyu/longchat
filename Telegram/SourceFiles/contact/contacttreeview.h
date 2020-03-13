@@ -9,7 +9,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "datadefine.h"
 #include "contactdelegate.h"
 #include "treemodel.h"
+
+
 namespace Contact {
+
+class MySortFilterProxyModel;
 
 class ContactTreeView : public QTreeView {
 	Q_OBJECT
@@ -20,13 +24,14 @@ public:
 
 	// ¸³Öµ
 	void loadDatas(const QVector<ContactInfo*> _vecContactPData);
-
+	void setSearchKey(const QString& searchKey);
 private:
 	void initConnection();
 
 private:
 	TreeModel* _contactModel{ nullptr };
 	ContactDelegate* _contactDelegate{ nullptr };
+	MySortFilterProxyModel* _sortFilterProxyModel{ nullptr };
 
 };
 

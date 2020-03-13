@@ -8,6 +8,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "contact/contactdialog.h"
 #include "datadefine.h"
 #include "lang/lang_keys.h"
+#include "contact/filterwidget.h"
 namespace Contact {
 
 
@@ -25,6 +26,8 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
 	cig1->showUserCount = "(1/2)";
 	cig1->userTotalCount = 2;
 	_vecContactPData.push_back(cig1);
+	//qDebug() << "###" << cig1 << cig1->firstName << " :" << cig1->expanded;
+
 	ContactInfo* ci1 = new ContactInfo();
 	ci1->id = 2;
 	ci1->firstName = qsl("user1");
@@ -33,6 +36,7 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
 	ci1->online = true;
 	ci1->lastLoginTime = qsl("last login 2020.02.18");
 	_vecContactPData.push_back(ci1);
+	//qDebug() << "###" << ci1 << ci1->firstName << " :" << ci1->expanded;
 
 	ContactInfo* ci2 = new ContactInfo();
 	ci2->id = 3;
@@ -42,6 +46,7 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
 	ci2->hasAvatar = true;
 	ci2->lastLoginTime = qsl("last login 2020.01.18");
 	_vecContactPData.push_back(ci2);
+	//qDebug() << "###" << ci2 << ci2->firstName << " :" << ci2->expanded;
 
 	ContactInfo* cig2 = new ContactInfo();
 	cig2->id = 4;
@@ -49,6 +54,8 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
 	cig2->parentId = 0;
 	cig2->showUserCount = "(0/0)";
 	_vecContactPData.push_back(cig2);
+	//qDebug() << "###" << cig2 << cig2->firstName << " :" << cig2->expanded;
+
 
 	ContactInfo* cig3 = new ContactInfo();
 	cig3->id = 5;
@@ -57,6 +64,7 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
 	cig3->showUserCount = "(1/1)";
 	cig3->userTotalCount = 1;
 	_vecContactPData.push_back(cig3);
+	//qDebug() << "###" << cig3 << cig3->firstName << " :" << cig3->expanded;
 
 
 	ContactInfo* ci31 = new ContactInfo();
@@ -67,6 +75,8 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
 	ci31->hasAvatar = false;
 	ci31->lastLoginTime = qsl("last login 2020.01.18");
 	_vecContactPData.push_back(ci31);
+	//qDebug() << "###" << ci31 << ci31->firstName << " :" << ci31->expanded;
+
 
 	
 
@@ -79,6 +89,10 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
 	_labTitle->setText(lang(lng_contacts_header));//qsl("联系人分组")
 	_labTitle->setObjectName(QStringLiteral("_labTitle")); //用于qss调用
 	_vLayout->addWidget(_labTitle);
+
+	_filterWidget = new FilterWidget(this);
+	_filterWidget->setObjectName(QStringLiteral("_filterWidget"));
+	_vLayout->addWidget(_filterWidget);
 
 	_contactTree = new ContactTreeView(this);
 	_contactTree->setObjectName(QStringLiteral("_contactTree"));
@@ -114,6 +128,7 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
 
 	connect(_btnNewContact, SIGNAL(clicked()), this, SLOT(on__btnNewGroup_clicked()));
 	connect(_btnClose, SIGNAL(clicked()), this, SLOT(accept()));
+	connect(_filterWidget, &FilterWidget::filterChanged, this, &Dialog::textFilterChanged);
 
 	setStyleSheet(getAllFileContent(":/style/qss/contactdialog.qss"));
 }
@@ -135,6 +150,11 @@ void Dialog::accept()
 void Dialog::on__btnNewGroup_clicked()
 {
 	//setStyleSheet(getAllFileContent(":/style/style1.qss"));
+}
+
+void Dialog::textFilterChanged()
+{
+	_contactTree->setSearchKey(_filterWidget->text().trimmed());
 }
 
 void Dialog::closeEvent(QCloseEvent* event)

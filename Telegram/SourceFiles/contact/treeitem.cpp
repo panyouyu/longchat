@@ -47,14 +47,15 @@
 #include <QStringList>
 
 #include "treeitem.h"
+#include "datadefine.h"
 
 namespace Contact {
 
     //! [0]
-    TreeItem::TreeItem(const QList<QVariant>& data, TreeItem* parent)
+    TreeItem::TreeItem(ContactInfo* pCI, TreeItem* parent)
     {
         m_parentItem = parent;
-        m_itemData = data;
+        m_pCI = pCI;
     }
     //! [0]
 
@@ -89,14 +90,21 @@ namespace Contact {
     //! [5]
     int TreeItem::columnCount() const
     {
-        return m_itemData.count();
+        //return m_itemData.count();
+        return 1;
     }
     //! [5]
 
     //! [6]
     QVariant TreeItem::data(int column) const
     {
-        return m_itemData.value(column);
+        //return m_itemData.value(column);
+        return QVariant::fromValue((void*)m_pCI);
+        
+    }
+    ContactInfo* TreeItem::data() const
+    {
+        return m_pCI;
     }
     //! [6]
 
@@ -106,9 +114,14 @@ namespace Contact {
         return m_parentItem;
     }
 
-    bool TreeItem::setExtColnData(int column, const QVariant& value)
+    bool TreeItem::setExtDataExpanded(int column, bool value)
     {
-        m_itemData[column] = value;
+        //ContactInfo* pCI = (ContactInfo*)m_itemData[column].value<void*>();
+        if (!value) {
+            int xx = 0;
+        }
+        m_pCI->expanded = value;
+        //qDebug() << "TreeItem::setExtDataExpanded[" << this << this->m_pCI << "]" << m_pCI << m_pCI->expanded; // << m_pCI->firstName;
         return true;
     }
 

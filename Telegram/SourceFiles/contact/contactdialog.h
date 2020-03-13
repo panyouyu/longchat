@@ -11,7 +11,10 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "treemodel.h"
 #include "contact/contacttreeview.h"
 #include "contactdelegate.h"
+
 namespace Contact {
+
+class FilterWidget;
 
 class Dialog : public QDialog {
 	Q_OBJECT
@@ -24,9 +27,11 @@ public:
 
 private slots:
 	void on__btnNewGroup_clicked();
+	void textFilterChanged();
 
 private:
 	QLabel* _labTitle;
+	FilterWidget* _filterWidget;
 	ContactTreeView* _contactTree;
 	QVBoxLayout* _vLayout;
 	QHBoxLayout* _hLayoutStyle;
