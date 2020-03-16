@@ -143,6 +143,7 @@ public:
 		not_null<HistoryItem*> item);
 	void markActiveHistoryAsRead();
 
+	History *history();
 	PeerData *peer();
 
 	int backgroundFromY() const;

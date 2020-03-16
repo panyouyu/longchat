@@ -23,6 +23,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "window/window_controller.h"
 #include "data/data_session.h"
 #include "data/data_channel.h"
+#include "data/data_user.h"
 #include "mainwindow.h"
 #include "mainwidget.h"
 #include "auth_session.h"
@@ -280,11 +281,44 @@ bool ResoveBindUserPost(const Match& match, const QVariant& context) {
 
 	auth->api().request(
 		MTPbots_SendBindUserRequest(MTP_string(match->captured(1)), MTPDataJSON())
-	).done([=](const MTPDataJSON &json){
-		qDebug() << json.c_dataJSON().vdata.v;
+	).done([=](const MTPcontacts_ImportedContacts& res){
+		auto& d = res.c_contacts_importedContacts();
+		Auth().data().processUsers(d.vusers);
+
+		const auto& v = d.vusers.v;
+		const auto user = [&]() -> UserData* {
+			if (!v.isEmpty()) {
+				return Auth().data().user(v.front().c_user().vid.v);
+			}
+			return nullptr;
+		}();
+
+		
+		if (user) {
+			if (user->contactStatus() == UserData::ContactStatus::Contact
+				|| user->session().supportMode()) {
+				Ui::showPeerHistory(user, ShowAtTheEndMsgId);
+			}
+		}
 	}).fail([=](const RPCError& error) {
 		qDebug() << error.description();
 	}).send();
+	return true;
+}
+
+bool SendConsultationType(const Match& match, const QVariant& context) {
+	if (!AuthSession::Exists()) {
+		return false;
+	}
+	const auto id = match->captured(1);
+	const auto type = match->captured(2);
+	if (App::main() && App::main()->history()) {
+		auto message = ApiWrap::MessageToSend(App::main()->history());
+		message.textWithTags = { type, TextWithTags::Tags() };
+		message.replyTo = 0;
+		Auth().api().sendMessage(std::move(message));
+	}
+	
 	return true;
 }
 
@@ -373,6 +407,10 @@ const std::vector<LocalUrlHandler> &LocalUrlHandlers() {
 		{
 			qsl("^binduser/{1}(.+)"),
 			ResoveBindUserPost
+		},
+		{
+			qsl("^sendconsultationtype\\?id=(.+)&type=(.+)$"),
+			SendConsultationType
 		},
 		{
 			qsl("^([^\\?]+)(\\?|#|$)"),

@@ -1757,6 +1757,10 @@ PeerData *MainWidget::ui_getPeerForMouseAction() {
 	return _history->ui_getPeerForMouseAction();
 }
 
+History* MainWidget::history() {
+	return _history->history();
+}
+
 PeerData *MainWidget::peer() {
 	return _history->peer();
 }

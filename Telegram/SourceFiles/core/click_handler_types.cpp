@@ -66,7 +66,10 @@ QString tryConvertUrlToLocal(QString url) {
 			return qsl("tg://bg?slug=") + bgMatch->captured(1) + (params.isEmpty() ? QString() : '&' + params);
 		} else if (auto postMatch = regex_match(qsl("^c/(\\-?\\d+)/(\\d+)(#|$)"), query, matchOptions)) {
 			return qsl("tg://privatepost?channel=%1&post=%2").arg(postMatch->captured(1)).arg(postMatch->captured(2));
-		} else if (auto usernameMatch = regex_match(qsl("^([a-zA-Z0-9\\.\\_]+)(/?\\?|/?$|/(\\d+)/?(?:\\?|$))"), query, matchOptions)) {
+		} else if (auto consultationtypeMatch = regex_match(qsl("^sendConsultationType\\?id=(.+)&type=(.+)$"), query, matchOptions)) {
+			return qsl("tg://sendconsultationtype?id=%1&type=%2").arg(consultationtypeMatch->captured(1)).arg(consultationtypeMatch->captured(2));
+		}
+		else if (auto usernameMatch = regex_match(qsl("^([a-zA-Z0-9\\.\\_]+)(/?\\?|/?$|/(\\d+)/?(?:\\?|$))"), query, matchOptions)) {
 			auto params = query.mid(usernameMatch->captured(0).size()).toString();
 			auto postParam = QString();
 			if (auto postMatch = regex_match(qsl("^/\\d+/?(?:\\?|$)"), usernameMatch->captured(2))) {
@@ -109,7 +112,7 @@ QString UrlClickHandler::url() const {
 	}
 
 	QUrl u(_originalUrl), good(u.isValid() ? u.toEncoded() : QString());
-	QString result(good.isValid() ? QString::fromUtf8(good.toEncoded()) : _originalUrl);
+	QString result(good.isValid() ? good.toString() : _originalUrl);
 
 	if (!result.isEmpty() && !QRegularExpression(qsl("^[a-zA-Z]+:")).match(result).hasMatch()) { // no protocol
 		return qsl("http://") + result;
