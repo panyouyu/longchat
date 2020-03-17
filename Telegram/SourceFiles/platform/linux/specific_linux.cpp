@@ -337,8 +337,8 @@ void RegisterCustomScheme() {
 			s << "StartupWMClass=TelegramDesktop\n";
 			s << "Type=Application\n";
 			s << "Categories=Network;InstantMessaging;Qt;\n";
-			s << "MimeType=x-scheme-handler/tg;\n";
-			s << "Keywords=tg;chat;im;messaging;messenger;sms;tdesktop;\n";
+			s << "MimeType=x-scheme-handler/lc;\n";
+			s << "Keywords=lc;chat;im;messaging;messenger;sms;tdesktop;\n";
 			s << "X-GNOME-UsesNotifications=true\n";
 			f.close();
 
@@ -347,7 +347,7 @@ void RegisterCustomScheme() {
 				QFile(qsl("%1.local/share/applications/telegram.desktop").arg(home)).remove();
 
 				RunShellCommand("update-desktop-database " + EscapeShell(QFile::encodeName(home + qsl(".local/share/applications"))));
-				RunShellCommand("xdg-mime default telegramdesktop.desktop x-scheme-handler/tg");
+				RunShellCommand("xdg-mime default telegramdesktop.desktop x-scheme-handler/lc");
 			}
 		} else {
 			LOG(("App Error: Could not open '%1' for write").arg(file));
@@ -356,9 +356,9 @@ void RegisterCustomScheme() {
 #endif // !TDESKTOP_DISABLE_DESKTOP_FILE_GENERATION
 
 	DEBUG_LOG(("App Info: registerting for Gnome"));
-	if (RunShellCommand("gconftool-2 -t string -s /desktop/gnome/url-handlers/tg/command " + EscapeShell(EscapeShell(QFile::encodeName(cExeDir() + cExeName())) + " -- %s"))) {
-		RunShellCommand("gconftool-2 -t bool -s /desktop/gnome/url-handlers/tg/needs_terminal false");
-		RunShellCommand("gconftool-2 -t bool -s /desktop/gnome/url-handlers/tg/enabled true");
+	if (RunShellCommand("gconftool-2 -t string -s /desktop/gnome/url-handlers/lc/command " + EscapeShell(EscapeShell(QFile::encodeName(cExeDir() + cExeName())) + " -- %s"))) {
+		RunShellCommand("gconftool-2 -t bool -s /desktop/gnome/url-handlers/lc/needs_terminal false");
+		RunShellCommand("gconftool-2 -t bool -s /desktop/gnome/url-handlers/lc/enabled true");
 	}
 
 	DEBUG_LOG(("App Info: placing .protocol file"));
@@ -371,14 +371,14 @@ void RegisterCustomScheme() {
 	if (!services.isEmpty()) {
 		if (!QDir(services).exists()) QDir().mkpath(services);
 
-		QString path = services, file = path + qsl("tg.protocol");
+		QString path = services, file = path + qsl("lc.protocol");
 		QFile f(file);
 		if (f.open(QIODevice::WriteOnly)) {
 			QTextStream s(&f);
 			s.setCodec("UTF-8");
 			s << "[Protocol]\n";
 			s << "exec=" << QFile::decodeName(EscapeShell(QFile::encodeName(cExeDir() + cExeName()))) << " -- %u\n";
-			s << "protocol=tg\n";
+			s << "protocol=lc\n";
 			s << "input=none\n";
 			s << "output=none\n";
 			s << "helper=true\n";

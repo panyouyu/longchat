@@ -422,10 +422,10 @@ const std::vector<LocalUrlHandler> &LocalUrlHandlers() {
 
 bool InternalPassportLink(const QString &url) {
 	const auto urlTrimmed = url.trimmed();
-	if (!urlTrimmed.startsWith(qstr("tg://"), Qt::CaseInsensitive)) {
+	if (!urlTrimmed.startsWith(qstr("lc://"), Qt::CaseInsensitive)) {
 		return false;
 	}
-	const auto command = urlTrimmed.midRef(qstr("tg://").size());
+	const auto command = urlTrimmed.midRef(qstr("lc://").size());
 
 	using namespace qthelp;
 	const auto matchOptions = RegExOption::CaseInsensitive;

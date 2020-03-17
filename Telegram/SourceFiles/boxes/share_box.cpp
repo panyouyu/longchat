@@ -1088,7 +1088,7 @@ QString AppendShareGameScoreUrl(const QString &url, const FullMsgId &fullId) {
 	}
 
 	auto shareHash = shareHashEncrypted.toBase64(QByteArray::Base64UrlEncoding | QByteArray::OmitTrailingEquals);
-	auto shareUrl = qsl("tg://share_game_score?hash=") + QString::fromLatin1(shareHash);
+	auto shareUrl = qsl("lc://share_game_score?hash=") + QString::fromLatin1(shareHash);
 
 	auto shareComponent = qsl("tgShareScoreUrl=") + qthelp::url_encode(shareUrl);
 

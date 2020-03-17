@@ -37,15 +37,15 @@ QString tryConvertUrlToLocal(QString url) {
 	if (telegramMeMatch) {
 		auto query = telegramMeMatch->capturedRef(4);
 		if (auto joinChatMatch = regex_match(qsl("^joinchat/([a-zA-Z0-9\\.\\_\\-]+)(\\?|$)"), query, matchOptions)) {
-			return qsl("tg://join?invite=") + url_encode(joinChatMatch->captured(1));
+			return qsl("lc://join?invite=") + url_encode(joinChatMatch->captured(1));
 		} else if (auto stickerSetMatch = regex_match(qsl("^addstickers/([a-zA-Z0-9\\.\\_]+)(\\?|$)"), query, matchOptions)) {
-			return qsl("tg://addstickers?set=") + url_encode(stickerSetMatch->captured(1));
+			return qsl("lc://addstickers?set=") + url_encode(stickerSetMatch->captured(1));
 		} else if (auto languageMatch = regex_match(qsl("^setlanguage/([a-zA-Z0-9\\.\\_\\-]+)(\\?|$)"), query, matchOptions)) {
-			return qsl("tg://setlanguage?lang=") + url_encode(languageMatch->captured(1));
+			return qsl("lc://setlanguage?lang=") + url_encode(languageMatch->captured(1));
 		} else if (auto shareUrlMatch = regex_match(qsl("^share/url/?\\?(.+)$"), query, matchOptions)) {
-			return qsl("tg://msg_url?") + shareUrlMatch->captured(1);
+			return qsl("lc://msg_url?") + shareUrlMatch->captured(1);
 		} else if (auto confirmPhoneMatch = regex_match(qsl("^confirmphone/?\\?(.+)"), query, matchOptions)) {
-			return qsl("tg://confirmphone?") + confirmPhoneMatch->captured(1);
+			return qsl("lc://confirmphone?") + confirmPhoneMatch->captured(1);
 		} else if (auto ivMatch = regex_match(qsl("^iv/?\\?(.+)(#|$)"), query, matchOptions)) {
 			//
 			// We need to show our t.me page, not the url directly.
@@ -58,16 +58,16 @@ QString tryConvertUrlToLocal(QString url) {
 			//}
 			return url;
 		} else if (auto socksMatch = regex_match(qsl("^socks/?\\?(.+)(#|$)"), query, matchOptions)) {
-			return qsl("tg://socks?") + socksMatch->captured(1);
+			return qsl("lc://socks?") + socksMatch->captured(1);
 		} else if (auto proxyMatch = regex_match(qsl("^proxy/?\\?(.+)(#|$)"), query, matchOptions)) {
-			return qsl("tg://proxy?") + proxyMatch->captured(1);
+			return qsl("lc://proxy?") + proxyMatch->captured(1);
 		} else if (auto bgMatch = regex_match(qsl("^bg/([a-zA-Z0-9\\.\\_\\-]+)(\\?(.+)?)?$"), query, matchOptions)) {
 			const auto params = bgMatch->captured(3);
-			return qsl("tg://bg?slug=") + bgMatch->captured(1) + (params.isEmpty() ? QString() : '&' + params);
+			return qsl("lc://bg?slug=") + bgMatch->captured(1) + (params.isEmpty() ? QString() : '&' + params);
 		} else if (auto postMatch = regex_match(qsl("^c/(\\-?\\d+)/(\\d+)(#|$)"), query, matchOptions)) {
-			return qsl("tg://privatepost?channel=%1&post=%2").arg(postMatch->captured(1)).arg(postMatch->captured(2));
+			return qsl("lc://privatepost?channel=%1&post=%2").arg(postMatch->captured(1)).arg(postMatch->captured(2));
 		} else if (auto consultationtypeMatch = regex_match(qsl("^sendConsultationType\\?id=(.+)&type=(.+)$"), query, matchOptions)) {
-			return qsl("tg://sendconsultationtype?id=%1&type=%2").arg(consultationtypeMatch->captured(1)).arg(consultationtypeMatch->captured(2));
+			return qsl("lc://sendconsultationtype?id=%1&type=%2").arg(consultationtypeMatch->captured(1)).arg(consultationtypeMatch->captured(2));
 		}
 		else if (auto usernameMatch = regex_match(qsl("^([a-zA-Z0-9\\.\\_]+)(/?\\?|/?$|/(\\d+)/?(?:\\?|$))"), query, matchOptions)) {
 			auto params = query.mid(usernameMatch->captured(0).size()).toString();
@@ -75,7 +75,7 @@ QString tryConvertUrlToLocal(QString url) {
 			if (auto postMatch = regex_match(qsl("^/\\d+/?(?:\\?|$)"), usernameMatch->captured(2))) {
 				postParam = qsl("&post=") + usernameMatch->captured(3);
 			}
-			return qsl("tg://resolve/?domain=") + url_encode(usernameMatch->captured(1)) + postParam + (params.isEmpty() ? QString() : '&' + params);
+			return qsl("lc://resolve/?domain=") + url_encode(usernameMatch->captured(1)) + postParam + (params.isEmpty() ? QString() : '&' + params);
 		}
 	}
 	return url;
@@ -129,7 +129,7 @@ void UrlClickHandler::Open(QString url, QVariant context) {
 	Ui::Tooltip::Hide();
 	if (isEmail(url)) {
 		File::OpenEmailLink(url);
-	} else if (url.startsWith(qstr("tg://"), Qt::CaseInsensitive)) {
+	} else if (url.startsWith(qstr("lc://"), Qt::CaseInsensitive)) {
 		Core::App().openLocalUrl(url, context);
 	} else if (!url.isEmpty()) {
 		QDesktopServices::openUrl(url);
@@ -152,7 +152,7 @@ void HiddenUrlClickHandler::Open(QString url, QVariant context) {
 	const auto open = [=] {
 		UrlClickHandler::Open(url, context);
 	};
-	if (url.startsWith(qstr("tg://"), Qt::CaseInsensitive)) {
+	if (url.startsWith(qstr("lc://"), Qt::CaseInsensitive)) {
 		open();
 	} else {
 		const auto parsedUrl = QUrl::fromUserInput(url);
@@ -182,7 +182,7 @@ void BotGameUrlClickHandler::onClick(ClickContext context) const {
 	const auto open = [=] {
 		UrlClickHandler::Open(url, context.other);
 	};
-	if (url.startsWith(qstr("tg://"), Qt::CaseInsensitive)) {
+	if (url.startsWith(qstr("lc://"), Qt::CaseInsensitive)) {
 		open();
 	} else if (!_bot || _bot->isVerified() || Local::isBotTrusted(_bot)) {
 		open();

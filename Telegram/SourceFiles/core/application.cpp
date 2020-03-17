@@ -306,7 +306,7 @@ bool Application::eventFilter(QObject *object, QEvent *e) {
 			const auto event = static_cast<QFileOpenEvent*>(e);
 			const auto url = QString::fromUtf8(
 				event->url().toEncoded().trimmed());
-			if (url.startsWith(qstr("tg://"), Qt::CaseInsensitive)) {
+			if (url.startsWith(qstr("lc://"), Qt::CaseInsensitive)) {
 				cSetStartUrl(url.mid(0, 8192));
 				checkStartUrl();
 			}
@@ -852,7 +852,7 @@ bool Application::openLocalUrl(const QString &url, QVariant context) {
 	auto urlTrimmed = url.trimmed();
 	if (urlTrimmed.size() > 8192) urlTrimmed = urlTrimmed.mid(0, 8192);
 
-	const auto protocol = qstr("tg://");
+	const auto protocol = qstr("lc://");
 	if (!urlTrimmed.startsWith(protocol, Qt::CaseInsensitive) || locked()) {
 		return false;
 	}

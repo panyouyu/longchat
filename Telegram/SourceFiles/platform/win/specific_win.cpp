@@ -567,32 +567,32 @@ void RegisterCustomScheme() {
 		return;
 	}
 #ifndef TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME
-	DEBUG_LOG(("App Info: Checking custom scheme 'tg'..."));
+	DEBUG_LOG(("App Info: Checking custom scheme 'lc'..."));
 
 	HKEY rkey;
 	QString exe = QDir::toNativeSeparators(cExeDir() + cExeName());
 
 	// Legacy URI scheme registration
-	if (!_psOpenRegKey(L"Software\\Classes\\tg", &rkey)) return;
+	if (!_psOpenRegKey(L"Software\\Classes\\lc", &rkey)) return;
 	if (!_psSetKeyValue(rkey, L"URL Protocol", QString())) return;
-	if (!_psSetKeyValue(rkey, 0, qsl("URL:Telegram Link"))) return;
+	if (!_psSetKeyValue(rkey, 0, qsl("URL:LongChat Link"))) return;
 
-	if (!_psOpenRegKey(L"Software\\Classes\\tg\\DefaultIcon", &rkey)) return;
+	if (!_psOpenRegKey(L"Software\\Classes\\lc\\DefaultIcon", &rkey)) return;
 	if (!_psSetKeyValue(rkey, 0, '"' + exe + qsl(",1\""))) return;
 
-	if (!_psOpenRegKey(L"Software\\Classes\\tg\\shell", &rkey)) return;
-	if (!_psOpenRegKey(L"Software\\Classes\\tg\\shell\\open", &rkey)) return;
-	if (!_psOpenRegKey(L"Software\\Classes\\tg\\shell\\open\\command", &rkey)) return;
+	if (!_psOpenRegKey(L"Software\\Classes\\lc\\shell", &rkey)) return;
+	if (!_psOpenRegKey(L"Software\\Classes\\lc\\shell\\open", &rkey)) return;
+	if (!_psOpenRegKey(L"Software\\Classes\\lc\\shell\\open\\command", &rkey)) return;
 	if (!_psSetKeyValue(rkey, 0, '"' + exe + qsl("\" -workdir \"") + cWorkingDir() + qsl("\" -- \"%1\""))) return;
 
 	// URI scheme registration as Default Program - Windows Vista and above
-	if (!_psOpenRegKey(L"Software\\Classes\\tdesktop.tg", &rkey)) return;
-	if (!_psOpenRegKey(L"Software\\Classes\\tdesktop.tg\\DefaultIcon", &rkey)) return;
+	if (!_psOpenRegKey(L"Software\\Classes\\tdesktop.lc", &rkey)) return;
+	if (!_psOpenRegKey(L"Software\\Classes\\tdesktop.lc\\DefaultIcon", &rkey)) return;
 	if (!_psSetKeyValue(rkey, 0, '"' + exe + qsl(",1\""))) return;
 
-	if (!_psOpenRegKey(L"Software\\Classes\\tdesktop.tg\\shell", &rkey)) return;
-	if (!_psOpenRegKey(L"Software\\Classes\\tdesktop.tg\\shell\\open", &rkey)) return;
-	if (!_psOpenRegKey(L"Software\\Classes\\tdesktop.tg\\shell\\open\\command", &rkey)) return;
+	if (!_psOpenRegKey(L"Software\\Classes\\tdesktop.lc\\shell", &rkey)) return;
+	if (!_psOpenRegKey(L"Software\\Classes\\tdesktop.lc\\shell\\open", &rkey)) return;
+	if (!_psOpenRegKey(L"Software\\Classes\\tdesktop.lc\\shell\\open\\command", &rkey)) return;
 	if (!_psSetKeyValue(rkey, 0, '"' + exe + qsl("\" -workdir \"") + cWorkingDir() + qsl("\" -- \"%1\""))) return;
 
 	if (!_psOpenRegKey(L"Software\\TelegramDesktop", &rkey)) return;
@@ -600,7 +600,7 @@ void RegisterCustomScheme() {
 	if (!_psSetKeyValue(rkey, L"ApplicationName", qsl("Telegram Desktop"))) return;
 	if (!_psSetKeyValue(rkey, L"ApplicationDescription", qsl("Telegram Desktop"))) return;
 	if (!_psOpenRegKey(L"Software\\TelegramDesktop\\Capabilities\\UrlAssociations", &rkey)) return;
-	if (!_psSetKeyValue(rkey, L"tg", qsl("tdesktop.tg"))) return;
+	if (!_psSetKeyValue(rkey, L"lc", qsl("tdesktop.lc"))) return;
 
 	if (!_psOpenRegKey(L"Software\\RegisteredApplications", &rkey)) return;
 	if (!_psSetKeyValue(rkey, L"Telegram Desktop", qsl("SOFTWARE\\TelegramDesktop\\Capabilities"))) return;

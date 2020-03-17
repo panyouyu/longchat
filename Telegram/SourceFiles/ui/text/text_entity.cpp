@@ -92,7 +92,7 @@ QSet<int32> CreateValidProtocols() {
 	addOne(qsl("http"));
 	addOne(qsl("https"));
 	addOne(qsl("ftp"));
-	addOne(qsl("tg")); // local urls
+	addOne(qsl("lc")); // local urls
 	return result;
 }
 
