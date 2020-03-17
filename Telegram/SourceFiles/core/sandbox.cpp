@@ -512,13 +512,6 @@ bool Sandbox::notify(QObject *receiver, QEvent *e) {
 		//});
 		//return QApplication::notify(receiver, e);
 	}
-	if (type == QEvent::KeyPress) {
-		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(e);
-		if (keyEvent->modifiers() == Qt::ControlModifier &&
-			keyEvent->key() == Qt::Key_A) {
-			App::main()->showScreenShot();
-		}
-	}
 	return QApplication::notify(receiver, e);
 }
 

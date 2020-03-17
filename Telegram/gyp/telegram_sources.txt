@@ -591,6 +591,8 @@
 <(src_loc)/platform/win/main_window_win.h
 <(src_loc)/platform/win/notifications_manager_win.cpp
 <(src_loc)/platform/win/notifications_manager_win.h
+<(src_loc)/platform/win/shortcut_win.cpp
+<(src_loc)/platform/win/shortcut_win.h
 <(src_loc)/platform/win/specific_win.cpp
 <(src_loc)/platform/win/specific_win.h
 <(src_loc)/platform/win/window_title_win.cpp
@@ -608,6 +610,7 @@
 <(src_loc)/platform/platform_launcher.h
 <(src_loc)/platform/platform_main_window.h
 <(src_loc)/platform/platform_notifications_manager.h
+<(src_loc)/platform/platform_shortcut.h
 <(src_loc)/platform/platform_specific.h
 <(src_loc)/platform/platform_window_title.h
 <(src_loc)/profile/profile_back_button.cpp
@@ -674,6 +677,8 @@
 <(src_loc)/support/support_helper.h
 <(src_loc)/support/support_templates.cpp
 <(src_loc)/support/support_templates.h
+<(src_loc)/tools/globalshortcut.cpp
+<(src_loc)/tools/globalshortcut.h
 <(src_loc)/ui/effects/animations.cpp
 <(src_loc)/ui/effects/animations.h
 <(src_loc)/ui/effects/cross_animation.cpp

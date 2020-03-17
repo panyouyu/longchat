@@ -90,6 +90,8 @@ class MessageField;
 class HistoryInner;
 struct HistoryMessageMarkupButton;
 
+class QxtGlobalShortcut;
+
 class ReportSpamPanel : public TWidget {
 	Q_OBJECT
 
@@ -246,9 +248,7 @@ public:
 	void clearAllLoadRequests();
 	void saveFieldToHistoryLocalDraft();
 
-	void applyCloudDraft(History *history);
-
-	void createScreenShot();
+	void applyCloudDraft(History *history);	
 
 	void updateHistoryDownPosition();
 	void updateHistoryDownVisibility();
@@ -362,7 +362,7 @@ private slots:
 	void onMembersDropdownShow();
 
 	void onModerateKeyActivate(int index, bool *outHandled);
-
+	void createScreenShot();
 	void destoryScreenShot(bool);
 
 private:
@@ -768,6 +768,7 @@ private:
 	object_ptr<Ui::RpWidget> _aboutProxyPromotion = { nullptr };
 	mtpRequestId _reportSpamRequest = 0;
 	object_ptr<Ui::IconButton> _attachToggle;
+	object_ptr<QxtGlobalShortcut> _shortcut;
 	object_ptr<Ui::ScreenShotButton> _screenShotToggle;
 	object_ptr<Ui::ShotScreen> _shotScreen = { nullptr };
 	object_ptr<Ui::EmojiButton> _tabbedSelectorToggle;
