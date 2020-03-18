@@ -10,7 +10,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "lang/lang_keys.h"
 
 namespace Contact {
-	Q_DECLARE_METATYPE(ContactInfo*);
+	
 
 ContactTreeView::ContactTreeView(CreatingTreeType ctt, QWidget *parent) : QTreeView(parent), _ctt(ctt) {
 	header()->hide();
@@ -154,3 +154,4 @@ void ContactTreeView::initConnection()
 }
 
 } // namespace Contact
+Q_DECLARE_METATYPE(Contact::ContactInfo*);
