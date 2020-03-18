@@ -43,10 +43,9 @@
 
 #include <QList>
 #include <QVariant>
-
+#include "datadefine.h"
 namespace Contact {
 
-    class ContactInfo;
     //! [0]
     class TreeItem
     {
