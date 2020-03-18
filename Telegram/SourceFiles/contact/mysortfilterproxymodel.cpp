@@ -95,7 +95,11 @@ namespace Contact {
         }
         ContactInfo* pCI = static_cast<ContactInfo*>(index0.data(Qt::DisplayRole).value<void*>());
         if (pCI != nullptr) {
-            return (pCI->firstName.contains(m_searchKey) || pCI->lastName.contains(m_searchKey));
+            if (pCI->isGroup)
+            {
+                return false;
+            }
+            return (pCI->firstName.contains(m_searchKey, Qt::CaseInsensitive) || pCI->lastName.contains(m_searchKey, Qt::CaseInsensitive));
         }
         return false;
     }

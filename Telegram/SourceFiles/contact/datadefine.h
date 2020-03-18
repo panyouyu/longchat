@@ -20,6 +20,7 @@ namespace Contact {
             , hasAvatar(false)
             , online(false)
             , expanded(false)
+            , isGroup(false)
             
         {
         }
@@ -33,14 +34,15 @@ namespace Contact {
         QString showUserCount; //分组内用户数信息 在线数/总数
         int32 userTotalCount; //总用户数
         int32 userOnlineCount; //在线用户数
-        //Image* pAvatarImage; //头像数据
+        QVector<uint64> userIds;
         PeerData* peerData;
         bool hasAvatar; //是否有头像
         bool online; //是否在线
         bool expanded;
+        bool isGroup; //就否分组
 
     };
-
+    
     struct ContactStyleInfo
     {
         ContactStyleInfo()
@@ -56,6 +58,7 @@ namespace Contact {
         int32 avatarHeight;
 
     };
+   
 
     // 借用隐藏列存储的数据
     //enum CustomColumn
@@ -70,6 +73,12 @@ namespace Contact {
         IsGroupRole, // 是否是群组
         PeerRole, // 获取peer
     };
+    //创建树类型
+	enum CreatingTreeType {
+		CTT_FULL, //联系人主界面的树 支持搜索右键 二级目录
+        CTT_TOSELECT, //分组维护窗口 支持选择到右边树，不支持二级目录 
+		CTT_SHOW, //分组维护窗口 右侧树 只显示选中的用户 不支持二级目录 
+	};
 
     QString getAllFileContent(const QString& path);
 }

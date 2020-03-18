@@ -98,7 +98,7 @@ namespace Contact {
 			painter->setBrush(color);
 			painter->drawRect(option.rect);
 
-			if (pCI->parentId == DEFAULT_VALUE_ZERO) {
+			if (pCI->isGroup) {
 				paintGroup(painter, option, index, pCI);
 			}
 			else
@@ -209,7 +209,7 @@ namespace Contact {
 		{
 			return size;
 		}
-		if (pCI->parentId == DEFAULT_VALUE_ZERO) {
+		if (pCI->isGroup) {
 			size.setHeight(34);
 		}
 		else {

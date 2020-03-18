@@ -101,13 +101,13 @@ namespace Contact {
     }
 
 
-    QVariant TreeModel::extData(const QModelIndex& index, int column)
+  /*  QVariant TreeModel::extData(const QModelIndex& index, int column)
     {
         if (!index.isValid())
             return QVariant();
         TreeItem* item = getItem(index);
         return item->data(column);
-    }
+    }*/
 
 
     QVariant TreeModel::data(const QModelIndex& index, int role) const
@@ -130,16 +130,19 @@ namespace Contact {
         }
         else if (CustomRole::IsGroupRole == role)
         {
-            ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
-            return pCI->parentId == DEFAULT_VALUE_ZERO;
+            //ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
+            ContactInfo* pCI = item->data();
+            return pCI->isGroup;
         }
         else if (CustomRole::PeerRole == role)
         {
-			ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
+			//ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
+            ContactInfo* pCI = item->data();
 			return QVariant::fromValue((void*)pCI->peerData);
         }
+        ContactInfo* pCI = item->data();
 
-        return item->data(index.column());
+        return QVariant::fromValue((void*)pCI);
     }
     //! [3]
 
@@ -158,7 +161,7 @@ namespace Contact {
         int role) const
     {
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-            return headItem->data(section);
+            return QVariant::fromValue((void*)headItem->data()); 
 
         return QVariant();
     }
@@ -220,7 +223,13 @@ namespace Contact {
 
     void TreeModel::setupModelData(const QVector<ContactInfo*>& vecData)
     {
+        removeRows(0, rowCount());
         QList<TreeItem*> parents;
+		if (nullptr != headItem)
+		{
+			delete headItem;
+            headItem = new TreeItem(pCIHead);
+		}
         parents << headItem; //第一项放标题头，其下的都为树项数据
         //添加第一级目录数据
         QList<TreeItem*> top1List;
@@ -275,9 +284,8 @@ namespace Contact {
     void TreeModel::PrintNodeData(TreeItem* item)
     {
         Q_ASSERT(item);
-        //ContactInfo* pCIHeader = (ContactInfo*)item->data(0).value<void*>();
         ContactInfo* pCIHeader = item->data();
-        //qDebug() << "***["<< item << item->m_pCI <<"]" << pCIHeader << pCIHeader->firstName << " :" << pCIHeader->expanded;
+        qDebug() << "***["<< item << item->m_pCI <<"]" << pCIHeader << pCIHeader->firstName << " :" << pCIHeader->expanded;
         if (item->childCount() > 0)
         {
             for (int i = 0; i < item->childCount(); i++)

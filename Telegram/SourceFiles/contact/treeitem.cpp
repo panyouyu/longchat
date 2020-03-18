@@ -96,12 +96,12 @@ namespace Contact {
     //! [5]
 
     //! [6]
-    QVariant TreeItem::data(int column) const
-    {
-        //return m_itemData.value(column);
-        return QVariant::fromValue((void*)m_pCI);
-        
-    }
+    //QVariant TreeItem::data(int column) const
+    //{
+    //    //return m_itemData.value(column);
+    //    return QVariant::fromValue((void*)m_pCI);
+    //    
+    //}
     ContactInfo* TreeItem::data() const
     {
         return m_pCI;

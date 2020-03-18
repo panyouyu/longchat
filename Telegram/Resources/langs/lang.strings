@@ -1383,6 +1383,12 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_dlg_contact_group_add" = "添加分组";
 "lng_dlg_contact_group_rename" = "重命名";
 "lng_dlg_contact_group_del" = "删除分组";
+"lng_dlg_contact_group_name_input" = "请输入分组名称";
+"lng_dlg_contact_group_name" = "名字";
+"lng_dlg_contact_group_del_conform" = "您确认删除该分组吗？";
+"lng_dlg_contact_group_select" = "选择分组";
+"lng_dlg_contact_select" = "选择联系人";
+"lng_dlg_contact_group_edit" = "编辑群组";
 "lng_add_contact" = "添加";
 "lng_add_contact_button" = "添加联系人";
 "lng_contacts_header" = "联系人";

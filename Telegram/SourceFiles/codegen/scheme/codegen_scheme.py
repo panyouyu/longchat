@@ -60,6 +60,12 @@ countedTypeIdExceptions['ipPortSecret#37982646'] = True
 countedTypeIdExceptions['accessPointRule#4679b65f'] = True
 countedTypeIdExceptions['help.configSimple#5a592a6c'] = True
 countedTypeIdExceptions['auth.kefuLogin#3b9acde9'] = True
+countedTypeIdExceptions['contacts.getUserGroups#3b9aca0d'] = True
+countedTypeIdExceptions['userGroup#3b92c21e'] = True
+countedTypeIdExceptions['userGroupList#3b9aca0e'] = True
+countedTypeIdExceptions['userGroup#3b9aca0e'] = True
+countedTypeIdExceptions['contacts.delUserGroups#3b9aca09'] = True
+countedTypeIdExceptions['userGroupDelReturn#3b9aca15'] = True
 
 
 renamedTypes = {};

@@ -68,7 +68,7 @@ namespace Contact {
 
 
         bool setExtDataExpanded(const QModelIndex& index, bool value);
-        QVariant extData(const QModelIndex& index, int column);
+        //QVariant extData(const QModelIndex& index, int column);
 
     public:
         void setupModelData(const QVector<ContactInfo*>& vecData);

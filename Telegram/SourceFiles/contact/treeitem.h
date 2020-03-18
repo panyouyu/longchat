@@ -59,7 +59,7 @@ namespace Contact {
         TreeItem* child(int row);
         int childCount() const;
         int columnCount() const;
-        QVariant data(int column) const;
+        //QVariant data(int column) const;
         ContactInfo* data() const;
         int row() const;
         TreeItem* parentItem();

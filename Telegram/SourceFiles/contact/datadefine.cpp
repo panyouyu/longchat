@@ -2,7 +2,7 @@
 #include <QFile>
 
 namespace Contact {
-
+    
     QString getAllFileContent(const QString& path)
     {
         QFile file(path);

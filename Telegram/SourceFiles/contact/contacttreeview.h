@@ -19,7 +19,7 @@ class ContactTreeView : public QTreeView {
 	Q_OBJECT
 
 public:
-	ContactTreeView(QWidget *parent = 0);
+	ContactTreeView(CreatingTreeType ctt, QWidget *parent = 0);
 	~ContactTreeView();
 
 	// 赋值
@@ -28,6 +28,16 @@ public:
 
 signals:
 	void startChat();
+	void addGroup();
+	void modGroup(ContactInfo* pCI);
+	void selectedUser(PeerData*);
+	void selectedUser(ContactInfo* pCI);
+
+public slots:
+	void slotCustomContextMenu(const QPoint& point);//创建右键菜单的槽函数
+	void slotAddGroup();
+	void slotModGroup();
+	void slotDelGroup();
 private:
 	void initConnection();
 
@@ -35,6 +45,8 @@ private:
 	TreeModel* _contactModel{ nullptr };
 	ContactDelegate* _contactDelegate{ nullptr };
 	MySortFilterProxyModel* _sortFilterProxyModel{ nullptr };
+	QString _searchKey;
+	CreatingTreeType _ctt;
 
 };
 

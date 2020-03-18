@@ -20,57 +20,61 @@ namespace Contact {
 
 class FilterWidget;
 
-class Dialog : public QDialog , public RPCSender {
+class GroupDialog : public QDialog , public RPCSender {
 	Q_OBJECT
 
 public:
-	Dialog(QWidget *parent = 0);
-	~Dialog();
+	GroupDialog(QWidget *parent = 0, ContactInfo* pCI =nullptr);
+	~GroupDialog();
 
-	virtual void accept() override;
 
 private slots:
-	void on__btnNewGroup_clicked();
+	void on__btnSave_clicked();
 	void textFilterChanged();
-	void slotAddGroup();
-	void slotModGroup(ContactInfo* pCI);
+	void on_selectedUser(ContactInfo* pCI);
+	void on_removeSelectedUser(ContactInfo* pCI);
 
 private:
+	QHBoxLayout* _hTitleLayout;
 	QLabel* _labTitle;
+	QHBoxLayout* _hGroupNameLayout;
+	//QLabel* _labGroupName;
+	QLineEdit* _lineGroupName;
+	QVBoxLayout* _vLeftTreeLayout;
 	FilterWidget* _filterWidget;
 	ContactTreeView* _contactTree;
+	ContactTreeView* _contactSelectedTree;
+	QHBoxLayout* _hMiddleLayout;
+
 	QVBoxLayout* _vLayout;
-	QHBoxLayout* _hLayoutStyle;
+	QHBoxLayout* _hBottomLayout;
 
 	
-	QPushButton* _btnNewContact;
-	QPushButton* _btnClose;
+	QPushButton* _btnSave;
 	QVector<ContactInfo*> _vecContactPData;
-	QVector<ContactInfo*> _vecContactPData4Search; //qt5.10以后才支持下级查询，所以这里把下级提升为1级查询 且把parentid设置为0
+	QVector<ContactInfo*> _vecContactSelected; 
 protected:
 	virtual void closeEvent(QCloseEvent* event) override;
 
 private:
 	void init();
 	void freshData();
-	void freshData_test();
+	void bindData();
 	void genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId);
+	void freshTree();
+	void eraseFromVector(QVector<ContactInfo*>& vecData, ContactInfo* pCI);
+	bool userInGroup(uint64 uId);
 
-private:
-	mtpRequestId _kefuLoginRequest = 0;
-	void codeSubmitDone(const MTPauth_Authorization& result);
-	bool codeSubmitFail(const RPCError& error);
+
 	void showCodeError(Fn<QString()> textFactory);
 
 	void userGroupDone(const MTPVector<MTPUserGroup>& result);
 	bool userGroupFail(const RPCError& error);
 
-	void userGroupDelDone(const MTPVector<MTPUserGroup>& result);
-	bool userGroupDelFail(const RPCError& error);
-
 	mtpRequestId _allUserTagRequest = 0;
 
-	mtpRequestId _allUserTagDelRequest = 0;
+private:
+	ContactInfo* _pCI { nullptr };
 
 };
 
