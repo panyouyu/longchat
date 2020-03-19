@@ -32,8 +32,11 @@ namespace Contact {
         QString phoneNum; //手机号码
         QString lastLoginTime; //最后一次上线时间
         QString showUserCount; //分组内用户数信息 在线数/总数
+        QString serverCount; //服务人数
+        QString queueCount; //排队人数
         int32 userTotalCount; //总用户数
         int32 userOnlineCount; //在线用户数
+        
         QVector<uint64> userIds;
         PeerData* peerData;
         bool hasAvatar; //是否有头像
@@ -78,6 +81,7 @@ namespace Contact {
 		CTT_FULL, //联系人主界面的树 支持搜索右键 二级目录
         CTT_TOSELECT, //分组维护窗口 支持选择到右边树，不支持二级目录 
 		CTT_SHOW, //分组维护窗口 右侧树 只显示选中的用户 不支持二级目录 
+        CTT_SWITCH, //转换窗口
 	};
 
 	//分组窗口操作类型

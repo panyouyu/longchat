@@ -63,8 +63,9 @@ namespace Contact {
 	const QRect GroupArrorIconRect{ 5,12,10,10 }; // 分组折叠箭头区域
 	const int ArrorRectWidth = 20;
 
-	ContactDelegate::ContactDelegate(QObject* parent)
+	ContactDelegate::ContactDelegate(CreatingTreeType ctt, QObject* parent)
 		: QItemDelegate(parent)
+		, m_ctt(ctt)
 	{
 		m_si.fontColor = QColor("#373737");
 		m_si.userCountFontColor = QColor(186, 186, 186);
@@ -190,13 +191,40 @@ namespace Contact {
 		delegateHelper.paintText(painter, Qt::AlignLeft, m_si.fontColor, nameRect, m_si.fontSize, name);
 
 		//画最近登录时间
-		QString lastTime = pCI->lastLoginTime;
+		QString midbutStr = pCI->lastLoginTime;
+		if (m_ctt == CTT_SWITCH)
+		{
+			midbutStr = pCI->serverCount + " " + pCI->queueCount;
+			
+		}
 		QRect recentLoginRect = cellRect;
-		QRect recRecLogin = delegateHelper.calTextRect(painter, m_si.fontSize, lastTime);
+		QRect recRecLogin = delegateHelper.calTextRect(painter, m_si.fontSize, midbutStr);
 		showNameHeight = recRecLogin.height();
 		recentLoginRect.setLeft(cellRect.left() + avatarRect.width() + ArrorRectWidth);
 		recentLoginRect.setTop(cellRect.top() + halfHeight + (halfHeight - showNameHeight) / 2 - heightRevise);
-		delegateHelper.paintText(painter, Qt::AlignLeft, m_si.userCountFontColor, recentLoginRect, m_si.fontSize, lastTime);
+		delegateHelper.paintText(painter, Qt::AlignLeft, m_si.userCountFontColor, recentLoginRect, m_si.fontSize, midbutStr);
+
+		if (m_ctt == CTT_SWITCH)
+		{
+			//////////////画转接按钮////////////////////////////////////
+			int groupUserInfoFontSize = 12;
+			int marginRight = 10;
+			QString userSwitchInfo = pCI->lastName;
+			QRect switchUserInfoTextRec = delegateHelper.calTextRect(painter, groupUserInfoFontSize, userSwitchInfo);
+			//字符串所占的像素宽度,高度
+			int textWidth = switchUserInfoTextRec.width();
+			int textHeight = switchUserInfoTextRec.height();
+			QRect switchUserInfoRect = option.rect;
+			switchUserInfoRect.setTop(option.rect.top() + (option.rect.height() - textHeight) / 2);
+			switchUserInfoRect.setLeft(option.rect.width() - textWidth - marginRight);
+			QRect switchUserInfoBackRect = switchUserInfoRect;
+			switchUserInfoBackRect.setWidth(textWidth);
+			switchUserInfoBackRect.setHeight(textHeight);
+			delegateHelper.paintRect(painter, QColor("#0f88e8"), switchUserInfoBackRect);
+			delegateHelper.paintText(painter, Qt::AlignLeft, m_si.fontColor, switchUserInfoRect, groupUserInfoFontSize, userSwitchInfo);
+
+		}
+		
 	}
 
 	QSize ContactDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const

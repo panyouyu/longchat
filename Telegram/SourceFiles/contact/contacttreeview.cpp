@@ -22,7 +22,7 @@ ContactTreeView::ContactTreeView(CreatingTreeType ctt, QWidget *parent) : QTreeV
 	_sortFilterProxyModel = new MySortFilterProxyModel();
 	setModel(_sortFilterProxyModel);
 
-	_contactDelegate = new ContactDelegate(this);
+	_contactDelegate = new ContactDelegate(_ctt, this);
 	setItemDelegate(_contactDelegate);
 
 	initConnection();
