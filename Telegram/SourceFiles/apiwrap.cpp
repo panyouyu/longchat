@@ -4915,6 +4915,32 @@ void ApiWrap::sendBotStart(not_null<UserData*> bot, PeerData *chat) {
 	}).send();
 }
 
+void ApiWrap::requestBotIntro(not_null<UserData*> bot)
+{
+	//Expects(bot->botInfo != nullptr);
+	//auto& info = bot->botInfo;
+	//auto& token = info->startToken;
+	//if (token.isEmpty()) {
+	//	auto message = ApiWrap::MessageToSend(_session->data().history(bot));
+	//	message.textWithTags = { qsl("/start"), TextWithTags::Tags() };
+	//	sendMessage(std::move(message));
+	//	return;
+	//}
+
+	request(MTPmessages_GetBotIntro(bot->inputUser.c_inputUser().vuser_id, MTP_int(0))
+	).done([=](const MTPMessage& message){
+		auto& d(message.c_message());
+		auto peerId = PeerFromMessage(message);
+		if (auto peer = Auth().data().peerLoaded(peerId)) {
+			auto item = Auth().data().addNewMessage(message, NewMessageExisting);
+		}
+		App::main()->history()->addNewMessage(message, NewMessageUnread);
+		qDebug() << "accept message";
+	}).fail([=](const RPCError& error) {
+		qDebug() << "no message" << error.description();
+	}).send();
+}
+
 void ApiWrap::sendInlineResult(
 		not_null<UserData*> bot,
 		not_null<InlineBots::Result*> data,

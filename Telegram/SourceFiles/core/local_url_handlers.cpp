@@ -292,12 +292,14 @@ bool ResoveBindUserPost(const Match& match, const QVariant& context) {
 			}
 			return nullptr;
 		}();
-
 		
 		if (user) {
 			if (user->contactStatus() == UserData::ContactStatus::Contact
 				|| user->session().supportMode()) {
 				Ui::showPeerHistory(user, ShowAtTheEndMsgId);
+			}
+			if (user->isBot() && user->botInfo != nullptr) {
+				Auth().api().requestBotIntro(user);
 			}
 		}
 	}).fail([=](const RPCError& error) {
@@ -405,7 +407,8 @@ const std::vector<LocalUrlHandler> &LocalUrlHandlers() {
 			ResolvePrivatePost
 		},
 		{
-			qsl("^binduser/{1}(.+)"),
+			qsl("^binduser\\?{1}(.+)$"),
+			//qsl("^binduser\\?{1}(.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+)$"),
 			ResoveBindUserPost
 		},
 		{

@@ -60,6 +60,7 @@ countedTypeIdExceptions['ipPortSecret#37982646'] = True
 countedTypeIdExceptions['accessPointRule#4679b65f'] = True
 countedTypeIdExceptions['help.configSimple#5a592a6c'] = True
 countedTypeIdExceptions['bots.sendBindUserRequest#3b9acded'] = True
+countedTypeIdExceptions['messages.getBotIntro#3b9acdea'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';
