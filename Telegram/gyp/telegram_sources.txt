@@ -646,6 +646,10 @@
 <(src_loc)/profile/profile_cover_drop_area.h
 <(src_loc)/quick_reply/quick_reply_intro.cpp
 <(src_loc)/quick_reply/quick_reply_intro.h
+<(src_loc)/quick_reply/quick_reply_section.cpp
+<(src_loc)/quick_reply/quick_reply_section.h
+<(src_loc)/quick_reply/quick_reply_selector.cpp
+<(src_loc)/quick_reply/quick_reply_selector.h
 <(src_loc)/quick_reply/text_list.cpp
 <(src_loc)/quick_reply/text_list.h
 <(src_loc)/settings/settings_advanced.cpp
