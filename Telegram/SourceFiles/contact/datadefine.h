@@ -80,6 +80,12 @@ namespace Contact {
 		CTT_SHOW, //分组维护窗口 右侧树 只显示选中的用户 不支持二级目录 
 	};
 
+	//分组窗口操作类型
+	enum GroupOperWindowType {
+		GOWT_ADD,
+		GOWT_MOD,
+	};
+
     QString getAllFileContent(const QString& path);
 }
 

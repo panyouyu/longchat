@@ -18,12 +18,13 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 namespace Contact {
 
-GroupDialog::GroupDialog(QWidget *parent, ContactInfo* pCI) : QDialog(parent), _pCI(pCI) {
+GroupDialog::GroupDialog(QWidget *parent, ContactInfo* pCI, GroupOperWindowType gowt) : QDialog(parent), _pCI(pCI), _gowt(gowt) {
 	setObjectName(QStringLiteral("_contactgroupdialog"));
 	//setWindowFlags(Qt::CustomizeWindowHint | Qt::Dialog | Qt::FramelessWindowHint);
+	setWindowFlags( Qt::CustomizeWindowHint);
 	resize(550, 560);
 	setFixedSize(this->width(), this->height());
-
+	
 	freshData();
 	init();	
 	bindData();
@@ -40,9 +41,27 @@ GroupDialog::~GroupDialog() {
 
 
 
+void GroupDialog::reject()
+{
+	return QDialog::reject();
+}
+
+
 void GroupDialog::on__btnSave_clicked()
 {
-	return QDialog::accept();
+	QVector<MTPlong> userIdVec;
+	for (int i = 0; i < _vecContactSelected.size(); ++i) {
+		userIdVec.push_back(MTP_long(_vecContactSelected.at(i)->id));
+	}
+	QString groupName = _lineGroupName->text().trimmed();
+	if (_gowt == GOWT_ADD)
+	{
+		_allUserTagAddRequest = MTP::send(MTPcontacts_AddUserGroups(MTP_string(groupName), MTP_vector<MTPlong>(userIdVec)), rpcDone(&GroupDialog::userGroupDone), rpcFail(&GroupDialog::userGroupFail));
+	}
+	else {
+		_allUserTagModRequest = MTP::send(MTPcontacts_ModUserGroups(MTP_long(_pCI->id),MTP_string(groupName), MTP_vector<MTPlong>(userIdVec)), rpcDone(&GroupDialog::userGroupDone), rpcFail(&GroupDialog::userGroupFail));
+	}
+	//return QDialog::accept();
 }
 
 void GroupDialog::textFilterChanged()
@@ -158,15 +177,23 @@ void GroupDialog::init()
 	//_hBottomLayout->setSpacing(spacing);
 	_hBottomLayout->setObjectName(QStringLiteral("_hBottomLayout"));
 
+	_btnClose = new QPushButton(this);
+	_btnClose->setObjectName(QStringLiteral("_btnClose"));
+	_btnClose->setText(lang(lng_dlg_contact_close));
+	_hBottomLayout->addWidget(_btnClose);
+
 	_btnSave = new QPushButton(this);
 	_btnSave->setObjectName(QStringLiteral("_btnSave"));
 	_btnSave->setText(lang(lng_settings_save));
 	_hBottomLayout->addWidget(_btnSave);
+
+
 	//_hBottomLayout->addStretch();
 	_vLayout->addLayout(_hBottomLayout);
 
 
 	connect(_btnSave, SIGNAL(clicked()), this, SLOT(on__btnSave_clicked()));
+	connect(_btnClose, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(_filterWidget, &FilterWidget::filterChanged, this, &GroupDialog::textFilterChanged);
 	connect(_contactTree, SIGNAL(selectedUser(ContactInfo*)), this, SLOT(on_selectedUser(ContactInfo*)));
 	connect(_contactSelectedTree, SIGNAL(selectedUser(ContactInfo*)), this, SLOT(on_removeSelectedUser(ContactInfo*)));
@@ -177,7 +204,7 @@ void GroupDialog::init()
 void GroupDialog::genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId)
 {
 	auto time = unixtime();
-	qDebug() << user->id << peer->name << Data::OnlineText(user, time);
+	//qDebug() << user->id << peer->name << Data::OnlineText(user, time);
 	ci->id = user->id;
 	ci->firstName = peer->name;
 	ci->lastName = qsl("");
@@ -231,32 +258,33 @@ void GroupDialog::showCodeError(Fn<QString()> textFactory)
     reply = QMessageBox::information(this, tr("QMessageBox::information()"), textFactory());
 }
 
-void GroupDialog::userGroupDone(const MTPVector<MTPUserGroup>& result)
+void GroupDialog::userGroupDone(const MTPUserGroupReturn& result)
 {
-	_allUserTagRequest = 0;
-	for (const auto& userGroup : result.v) {
-		ContactInfo* info = new ContactInfo();
-		info->id = userGroup.c_userGroup().vtag_id.v;
-		info->firstName = userGroup.c_userGroup().vtag_name.v;
-		qDebug() << "groupInfo:" << info->id << info->firstName;
-		for (const auto& userId : userGroup.c_userGroup().vuser_ids.v) {
-			qDebug() << "groupInfo:" << userId.v;
-		}		
+	_allUserTagAddRequest = 0;
+	_allUserTagModRequest = 0;
+	int32 succeed = result.c_userGroupReturn().vis_success.v;
+	if (succeed == 0)
+	{
+		return QDialog::accept();
 	}
+	QMessageBox::StandardButton reply;
+	reply = QMessageBox::information(this, tr("QMessageBox::information()"), "fail!");
 }
 
 bool GroupDialog::userGroupFail(const RPCError& error)
 {
 	if (MTP::isFloodError(error)) {
 		//stopCheck();
-		_allUserTagRequest = 0;
+		_allUserTagAddRequest = 0;
+		_allUserTagModRequest = 0;
 		showCodeError(langFactory(lng_flood_error));
 		return true;
 	}
 	if (MTP::isDefaultHandledError(error)) return false;
 
 	//stopCheck();
-	_allUserTagRequest = 0;
+	_allUserTagAddRequest = 0;
+	_allUserTagModRequest = 0;
 	auto& err = error.type();
 	if (err == qstr("PASSWORD_WRONG")) {
 		showCodeError(langFactory(lng_signin_bad_password));
@@ -276,11 +304,6 @@ bool GroupDialog::userGroupFail(const RPCError& error)
 
 void GroupDialog::freshData()
 {
-
-	/////////获取分组数据//////////
-	_allUserTagRequest = MTP::send(MTPcontacts_GetUserGroups(), rpcDone(&GroupDialog::userGroupDone), rpcFail(&GroupDialog::userGroupFail));
-
-	///////////////
 	auto appendList = [this](auto chats) {
 		auto count = 0;
 		for (const auto row : chats->all()) {
@@ -293,7 +316,12 @@ void GroupDialog::freshData()
 						genContact(ci, user, peer, 0);
 						_vecContactPData.push_back(ci);
 					}
-					
+					else
+					{
+						ContactInfo* ci = new ContactInfo();
+						genContact(ci, user, peer, 0);
+						_vecContactSelected.push_back(ci);
+					}
 				}
 			}
 		}
@@ -305,7 +333,7 @@ void GroupDialog::freshData()
 
 void GroupDialog::bindData()
 {
-	if (nullptr != _pCI)
+	if (nullptr != _pCI && nullptr != _lineGroupName)
 	{
 		_lineGroupName->setText(_pCI->firstName);
 	}

@@ -30,6 +30,7 @@ signals:
 	void startChat();
 	void addGroup();
 	void modGroup(ContactInfo* pCI);
+	void delGroup(ContactInfo* pCI);
 	void selectedUser(PeerData*);
 	void selectedUser(ContactInfo* pCI);
 

@@ -24,8 +24,12 @@ class GroupDialog : public QDialog , public RPCSender {
 	Q_OBJECT
 
 public:
-	GroupDialog(QWidget *parent = 0, ContactInfo* pCI =nullptr);
+	GroupDialog(QWidget *parent = 0, ContactInfo* pCI =nullptr, GroupOperWindowType gowt = GOWT_ADD);
 	~GroupDialog();
+
+
+
+	virtual void reject() override;
 
 
 private slots:
@@ -49,7 +53,7 @@ private:
 	QVBoxLayout* _vLayout;
 	QHBoxLayout* _hBottomLayout;
 
-	
+	QPushButton* _btnClose;
 	QPushButton* _btnSave;
 	QVector<ContactInfo*> _vecContactPData;
 	QVector<ContactInfo*> _vecContactSelected; 
@@ -68,13 +72,15 @@ private:
 
 	void showCodeError(Fn<QString()> textFactory);
 
-	void userGroupDone(const MTPVector<MTPUserGroup>& result);
+	void userGroupDone(const MTPUserGroupReturn& result);
 	bool userGroupFail(const RPCError& error);
 
-	mtpRequestId _allUserTagRequest = 0;
+	mtpRequestId _allUserTagAddRequest = 0;
+	mtpRequestId _allUserTagModRequest = 0;
 
 private:
 	ContactInfo* _pCI { nullptr };
+	GroupOperWindowType _gowt;
 
 };
 

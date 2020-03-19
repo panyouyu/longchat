@@ -122,7 +122,7 @@ void UserLoginWidget::initData()
 		_unameField->setText(Global::KefuUserName());
 	}
 	
-	_pwdField->setText("kf123");
+	//_pwdField->setText("kf123");
 	
 }
 
@@ -213,11 +213,11 @@ void UserLoginWidget::submit()
 	//goNext(new Intro::PwdCheckWidget(parentWidget(), getData()));
 
 	QString veriCode = _picCode->getVerificationCode();
-	//if (QString::compare(veriCode, _codeField->getLastText(), Qt::CaseInsensitive) != 0)
-	//{
-	//	Ui::show(Box<InformBox>(lang(lng_login_input_code_error)));
-	//	return;
-	//}
+	if (QString::compare(veriCode, _codeField->getLastText(), Qt::CaseInsensitive) != 0)
+	{
+		Ui::show(Box<InformBox>(lang(lng_login_input_code_error)));
+		return;
+	}
 
 	if (_kefuLoginRequest) {
 		return;
