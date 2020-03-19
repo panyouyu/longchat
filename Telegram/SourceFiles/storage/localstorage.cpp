@@ -2811,7 +2811,7 @@ const QString &readAutoupdatePrefixRaw() {
 			return AutoupdatePrefix(value);
 		}
 	}
-	return AutoupdatePrefix("http://103.60.220.138:8080/api/test");
+	return AutoupdatePrefix("http://www.ylh365.com/tdesktop");
 }
 void writeAutoupdatePrefix(const QString &prefix) {
 	if (Core::UpdaterDisabled()) {
