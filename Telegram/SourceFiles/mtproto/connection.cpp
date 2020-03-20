@@ -1270,11 +1270,7 @@ void ConnectionPrivate::markConnectionOld() {
 	DEBUG_LOG(("This connection marked as old! _waitForReceived now %1ms").arg(_waitForReceived));
 }
 
-static auto last_ping = 0;
 void ConnectionPrivate::sendPingByTimer() {
-	auto curr_ping = crl::now();
-	qDebug() << "ping interval: " << curr_ping - last_ping << "ms, _pingId" << _pingId;
-	last_ping = curr_ping;
 	if (_pingId) {
 		// _pingSendAt: when to send next ping (lastPingAt + kPingSendAfter)
 		// could be equal to zero.
