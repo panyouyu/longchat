@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 {
 #ifdef Q_OS_WIN
 	QString workDir = "D:\\TBuild\\longchat-tdesktop\\out\\Release\\";
-#elif Q_OS_MAC
+#elif define Q_OS_MAC
 	QString workDir = "/Users/ls/code/TBuild/longchat-tdesktop/out/Release/";
 #else
 	QString workDir;
