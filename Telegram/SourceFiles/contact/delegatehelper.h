@@ -17,6 +17,8 @@ namespace Contact {
 		void paintText(QPainter* painter, Qt::AlignmentFlag alignFlag, const QColor& color, const QRect& paintRect, int fontSize, QString content = "", QString fontFamily = "Microsoft YaHei");
         //画圆
         void paintEllipse(QPainter* painter, const QColor& color, const QRect& paintRect);
+		//矩形
+		void paintRect(QPainter* painter, const QColor& color, const QRect& paintRect);
 
     };
 }

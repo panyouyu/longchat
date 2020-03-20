@@ -58,7 +58,7 @@ namespace Contact {
         Q_OBJECT
 
     public:
-        ContactDelegate(QObject* parent = 0);
+        ContactDelegate(CreatingTreeType ctt, QObject* parent = 0);
         ~ContactDelegate();
 
 
@@ -74,6 +74,7 @@ namespace Contact {
         QPixmap rixmapToRound(const QPixmap& src, int radius) const;
 
         ContactStyleInfo m_si;
+        CreatingTreeType m_ctt;
     };
 }
 

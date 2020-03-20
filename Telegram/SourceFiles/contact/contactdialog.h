@@ -34,6 +34,7 @@ private slots:
 	void textFilterChanged();
 	void slotAddGroup();
 	void slotModGroup(ContactInfo* pCI);
+	void slotDelGroup(ContactInfo* pCI);
 
 private:
 	QLabel* _labTitle;
@@ -47,25 +48,26 @@ private:
 	QPushButton* _btnClose;
 	QVector<ContactInfo*> _vecContactPData;
 	QVector<ContactInfo*> _vecContactPData4Search; //qt5.10以后才支持下级查询，所以这里把下级提升为1级查询 且把parentid设置为0
+	QMap<uint64, QSet<uint64>> _mapUser2Group;
 protected:
 	virtual void closeEvent(QCloseEvent* event) override;
 
 private:
 	void init();
 	void freshData();
+	void clearData();
 	void freshData_test();
 	void genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId);
 
+	bool existUser(uint64 userId);
+
 private:
-	mtpRequestId _kefuLoginRequest = 0;
-	void codeSubmitDone(const MTPauth_Authorization& result);
-	bool codeSubmitFail(const RPCError& error);
 	void showCodeError(Fn<QString()> textFactory);
 
-	void userGroupDone(const MTPVector<MTPUserGroup>& result);
+	void userGroupDone(const MTPUserGroupList& result);
 	bool userGroupFail(const RPCError& error);
 
-	void userGroupDelDone(const MTPVector<MTPUserGroup>& result);
+	void userGroupDelDone(const MTPUserGroupReturn& result);
 	bool userGroupDelFail(const RPCError& error);
 
 	mtpRequestId _allUserTagRequest = 0;

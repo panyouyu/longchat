@@ -285,7 +285,7 @@ namespace Contact {
     {
         Q_ASSERT(item);
         ContactInfo* pCIHeader = item->data();
-        qDebug() << "***["<< item << item->m_pCI <<"]" << pCIHeader << pCIHeader->firstName << " :" << pCIHeader->expanded;
+        //qDebug() << "***["<< item << item->m_pCI <<"]" << pCIHeader << pCIHeader->firstName << " :" << pCIHeader->expanded;
         if (item->childCount() > 0)
         {
             for (int i = 0; i < item->childCount(); i++)

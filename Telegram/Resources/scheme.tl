@@ -1041,9 +1041,9 @@ help.deepLinkInfoEmpty#66afa166 = help.DeepLinkInfo;
 help.deepLinkInfo#6a4ee832 flags:# update_app:flags.0?true message:string entities:flags.1?Vector<MessageEntity> = help.DeepLinkInfo;
 
 savedPhoneContact#1142bd56 phone:string first_name:string last_name:string date:int = SavedContact;
-userGroup#3b92c21e tag_id:long tag_name:string user_ids:vector<long> = UserGroup;
+userGroup#3b9aca21 tag_id:long tag_name:string user_ids:Vector<long> = UserGroup;
 userGroupList#3b9aca0e tag_users:Vector<UserGroup> = UserGroupList;
-userGroupDelReturn#3b9aca15 is_success:int = UserGroupDelReturn;
+userGroupReturn#3b9aca15 is_success:int = UserGroupReturn;
 
 account.takeout#4dba4501 id:long = account.Takeout;
 
@@ -1243,8 +1243,9 @@ contacts.resetSaved#879537f1 = Bool;
 contacts.getSaved#82f1e39f = Vector<SavedContact>;
 contacts.toggleTopPeers#8514bdda enabled:Bool = Bool;
 contacts.getUserGroups#3b9aca0d = UserGroupList;
-contacts.delUserGroups#3b9aca09 tag_id:long = UserGroupDelReturn;
-
+contacts.delUserGroups#3b9aca09 tag_id:long = UserGroupReturn;
+contacts.addUserGroups#3b9aca07 tag_name:string user_ids:Vector<long> = UserGroupReturn;
+contacts.modUserGroups#3b9aca0b tag_id:long tag_name:string user_ids:Vector<long> = UserGroupReturn;
 
 messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
 messages.getDialogs#b098aee6 flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:int = messages.Dialogs;

@@ -61,4 +61,18 @@ namespace Contact {
 		painter->restore();
 	}
 
+	void DelegateHelper::paintRect(QPainter* painter, const QColor& color, const QRect& paintRect)
+	{
+		painter->save();
+		// 反走样
+		painter->setRenderHint(QPainter::Antialiasing, true);
+		// 设置画笔颜色、宽度
+		painter->setPen(QPen(color, 1));
+		// 设置画刷颜色
+		painter->setBrush(color);
+		// 绘制圆
+		painter->drawRect(paintRect);
+		painter->restore();
+	}
+
 }

@@ -22,7 +22,7 @@ ContactTreeView::ContactTreeView(CreatingTreeType ctt, QWidget *parent) : QTreeV
 	_sortFilterProxyModel = new MySortFilterProxyModel();
 	setModel(_sortFilterProxyModel);
 
-	_contactDelegate = new ContactDelegate(this);
+	_contactDelegate = new ContactDelegate(_ctt, this);
 	setItemDelegate(_contactDelegate);
 
 	initConnection();
@@ -62,8 +62,11 @@ void ContactTreeView::slotCustomContextMenu(const QPoint& point)
 				pModGroup->setData(QVariant::fromValue(pCI));
 				connect(pModGroup, SIGNAL(triggered()), this, SLOT(slotModGroup()));
 				menu->addAction(pModGroup);
-				//menu->addAction(lang(lng_dlg_contact_group_rename), this, SLOT(slotModGroup()));
-				menu->addAction(lang(lng_dlg_contact_group_del), this, SLOT(slotDelGroup()));
+
+				QAction* pDelGroup = new QAction(lang(lng_dlg_contact_group_del), this);
+				pDelGroup->setData(QVariant::fromValue(pCI));
+				connect(pDelGroup, SIGNAL(triggered()), this, SLOT(slotDelGroup()));
+				menu->addAction(pDelGroup);
 			}
 			menu->exec(this->mapToGlobal(point));
 		}
@@ -97,7 +100,14 @@ void ContactTreeView::slotModGroup()
 
 void ContactTreeView::slotDelGroup()
 {
-
+	QAction* pSendMsg = nullptr;
+	ContactInfo* pCI = nullptr;
+	do
+	{
+		pSendMsg = qobject_cast<QAction*>(sender());
+		pCI = pSendMsg->data().value<ContactInfo*>();
+	} while (false);
+	emit delGroup(pCI);
 }
 
 void ContactTreeView::initConnection()

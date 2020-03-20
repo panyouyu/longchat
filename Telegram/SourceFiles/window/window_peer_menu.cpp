@@ -11,6 +11,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/confirm_box.h"
 #include "boxes/mute_settings_box.h"
 #include "boxes/add_contact_box.h"
+#include "contact/contactswitchdialog.h"
 #include "boxes/report_box.h"
 #include "boxes/create_poll_box.h"
 #include "boxes/peers/add_participants_box.h"
@@ -58,6 +59,7 @@ private:
 	void addToggleUnreadMark();
 	void addUserActions(not_null<UserData*> user);
 	void addBlockUser(not_null<UserData*> user);
+	void addSwitchboardUser(not_null<UserData*> user);
 	void addChatActions(not_null<ChatData*> chat);
 	void addChannelActions(not_null<ChannelData*> channel);
 
@@ -302,6 +304,15 @@ void Filler::addBlockUser(not_null<UserData*> user) {
 	}
 }
 
+void Filler::addSwitchboardUser(not_null<UserData*> user) {
+	auto blockAction = _addAction(lang(lng_switchboard_user), [=] {
+		Contact::SwitchDialog dlg;
+		dlg.exec();
+		});
+}
+
+
+
 void Filler::addUserActions(not_null<UserData*> user) {
 	if (_source != PeerMenuSource::ChatsList) {
 		if (Auth().supportMode()) {
@@ -350,6 +361,7 @@ void Filler::addUserActions(not_null<UserData*> user) {
 	if (!user->isInaccessible() && user != Auth().user()) {
 		addBlockUser(user);
 	}
+	addSwitchboardUser(user);
 }
 
 void Filler::addChatActions(not_null<ChatData*> chat) {
