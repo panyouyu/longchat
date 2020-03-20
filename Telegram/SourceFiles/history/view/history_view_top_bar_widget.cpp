@@ -27,6 +27,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/effects/radial_animation.h"
 #include "window/window_controller.h"
 #include "window/window_peer_menu.h"
+#include "quick_reply/quick_reply_section.h"
+#include "quick_reply/quick_reply_selector.h"
 #include "calls/calls_instance.h"
 #include "data/data_peer_values.h"
 #include "data/data_feed.h"
@@ -71,6 +73,7 @@ TopBarWidget::TopBarWidget(
 	_call->setClickedCallback([this] { onCall(); });
 	_search->setClickedCallback([this] { onSearch(); });
 	_menuToggle->setClickedCallback([this] { showMenu(); });
+    _quickReplyToggle->setClickedCallback([this] { toggleQuickReplySection(); });
 	_infoToggle->setClickedCallback([this] { toggleInfoSection(); });
 	_back->addClickHandler([this] { backClicked(); });
 
@@ -236,7 +239,21 @@ void TopBarWidget::showMenu() {
 void TopBarWidget::toggleQuickReplySection() {
     if (Adaptive::ThreeColumn()
         && Auth().settings().thirdSectionInfoEnabled()) {
-        return;
+        _controller->closeThirdSection();
+    }
+    else if (_activeChat) {
+        if (_controller->canShowThirdSection()) {
+            Auth().settings().setThirdSectionExtendedBy(true);
+            Auth().saveSettingsDelayed();
+            if (Adaptive::ThreeColumn()) {
+                _controller->showSection(QuickReply::QuickReplyMemento(object_ptr<QuickReply::QuickReplySelector>(this, _controller)));
+            } else {
+                _controller->resizeForThirdSection();
+                _controller->updateColumnLayout();
+            }
+        }
+    } else {
+        updateControlsVisibility();
     }
 }
     
