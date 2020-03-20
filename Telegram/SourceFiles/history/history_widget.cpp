@@ -253,8 +253,8 @@ HistoryWidget::HistoryWidget(
 	connect(Media::Capture::instance(), SIGNAL(done(QByteArray,VoiceWaveform,qint32)), this, SLOT(onRecordDone(QByteArray,VoiceWaveform,qint32)));
 
 	_shortcut->setShortcut(QKeySequence("Shift+1"));
-	connect(_shortcut, &QxtGlobalShortcut::activated,
-		[=]() { createScreenShot(); });
+//    connect(_shortcut, &QxtGlobalShortcut::activated,
+//        [=]() { createScreenShot(); });
 
 	_attachToggle->setClickedCallback(App::LambdaDelayed(st::historyAttach.ripple.hideDuration, this, [this] {
 		chooseAttach();
