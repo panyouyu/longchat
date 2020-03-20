@@ -40,3 +40,9 @@ QLabel#_labTitle {
 	font-size: 18px;
 	font-weight:bold;
 }
+
+QLineEdit {
+      border-bottom: 2px solid;
+      border-color: rgb(55, 161, 222);
+      padding: 0 8px;
+  }
