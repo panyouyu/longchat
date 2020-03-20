@@ -57,7 +57,6 @@ TopBarWidget::TopBarWidget(
 , _back(this, st::historyTopBarBack)
 , _call(this, st::topBarCall)
 , _search(this, st::topBarSearch)
-, _quickReplyToggle(this, st::topBarQuickReply)
 , _infoToggle(this, st::topBarInfo)
 , _menuToggle(this, st::topBarMenuToggle)
 , _titlePeerText(st::windowMinWidth / 3)
@@ -73,7 +72,6 @@ TopBarWidget::TopBarWidget(
 	_call->setClickedCallback([this] { onCall(); });
 	_search->setClickedCallback([this] { onSearch(); });
 	_menuToggle->setClickedCallback([this] { showMenu(); });
-    _quickReplyToggle->setClickedCallback([this] { toggleQuickReplySection(); });
 	_infoToggle->setClickedCallback([this] { toggleInfoSection(); });
 	_back->addClickHandler([this] { backClicked(); });
 
@@ -236,27 +234,6 @@ void TopBarWidget::showMenu() {
 	_menu->showAnimated(Ui::PanelAnimation::Origin::TopRight);
 }
 
-void TopBarWidget::toggleQuickReplySection() {
-    if (Adaptive::ThreeColumn()
-        && Auth().settings().thirdSectionInfoEnabled()) {
-        _controller->closeThirdSection();
-    }
-    else if (_activeChat) {
-        if (_controller->canShowThirdSection()) {
-            Auth().settings().setThirdSectionExtendedBy(true);
-            Auth().saveSettingsDelayed();
-            if (Adaptive::ThreeColumn()) {
-                _controller->showSection(QuickReply::QuickReplyMemento(object_ptr<QuickReply::QuickReplySelector>(this, _controller)));
-            } else {
-                _controller->resizeForThirdSection();
-                _controller->updateColumnLayout();
-            }
-        }
-    } else {
-        updateControlsVisibility();
-    }
-}
-    
 void TopBarWidget::toggleInfoSection() {
 	if (Adaptive::ThreeColumn()
 		&& (Auth().settings().thirdSectionInfoEnabled()
@@ -553,10 +530,6 @@ void TopBarWidget::updateControlsGeometry() {
 	if (!_infoToggle->isHidden()) {
 		_rightTaken += _infoToggle->width() + st::topBarSkip;
 	}
-    _quickReplyToggle->moveToRight(_rightTaken, otherButtonsTop);
-    if (!_quickReplyToggle->isHidden()) {
-        _rightTaken += _quickReplyToggle->width() + st::topBarSkip;
-    }
 	if (!_search->isHidden()) {
 		_search->moveToRight(_rightTaken, otherButtonsTop);
 		_rightTaken += _search->width() + st::topBarCallSkip;
@@ -603,8 +576,6 @@ void TopBarWidget::updateControlsVisibility() {
 	_menuToggle->show();
 	_infoToggle->setVisible(!Adaptive::OneColumn()
 		&& _controller->canShowThirdSection());
-    _quickReplyToggle->setVisible(!Adaptive::OneColumn()
-        && _controller->canShowThirdSection());
 	const auto callsEnabled = [&] {
 		if (const auto peer = _activeChat.peer()) {
 			if (const auto user = peer->asUser()) {

@@ -62,6 +62,7 @@ QByteArray AuthSessionSettings::serialize() const {
 		stream << static_cast<qint32>(_variables.selectorTab);
 		stream << qint32(_variables.lastSeenWarningSeen ? 1 : 0);
 		stream << qint32(_variables.tabbedSelectorSectionEnabled ? 1 : 0);
+		stream << qint32(_variables.thirdSectionQuickReplyEnabled ? 1 : 0);
 		stream << qint32(_variables.soundOverrides.size());
 		for (auto i = _variables.soundOverrides.cbegin(), e = _variables.soundOverrides.cend(); i != e; ++i) {
 			stream << i.key() << i.value();
@@ -107,6 +108,7 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	qint32 selectorTab = static_cast<qint32>(ChatHelpers::SelectorTab::Emoji);
 	qint32 lastSeenWarningSeen = 0;
 	qint32 tabbedSelectorSectionEnabled = 1;
+	qint32 thirdSectionQuickReplyEnabled = 1;
 	qint32 tabbedSelectorSectionTooltipShown = 0;
 	qint32 floatPlayerColumn = static_cast<qint32>(Window::Column::Second);
 	qint32 floatPlayerCorner = static_cast<qint32>(RectPart::TopRight);
@@ -134,6 +136,9 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	stream >> lastSeenWarningSeen;
 	if (!stream.atEnd()) {
 		stream >> tabbedSelectorSectionEnabled;
+	}
+	if (!stream.atEnd()) {
+		stream >> thirdSectionQuickReplyEnabled;
 	}
 	if (!stream.atEnd()) {
 		auto count = qint32(0);
@@ -226,6 +231,7 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	}
 	_variables.lastSeenWarningSeen = (lastSeenWarningSeen == 1);
 	_variables.tabbedSelectorSectionEnabled = (tabbedSelectorSectionEnabled == 1);
+	_variables.thirdSectionQuickReplyEnabled = (thirdSectionQuickReplyEnabled == 1);
 	_variables.soundOverrides = std::move(soundOverrides);
 	_variables.tabbedSelectorSectionTooltipShown = tabbedSelectorSectionTooltipShown;
 	auto uncheckedColumn = static_cast<Window::Column>(floatPlayerColumn);
@@ -249,6 +255,9 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	_variables.thirdSectionExtendedBy = thirdSectionExtendedBy;
 	if (_variables.thirdSectionInfoEnabled) {
 		_variables.tabbedSelectorSectionEnabled = false;
+	}
+	if (_variables.thirdSectionQuickReplyEnabled) {
+		_variables.thirdSectionQuickReplyEnabled = false;
 	}
 	auto uncheckedSendFilesWay = static_cast<SendFilesWay>(sendFilesWay);
 	switch (uncheckedSendFilesWay) {
@@ -307,6 +316,16 @@ void AuthSessionSettings::setTabbedSelectorSectionEnabled(bool enabled) {
 	_variables.tabbedSelectorSectionEnabled = enabled;
 	if (enabled) {
 		setThirdSectionInfoEnabled(false);
+		setThirdSectionQuickReplyEnabled(false);
+	}
+	setTabbedReplacedWithInfo(false);
+}
+
+void AuthSessionSettings::setThirdSectionQuickReplyEnabled(bool enabled) {
+	_variables.thirdSectionQuickReplyEnabled = enabled;
+	if (enabled) {
+		setTabbedSelectorSectionEnabled(false);
+		setThirdSectionInfoEnabled(false);
 	}
 	setTabbedReplacedWithInfo(false);
 }
@@ -321,6 +340,7 @@ void AuthSessionSettings::setThirdSectionInfoEnabled(bool enabled) {
 		_variables.thirdSectionInfoEnabled = enabled;
 		if (enabled) {
 			setTabbedSelectorSectionEnabled(false);
+			setThirdSectionQuickReplyEnabled(false);
 		}
 		setTabbedReplacedWithInfo(false);
 		_thirdSectionInfoEnabledValue.fire_copy(enabled);

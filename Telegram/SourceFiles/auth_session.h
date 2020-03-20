@@ -117,6 +117,10 @@ public:
 		return _variables.tabbedSelectorSectionEnabled;
 	}
 	void setTabbedSelectorSectionEnabled(bool enabled);
+	bool thirdSectionQuickReplyEnabled() const {
+		return _variables.thirdSectionQuickReplyEnabled;
+	}
+	void setThirdSectionQuickReplyEnabled(bool enabled);
 	bool thirdSectionInfoEnabled() const {
 		return _variables.thirdSectionInfoEnabled;
 	}
@@ -222,6 +226,7 @@ private:
 		SendFilesWay sendFilesWay;
 		ChatHelpers::SelectorTab selectorTab; // per-window
 		bool tabbedSelectorSectionEnabled = false; // per-window
+		bool thirdSectionQuickReplyEnabled = false;
 		int tabbedSelectorSectionTooltipShown = 0;
 		QMap<QString, QString> soundOverrides;
 		Window::Column floatPlayerColumn; // per-window

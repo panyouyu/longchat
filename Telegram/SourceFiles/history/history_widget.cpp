@@ -12,6 +12,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/share_box.h"
 #include "boxes/edit_caption_box.h"
 #include "core/file_utilities.h"
+#include "quick_reply/quick_reply_intro.h"
 #include "ui/toast/toast.h"
 #include "ui/special_buttons.h"
 #include "ui/emoji_config.h"
@@ -197,6 +198,7 @@ HistoryWidget::HistoryWidget(
 	st::historyComposeButton)
 , _muteUnmute(this, lang(lng_channel_mute).toUpper(), st::historyComposeButton)
 , _attachToggle(this, st::historyAttach)
+, _quickReplyToggle(this, st::quickReplyToggle)
 , _screenShotToggle(this)
 , _tabbedSelectorToggle(this, st::historyAttachEmoji)
 , _botKeyboardShow(this, st::historyBotKeyboardShow)
@@ -343,6 +345,7 @@ HistoryWidget::HistoryWidget(
 	_record->setRecordAnimationCallback([this] { updateField(); });
 
 	_attachToggle->hide();
+	_quickReplyToggle->hide();
 	_screenShotToggle->hide();
 	_tabbedSelectorToggle->hide();
 	_botKeyboardShow->hide();
@@ -2007,6 +2010,7 @@ void HistoryWidget::updateControlsVisibility() {
 		_kbScroll->hide();
 		_fieldBarCancel->hide();
 		_attachToggle->hide();
+		_quickReplyToggle->hide();
 		_screenShotToggle->hide();
 		_tabbedSelectorToggle->hide();
 		_botKeyboardShow->hide();
@@ -2067,6 +2071,7 @@ void HistoryWidget::updateControlsVisibility() {
 				}
 			}
 			_attachToggle->show();
+			_quickReplyToggle->show();
 			_screenShotToggle->show();
 			if (_silent) {
 				_silent->show();
@@ -3069,6 +3074,9 @@ void HistoryWidget::chooseAttach() {
 
 void HistoryWidget::createScreenShot()
 {
+	App::wnd()->showSpecialLayer(Box<QuickReply::LayerWidget>(), anim::type::normal);
+	return;
+
 	if (_shotScreen.data()) return;
     
 	_shotScreen.create(nullptr);
@@ -3775,6 +3783,10 @@ void HistoryWidget::toggleTabbedSelectorMode() {
 	}
 }
 
+void HistoryWidget::toggleQuickReplySection() {
+
+}
+
 void HistoryWidget::returnTabbedSelector(
 		object_ptr<TabbedSelector> selector) {
 	_tabbedPanel.create(
@@ -3814,6 +3826,7 @@ void HistoryWidget::moveFieldControls() {
 	auto buttonsBottom = bottom - _attachToggle->height() - _field->height() - st::historySendPadding * 2 - _send->height();
 	auto left = 0;
 	_tabbedSelectorToggle->moveToLeft(left, buttonsBottom); left += _tabbedSelectorToggle->width();
+	_quickReplyToggle->moveToLeft(left, buttonsBottom); left += _quickReplyToggle->width();
 	_attachToggle->moveToLeft(left, buttonsBottom); left += _attachToggle->width();
 	_screenShotToggle->moveToLeft(left, buttonsBottom);	left += _screenShotToggle->width();
 	if (showRecordButton()) {
