@@ -252,7 +252,7 @@ HistoryWidget::HistoryWidget(
 	connect(Media::Capture::instance(), SIGNAL(updated(quint16,qint32)), this, SLOT(onRecordUpdate(quint16,qint32)));
 	connect(Media::Capture::instance(), SIGNAL(done(QByteArray,VoiceWaveform,qint32)), this, SLOT(onRecordDone(QByteArray,VoiceWaveform,qint32)));
 
-	_shortcut->setShortcut(QKeySequence("Shift+1"));
+//	_shortcut->setShortcut(QKeySequence("Shift+1"));
 //    connect(_shortcut, &QxtGlobalShortcut::activated,
 //        [=]() { createScreenShot(); });
 
