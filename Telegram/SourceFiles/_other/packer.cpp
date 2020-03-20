@@ -8,6 +8,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "packer.h"
 
 #include <QtCore/QtPlugin>
+#include <QDebug>
 
 #ifdef Q_OS_MAC
 //Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
@@ -128,7 +129,13 @@ QString AlphaSignature;
 
 int main(int argc, char *argv[])
 {
-	QString workDir = "C:\\Users\\levy\\Desktop\\test\\tsetup\\";
+#ifdef Q_OS_WIN
+	QString workDir = "D:\\TBuild\\longchat-tdesktop\\out\\Release\\";
+#elif Q_OS_MAC
+	QString workDir = "/Users/ls/code/TBuild/longchat-tdesktop/out/Release/";
+#else
+	QString workDir;
+#endif
 
 	QString remove;
 	int version = 0;
@@ -156,7 +163,7 @@ int main(int argc, char *argv[])
 					return -1;
 				}
 			} else {
-				cout << "Bad -alpha param value passed, should be for the same version: " << version << ", alpha: " << AlphaVersion << "\n";
+				qDebug() << "Bad -alpha param value passed, should be for the same version: " << version << ", alpha: " << AlphaVersion << "\n";
 				return -1;
 			}
 		}
@@ -164,11 +171,11 @@ int main(int argc, char *argv[])
 
 	if (files.isEmpty() || remove.isEmpty() || version <= 1016 || version > 999999999) {
 #ifdef Q_OS_WIN
-		cout << "Usage: Packer.exe -path {file} -version {version} OR Packer.exe -path {dir} -version {version}\n";
+		qDebug() << "Usage: Packer.exe -path {file} -version {version} OR Packer.exe -path {dir} -version {version}\n";
 #elif defined Q_OS_MAC
-		cout << "Usage: Packer.app -path {file} -version {version} OR Packer.app -path {dir} -version {version}\n";
+		qDebug() << "Usage: Packer.app -path {file} -version {version} OR Packer.app -path {dir} -version {version}\n";
 #else
-		cout << "Usage: Packer -path {file} -version {version} OR Packer -path {dir} -version {version}\n";
+		qDebug() << "Usage: Packer -path {file} -version {version} OR Packer -path {dir} -version {version}\n";
 #endif
 		return -1;
 	}
@@ -188,7 +195,7 @@ int main(int argc, char *argv[])
 				files.append(d.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot));
 				break;
 			} else if (!info.isReadable()) {
-				cout << "Can't read: " << info.absoluteFilePath().toUtf8().constData() << "\n";
+				qDebug() << "Can't read: " << info.absoluteFilePath().toUtf8().constData() << "\n";
 				return -1;
 			} else if (info.isHidden()) {
 				hasDirs = true;
@@ -200,7 +207,7 @@ int main(int argc, char *argv[])
 	for (QFileInfoList::iterator i = files.begin(); i != files.end(); ++i) {
 		QFileInfo info(*i);
 		if (!info.canonicalFilePath().startsWith(remove)) {
-			cout << "Can't find '" << remove.toUtf8().constData() << "' in file '" << info.canonicalFilePath().toUtf8().constData() << "' :(\n";
+			qDebug() << "Can't find '" << remove.toUtf8().constData() << "' in file '" << info.canonicalFilePath().toUtf8().constData() << "' :(\n";
 			return -1;
 		}
 	}
@@ -220,16 +227,16 @@ int main(int argc, char *argv[])
 		}
 
 		stream << quint32(files.size());
-		cout << "Found " << files.size() << " file" << (files.size() == 1 ? "" : "s") << "..\n";
+		qDebug() << "Found " << files.size() << " file" << (files.size() == 1 ? "" : "s") << "..\n";
 		for (QFileInfoList::iterator i = files.begin(); i != files.end(); ++i) {
 			QFileInfo info(*i);
 			QString fullName = info.canonicalFilePath();
 			QString name = fullName.mid(remove.length());
-			cout << name.toUtf8().constData() << " (" << info.size() << ")\n";
+			qDebug() << name.toUtf8().constData() << " (" << info.size() << ")\n";
 
 			QFile f(fullName);
 			if (!f.open(QIODevice::ReadOnly)) {
-				cout << "Can't open '" << fullName.toUtf8().constData() << "' for read..\n";
+				qDebug() << "Can't open '" << fullName.toUtf8().constData() << "' for read..\n";
 				return -1;
 			}
 			QByteArray inner = f.readAll();
@@ -239,13 +246,13 @@ int main(int argc, char *argv[])
 #endif
 		}
 		if (stream.status() != QDataStream::Ok) {
-			cout << "Stream status is bad: " << stream.status() << "\n";
+			qDebug() << "Stream status is bad: " << stream.status() << "\n";
 			return -1;
 		}
 	}
 
 	int32 resultSize = result.size();
-	cout << "Compression start, size: " << resultSize << "\n";
+	qDebug() << "Compression start, size: " << resultSize << "\n";
 
 	QByteArray compressed, resultCheck;
 #ifdef Q_OS_WIN // use Lzma SDK for win
@@ -262,20 +269,20 @@ int main(int argc, char *argv[])
 	uchar *_outProps = (uchar*)(compressed.data() + hSigLen + hShaLen);
 	int res = LzmaCompress(_dest, _destLen, _src, _srcLen, _outProps, &outPropsSize, 9, 64 * 1024 * 1024, 4, 0, 2, 273, 2);
 	if (res != SZ_OK) {
-		cout << "Error in compression: " << res << "\n";
+		qDebug() << "Error in compression: " << res << "\n";
 		return -1;
 	}
 	compressed.resize(int(hSize + compressedLen));
 	memcpy(compressed.data() + hSigLen + hShaLen + hPropsLen, &resultSize, hOriginalSizeLen);
 
-	cout << "Compressed to size: " << compressedLen << "\n";
+	qDebug() << "Compressed to size: " << compressedLen << "\n";
 
-	cout << "Checking uncompressed..\n";
+	qDebug() << "Checking uncompressed..\n";
 
 	int32 resultCheckLen;
 	memcpy(&resultCheckLen, compressed.constData() + hSigLen + hShaLen + hPropsLen, hOriginalSizeLen);
 	if (resultCheckLen <= 0 || resultCheckLen > 1024 * 1024 * 1024) {
-		cout << "Bad result len: " << resultCheckLen << "\n";
+		qDebug() << "Bad result len: " << resultCheckLen << "\n";
 		return -1;
 	}
 	resultCheck.resize(resultCheckLen);
@@ -284,11 +291,11 @@ int main(int argc, char *argv[])
 	SizeT srcLen = compressedLen;
 	int uncompressRes = LzmaUncompress((uchar*)resultCheck.data(), &resultLen, (const uchar*)(compressed.constData() + hSize), &srcLen, (const uchar*)(compressed.constData() + hSigLen + hShaLen), LZMA_PROPS_SIZE);
 	if (uncompressRes != SZ_OK) {
-		cout << "Uncompress failed: " << uncompressRes << "\n";
+		qDebug() << "Uncompress failed: " << uncompressRes << "\n";
 		return -1;
 	}
 	if (resultLen != size_t(result.size())) {
-		cout << "Uncompress bad size: " << resultLen << ", was: " << result.size() << "\n";
+		qDebug() << "Uncompress bad size: " << resultLen << ", was: " << result.size() << "\n";
 		return -1;
 	}
 #else // use liblzma for others
@@ -310,7 +317,7 @@ int main(int argc, char *argv[])
 			case LZMA_UNSUPPORTED_CHECK: msg = "Specified integrity check is not supported"; break;
 			default: msg = "Unknown error, possibly a bug"; break;
 		}
-		cout << "Error initializing the encoder: " << msg << " (error code " << ret << ")\n";
+		qDebug() << "Error initializing the encoder: " << msg << " (error code " << ret << ")\n";
 		return -1;
 	}
 
@@ -329,21 +336,21 @@ int main(int argc, char *argv[])
 			case LZMA_DATA_ERROR: msg = "File size limits exceeded"; break;
 			default: msg = "Unknown error, possibly a bug"; break;
 		}
-		cout << "Error in compression: " << msg << " (error code " << res << ")\n";
+		qDebug() << "Error in compression: " << msg << " (error code " << res << ")\n";
 		return -1;
 	}
 
 	compressed.resize(int(hSize + compressedLen));
 	memcpy(compressed.data() + hSigLen + hShaLen, &resultSize, hOriginalSizeLen);
 
-	cout << "Compressed to size: " << compressedLen << "\n";
+	qDebug() << "Compressed to size: " << compressedLen << "\n";
 
-	cout << "Checking uncompressed..\n";
+	qDebug() << "Checking uncompressed..\n";
 
 	int32 resultCheckLen;
 	memcpy(&resultCheckLen, compressed.constData() + hSigLen + hShaLen, hOriginalSizeLen);
 	if (resultCheckLen <= 0 || resultCheckLen > 1024 * 1024 * 1024) {
-		cout << "Bad result len: " << resultCheckLen << "\n";
+		qDebug() << "Bad result len: " << resultCheckLen << "\n";
 		return -1;
 	}
 	resultCheck.resize(resultCheckLen);
@@ -361,7 +368,7 @@ int main(int argc, char *argv[])
 			case LZMA_UNSUPPORTED_CHECK: msg = "Specified integrity check is not supported"; break;
 			default: msg = "Unknown error, possibly a bug"; break;
 		}
-		cout << "Error initializing the decoder: " << msg << " (error code " << ret << ")\n";
+		qDebug() << "Error initializing the decoder: " << msg << " (error code " << ret << ")\n";
 		return -1;
 	}
 
@@ -372,10 +379,10 @@ int main(int argc, char *argv[])
 
 	res = lzma_code(&stream, LZMA_FINISH);
 	if (stream.avail_in) {
-		cout << "Error in decompression, " << stream.avail_in << " bytes left in _in of " << compressedLen << " whole.\n";
+		qDebug() << "Error in decompression, " << stream.avail_in << " bytes left in _in of " << compressedLen << " whole.\n";
 		return -1;
 	} else if (stream.avail_out) {
-		cout << "Error in decompression, " << stream.avail_out << " bytes free left in _out of " << resultLen << " whole.\n";
+		qDebug() << "Error in decompression, " << stream.avail_out << " bytes free left in _out of " << resultLen << " whole.\n";
 		return -1;
 	}
 	lzma_end(&stream);
@@ -389,60 +396,60 @@ int main(int argc, char *argv[])
 			case LZMA_BUF_ERROR: msg = "Compressed data is truncated or otherwise corrupt"; break;
 			default: msg = "Unknown error, possibly a bug"; break;
 		}
-		cout << "Error in decompression: " << msg << " (error code " << res << ")\n";
+		qDebug() << "Error in decompression: " << msg << " (error code " << res << ")\n";
 		return -1;
 	}
 #endif
 	if (memcmp(result.constData(), resultCheck.constData(), resultLen)) {
-		cout << "Data differ :(\n";
+		qDebug() << "Data differ :(\n";
 		return -1;
 	}
 	/**/
 	result = resultCheck = QByteArray();
 
-	cout << "Counting SHA1 hash..\n";
+	qDebug() << "Counting SHA1 hash..\n";
 
 	uchar sha1Buffer[20];
 	memcpy(compressed.data() + hSigLen, hashSha1(compressed.constData() + hSigLen + hShaLen, uint32(compressedLen + hPropsLen + hOriginalSizeLen), sha1Buffer), hShaLen); // count sha1
 
 	uint32 siglen = 0;
 
-	cout << "Signing..\n";
+	qDebug() << "Signing..\n";
 	RSA *prKey = PEM_read_bio_RSAPrivateKey(BIO_new_mem_buf(const_cast<char*>((BetaChannel || AlphaVersion) ? PrivateBetaKey : PrivateKey), -1), 0, 0, 0);
 	if (!prKey) {
-		cout << "Could not read RSA private key!\n";
+		qDebug() << "Could not read RSA private key!\n";
 		return -1;
 	}
 	if (RSA_size(prKey) != hSigLen) {
-		cout << "Bad private key, size: " << RSA_size(prKey) << "\n";
+		qDebug() << "Bad private key, size: " << RSA_size(prKey) << "\n";
 		RSA_free(prKey);
 		return -1;
 	}
 	if (RSA_sign(NID_sha1, (const uchar*)(compressed.constData() + hSigLen), hShaLen, (uchar*)(compressed.data()), &siglen, prKey) != 1) { // count signature
-		cout << "Signing failed!\n";
+		qDebug() << "Signing failed!\n";
 		RSA_free(prKey);
 		return -1;
 	}
 	RSA_free(prKey);
 
 	if (siglen != hSigLen) {
-		cout << "Bad signature length: " << siglen << "\n";
+		qDebug() << "Bad signature length: " << siglen << "\n";
 		return -1;
 	}
 
-	cout << "Checking signature..\n";
+	qDebug() << "Checking signature..\n";
 	BIO* bio = BIO_new_mem_buf(const_cast<char*>((BetaChannel || AlphaVersion) ? PublicBetaKey : PublicKey), -1);
 	RSA *pbKey = PEM_read_bio_RSAPublicKey(bio, 0, 0, 0);
 	if (!pbKey) {
-		cout << "Could not read RSA public key!\n";
+		qDebug() << "Could not read RSA public key!\n";
 		return -1;
 	}
 	if (RSA_verify(NID_sha1, (const uchar*)(compressed.constData() + hSigLen), hShaLen, (const uchar*)(compressed.constData()), siglen, pbKey) != 1) { // verify signature
 		RSA_free(pbKey);
-		cout << "Signature verification failed!\n";
+		qDebug() << "Signature verification failed!\n";
 		return -1;
 	}
-	cout << "Signature verified!\n";
+	qDebug() << "Signature verified!\n";
 	RSA_free(pbKey);
 #ifdef Q_OS_WIN
 	QString outName(QString("tupdate%1").arg(AlphaVersion ? AlphaVersion : version));
@@ -460,7 +467,7 @@ int main(int argc, char *argv[])
 	}
 	QFile out(outName);
 	if (!out.open(QIODevice::WriteOnly)) {
-		cout << "Can't open '" << outName.toUtf8().constData() << "' for write..\n";
+		qDebug() << "Can't open '" << outName.toUtf8().constData() << "' for write..\n";
 		return -1;
 	}
 	out.write(compressed);
@@ -470,14 +477,14 @@ int main(int argc, char *argv[])
 		QString keyName(QString("talpha_%1_key").arg(AlphaVersion));
 		QFile key(keyName);
 		if (!key.open(QIODevice::WriteOnly)) {
-			cout << "Can't open '" << keyName.toUtf8().constData() << "' for write..\n";
+			qDebug() << "Can't open '" << keyName.toUtf8().constData() << "' for write..\n";
 			return -1;
 		}
 		key.write(AlphaSignature.toUtf8());
 		key.close();
 	}
 
-	cout << "Update file '" << outName.toUtf8().constData() << "' written successfully!\n";
+	qDebug() << "Update file '" << outName.toUtf8().constData() << "' written successfully!\n";
 
 	return 0;
 }
@@ -485,7 +492,7 @@ int main(int argc, char *argv[])
 QString countAlphaVersionSignature(quint64 version) { // duplicated in autoupdater.cpp
 	QByteArray cAlphaPrivateKey(AlphaPrivateKey);
 	if (cAlphaPrivateKey.isEmpty()) {
-		cout << "Error: Trying to count alpha version signature without alpha private key!\n";
+		qDebug() << "Error: Trying to count alpha version signature without alpha private key!\n";
 		return QString();
 	}
 
@@ -500,25 +507,25 @@ QString countAlphaVersionSignature(quint64 version) { // duplicated in autoupdat
 
 	RSA *prKey = PEM_read_bio_RSAPrivateKey(BIO_new_mem_buf(const_cast<char*>(cAlphaPrivateKey.constData()), -1), 0, 0, 0);
 	if (!prKey) {
-		cout << "Error: Could not read alpha private key!\n";
+		qDebug() << "Error: Could not read alpha private key!\n";
 		return QString();
 	}
 	if (RSA_size(prKey) != keySize) {
-		cout << "Error: Bad alpha private key size: " << RSA_size(prKey) << "\n";
+		qDebug() << "Error: Bad alpha private key size: " << RSA_size(prKey) << "\n";
 		RSA_free(prKey);
 		return QString();
 	}
 	QByteArray signature;
 	signature.resize(keySize);
 	if (RSA_sign(NID_sha1, (const uchar*)(sha1Buffer), shaSize, (uchar*)(signature.data()), &siglen, prKey) != 1) { // count signature
-		cout << "Error: Counting alpha version signature failed!\n";
+		qDebug() << "Error: Counting alpha version signature failed!\n";
 		RSA_free(prKey);
 		return QString();
 	}
 	RSA_free(prKey);
 
 	if (siglen != keySize) {
-		cout << "Error: Bad alpha version signature length: " << siglen << "\n";
+		qDebug() << "Error: Bad alpha version signature length: " << siglen << "\n";
 		return QString();
 	}
 
