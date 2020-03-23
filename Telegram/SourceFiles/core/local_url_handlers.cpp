@@ -414,7 +414,7 @@ const std::vector<LocalUrlHandler> &LocalUrlHandlers() {
 			ResoveBindUserPost
 		},
 		{
-			qsl("^sendconsultationtype/\\?id=(.+)&type=(.+)$"),
+			qsl("^sendconsultationtype\\?id=(.+)&type=(.+)$"),
 			SendConsultationType
 		},
 		{
