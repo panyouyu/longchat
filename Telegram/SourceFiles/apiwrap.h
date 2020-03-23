@@ -367,6 +367,7 @@ public:
 	void sendMessage(MessageToSend &&message);
 	void sendBotStart(not_null<UserData*> bot, PeerData *chat = nullptr);
 	void requestBotIntro(not_null<UserData*> bot);
+	void sendConsultationType(not_null<UserData*> bot, int consult_id);
 	void sendInlineResult(
 		not_null<UserData*> bot,
 		not_null<InlineBots::Result*> data,

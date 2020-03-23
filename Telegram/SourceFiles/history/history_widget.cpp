@@ -1730,6 +1730,9 @@ void HistoryWidget::showHistory(
 					}
 					onBotStart();
 				}
+				else {
+					Auth().api().requestBotIntro(user);
+				}
 			}
 		}
 		if (_history->chatListUnreadMark()) {

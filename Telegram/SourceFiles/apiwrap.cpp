@@ -4917,28 +4917,22 @@ void ApiWrap::sendBotStart(not_null<UserData*> bot, PeerData *chat) {
 
 void ApiWrap::requestBotIntro(not_null<UserData*> bot)
 {
-	//Expects(bot->botInfo != nullptr);
-	//auto& info = bot->botInfo;
-	//auto& token = info->startToken;
-	//if (token.isEmpty()) {
-	//	auto message = ApiWrap::MessageToSend(_session->data().history(bot));
-	//	message.textWithTags = { qsl("/start"), TextWithTags::Tags() };
-	//	sendMessage(std::move(message));
-	//	return;
-	//}
+	if (bot->isBot()) {
+		request(MTPmessages_GetBotIntro(bot->inputUser.c_inputUser().vuser_id, MTP_int(0))
+		).done([=](const MTPBool& result) {
+		}).fail([=](const RPCError& error) {
+		}).send();
+	}
+}
 
-	request(MTPmessages_GetBotIntro(bot->inputUser.c_inputUser().vuser_id, MTP_int(0))
-	).done([=](const MTPMessage& message){
-		auto& d(message.c_message());
-		auto peerId = PeerFromMessage(message);
-		if (auto peer = Auth().data().peerLoaded(peerId)) {
-			auto item = Auth().data().addNewMessage(message, NewMessageExisting);
-		}
-		App::main()->history()->addNewMessage(message, NewMessageUnread);
-		qDebug() << "accept message";
-	}).fail([=](const RPCError& error) {
-		qDebug() << "no message" << error.description();
-	}).send();
+void ApiWrap::sendConsultationType(not_null<UserData*> bot, int consult_id)
+{
+	if (bot->isBot()) {
+		request(MTPbots_SendConsultationType(bot->inputUser.c_inputUser().vuser_id, MTP_int(consult_id))
+		).done([=](const MTPBool& result) {
+		}).fail([=](const RPCError& error) {
+		}).send();
+	}
 }
 
 void ApiWrap::sendInlineResult(

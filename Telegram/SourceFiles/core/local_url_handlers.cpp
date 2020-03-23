@@ -298,9 +298,6 @@ bool ResoveBindUserPost(const Match& match, const QVariant& context) {
 				|| user->session().supportMode()) {
 				Ui::showPeerHistory(user, ShowAtTheEndMsgId);
 			}
-			if (user->isBot() && user->botInfo != nullptr) {
-				Auth().api().requestBotIntro(user);
-			}
 		}
 	}).fail([=](const RPCError& error) {
 		qDebug() << error.description();
@@ -312,14 +309,20 @@ bool SendConsultationType(const Match& match, const QVariant& context) {
 	if (!AuthSession::Exists()) {
 		return false;
 	}
-	const auto id = match->captured(1);
+	const auto consult_id = match->captured(1).toInt();
 	const auto type = match->captured(2);
-	if (App::main() && App::main()->history()) {
+	if (App::main() && App::main()->peer()) {
+		PeerData* peer = App::main()->peer();
+		if (peer->isUser() && peer->asUser()->isBot()) {
+			Auth().api().sendConsultationType(peer->asUser(), consult_id);
+		}
+	}
+	/*if (App::main() && App::main()->history()) {
 		auto message = ApiWrap::MessageToSend(App::main()->history());
-		message.textWithTags = { type, TextWithTags::Tags() };
+		message.textWithTags = { id, TextWithTags::Tags() };
 		message.replyTo = 0;
 		Auth().api().sendMessage(std::move(message));
-	}
+	}*/
 	
 	return true;
 }
@@ -407,12 +410,11 @@ const std::vector<LocalUrlHandler> &LocalUrlHandlers() {
 			ResolvePrivatePost
 		},
 		{
-			qsl("^binduser\\?{1}(.+)$"),
-			//qsl("^binduser\\?{1}(.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+)$"),
+			qsl("^binduser/?\\?(.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+)$"),
 			ResoveBindUserPost
 		},
 		{
-			qsl("^sendconsultationtype\\?id=(.+)&type=(.+)$"),
+			qsl("^sendconsultationtype/\\?id=(.+)&type=(.+)$"),
 			SendConsultationType
 		},
 		{
