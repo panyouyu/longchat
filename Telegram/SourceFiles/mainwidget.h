@@ -13,6 +13,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/effects/animations.h"
 #include "media/player/media_player_float.h"
 #include "data/data_pts_waiter.h"
+#include "contact/datadefine.h"
 
 class AuthSession;
 struct HistoryMessageMarkupButton;
@@ -203,6 +204,11 @@ public:
 	Dialogs::IndexedList *contactsList();
 	Dialogs::IndexedList *dialogsList();
 	Dialogs::IndexedList *contactsNoDialogsList();
+	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
+	QVector<Contact::ContactInfo*>& getGroupInfo();
+	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
+	void loadGroupDialogs();
+	base::Observable<int>& signalGroupChanged();
 
 	// While HistoryInner is not HistoryView::ListWidget.
 	crl::time highlightStartTime(not_null<const HistoryItem*> item) const;

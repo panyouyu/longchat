@@ -12,6 +12,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/widgets/scroll_area.h"
 #include "dialogs/dialogs_key.h"
 #include "ui/special_buttons.h"
+#include "contact/datadefine.h"
 
 class DialogsInner;
 
@@ -58,7 +59,13 @@ public:
 
 	void searchInChat(Dialogs::Key chat);
 
+	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
+	QVector<Contact::ContactInfo*>& getGroupInfo();
+	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
+
 	void loadDialogs();
+	void loadGroupDialogs();
+	base::Observable<int>& signalGroupChanged();
 	void loadPinnedDialogs();
 	void createDialog(Dialogs::Key key);
 	void removeDialog(Dialogs::Key key);
@@ -129,6 +136,8 @@ protected:
 	void paintEvent(QPaintEvent *e) override;
 
 private:
+	void userGroupDone(const MTPUserGroupList& result);
+	bool userGroupFail(const RPCError& error);
 	void animationCallback();
 	void dialogsReceived(
 		const MTPmessages_Dialogs &result,
@@ -184,6 +193,7 @@ private:
 	MsgId _dialogsOffsetId = 0;
 	PeerData *_dialogsOffsetPeer = nullptr;
 	mtpRequestId _dialogsRequestId = 0;
+	mtpRequestId _allUserTagRequest = 0;
 	mtpRequestId _pinnedDialogsRequestId = 0;
 	bool _pinnedDialogsReceived = false;
 

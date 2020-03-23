@@ -12,6 +12,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "data/data_messages.h"
 #include "ui/effects/animations.h"
 #include "base/flags.h"
+#include "contact/datadefine.h"
 
 namespace Dialogs {
 class Row;
@@ -54,6 +55,8 @@ public:
 	void selectSkipPage(int32 pixels, int32 direction);
 
 	void createDialog(Dialogs::Key key);
+	void createGroupDialog(const MTPUserGroupList& result);
+	void removeGroupDialog();
 	void removeDialog(Dialogs::Key key);
 	void repaintDialogRow(Dialogs::Mode list, not_null<Dialogs::Row*> row);
 	void repaintDialogRow(Dialogs::RowDescriptor row);
@@ -68,7 +71,10 @@ public:
 	void destroyData();
 
 	void scrollToEntry(const Dialogs::RowDescriptor &entry);
-
+	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
+	QVector<Contact::ContactInfo*>& getGroupInfo();
+	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
+	bool existUser(uint64 userId);
 	Dialogs::IndexedList *contactsList();
 	Dialogs::IndexedList *dialogsList();
 	Dialogs::IndexedList *contactsNoDialogsList();
@@ -98,6 +104,7 @@ public:
 	[[nodiscard]] rpl::producer<> listBottomReached() const;
 
 	base::Observable<UserData*> searchFromUserChanged;
+	base::Observable<int> _signalGroupChanged;
 
 	void notify_historyMuteUpdated(History *history);
 
@@ -292,6 +299,10 @@ private:
 
 	std::unique_ptr<Dialogs::IndexedList> _contactsNoDialogs;
 	std::unique_ptr<Dialogs::IndexedList> _contacts;
+
+	QVector<Contact::ContactInfo*> _vecContactAndGroupData; //组信息
+	QVector<Contact::ContactInfo*> _vecContactAndGroupData4Search; //用于查询的组信息
+	QMap<uint64, QSet<uint64>> _mapUser2Group; //用户属于哪些组
 
 	bool _mouseSelection = false;
 	std::optional<QPoint> _lastMousePosition;

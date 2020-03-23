@@ -78,9 +78,19 @@ namespace Contact {
 
 	QModelIndex MySortFilterProxyModel::mapToSource(const QModelIndex& proxyIndex) const
 	{
+		if (!proxyIndex.isValid())
+		{
+            return QModelIndex();
+		}
+        
         QModelIndex index = QSortFilterProxyModel::mapToSource(proxyIndex);
-        //qDebug() << " proxyIndex" << proxyIndex << "index" << index;
+        if (index.row() < 0)
+        {
+            return QModelIndex();
+        }
         return QSortFilterProxyModel::mapToSource(proxyIndex);
+        //qDebug() << " proxyIndex" << proxyIndex << "index" << index;
+        
 	}
 
 	//! [2]

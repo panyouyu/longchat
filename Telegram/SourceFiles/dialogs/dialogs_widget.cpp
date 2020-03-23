@@ -221,7 +221,7 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 
 	_searchTimer.setSingleShot(true);
 	connect(&_searchTimer, SIGNAL(timeout()), this, SLOT(onSearchMessages()));
-
+	//loadGroupDialogs();放这加载太早，联系人还没同步过来
 	_inner->setLoadMoreCallback([this] {
 		using State = DialogsInner::State;
 		const auto state = _inner->state();
@@ -492,6 +492,8 @@ QRect DialogsWidget::rectForFloatPlayer() const {
 	return mapToGlobal(_scroll->geometry());
 }
 
+
+
 void DialogsWidget::animationCallback() {
 	update();
 	if (!_a_show.animating()) {
@@ -559,6 +561,7 @@ void DialogsWidget::dialogsReceived(
 		Auth().data().allChatsLoaded().set(true);
 	}
 	Auth().api().requestContacts();
+	loadGroupDialogs();//用户加载完成后，再加载分组
 }
 
 void DialogsWidget::updateDialogsOffset(
@@ -985,6 +988,35 @@ void DialogsWidget::loadDialogs() {
 	}
 	refreshLoadMoreButton();
 }
+void DialogsWidget::userGroupDone(const MTPUserGroupList& result)
+{
+	_allUserTagRequest = 0;
+	_inner->createGroupDialog(result);
+}
+
+bool DialogsWidget::userGroupFail(const RPCError& error)
+{
+	if (MTP::isDefaultHandledError(error)) return false;
+
+	LOG(("RPC Error: %1 %2: %3").arg(error.code()).arg(error.type()).arg(error.description()));
+
+	_allUserTagRequest = 0;
+
+	return true;
+
+}
+
+void DialogsWidget::loadGroupDialogs()
+{
+	if (_allUserTagRequest) 
+		return;
+	_allUserTagRequest = MTP::send(MTPcontacts_GetUserGroups(), rpcDone(&DialogsWidget::userGroupDone), rpcFail(&DialogsWidget::userGroupFail));
+}
+
+base::Observable<int>& DialogsWidget::signalGroupChanged()
+{
+		return _inner->_signalGroupChanged;
+}
 
 void DialogsWidget::loadPinnedDialogs() {
 	if (_pinnedDialogsRequestId) return;
@@ -1267,6 +1299,21 @@ void DialogsWidget::searchInChat(Dialogs::Key chat) {
 	onCancelSearch();
 	setSearchInChat(chat);
 	applyFilterUpdate(true);
+}
+
+QMap<uint64, QSet<uint64>>& DialogsWidget::getUserGroupInfo()
+{
+	return _inner->getUserGroupInfo();
+}
+
+QVector<Contact::ContactInfo*>& DialogsWidget::getGroupInfo()
+{
+	return _inner->getGroupInfo();
+}
+
+QVector<Contact::ContactInfo*>& DialogsWidget::getGroupInfo4Search()
+{
+	return _inner->getGroupInfo4Search();
 }
 
 void DialogsWidget::setSearchInChat(Dialogs::Key chat, UserData *from) {

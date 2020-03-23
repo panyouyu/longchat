@@ -37,6 +37,7 @@ void ContactTreeView::loadDatas(const QVector<ContactInfo*> _vecContactPData)
 	_contactModel->setupModelData(_vecContactPData);
 	_sortFilterProxyModel->clear();
 	_sortFilterProxyModel->setSourceModel(_contactModel);
+	
 }
 
 void ContactTreeView::setSearchKey(const QString& searchKey)

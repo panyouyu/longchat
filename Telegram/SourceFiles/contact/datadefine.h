@@ -3,6 +3,7 @@
 #include "base/basic_types.h"
 #include "ui/image/image_location.h"
 #include "data/data_peer.h"
+#include "data/data_user.h"
 #include <QString>
 namespace Contact {
 #define DEFAULT_VALUE_ZERO    0
@@ -91,6 +92,7 @@ namespace Contact {
 	};
 
     QString getAllFileContent(const QString& path);
+    void genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId);
 }
 
 #endif // DATADEFINE

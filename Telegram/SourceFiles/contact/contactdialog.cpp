@@ -16,6 +16,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "data/data_peer_values.h"
 #include "contactgroupdialog.h"
 
+
 namespace Contact {
 
 Dialog::Dialog(QWidget *parent) : QDialog(parent) {
@@ -26,14 +27,13 @@ Dialog::Dialog(QWidget *parent) : QDialog(parent) {
 	setFixedSize(this->width(), this->height());
 
 	//freshData_test();
-	freshData();
+	updateGroupInfoData();
 	init();	
 }
 
 Dialog::~Dialog() {
 	//_vLayout->deleteLater();
 	//_btnClose->deleteLater();
-	clearData();
 }
 
 
@@ -48,7 +48,8 @@ void Dialog::on__btnNewGroup_clicked()
 {
 	GroupDialog dlg(nullptr, nullptr);
 	if (QDialog::Accepted == dlg.exec()) {
-		freshData();
+		//freshData();
+		App::main()->loadGroupDialogs();		
 	}
 }
 
@@ -70,7 +71,8 @@ void Dialog::slotAddGroup()
 {
 	GroupDialog dlg(nullptr, nullptr);
 	if (QDialog::Accepted == dlg.exec()) {
-		freshData();
+		//freshData();
+		App::main()->loadGroupDialogs();
 	}
 	
 }
@@ -80,7 +82,8 @@ void Dialog::slotModGroup(ContactInfo* pCI)
 {
 	GroupDialog dlg(nullptr, pCI, GOWT_MOD);
 	if (QDialog::Accepted == dlg.exec()) {
-		freshData();
+		//freshData();
+		App::main()->loadGroupDialogs();
 	}
 }
 
@@ -156,125 +159,29 @@ void Dialog::init()
 	connect(_contactTree, SIGNAL(modGroup(ContactInfo*)), this, SLOT(slotModGroup(ContactInfo*)));
 	connect(_contactTree, SIGNAL(delGroup(ContactInfo*)), this, SLOT(slotDelGroup(ContactInfo*)));
 
+	subscribe(App::main()->signalGroupChanged(), [this](int value) {
+		updateGroupInfoData();
+		});
+
 	setStyleSheet(getAllFileContent(":/style/qss/contactdialog.qss"));
 }
 
-void Dialog::genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId)
+
+void Dialog::updateGroupInfoData()
 {
-	auto time = unixtime();
-	//qDebug() << user->id << peer->name << Data::OnlineText(user, time);
-	ci->id = user->id;
-	ci->firstName = peer->name;
-	ci->lastName = qsl("");
-	if (auto userpic = peer->currentUserpic()) {
-		ci->hasAvatar = true;
-	}
-	ci->peerData = peer;
-	ci->parentId = parentId;
-	ci->online = Data::OnlineTextActive(user, time);
-	ci->lastLoginTime = Data::OnlineText(user, time);
-}
-
-
-
-bool Dialog::existUser(uint64 userId)
-{
-	QMap<uint64, QSet<uint64>>::const_iterator i = _mapUser2Group.find(userId);
-	if (i != _mapUser2Group.end())
+	_mapUser2Group = App::main()->getUserGroupInfo();
+	_vecContactPData = App::main()->getGroupInfo();
+	_vecContactPData4Search = App::main()->getGroupInfo4Search();
+	if (_contactTree != nullptr)
 	{
-		return true;
+		_contactTree->loadDatas(_vecContactPData);
 	}
-	return false;
+	
 }
 
 void Dialog::showCodeError(Fn<QString()> textFactory)
 {
 	qDebug() << textFactory();
-}
-
-void Dialog::userGroupDone(const MTPUserGroupList& result)
-{
-	_allUserTagRequest = 0;
-	clearData();
-	
-	ContactInfo* info = new ContactInfo();
-	for (const auto& userGroup : result.c_userGroupList().vtag_users.v) {
-		ContactInfo* info = new ContactInfo();
-		info->id = userGroup.c_userGroup().vtag_id.v;
-		info->firstName = userGroup.c_userGroup().vtag_name.v;
-		info->isGroup = true;
-		info->parentId = 0;
-		//qDebug() << info->firstName;
-		for (const auto& userId : userGroup.c_userGroup().vuser_ids.v) {
-			info->userIds.push_back(userId.v);
-			_mapUser2Group[userId.v].insert(info->id);
-			//qDebug() << "    " << userId.v;
-		}
-		//info->userIds = userGroup.c_userGroup().vuser_ids.v;
-		info->userTotalCount = info->userIds.size();
-		info->showUserCount = QString("(%1)").arg(info->userTotalCount);
-		
-		
-		_vecContactPData.push_back(info);
-	}
-
-	auto appendList = [this](auto chats) {
-		auto count = 0;
-		for (const auto row : chats->all()) {
-			if (const auto history = row->history()) {
-				auto peer = history->peer;
-				if (const auto user = history->peer->asUser()) {
-					auto userId = user->id;
-					if (existUser(userId))
-					{
-						QSet<uint64>::const_iterator i = _mapUser2Group[userId].constBegin();
-						while (i != _mapUser2Group[userId].constEnd()) {
-							ContactInfo* ci = new ContactInfo();
-							genContact(ci, user, peer, *i);
-							ContactInfo* ci4s = new ContactInfo();
-							genContact(ci4s, user, peer, 0);
-							_vecContactPData.push_back(ci);
-							_vecContactPData4Search.push_back(ci4s);
-							++i;
-						}
-					}
-					
-				}
-			}
-		}
-		_contactTree->loadDatas(_vecContactPData);
-		return count;
-	};
-	appendList(App::main()->contactsList());
-}
-
-bool Dialog::userGroupFail(const RPCError& error)
-{
-	if (MTP::isFloodError(error)) {
-		//stopCheck();
-		_allUserTagRequest = 0;
-		showCodeError(langFactory(lng_flood_error));
-		return true;
-	}
-	if (MTP::isDefaultHandledError(error)) {
-		return false;
-	}
-
-	//stopCheck();
-	_allUserTagRequest = 0;
-	auto& err = error.type();
-	if (err == qstr("PASSWORD_WRONG")) {
-		showCodeError(langFactory(lng_signin_bad_password));
-		return true;
-	}
-	if (Logs::DebugEnabled()) { // internal server error
-		auto text = err + ": " + error.description();
-		showCodeError([text] { return text; });
-	}
-	else {
-		showCodeError(&Lang::Hard::ServerError);
-	}
-	return false;
 }
 
 
@@ -285,7 +192,8 @@ void Dialog::userGroupDelDone(const  MTPUserGroupReturn& result)
 	int32 succeed = result.c_userGroupReturn().vis_success.v;
 	if (succeed == 0)
 	{
-		freshData();
+		App::main()->loadGroupDialogs();
+		//freshData();
 	}
 }
 
@@ -318,21 +226,6 @@ bool Dialog::userGroupDelFail(const RPCError& error)
 	return false;
 }
 
-void Dialog::freshData()
-{
-	/////////获取分组数据//////////
-
-	_allUserTagRequest = MTP::send(MTPcontacts_GetUserGroups(), rpcDone(&Dialog::userGroupDone), rpcFail(&Dialog::userGroupFail));
-	///////////////
-}
-
-void Dialog::clearData()
-{
-	qDeleteAll(_vecContactPData4Search);
-	qDeleteAll(_vecContactPData);
-	_vecContactPData4Search.clear();
-	_vecContactPData.clear();
-}
 
 void Dialog::freshData_test()
 {

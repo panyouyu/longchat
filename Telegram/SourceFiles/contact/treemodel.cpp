@@ -217,7 +217,12 @@ namespace Contact {
         else
             parentItem = static_cast<TreeItem*>(parent.internalPointer());
 
-        return parentItem->childCount();
+        if (parentItem)
+        {
+            return parentItem->childCount();
+        }
+        return 0;
+        
     }
     //! [8]
 

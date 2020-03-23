@@ -979,6 +979,31 @@ Dialogs::IndexedList *MainWidget::contactsNoDialogsList() {
 	return _dialogs->contactsNoDialogsList();
 }
 
+QMap<uint64, QSet<uint64>>& MainWidget::getUserGroupInfo()
+{
+	return _dialogs->getUserGroupInfo();
+}
+
+QVector<Contact::ContactInfo*>& MainWidget::getGroupInfo()
+{
+	return _dialogs->getGroupInfo();
+}
+
+QVector<Contact::ContactInfo*>& MainWidget::getGroupInfo4Search()
+{
+	return _dialogs->getGroupInfo4Search();
+}
+
+void MainWidget::loadGroupDialogs()
+{
+	return _dialogs->loadGroupDialogs();
+}
+
+base::Observable<int>& MainWidget::signalGroupChanged()
+{
+	return _dialogs->signalGroupChanged();
+}
+
 crl::time MainWidget::highlightStartTime(not_null<const HistoryItem*> item) const {
 	return _history->highlightStartTime(item);
 }

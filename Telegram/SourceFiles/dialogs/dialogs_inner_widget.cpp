@@ -1304,6 +1304,64 @@ void DialogsInner::createDialog(Dialogs::Key key) {
 	}
 }
 
+void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
+{
+	removeGroupDialog();	
+	for (const auto& userGroup : result.c_userGroupList().vtag_users.v) {
+		Contact::ContactInfo* info = new Contact::ContactInfo();
+		info->id = userGroup.c_userGroup().vtag_id.v;
+		info->firstName = userGroup.c_userGroup().vtag_name.v;
+		info->isGroup = true;
+		info->parentId = 0;
+		for (const auto& userId : userGroup.c_userGroup().vuser_ids.v) {
+			info->userIds.push_back(userId.v);
+			_mapUser2Group[userId.v].insert(info->id);
+		}
+		info->userTotalCount = info->userIds.size();
+		info->showUserCount = QString("(%1)").arg(info->userTotalCount);
+
+		_vecContactAndGroupData.push_back(info); //先添加分组信息
+	}
+	//再添加分组下的联系人信息
+	auto appendList = [this](auto chats) {
+		auto count = 0;
+		for (const auto row : chats->all()) {
+			if (const auto history = row->history()) {
+				auto peer = history->peer;
+				if (const auto user = history->peer->asUser()) {
+					auto userId = user->id;
+					if (existUser(userId))
+					{
+						QSet<uint64>::const_iterator i = _mapUser2Group[userId].constBegin();
+						while (i != _mapUser2Group[userId].constEnd()) {
+							Contact::ContactInfo* ci = new Contact::ContactInfo();
+							genContact(ci, user, peer, *i);
+							Contact::ContactInfo* ci4s = new Contact::ContactInfo();
+							genContact(ci4s, user, peer, 0);
+							_vecContactAndGroupData.push_back(ci);
+							_vecContactAndGroupData4Search.push_back(ci4s);
+							++i;
+						}
+					}
+
+				}
+			}
+		}
+		_signalGroupChanged.notify(1);
+		return count;
+	};
+	appendList(_contacts.get());
+}
+
+void DialogsInner::removeGroupDialog()
+{
+	_mapUser2Group.clear();
+	qDeleteAll(_vecContactAndGroupData);
+	qDeleteAll(_vecContactAndGroupData4Search);
+	_vecContactAndGroupData.clear();
+	_vecContactAndGroupData4Search.clear();
+}
+
 void DialogsInner::removeDialog(Dialogs::Key key) {
 	if (key == _menuRow.key && _menu) {
 		InvokeQueued(this, [=] { _menu = nullptr; });
@@ -1775,6 +1833,7 @@ void DialogsInner::onHashtagFilterUpdate(QStringRef newFilter) {
 
 DialogsInner::~DialogsInner() {
 	clearSearchResults();
+	removeGroupDialog();
 }
 
 void DialogsInner::clearSearchResults(bool clearPeerSearchResults) {
@@ -2837,6 +2896,31 @@ Dialogs::RowDescriptor DialogsInner::chatListEntryLast() const {
 
 Dialogs::IndexedList *DialogsInner::contactsList() {
 	return _contacts.get();
+}
+
+QMap<uint64, QSet<uint64>> & DialogsInner::getUserGroupInfo() {
+	return _mapUser2Group;
+}
+
+
+QVector<Contact::ContactInfo*>& DialogsInner::getGroupInfo()
+{
+	return _vecContactAndGroupData;
+}
+
+QVector<Contact::ContactInfo*>& DialogsInner::getGroupInfo4Search()
+{
+	return _vecContactAndGroupData4Search;
+}
+
+bool DialogsInner::existUser(uint64 userId)
+{
+	QMap<uint64, QSet<uint64>>::const_iterator i = _mapUser2Group.find(userId);
+	if (i != _mapUser2Group.end())
+	{
+		return true;
+	}
+	return false;
 }
 
 Dialogs::IndexedList *DialogsInner::dialogsList() {

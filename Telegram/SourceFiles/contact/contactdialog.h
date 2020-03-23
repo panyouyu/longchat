@@ -11,7 +11,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "treemodel.h"
 #include "contact/contacttreeview.h"
 #include "contactdelegate.h"
-
+#include "base/observer.h"
 #include "mtproto/sender.h"
 
 
@@ -20,7 +20,7 @@ namespace Contact {
 
 class FilterWidget;
 
-class Dialog : public QDialog , public RPCSender {
+class Dialog : public QDialog , public RPCSender, private base::Subscriber {
 	Q_OBJECT
 
 public:
@@ -39,7 +39,7 @@ private slots:
 private:
 	QLabel* _labTitle;
 	FilterWidget* _filterWidget;
-	ContactTreeView* _contactTree;
+	ContactTreeView* _contactTree{nullptr};
 	QVBoxLayout* _vLayout;
 	QHBoxLayout* _hLayoutStyle;
 
@@ -54,24 +54,16 @@ protected:
 
 private:
 	void init();
-	void freshData();
-	void clearData();
 	void freshData_test();
-	void genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId);
-
-	bool existUser(uint64 userId);
-
+	void updateGroupInfoData();
 private:
 	void showCodeError(Fn<QString()> textFactory);
 
 	void userGroupDone(const MTPUserGroupList& result);
-	bool userGroupFail(const RPCError& error);
 
 	void userGroupDelDone(const MTPUserGroupReturn& result);
 	bool userGroupDelFail(const RPCError& error);
-
-	mtpRequestId _allUserTagRequest = 0;
-
+	
 	mtpRequestId _allUserTagDelRequest = 0;
 
 };
