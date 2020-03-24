@@ -770,6 +770,11 @@ void Application::authSessionCreate(const MTPUser &user) {
 		crl::on_main(_authSession.get(), [=] { logOut(); });
 		return true;
 	}));
+	_mtproto->setUserGroupChangedHandler(::rpcDone([](int32 state) {
+			if (const auto main = App::main()) {
+				main->loadGroupDialogs();
+			}
+		}));
 	authSessionChanged().notify(true);
 }
 

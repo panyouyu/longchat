@@ -202,6 +202,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 "lng_login_input_title" = "让沟通更有效";
 "lng_login_input_email" = "请输入邮箱地址";
+"lng_login_input_username" = "请输入用户名";
 "lng_login_input_password" = "请输入密码";
 "lng_login_input_code" = "请输入验证码";
 "lng_login_input_code_error" = "验证码输入错误";

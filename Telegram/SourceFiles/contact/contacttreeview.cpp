@@ -34,8 +34,8 @@ ContactTreeView::~ContactTreeView() {
 
 void ContactTreeView::loadDatas(const QVector<ContactInfo*> _vecContactPData)
 {
-	_contactModel->setupModelData(_vecContactPData);
 	_sortFilterProxyModel->clear();
+	_contactModel->setupModelData(_vecContactPData);
 	_sortFilterProxyModel->setSourceModel(_contactModel);
 	
 }
@@ -101,6 +101,9 @@ void ContactTreeView::slotModGroup()
 
 void ContactTreeView::slotDelGroup()
 {
+	QModelIndex index = selectionModel()->currentIndex();
+	_sortFilterProxyModel->removeRow(index.row(), index.parent());
+
 	QAction* pSendMsg = nullptr;
 	ContactInfo* pCI = nullptr;
 	do

@@ -63,6 +63,7 @@ namespace Contact {
         int row() const;
         TreeItem* parentItem();
         bool setExtDataExpanded(int column, bool value);
+        bool removeChildren(int position, int count);
         ContactInfo* m_pCI;
     private:
         QList<TreeItem*> m_childItems;

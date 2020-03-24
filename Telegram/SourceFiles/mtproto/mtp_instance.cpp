@@ -99,7 +99,7 @@ public:
 	void execCallback(mtpRequestId requestId, const mtpPrime *from, const mtpPrime *end);
 	bool hasCallbacks(mtpRequestId requestId);
 	void globalCallback(const mtpPrime *from, const mtpPrime *end);
-
+	void onGroupStateChange(int32 state);
 	void onStateChange(ShiftedDcId shiftedDcId, int32 state);
 	void onSessionReset(ShiftedDcId shiftedDcId);
 
@@ -108,7 +108,7 @@ public:
 	inline bool rpcErrorOccured(mtpRequestId requestId, const RPCResponseHandler &handler, const RPCError &err) {
 		return rpcErrorOccured(requestId, handler.onFail, err);
 	}
-
+	void setUserGroupChangedHandler(RPCDoneHandlerPtr onDone);
 	void setUpdatesHandler(RPCDoneHandlerPtr onDone);
 	void setGlobalFailHandler(RPCFailHandlerPtr onFail);
 	void setStateChangedHandler(Fn<void(ShiftedDcId shiftedDcId, int32 state)> handler);
@@ -218,6 +218,7 @@ private:
 	std::map<DcId, std::vector<mtpRequestId>> _authWaiters;
 
 	RPCResponseHandler _globalHandler;
+	RPCDoneHandlerPtr _userGroupHandler;
 	Fn<void(ShiftedDcId shiftedDcId, int32 state)> _stateChangedHandler;
 	Fn<void(ShiftedDcId shiftedDcId)> _sessionResetHandler;
 
@@ -1096,6 +1097,14 @@ void Instance::Private::onStateChange(int32 dcWithShift, int32 state) {
 	}
 }
 
+void Instance::Private::onGroupStateChange(int32 state)
+{
+	if (_userGroupHandler)
+	{
+		(*_userGroupHandler)(state, 0, 0);
+	}
+}
+
 void Instance::Private::onSessionReset(int32 dcWithShift) {
 	if (_sessionResetHandler) {
 		_sessionResetHandler(dcWithShift);
@@ -1493,6 +1502,12 @@ void Instance::Private::completedKeyDestroy(ShiftedDcId shiftedDcId) {
 	}
 }
 
+void Instance::Private::setUserGroupChangedHandler(RPCDoneHandlerPtr onDone)
+{
+	_userGroupHandler = onDone;
+}
+
+
 void Instance::Private::setUpdatesHandler(RPCDoneHandlerPtr onDone) {
 	_globalHandler.onDone = onDone;
 }
@@ -1510,6 +1525,7 @@ void Instance::Private::setSessionResetHandler(Fn<void(ShiftedDcId shiftedDcId)>
 }
 
 void Instance::Private::clearGlobalHandlers() {
+	setUserGroupChangedHandler(RPCDoneHandlerPtr());
 	setUpdatesHandler(RPCDoneHandlerPtr());
 	setGlobalFailHandler(RPCFailHandlerPtr());
 	setStateChangedHandler(Fn<void(ShiftedDcId,int32)>());
@@ -1529,6 +1545,7 @@ void Instance::Private::prepareToDestroy() {
 
 	MustNotCreateSessions = true;
 }
+
 
 Instance::Instance(not_null<DcOptions*> options, Mode mode, Config &&config)
 : QObject()
@@ -1677,6 +1694,13 @@ void Instance::setUpdatesHandler(RPCDoneHandlerPtr onDone) {
 	_private->setUpdatesHandler(onDone);
 }
 
+
+void Instance::setUserGroupChangedHandler(RPCDoneHandlerPtr onDone)
+{
+	_private->setUserGroupChangedHandler(onDone);
+}
+
+
 void Instance::setGlobalFailHandler(RPCFailHandlerPtr onFail) {
 	_private->setGlobalFailHandler(onFail);
 }
@@ -1691,6 +1715,11 @@ void Instance::setSessionResetHandler(Fn<void(ShiftedDcId shiftedDcId)> handler)
 
 void Instance::clearGlobalHandlers() {
 	_private->clearGlobalHandlers();
+}
+
+void Instance::onGroupStateChange(int32 state)
+{
+	_private->onGroupStateChange(state);
 }
 
 void Instance::onStateChange(ShiftedDcId shiftedDcId, int32 state) {

@@ -20,7 +20,7 @@ namespace Intro {
 
 UserLoginWidget::UserLoginWidget(QWidget* parent, Widget::Data* data)
 	: Step(parent, data)
-	, _unameField(this, st::introUserLoginName, langFactory(lng_login_input_email))
+	, _unameField(this, st::introUserLoginName, langFactory(lng_login_input_username))
 	, _pwdField(this, st::introUserLoginName, langFactory(lng_login_input_password))
 	, _codeField(this, st::introUserLoginCode, langFactory(lng_login_input_code))
 	, _picCode(this, st::introUserLoginPicCode)

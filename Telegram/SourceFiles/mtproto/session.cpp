@@ -375,6 +375,11 @@ void Session::onConnectionStateChange(qint32 newState) {
 	_instance->onStateChange(dcWithShift, newState);
 }
 
+void Session::onGroupStateChange(qint32 state)
+{
+	_instance->onGroupStateChange(state);
+}
+
 void Session::onResetDone() {
 	_instance->onSessionReset(dcWithShift);
 }

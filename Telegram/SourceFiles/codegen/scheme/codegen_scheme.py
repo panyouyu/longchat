@@ -67,6 +67,7 @@ countedTypeIdExceptions['contacts.delUserGroups#3b9aca09'] = True
 countedTypeIdExceptions['userGroupReturn#3b9aca15'] = True
 countedTypeIdExceptions['contacts.addUserGroups#3b9aca07'] = True
 countedTypeIdExceptions['contacts.modUserGroups#3b9aca0b'] = True
+countedTypeIdExceptions['userGroupStatusRes#3b9aca1f'] = True
 
 
 renamedTypes = {};

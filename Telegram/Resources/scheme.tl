@@ -1044,6 +1044,7 @@ savedPhoneContact#1142bd56 phone:string first_name:string last_name:string date:
 userGroup#3b9aca21 tag_id:long tag_name:string user_ids:Vector<long> = UserGroup;
 userGroupList#3b9aca0e tag_users:Vector<UserGroup> = UserGroupList;
 userGroupReturn#3b9aca15 is_success:int = UserGroupReturn;
+userGroupStatusRes#3b9aca1f flags:int other_id:int = UserGroupStatusRes;
 
 account.takeout#4dba4501 id:long = account.Takeout;
 

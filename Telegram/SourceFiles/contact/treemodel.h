@@ -68,6 +68,9 @@ namespace Contact {
 
 
         bool setExtDataExpanded(const QModelIndex& index, bool value);
+
+        virtual bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex()) override;
+
         //QVariant extData(const QModelIndex& index, int column);
 
     public:

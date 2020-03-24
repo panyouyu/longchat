@@ -48,7 +48,6 @@ void Dialog::on__btnNewGroup_clicked()
 {
 	GroupDialog dlg(nullptr, nullptr);
 	if (QDialog::Accepted == dlg.exec()) {
-		//freshData();
 		App::main()->loadGroupDialogs();		
 	}
 }
@@ -71,7 +70,6 @@ void Dialog::slotAddGroup()
 {
 	GroupDialog dlg(nullptr, nullptr);
 	if (QDialog::Accepted == dlg.exec()) {
-		//freshData();
 		App::main()->loadGroupDialogs();
 	}
 	
@@ -82,7 +80,6 @@ void Dialog::slotModGroup(ContactInfo* pCI)
 {
 	GroupDialog dlg(nullptr, pCI, GOWT_MOD);
 	if (QDialog::Accepted == dlg.exec()) {
-		//freshData();
 		App::main()->loadGroupDialogs();
 	}
 }
@@ -193,7 +190,6 @@ void Dialog::userGroupDelDone(const  MTPUserGroupReturn& result)
 	if (succeed == 0)
 	{
 		App::main()->loadGroupDialogs();
-		//freshData();
 	}
 }
 

@@ -101,7 +101,19 @@ namespace Contact {
     }
 
 
-  /*  QVariant TreeModel::extData(const QModelIndex& index, int column)
+	bool TreeModel::removeRows(int row, int count, const QModelIndex& parent /*= QModelIndex()*/)
+	{
+		TreeItem* parentItem = getItem(parent);
+		bool success = true;
+
+		beginRemoveRows(parent, row, row + count - 1);
+		success = parentItem->removeChildren(row, count);
+		endRemoveRows();
+
+		return success;
+	}
+
+	/*  QVariant TreeModel::extData(const QModelIndex& index, int column)
     {
         if (!index.isValid())
             return QVariant();
@@ -228,7 +240,8 @@ namespace Contact {
 
     void TreeModel::setupModelData(const QVector<ContactInfo*>& vecData)
     {
-        removeRows(0, rowCount());
+        //qDebug() << "setupModel start";
+        //removeRows(0, rowCount());
         QList<TreeItem*> parents;
 		if (nullptr != headItem)
 		{

@@ -63,6 +63,8 @@ namespace Contact {
     TreeItem::~TreeItem()
     {
         qDeleteAll(m_childItems);
+        m_childItems.clear();
+        m_pCI = nullptr;
     }
     //! [1]
 
@@ -83,7 +85,11 @@ namespace Contact {
     //! [4]
     int TreeItem::childCount() const
     {
-        return m_childItems.count();
+        if (m_pCI)
+        {
+            return m_childItems.count();
+        }
+        return 0;
     }
     //! [4]
 
@@ -126,7 +132,18 @@ namespace Contact {
     }
 
 
-    //! [7]
+	bool TreeItem::removeChildren(int position, int count)
+	{
+		if (position < 0 || position + count > m_childItems.size())
+			return false;
+
+		for (int row = 0; row < count; ++row)
+			delete m_childItems.takeAt(position);
+
+		return true;
+	}
+
+	//! [7]
 
     //! [8]
     int TreeItem::row() const
