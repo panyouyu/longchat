@@ -71,6 +71,7 @@ DialogsInner::DialogsInner(QWidget *parent, not_null<Window::Controller*> contro
 , _dialogs(std::make_unique<Dialogs::IndexedList>(Dialogs::SortMode::Date))
 , _contactsNoDialogs(std::make_unique<Dialogs::IndexedList>(Dialogs::SortMode::Name))
 , _contacts(std::make_unique<Dialogs::IndexedList>(Dialogs::SortMode::Name))
+, _queueCount(0)
 , _pinnedShiftAnimation([=](crl::time now) {
 	return pinnedShiftAnimationCallback(now);
 })
@@ -1309,32 +1310,49 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 	removeGroupDialog();	
 	for (const auto& userGroup : result.c_userGroupList().vtag_users.v) {
 		Contact::ContactInfo* info = new Contact::ContactInfo();
-		info->id = userGroup.c_userGroup().vtag_id.v;
-		info->firstName = userGroup.c_userGroup().vtag_name.v;
-		info->isGroup = true;
-		info->parentId = 0;
-		for (const auto& userId : userGroup.c_userGroup().vuser_ids.v) {
-			info->userIds.push_back(userId.v);
-			_mapUser2Group[userId.v].insert(info->id);
+		info->otherId = userGroup.c_userGroup().vother_id.v;
+		if (Contact::GFT_QUEUE == info->otherId)
+		{
+			_queueCount = 0;
+			for (const auto& userId : userGroup.c_userGroup().vuser_ids.v) {
+				_queueCount++;
+			}			
 		}
-		info->userTotalCount = info->userIds.size();
-		info->showUserCount = QString("(%1)").arg(info->userTotalCount);
-
-		_vecContactAndGroupData.push_back(info); //先添加分组信息
+		else 
+		{
+			info->id = userGroup.c_userGroup().vtag_id.v;
+			info->firstName = userGroup.c_userGroup().vtag_name.v;
+			info->isGroup = true;
+			info->parentId = 0;
+			for (const auto& userId : userGroup.c_userGroup().vuser_ids.v) {
+				info->userIds.push_back(userId.v);
+				_mapUser2Group[userId.v].insert(info->id);
+			}
+			info->userTotalCount = info->userIds.size();
+			info->showUserCount = QString("(%1)").arg(info->userTotalCount);
+			_vecContactAndGroupData.push_back(info); //先添加分组信息
+		}
+		
 	}
 	//再添加分组下的联系人信息
 	auto appendList = [this](auto chats) {
 		auto count = 0;
-		for (const auto row : chats->all()) {
+		for (const auto row : chats->all()) { 
 			if (const auto history = row->history()) {
 				auto peer = history->peer;
 				if (const auto user = history->peer->asUser()) {
+					++count;
 					auto userId = user->id;
-					if (existUser(userId))
+					_mapUserInfo[userId] = peer->name;
+					//循环所有用户
+					qDebug() << "u:" << userId << _mapUserInfo[userId];
+					if (existUser(userId)) //当前用户在分组中
 					{
+						//遍历用户下的所有分组，并加入到对应分组中去
 						QSet<uint64>::const_iterator i = _mapUser2Group[userId].constBegin();
 						while (i != _mapUser2Group[userId].constEnd()) {
 							Contact::ContactInfo* ci = new Contact::ContactInfo();
+							qDebug() << "     gId:" << *i << "gName" << peer->name;
 							genContact(ci, user, peer, *i);
 							Contact::ContactInfo* ci4s = new Contact::ContactInfo();
 							genContact(ci4s, user, peer, 0);
@@ -1343,7 +1361,6 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 							++i;
 						}
 					}
-
 				}
 			}
 		}
@@ -1351,10 +1368,12 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 		return count;
 	};
 	appendList(_contacts.get());
+	emit queueCountChanged(_queueCount);
 }
 
 void DialogsInner::removeGroupDialog()
 {
+	_mapUserInfo.clear();
 	_mapUser2Group.clear();
 	qDeleteAll(_vecContactAndGroupData);
 	qDeleteAll(_vecContactAndGroupData4Search);
@@ -2146,6 +2165,7 @@ void DialogsInner::userIsContactUpdated(not_null<UserData*> user) {
 	if (user->contactStatus() == UserData::ContactStatus::Contact) {
 		const auto history = user->owner().history(user->id);
 		_contacts->addByName(history);
+		emit contactStatusChanged();
 		if (!shownDialogs()->getRow(history)
 			&& !_dialogs->contains(history)) {
 			_contactsNoDialogs->addByName(history);
@@ -2903,6 +2923,30 @@ QMap<uint64, QSet<uint64>> & DialogsInner::getUserGroupInfo() {
 }
 
 
+QString DialogsInner::getUserGroupInfo(uint64 userId)
+{
+	QString userGroupInfo = "";
+	if (existUser(userId)) {
+		foreach(const uint64 & uid, _mapUser2Group[userId]) {
+			userGroupInfo = userGroupInfo + getGroupName(uid) + " ";
+		}
+			
+	}
+	if (userGroupInfo.isEmpty()){
+		userGroupInfo = lang(lng_info_edit_contact_group_no);
+	}
+	return userGroupInfo;
+}
+
+QString DialogsInner::getGroupName(uint64 groupId)
+{
+	for (int i = 0; i < _vecContactAndGroupData.size(); ++i) {
+		if (_vecContactAndGroupData.at(i)->id == groupId)
+			return _vecContactAndGroupData.at(i)->firstName;
+	}
+	return "";
+}
+
 QVector<Contact::ContactInfo*>& DialogsInner::getGroupInfo()
 {
 	return _vecContactAndGroupData;
@@ -2920,6 +2964,9 @@ bool DialogsInner::existUser(uint64 userId)
 	{
 		return true;
 	}
+	QString noUser = QString("uid: %1 name: %2 not in any group").arg(userId).arg(_mapUserInfo[userId]);
+	LOG((noUser));
+	qDebug() << noUser;
 	return false;
 }
 

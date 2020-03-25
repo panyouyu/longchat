@@ -26,6 +26,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/peer_list_controllers.h"
 #include "boxes/add_contact_box.h"
 #include "boxes/report_box.h"
+#include "contact/usergroupdialog.h"
 #include "lang/lang_keys.h"
 #include "info/info_controller.h"
 #include "info/info_memento.h"
@@ -42,6 +43,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "apiwrap.h"
 #include "styles/style_info.h"
 #include "styles/style_boxes.h"
+
 
 namespace Info {
 namespace Profile {
@@ -150,6 +152,7 @@ private:
 	void addInviteToGroupAction(not_null<UserData*> user);
 	void addShareContactAction(not_null<UserData*> user);
 	void addEditContactAction(not_null<UserData*> user);
+	void addContactGroupAction(not_null<UserData*> user);
 	void addDeleteContactAction(not_null<UserData*> user);
 	void addClearHistoryAction(not_null<UserData*> user);
 	void addDeleteConversationAction(not_null<UserData*> user);
@@ -489,6 +492,18 @@ void ActionsFiller::addEditContactAction(not_null<UserData*> user) {
 		[user] { Ui::show(Box<AddContactBox>(user)); });
 }
 
+void ActionsFiller::addContactGroupAction(not_null<UserData*> user) {
+	QString userInfo = App::main()->getUserGroupInfo(user->id);
+	AddActionButton(
+		_wrap,
+		rpl::single(userInfo),
+		IsContactValue(user),
+		[user] { 
+			Contact::UserGroupDialog dlg(user);
+			dlg.exec();
+		});
+}
+
 void ActionsFiller::addDeleteContactAction(
 		not_null<UserData*> user) {
 	AddActionButton(
@@ -647,6 +662,7 @@ void ActionsFiller::fillUserActions(not_null<UserData*> user) {
 	}
 	addShareContactAction(user);
 	if (!user->isSelf()) {
+		addContactGroupAction(user);
 		addEditContactAction(user);
 		addDeleteContactAction(user);
 	}

@@ -72,6 +72,8 @@ public:
 
 	void scrollToEntry(const Dialogs::RowDescriptor &entry);
 	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
+	QString getUserGroupInfo(uint64 userId);
+	QString getGroupName(uint64 groupId);
 	QVector<Contact::ContactInfo*>& getGroupInfo();
 	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
 	bool existUser(uint64 userId);
@@ -123,6 +125,8 @@ signals:
 	void cancelSearchInChat();
 	void completeHashtag(QString tag);
 	void refreshHashtags();
+	void queueCountChanged(int count);
+	void contactStatusChanged();
 
 protected:
 	void visibleTopBottomUpdated(
@@ -303,6 +307,8 @@ private:
 	QVector<Contact::ContactInfo*> _vecContactAndGroupData; //组信息
 	QVector<Contact::ContactInfo*> _vecContactAndGroupData4Search; //用于查询的组信息
 	QMap<uint64, QSet<uint64>> _mapUser2Group; //用户属于哪些组
+	QMap<uint64,QString> _mapUserInfo; //所有用户信息方便查询跟踪
+	uint32 _queueCount; //排队中的数量
 
 	bool _mouseSelection = false;
 	std::optional<QPoint> _lastMousePosition;

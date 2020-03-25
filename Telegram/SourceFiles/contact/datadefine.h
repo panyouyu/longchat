@@ -16,6 +16,7 @@ namespace Contact {
             , parentId(DEFAULT_VALUE_ZERO)
             , userTotalCount(0)
             , userOnlineCount(0)
+            , otherId(0)
             //, pAvatarImage(nullptr)
             , peerData(nullptr)
             , hasAvatar(false)
@@ -37,6 +38,7 @@ namespace Contact {
         QString queueCount; //排队人数
         int32 userTotalCount; //总用户数
         int32 userOnlineCount; //在线用户数
+        int32 otherId;//功能 0=普通组 1=咨询中 2=已结束
         
         QVector<uint64> userIds;
         PeerData* peerData;
@@ -89,6 +91,15 @@ namespace Contact {
 	enum GroupOperWindowType {
 		GOWT_ADD,
 		GOWT_MOD,
+	};
+
+
+	//分组功能 0=普通组 1=咨询中 2=已结束 3=排队中
+	enum GroupFunctionType {
+		GFT_NORMAL,
+        GFT_SEEKING,
+        GFT_SEEKED,
+        GFT_QUEUE,
 	};
 
     QString getAllFileContent(const QString& path);

@@ -188,6 +188,10 @@ HistoryWidget::HistoryWidget(
 	? object_ptr<Support::Autocomplete>(this, &Auth())
 	: nullptr)
 , _record(this, st::recordButton)
+, _overSession(
+	this,
+	lang(lng_profile_over_session).toUpper(),
+	st::historyComposeButton)
 , _send(this)
 , _unblock(this, lang(lng_unblock_button).toUpper(), st::historyUnblock)
 , _botStart(this, lang(lng_bot_start).toUpper(), st::historyComposeButton)
@@ -231,6 +235,7 @@ HistoryWidget::HistoryWidget(
 	connect(_unblock, SIGNAL(clicked()), this, SLOT(onUnblock()));
 	connect(_botStart, SIGNAL(clicked()), this, SLOT(onBotStart()));
 	connect(_joinChannel, SIGNAL(clicked()), this, SLOT(onJoinChannel()));
+	connect(_overSession, SIGNAL(clicked()), this, SLOT(onOverSession()));
 	connect(_muteUnmute, SIGNAL(clicked()), this, SLOT(onMuteUnmute()));
 	connect(
 		_field,
@@ -331,6 +336,7 @@ HistoryWidget::HistoryWidget(
 
 	_field->hide();
 	_send->hide();
+	_overSession->hide();
 	_record->hide();
 	_unblock->hide();
 	_botStart->hide();
@@ -2000,6 +2006,7 @@ void HistoryWidget::updateControlsVisibility() {
 			_supportAutocomplete->hide();
 		}
 		_send->hide();
+		_overSession->hide();
 		_record->hide();
 		if (_silent) {
 			_silent->hide();
@@ -2030,6 +2037,7 @@ void HistoryWidget::updateControlsVisibility() {
 		_joinChannel->hide();
 		_muteUnmute->hide();
 		_send->show();
+		_overSession->show();
 		if (showRecordButton()) {
 			_record->show();
 		}
@@ -2088,6 +2096,7 @@ void HistoryWidget::updateControlsVisibility() {
 			_supportAutocomplete->hide();
 		}
 		_send->hide();
+		_overSession->hide();
 		_record->hide();
 		_unblock->hide();
 		_botStart->hide();
@@ -3844,6 +3853,7 @@ void HistoryWidget::moveFieldControls() {
 	buttonsBottom += _field->height() + st::historySendPadding;
 	
 	_send->moveToRight(st::historySendRight, buttonsBottom);
+	_overSession->moveToRight(st::historySendRight + _send->width(), buttonsBottom);
 
 	if (_inlineResults) {
 		_inlineResults->moveBottom(_field->y() - st::historySendPadding);
@@ -6767,6 +6777,27 @@ void HistoryWidget::synteticScrollToY(int y) {
 		_scroll->scrollToY(y);
 	}
 	_synteticScrollEvent = false;
+}
+
+void HistoryWidget::onOverSession()
+{
+	const auto requestId = MTP::send(
+		MTPauth_OverSession(MTP_long(_history->peer->id)),
+		rpcDone(&HistoryWidget::sendOverSessionDone));
+	_sendOverSessionRequests.insert(_history, requestId);
+	//Ui::show(Box<DeleteMessagesBox>(_history->peer, false), LayerOption::KeepOther);
+	//const auto box = Ui::show(Box<DeleteMessagesBox>(std::move(items))).data();
+	const auto box = Ui::show(Box<DeleteMessagesBox>(_history->peer, false)).data();
+}
+
+void HistoryWidget::sendOverSessionDone(const MTPBool& result, mtpRequestId req)
+{
+	for (auto i = _sendOverSessionRequests.begin(), e = _sendOverSessionRequests.end(); i != e; ++i) {
+		if (i.value() == req) {
+			_sendOverSessionRequests.erase(i);
+			break;
+		}
+	}
 }
 
 HistoryWidget::~HistoryWidget() = default;

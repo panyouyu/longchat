@@ -158,9 +158,16 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 , _jumpToDate(
 	this,
 	object_ptr<Ui::IconButton>(this, st::dialogsCalendar))
+
 , _cancelSearch(this, st::dialogsCancelSearch)
 , _lockUnlock(this, st::dialogsLock)
 , _scroll(this, st::dialogsScroll)
+, _custQueueCount(
+	this,
+	lang(lng_switchboard_cust_queue_count) + " 0",
+	st::dialogsLoadMoreButton,
+	st::dialogsLoadMore,
+	st::dialogsLoadMore)
 , _scrollToTop(_scroll, st::dialogsToUp) {
 	_inner = _scroll->setOwnedWidget(object_ptr<DialogsInner>(this, controller, parent));
 	connect(_inner, SIGNAL(draggingScrollDelta(int)), this, SLOT(onDraggingScrollDelta(int)));
@@ -171,6 +178,8 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 	connect(_inner, SIGNAL(completeHashtag(QString)), this, SLOT(onCompleteHashtag(QString)));
 	connect(_inner, SIGNAL(refreshHashtags()), this, SLOT(onFilterCursorMoved()));
 	connect(_inner, SIGNAL(cancelSearchInChat()), this, SLOT(onCancelSearchInChat()));
+	connect(_inner, SIGNAL(queueCountChanged(int)), this, SLOT(onQueueCountChanged(int)));
+	connect(_inner, SIGNAL(contactStatusChanged()), this, SLOT(onContactStatus()));
 	subscribe(_inner->searchFromUserChanged, [this](UserData *user) {
 		setSearchInChat(_searchInChat, user);
 		applyFilterUpdate(true);
@@ -247,6 +256,9 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 	setupConnectingWidget();
 	setupSupportMode();
 	setupScrollUpButton();
+
+	
+
 }
 
 void DialogsWidget::setupScrollUpButton() {
@@ -830,6 +842,16 @@ void DialogsWidget::onChooseByDrag() {
 	_inner->chooseRow();
 }
 
+void DialogsWidget::onQueueCountChanged(int count)
+{
+	_custQueueCount->setText(lang(lng_switchboard_cust_queue_count) + QString::number(count));
+}
+
+void DialogsWidget::onContactStatus()
+{
+	loadGroupDialogs();
+}
+
 void DialogsWidget::showMainMenu() {
 	App::wnd()->showMainMenu();
 }
@@ -1306,6 +1328,11 @@ QMap<uint64, QSet<uint64>>& DialogsWidget::getUserGroupInfo()
 	return _inner->getUserGroupInfo();
 }
 
+QString DialogsWidget::getUserGroupInfo(uint64 userId)
+{
+	return _inner->getUserGroupInfo(userId);
+}
+
 QVector<Contact::ContactInfo*>& DialogsWidget::getGroupInfo()
 {
 	return _inner->getGroupInfo();
@@ -1499,6 +1526,7 @@ void DialogsWidget::updateControlsGeometry() {
 	};
 	putBottomButton(_updateTelegram);
 	putBottomButton(_loadMoreChats);
+	putBottomButton(_custQueueCount);
 	auto wasScrollHeight = _scroll->height();
 	_scroll->setGeometry(0, scrollTop, width(), scrollHeight);
 	if (scrollHeight != wasScrollHeight) {

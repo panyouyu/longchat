@@ -96,6 +96,8 @@
 <(src_loc)/calls/calls_top_bar.h
 <(src_loc)/contact/contactdialog.cpp
 <(src_loc)/contact/contactdialog.h
+<(src_loc)/contact/usergroupdialog.cpp
+<(src_loc)/contact/usergroupdialog.h
 <(src_loc)/contact/contactgroupdialog.cpp
 <(src_loc)/contact/contactgroupdialog.h
 <(src_loc)/contact/contactswitchdialog.cpp

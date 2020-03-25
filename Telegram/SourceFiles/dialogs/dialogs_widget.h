@@ -61,6 +61,7 @@ public:
 
 	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
 	QVector<Contact::ContactInfo*>& getGroupInfo();
+	QString getUserGroupInfo(uint64 userId);
 	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
 
 	void loadDialogs();
@@ -104,7 +105,6 @@ public:
 
 signals:
 	void cancelled();
-
 public slots:
 	void onDraggingScrollDelta(int delta);
 
@@ -122,6 +122,8 @@ public slots:
 	void onNeedSearchMessages();
 
 	void onChooseByDrag();
+	void onQueueCountChanged(int count);
+	void onContactStatus();
 
 private slots:
 	void onDraggingScrollTimer();
@@ -209,6 +211,7 @@ private:
 	class BottomButton;
 	object_ptr<BottomButton> _updateTelegram = { nullptr };
 	object_ptr<BottomButton> _loadMoreChats = { nullptr };
+	object_ptr<BottomButton> _custQueueCount = { nullptr };
 	std::unique_ptr<Window::ConnectionState> _connecting;
 
 	Ui::Animations::Simple _scrollToAnimation;

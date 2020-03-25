@@ -986,6 +986,11 @@ QMap<uint64, QSet<uint64>>& MainWidget::getUserGroupInfo()
 	return _dialogs->getUserGroupInfo();
 }
 
+QString MainWidget::getUserGroupInfo(uint64 userId)
+{
+	return _dialogs->getUserGroupInfo(userId);
+}
+
 QVector<Contact::ContactInfo*>& MainWidget::getGroupInfo()
 {
 	return _dialogs->getGroupInfo();

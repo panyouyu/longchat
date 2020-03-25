@@ -205,6 +205,7 @@ public:
 	Dialogs::IndexedList *dialogsList();
 	Dialogs::IndexedList *contactsNoDialogsList();
 	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
+	QString getUserGroupInfo(uint64 userId);
 	QVector<Contact::ContactInfo*>& getGroupInfo();
 	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
 	void loadGroupDialogs();

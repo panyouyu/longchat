@@ -788,6 +788,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_info_channel_title" = "频道信息";
 "lng_profile_enable_notifications" = "通知";
 "lng_profile_send_message" = "发送消息";
+"lng_profile_over_session" = "结束会话";
 "lng_info_add_as_contact" = "添加为联系人";
 "lng_profile_shared_media" = "分享的媒体文件";
 "lng_media_type_photos" = "图片";
@@ -800,6 +801,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_profile_common_groups_section" = "共同加入的群组";
 "lng_profile_share_contact" = "分享联系人信息";
 "lng_info_edit_contact" = "编辑联系人";
+"lng_info_edit_contact_group_no" = "不属于任何分组";
 "lng_info_delete_contact" = "删除联系人";
 "lng_info_share_contact" = "分享联系方式";
 "lng_profile_clear_history" = "清除历史记录";
@@ -809,6 +811,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_switchboard_online_user" = "在线客服转接";
 "lng_switchboard_num_server" = "服务人数：";
 "lng_switchboard_num_queue" = "排队人数：";
+"lng_switchboard_cust_queue_count" = "当前排队人数：";
 "lng_profile_unblock_user" = "取消屏蔽";
 "lng_profile_export_chat" = "导出聊天记录";
 "lng_profile_export_channel" = "导出频道记录";

@@ -1041,7 +1041,7 @@ help.deepLinkInfoEmpty#66afa166 = help.DeepLinkInfo;
 help.deepLinkInfo#6a4ee832 flags:# update_app:flags.0?true message:string entities:flags.1?Vector<MessageEntity> = help.DeepLinkInfo;
 
 savedPhoneContact#1142bd56 phone:string first_name:string last_name:string date:int = SavedContact;
-userGroup#3b9aca21 tag_id:long tag_name:string user_ids:Vector<long> = UserGroup;
+userGroup#3b9aca21 tag_id:long tag_name:string other_id:int user_ids:Vector<long> = UserGroup;
 userGroupList#3b9aca0e tag_users:Vector<UserGroup> = UserGroupList;
 userGroupReturn#3b9aca15 is_success:int = UserGroupReturn;
 userGroupStatusRes#3b9aca1f flags:int other_id:int = UserGroupStatusRes;
@@ -1154,6 +1154,7 @@ auth.signUp#1b067634 phone_number:string phone_code_hash:string phone_code:strin
 auth.signIn#bcd51581 phone_number:string phone_code_hash:string phone_code:string = auth.Authorization;
 auth.kefuLogin#3b9acde9 kefu_login_name:string kefu_login_password:string auth_code:string = auth.Authorization;
 auth.logOut#5717da40 = Bool;
+auth.overSession#3b9acdee user_id:long = Bool;
 auth.resetAuthorizations#9fab0d1a = Bool;
 auth.exportAuthorization#e5bfffcd dc_id:int = auth.ExportedAuthorization;
 auth.importAuthorization#e3ef9613 id:int bytes:bytes = auth.Authorization;

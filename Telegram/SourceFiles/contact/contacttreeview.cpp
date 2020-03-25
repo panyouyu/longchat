@@ -57,7 +57,7 @@ void ContactTreeView::slotCustomContextMenu(const QPoint& point)
 			ContactInfo* pCI = (ContactInfo*)curIndex.data(Qt::DisplayRole).value<void*>();
 
 			menu->addAction(lang(lng_dlg_contact_group_add), this, SLOT(slotAddGroup()));
-			if (pCI && pCI->isGroup)
+			if (pCI && pCI->isGroup && pCI->otherId == 0)
 			{
 				QAction* pModGroup = new QAction(lang(lng_dlg_contact_group_rename), this);
 				pModGroup->setData(QVariant::fromValue(pCI));

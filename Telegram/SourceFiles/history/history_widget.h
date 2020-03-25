@@ -321,6 +321,7 @@ public slots:
 	void onUnblock();
 	void onBotStart();
 	void onJoinChannel();
+	void onOverSession();
 	void onMuteUnmute();
 	void onBroadcastSilentChange();
 
@@ -406,6 +407,7 @@ private:
 		SendAction::Type type);
 	void cancelTypingAction();
 	void sendActionDone(const MTPBool &result, mtpRequestId req);
+	void sendOverSessionDone(const MTPBool& result, mtpRequestId req);
 
 	void animationCallback();
 	void updateOverStates(QPoint pos);
@@ -759,6 +761,7 @@ private:
 	object_ptr<ReportSpamPanel> _reportSpamPanel = { nullptr };
 
 	object_ptr<Ui::RecordButton> _record;
+	object_ptr<Ui::FlatButton> _overSession;
 	object_ptr<Ui::SendButton> _send;
 	object_ptr<Ui::FlatButton> _unblock;
 	object_ptr<Ui::FlatButton> _botStart;
@@ -831,6 +834,9 @@ private:
 
 	QMap<QPair<not_null<History*>, SendAction::Type>, mtpRequestId> _sendActionRequests;
 	base::Timer _sendActionStopTimer;
+
+	QMap<not_null<History*>, mtpRequestId> _sendOverSessionRequests;
+	//base::Timer _sendOverSessionStopTimer;
 
 	crl::time _saveDraftStart = 0;
 	bool _saveDraftText = false;
