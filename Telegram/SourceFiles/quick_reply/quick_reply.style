@@ -4,9 +4,10 @@ using "ui/widgets/widgets.style";
 using "intro/intro.style";
 using "info/info.style";
 
-quickReplyDesireWidth: 596px;
-quickReplyWidgetWidth: 500px;
-quickReplyWidgetHeight: 400px;
+quickReplyWidgetWidth: 600px;
+
+quickReplyLayerTopMinimal: 20px;
+quickReplyLayerTopMaximal: 40px;
 
 quickReplyImport: IconTextButton(defaultIconTextButton) {
 	margin: margins(20px, 2px, 2px, 2px);

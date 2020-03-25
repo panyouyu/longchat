@@ -27,7 +27,6 @@ public:
 	QuickReplyWidget(QWidget* parent);
 
 protected:
-	int resizeGetHeight(int newWidth) override;
 	void resizeEvent(QResizeEvent* e) override;
 	void paintEvent(QPaintEvent* e) override;
 
@@ -59,7 +58,8 @@ private:
 };
 
 QuickReplyWidget::QuickReplyWidget(QWidget* parent)
-	: _import(this, lang(lng_quick_reply_import), st::quickReplyImport)
+	: RpWidget(parent)
+	, _import(this, lang(lng_quick_reply_import), st::quickReplyImport)
 	, _export(this, lang(lng_quick_reply_export), st::quickReplyExport)
 	, _tip(this, st::quickReplyTipLabel, lang(lng_quick_reply_tip))
 	, _manager(this, lang(lng_quick_reply_manager), st::quickReplyManager)
@@ -69,8 +69,6 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 	, _scrollTitle(Ui::CreateChild<Ui::ScrollArea>(this, st::quickReplyTitleScroll))
 	, _scrollContent(Ui::CreateChild<Ui::ScrollArea>(this, st::quickReplyContentScroll))
 {
-	resizeToWidth(st::quickReplyWidgetWidth);
-
 	auto& ref = cRefQuickReplyStrings();
 	_groupRow = ref.size() ? ref.first().group : QString();
 	_contentRow = ref.size() ? ref.first().content.size() ? ref.first().content.first() : QString() : QString();
@@ -302,10 +300,6 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 	refreshTitle();
 }
 
-int QuickReplyWidget::resizeGetHeight(int newWidth) {
-	return st::quickReplyWidgetHeight;
-}
-
 void QuickReplyWidget::resizeEvent(QResizeEvent* e)
 {	
 	int left = st::quickReplyImport.margin.left();
@@ -376,117 +370,31 @@ void QuickReplyWidget::refreshContent(QString group) {
 	}
 }
 
-object_ptr<Ui::RpWidget> CreateIntroWidget(QWidget* parent) {
-	return object_ptr<QuickReplyWidget>(parent);
-}
-
 class IntroWidget : public Ui::RpWidget {
 public:
 	IntroWidget(QWidget* parent);
 
-	void forceContentRepaint();
-	rpl::producer<int> desiredHeightValue() const override;
-	void updateGeometry(QRect newGeometry, int additionalScroll);
-	int scrollTillBottom(int forHeight) const;
-	rpl::producer<int>  scrollTillBottomChanges() const;
-
-	void setInnerFocus();
-
-	~IntroWidget();
-
 protected:
 	void resizeEvent(QResizeEvent* e) override;
-
 private:
-	void updateControlsGeometry();
 	QRect contentGeometry() const;
-	void setInnerWidget(object_ptr<Ui::RpWidget> content);
-	void showContent();
-	rpl::producer<bool> topShadowToggledValue() const;
-	void createTopBar();
-	void applyAdditionalScroll(int additionalScroll);
 
-	rpl::variable<int> _scrollTopSkip = -1;
-	rpl::event_stream<int> _scrollTillBottomChanges;
 	object_ptr<Ui::RpWidget> _wrap;
-	not_null<Ui::ScrollArea*> _scroll;
-	Ui::PaddingWrap<Ui::RpWidget>* _innerWrap = nullptr;
-	int _innerDesiredHeight = 0;
-
-	int _additionalScroll = 0;
-	object_ptr<TopBar> _topBar = { nullptr };
-
-	object_ptr<Ui::FadeShadow> _topShadow;
-
+	object_ptr<TopBar> _topBar;
+	object_ptr<QuickReplyWidget> _inner;
 };
 
 IntroWidget::IntroWidget(QWidget* parent)
 	: RpWidget(parent)
 	, _wrap(this)
-	, _scroll(Ui::CreateChild<Ui::ScrollArea>(_wrap.data(), st::quickReplyScroll))
-	, _topShadow(this) {
+	, _topBar(this, st::quickReplyTopBar)
+	, _inner(_wrap){
 	_wrap->setAttribute(Qt::WA_OpaquePaintEvent);
 	_wrap->paintRequest(
 	) | rpl::start_with_next([=](QRect clip) {
 		Painter p(_wrap.data());
 		p.fillRect(clip, st::boxBg);
 		}, _wrap->lifetime());
-
-	_scrollTopSkip.changes(
-	) | rpl::start_with_next([this] {
-		updateControlsGeometry();
-		}, lifetime());
-
-	createTopBar();
-	showContent();
-	_topShadow->toggleOn(
-		topShadowToggledValue(
-		) | rpl::filter([](bool shown) {
-			return true;
-			}));
-}
-
-void IntroWidget::updateControlsGeometry() {
-	if (!_innerWrap) {
-		return;
-	}
-
-	_topBar->resizeToWidth(width());
-	_topShadow->resizeToWidth(width());
-	_topShadow->moveToLeft(0, _topBar->height());
-	_wrap->setGeometry(contentGeometry());
-
-	auto newScrollTop = _scroll->scrollTop();
-	auto scrollGeometry = _wrap->rect().marginsRemoved(
-		QMargins(0, _scrollTopSkip.current(), 0, 0));
-	if (_scroll->geometry() != scrollGeometry) {
-		_scroll->setGeometry(scrollGeometry);
-		_innerWrap->resizeToWidth(_scroll->width());
-	}
-
-	if (!_scroll->isHidden()) {
-		auto scrollTop = _scroll->scrollTop();
-		_innerWrap->setVisibleTopBottom(
-			scrollTop,
-			scrollTop + _scroll->height());
-	}
-}
-
-void IntroWidget::forceContentRepaint() {
-	// WA_OpaquePaintEvent on TopBar creates render glitches when
-	// animating the LayerWidget's height :( Fixing by repainting.
-
-	if (_topBar) {
-		_topBar->update();
-	}
-	_scroll->update();
-	if (_innerWrap) {
-		_innerWrap->update();
-	}
-}
-
-void IntroWidget::createTopBar() {
-	_topBar.create(this, st::quickReplyTopBar);
 	_topBar->setTitle(Lang::Viewer(lng_quick_reply_management));
 	auto close = _topBar->addButton(
 		base::make_unique_q<Ui::IconButton>(
@@ -495,64 +403,7 @@ void IntroWidget::createTopBar() {
 	close->addClickHandler([] {
 		Ui::hideSettingsAndLayer();
 	});
-
-	_topBar->lower();
-	_topBar->resizeToWidth(width());
-	_topBar->show();
-}
-
-void IntroWidget::setInnerWidget(object_ptr<Ui::RpWidget> content) {
-	_innerWrap = _scroll->setOwnedWidget(
-		object_ptr<Ui::PaddingWrap<Ui::RpWidget>>(
-			this,
-			std::move(content),
-			_innerWrap ? _innerWrap->padding() : style::margins()));
-	_innerWrap->move(0, 0);
-
-	// MSVC BUG + REGRESSION rpl::mappers::tuple :(
-	rpl::combine(
-		_scroll->scrollTopValue(),
-		_scroll->heightValue(),
-		_innerWrap->entity()->desiredHeightValue()
-	) | rpl::start_with_next([this](
-		int top,
-		int height,
-		int desired) {
-			const auto bottom = top + height;
-			_innerDesiredHeight = desired;
-			_innerWrap->setVisibleTopBottom(top, bottom);
-			_scrollTillBottomChanges.fire_copy(std::max(desired - bottom, 0));
-		}, _innerWrap->lifetime());
-}
-
-rpl::producer<bool> IntroWidget::topShadowToggledValue() const {
-	using namespace rpl::mappers;
-	return rpl::combine(
-		_scroll->scrollTopValue(),
-		_scrollTopSkip.value()
-	) | rpl::map((_1 > 0) || (_2 > 0));
-}
-
-void IntroWidget::showContent() {
-	setInnerWidget(CreateIntroWidget(_scroll));
-
-	_additionalScroll = 0;
-	updateControlsGeometry();
-	_topShadow->raise();
-	_topShadow->finishAnimating();
-}
-
-void IntroWidget::setInnerFocus() {
-	setFocus();
-}
-
-rpl::producer<int> IntroWidget::desiredHeightValue() const {
-	using namespace rpl::mappers;
-	return rpl::combine(
-		_topBar->heightValue(),
-		_innerWrap->entity()->desiredHeightValue(),
-		_scrollTopSkip.value()
-	) | rpl::map(_1 + _2 + _3);
+	_inner->show();
 }
 
 QRect IntroWidget::contentGeometry() const {
@@ -560,166 +411,29 @@ QRect IntroWidget::contentGeometry() const {
 }
 
 void IntroWidget::resizeEvent(QResizeEvent* e) {
-	updateControlsGeometry();
+	_topBar->resizeToWidth(width());
+	_wrap->setGeometry(contentGeometry());
+	_inner->setGeometry(_wrap->rect());
 }
-
-void IntroWidget::applyAdditionalScroll(int additionalScroll) {
-	if (_innerWrap) {
-		_innerWrap->setPadding({ 0, 0, 0, additionalScroll });
-	}
-}
-
-void IntroWidget::updateGeometry(QRect newGeometry, int additionalScroll) {
-	auto scrollChanged = (_additionalScroll != additionalScroll);
-	auto geometryChanged = (geometry() != newGeometry);
-	auto shrinkingContent = (additionalScroll < _additionalScroll);
-	_additionalScroll = additionalScroll;
-
-	if (geometryChanged) {
-		if (shrinkingContent) {
-			setGeometry(newGeometry);
-		}
-		if (scrollChanged) {
-			applyAdditionalScroll(additionalScroll);
-		}
-		if (!shrinkingContent) {
-			setGeometry(newGeometry);
-		}
-	}
-	else if (scrollChanged) {
-		applyAdditionalScroll(additionalScroll);
-	}
-}
-
-int IntroWidget::scrollTillBottom(int forHeight) const {
-	auto scrollHeight = forHeight
-		- _scrollTopSkip.current()
-		- _topBar->height();
-	auto scrollBottom = _scroll->scrollTop() + scrollHeight;
-	auto desired = _innerDesiredHeight;
-	return std::max(desired - scrollBottom, 0);
-}
-
-rpl::producer<int> IntroWidget::scrollTillBottomChanges() const {
-	return _scrollTillBottomChanges.events();
-}
-
-IntroWidget::~IntroWidget() = default;
-
-
-
 
 LayerWidget::LayerWidget(QWidget*)
 	: _content(this) {
-	setupHeightConsumers();
-}
-
-void LayerWidget::setupHeightConsumers() {
-	_content->scrollTillBottomChanges(
-	) | rpl::filter([this] {
-		return !_inResize;
-		}) | rpl::start_with_next([this] {
-			resizeToWidth(width());
-			}, lifetime());
-		_content->desiredHeightValue(
-		) | rpl::start_with_next([this](int height) {
-			accumulate_max(_desiredHeight, height);
-			if (_content && !_inResize) {
-				resizeToWidth(width());
-			}
-			}, lifetime());
-}
-
-void LayerWidget::showFinished() {
 }
 
 void LayerWidget::parentResized() {
 	const auto parentSize = parentWidget()->size();
-	const auto parentWidth = parentSize.width();
-	const auto newWidth = (parentWidth < MinimalSupportedWidth())
-		? parentWidth
-		: qMin(
-			parentWidth - 2 * st::infoMinimalLayerMargin,
-			st::quickReplyDesireWidth);
-	resizeToWidth(newWidth);
-}
-
-int LayerWidget::MinimalSupportedWidth() {
-	const auto minimalMargins = 2 * st::infoMinimalLayerMargin;
-	return st::quickReplyWidgetWidth + minimalMargins;
-}
-
-int LayerWidget::resizeGetHeight(int newWidth) {
-	if (!parentWidget() || !_content) {
-		return 0;
-	}
-	_inResize = true;
-	auto guard = gsl::finally([&] { _inResize = false; });
-
-	auto parentSize = parentWidget()->size();
 	auto windowWidth = parentSize.width();
 	auto windowHeight = parentSize.height();
-	auto newLeft = (windowWidth - newWidth) / 2;
-	if (!newLeft) {
-		_content->updateGeometry({
-			0,
-			st::boxRadius,
-			windowWidth,
-			windowHeight - st::boxRadius }, 0);
-		auto newGeometry = QRect(0, 0, windowWidth, windowHeight);
-		if (newGeometry != geometry()) {
-			_content->forceContentRepaint();
-		}
-		if (newGeometry.topLeft() != geometry().topLeft()) {
-			move(newGeometry.topLeft());
-		}
-		_tillTop = _tillBottom = true;
-		return windowHeight;
-	}
-	auto newTop = snap(
-		windowHeight / 24,
-		st::infoLayerTopMinimal,
-		st::infoLayerTopMaximal);
+	const auto newWidth = windowWidth < st::quickReplyWidgetWidth ? windowWidth : st::quickReplyWidgetWidth;
+	const auto newLeft = (windowWidth - newWidth) >> 1;
+	auto newTop = 0;
+	if (newLeft)
+		newTop = snap(windowHeight / 24, st::quickReplyLayerTopMinimal, st::quickReplyLayerTopMaximal);
+	
 	auto newBottom = newTop;
-	auto desiredHeight = st::boxRadius + _desiredHeight + st::boxRadius;
-	accumulate_min(desiredHeight, windowHeight - newTop - newBottom);
-
-	// First resize content to new width and get the new desired height.
-	auto contentLeft = 0;
-	auto contentTop = st::boxRadius;
-	auto contentBottom = st::boxRadius;
-	auto contentWidth = newWidth;
-	auto contentHeight = desiredHeight - contentTop - contentBottom;
-	auto scrollTillBottom = _content->scrollTillBottom(contentHeight);
-	auto additionalScroll = std::min(scrollTillBottom, newBottom);
-
-	desiredHeight += additionalScroll;
-	contentHeight += additionalScroll;
-	_tillTop = false;
-	_tillBottom = (newTop + desiredHeight >= windowHeight);
-	if (_tillBottom) {
-		contentHeight += contentBottom;
-		additionalScroll += contentBottom;
-	}
-	_content->updateGeometry({
-		contentLeft,
-		contentTop,
-		contentWidth,
-		contentHeight }, additionalScroll);
-
-	auto newGeometry = QRect(newLeft, newTop, newWidth, desiredHeight);
-	if (newGeometry != geometry()) {
-		_content->forceContentRepaint();
-	}
-	if (newGeometry.topLeft() != geometry().topLeft()) {
-		move(newGeometry.topLeft());
-	}
-
-	return desiredHeight;
-}
-
-void LayerWidget::doSetInnerFocus() {
-	_content->setInnerFocus();
+	auto newHeight = windowHeight - newTop - newBottom;
+	setGeometry(newLeft, newTop, newWidth, newHeight);
+	_content->setGeometry(0, 0, newWidth, newHeight);
 }
 
 void LayerWidget::paintEvent(QPaintEvent* e) {
@@ -728,10 +442,10 @@ void LayerWidget::paintEvent(QPaintEvent* e) {
 	auto clip = e->rect();
 	auto r = st::boxRadius;
 	auto parts = RectPart::None | 0;
-	if (!_tillTop && clip.intersects({ 0, 0, width(), r })) {
+	if (clip.intersects({ 0, 0, width(), r })) {
 		parts |= RectPart::FullTop;
 	}
-	if (!_tillBottom && clip.intersects({ 0, height() - r, width(), r })) {
+	if (clip.intersects({ 0, height() - r, width(), r })) {
 		parts |= RectPart::FullBottom;
 	}
 	if (parts) {
@@ -742,9 +456,6 @@ void LayerWidget::paintEvent(QPaintEvent* e) {
 			BoxCorners,
 			nullptr,
 			parts);
-	}
-	if (_tillTop) {
-		p.fillRect(0, 0, width(), r, st::boxBg);
 	}
 }
 

@@ -19,26 +19,12 @@ class LayerWidget : public Window::LayerWidget
 public:
 	LayerWidget(QWidget*);
 
-	void showFinished() override;
 	void parentResized() override;
 
-	static int MinimalSupportedWidth();
-
 protected:
-	int resizeGetHeight(int newWidth) override;
-	void doSetInnerFocus() override;
-
 	void paintEvent(QPaintEvent* e) override;
 
 private:
-	void setupHeightConsumers();
-
 	object_ptr<IntroWidget> _content;
-
-	int _desiredHeight = 0;
-	bool _inResize = false;
-	bool _tillTop = false;
-	bool _tillBottom = false;
-
 };
 }
