@@ -2,6 +2,7 @@ using "basic.style";
 
 using "ui/widgets/widgets.style";
 using "intro/intro.style";
+using "info/info.style";
 
 quickReplyDesireWidth: 596px;
 quickReplyWidgetWidth: 500px;
@@ -102,16 +103,28 @@ quickReplyPopupMenu: PopupMenu(defaultPopupMenu) {
 }
 
 quickReplyCreateGroup: icon {{"quick_reply_create_group", menuIconFg}};
-quickReplyCreateGroupOver: icon {{"quick_reply_create_group", menuIconFg}};
+quickReplyCreateGroupOver: icon {{"quick_reply_create_group", menuIconFgOver}};
 
 quickReplyRenameGroup: icon {{"quick_reply_rename_group", menuIconFg}};
-quickReplyRenameGroupOver: icon {{"quick_reply_rename_group", menuIconFg}};
+quickReplyRenameGroupOver: icon {{"quick_reply_rename_group", menuIconFgOver}};
 
 quickReplyRemoveGroup: icon {{"quick_reply_remove_group", menuIconFg}};
-quickReplyRemoveGroupOver: icon {{"quick_reply_remove_group", menuIconFg}};
+quickReplyRemoveGroupOver: icon {{"quick_reply_remove_group", menuIconFgOver}};
 
 quickReplyMoveUp: icon {{"quick_reply_move_up", menuIconFg}};
-quickReplyMoveUpOver: icon {{"quick_reply_move_up", menuIconFg}};
+quickReplyMoveUpOver: icon {{"quick_reply_move_up", menuIconFgOver}};
 
 quickReplyMoveDown: icon {{"quick_reply_move_down", menuIconFg}};
-quickReplyMoveDownOver: icon {{"quick_reply_move_down", menuIconFg}};
+quickReplyMoveDownOver: icon {{"quick_reply_move_down", menuIconFgOver}};
+
+quickReplyTopBarHeight: 54px;
+
+quickReplyTopBar:InfoTopBar(infoLayerTopBar) {
+	height: quickReplyTopBarHeight;
+}
+
+quickReplyTreeItemRightIcon: icon {{"tree_item_right", menuIconFg}};
+quickReplyTreeItemRightIconOver: icon {{"tree_item_right", menuIconFgOver}}; 
+
+quickReplyTreeItemBottomIcon: icon {{"tree_item_bottom", menuIconFg}};
+quickReplyTreeItemBottomOver: icon {{"tree_item_bottom", menuIconFgOver}};

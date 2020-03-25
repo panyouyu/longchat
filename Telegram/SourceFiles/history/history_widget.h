@@ -767,7 +767,6 @@ private:
 	object_ptr<Ui::RpWidget> _aboutProxyPromotion = { nullptr };
 	mtpRequestId _reportSpamRequest = 0;
 	object_ptr<Ui::IconButton> _attachToggle;
-	object_ptr<Ui::IconButton> _quickReplyToggle;
 	object_ptr<Ui::ScreenShotButton> _screenShotToggle;
 	object_ptr<Ui::ShotScreen> _shotScreen = { nullptr };
 	object_ptr<Ui::EmojiButton> _tabbedSelectorToggle;

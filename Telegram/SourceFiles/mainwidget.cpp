@@ -93,6 +93,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "storage/storage_facade.h"
 #include "storage/storage_shared_media.h"
 #include "storage/storage_user_photos.h"
+#include "quick_reply/quick_reply_section.h"
+#include "quick_reply/quick_reply_selector.h"
 #include "styles/style_dialogs.h"
 #include "styles/style_history.h"
 #include "styles/style_boxes.h"
@@ -2423,6 +2425,12 @@ void MainWidget::updateControlsGeometry() {
 				if (const auto key = _controller->activeChatCurrent()) {
 					_controller->showSection(
 						Info::Memento::Default(key),
+						params.withThirdColumn());
+				}
+			}
+			else if (session().settings().thirdSectionQuickReplyEnabled()) {
+				if (const auto key = _controller->activeChatCurrent()) {
+					_controller->showSection(QuickReply::Memento(object_ptr<QuickReply::Selector>(this, _controller)),
 						params.withThirdColumn());
 				}
 			}

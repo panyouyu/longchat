@@ -2004,6 +2004,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_save_screenshot_image" = "保存截图";
 
 // quick_reply
+"lng_quick_reply" = "快捷回复";
+"lng_quick_reply_open" = "新增快捷回复";
 "lng_quick_reply_management" = "文本快捷回复管理";
 "lng_quick_reply_import" = "导入";
 "lng_quick_reply_export" = "导出";

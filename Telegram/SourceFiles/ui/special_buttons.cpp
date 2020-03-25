@@ -1065,5 +1065,4 @@ void ScreenShotButton::showOptions()
 		}
 	});
 }
-
 } // namespace Ui

@@ -761,6 +761,11 @@ topBarCall: IconButton(topBarSearch) {
 	icon: icon {{ "top_bar_call", menuIconFg }};
 	iconOver: icon {{ "top_bar_call", menuIconFgOver }};
 }
+topBarQuickReply: IconButton(topBarSearch) {
+	icon: icon {{ "top_bar_quick_reply", menuIconFg }};
+	iconOver: icon {{ "top_bar_quick_reply", menuIconFgOver }};
+}
+topBarQuickReplyActive: icon {{"top_bar_quick_reply", windowActiveTextFg}};
 topBarInfo: IconButton(topBarSearch) {
 	icon: icon {{ "top_bar_profile", menuIconFg }};
 	iconOver: icon {{ "top_bar_profile", menuIconFgOver }};

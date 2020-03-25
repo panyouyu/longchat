@@ -10,6 +10,7 @@
 #include "ui/widgets/buttons.h"
 #include "ui/widgets/scroll_area.h"
 #include "ui/widgets/popup_menu.h"
+#include "quick_reply/quick_reply_top_bar.h"
 #include "quick_reply/text_list.h"
 #include "settings.h"
 #include "storage/localstorage.h"
@@ -18,7 +19,6 @@
 #include "styles/style_settings.h"
 #include "styles/style_quick_reply.h"
 #include "styles/style_boxes.h"
-#include "styles/style_info.h"
 
 namespace QuickReply {
 
@@ -376,94 +376,8 @@ void QuickReplyWidget::refreshContent(QString group) {
 	}
 }
 
-class TopBar : public Ui::RpWidget {
-public:
-	TopBar(QWidget* parent, const style::InfoTopBar& st);
-
-	void setTitle(rpl::producer<QString>&& title);
-
-	template <typename ButtonWidget>
-	ButtonWidget* addButton(base::unique_qptr<ButtonWidget> button) {
-		auto result = button.get();
-		pushButton(std::move(button));
-		return result;
-	}
-
-protected:
-	int resizeGetHeight(int newWidth) override;
-	void paintEvent(QPaintEvent* e) override;
-
-private:
-	void updateControlsGeometry(int newWidth);
-	Ui::RpWidget* pushButton(base::unique_qptr<Ui::RpWidget> button);
-	void removeButton(not_null<Ui::RpWidget*> button);
-
-	const style::InfoTopBar& _st;
-	std::vector<base::unique_qptr<Ui::RpWidget>> _buttons;
-	QPointer<Ui::FlatLabel> _title;
-};
-
 object_ptr<Ui::RpWidget> CreateIntroWidget(QWidget* parent) {
 	return object_ptr<QuickReplyWidget>(parent);
-}
-
-TopBar::TopBar(QWidget* parent, const style::InfoTopBar& st)
-	: RpWidget(parent)
-	, _st(st) {
-	setAttribute(Qt::WA_OpaquePaintEvent);
-}
-
-void TopBar::setTitle(rpl::producer<QString>&& title) {
-	if (_title) {
-		delete _title;
-	}
-	_title = Ui::CreateChild<Ui::FlatLabel>(
-		this,
-		std::move(title),
-		_st.title);
-	updateControlsGeometry(width());
-}
-
-Ui::RpWidget* TopBar::pushButton(base::unique_qptr<Ui::RpWidget> button) {
-	auto wrapped = std::move(button);
-	auto weak = wrapped.get();
-	_buttons.push_back(std::move(wrapped));
-	weak->widthValue(
-	) | rpl::start_with_next([this] {
-		updateControlsGeometry(width());
-		}, lifetime());
-	return weak;
-}
-
-void TopBar::removeButton(not_null<Ui::RpWidget*> button) {
-	_buttons.erase(
-		std::remove(_buttons.begin(), _buttons.end(), button),
-		_buttons.end());
-}
-
-int TopBar::resizeGetHeight(int newWidth) {
-	updateControlsGeometry(newWidth);
-	return _st.height;
-}
-
-void TopBar::updateControlsGeometry(int newWidth) {
-	auto right = 0;
-	for (auto& button : _buttons) {
-		if (!button) continue;
-		button->moveToRight(right, 0, newWidth);
-		right += button->width();
-	}
-	if (_title) {
-		_title->moveToLeft(
-			_st.titlePosition.x(),
-			_st.titlePosition.y(),
-			newWidth);
-	}
-}
-
-void TopBar::paintEvent(QPaintEvent* e) {
-	Painter p(this);
-	p.fillRect(e->rect(), _st.bg);
 }
 
 class IntroWidget : public Ui::RpWidget {
@@ -572,7 +486,7 @@ void IntroWidget::forceContentRepaint() {
 }
 
 void IntroWidget::createTopBar() {
-	_topBar.create(this, st::infoLayerTopBar);
+	_topBar.create(this, st::quickReplyTopBar);
 	_topBar->setTitle(Lang::Viewer(lng_quick_reply_management));
 	auto close = _topBar->addButton(
 		base::make_unique_q<Ui::IconButton>(
@@ -580,7 +494,7 @@ void IntroWidget::createTopBar() {
 			st::infoLayerTopBarClose));
 	close->addClickHandler([] {
 		Ui::hideSettingsAndLayer();
-		});
+	});
 
 	_topBar->lower();
 	_topBar->resizeToWidth(width());

@@ -256,9 +256,6 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	if (_variables.thirdSectionInfoEnabled) {
 		_variables.tabbedSelectorSectionEnabled = false;
 	}
-	if (_variables.thirdSectionQuickReplyEnabled) {
-		_variables.thirdSectionQuickReplyEnabled = false;
-	}
 	auto uncheckedSendFilesWay = static_cast<SendFilesWay>(sendFilesWay);
 	switch (uncheckedSendFilesWay) {
 	case SendFilesWay::Album:
@@ -322,12 +319,20 @@ void AuthSessionSettings::setTabbedSelectorSectionEnabled(bool enabled) {
 }
 
 void AuthSessionSettings::setThirdSectionQuickReplyEnabled(bool enabled) {
-	_variables.thirdSectionQuickReplyEnabled = enabled;
-	if (enabled) {
-		setTabbedSelectorSectionEnabled(false);
-		setThirdSectionInfoEnabled(false);
+	if (_variables.thirdSectionQuickReplyEnabled != enabled) {
+		_variables.thirdSectionQuickReplyEnabled = enabled;
+		if (enabled) {
+			setTabbedSelectorSectionEnabled(false);
+			setThirdSectionInfoEnabled(false);
+		}
+		setTabbedReplacedWithInfo(false);
+		_thirdSectionQuickReplyEnableValue.fire_copy(enabled);
 	}
-	setTabbedReplacedWithInfo(false);
+}
+
+rpl::producer<bool> AuthSessionSettings::thirdSectionQuickReplyEnableValue() const {
+	return _thirdSectionQuickReplyEnableValue.events_starting_with(
+		thirdSectionQuickReplyEnabled());
 }
 
 rpl::producer<bool> AuthSessionSettings::tabbedReplacedWithInfoValue() const {

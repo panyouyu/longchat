@@ -221,11 +221,6 @@ historyAttach: IconButton {
 	}
 }
 
-quickReplyToggle: IconButton(historyAttach) {
-icon: icon {{ "top_bar_quick_reply", historyComposeIconFg }};
-iconOver: icon {{ "top_bar_quick_reply", historyComposeIconFgOver }};
-}
-
 recordButton: IconButton(historyAttach) {
 	icon: icon {{ "call_record_active", historyComposeIconFg }};
 	iconOver: icon {{ "call_record_active", historyComposeIconFgOver }};

@@ -9,11 +9,11 @@ namespace Window {
 
 namespace QuickReply {
     
-class QuickReplySelector;
+class Selector;
     
-class QuickReplyMemento : public Window::SectionMemento {
+class Memento : public Window::SectionMemento {
 public:
-    QuickReplyMemento(object_ptr<QuickReplySelector> selector);
+    Memento(object_ptr<Selector> selector);
     
     object_ptr<Window::SectionWidget> createWidget(
         QWidget *parent,
@@ -21,23 +21,25 @@ public:
         Window::Column column,
         const QRect &geometry) override;
     
-    ~QuickReplyMemento();
+    ~Memento();
     
 private:
-    object_ptr<QuickReplySelector> _selector;
+    object_ptr<Selector> _selector;
 };
     
-class QuickReplySection : public Window::SectionWidget {
+class Section : public Window::SectionWidget {
 public:
-    QuickReplySection(QWidget *parent, not_null<Window::Controller*> controller);
-    QuickReplySection(QWidget *parent, not_null<Window::Controller*> controller, object_ptr<QuickReplySelector> selector);
+    Section(QWidget *parent, not_null<Window::Controller*> controller);
+    Section(QWidget *parent, not_null<Window::Controller*> controller, object_ptr<Selector> selector);
     
-    ~QuickReplySection();
+    ~Section();
     
     bool showInternal(not_null<Window::SectionMemento*> memento, const Window::SectionShow &params) override;
     
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 private:
-    object_ptr<QuickReplySelector> _selector;
+    object_ptr<Selector> _selector;
 };
     
 } // namespace QuickReply

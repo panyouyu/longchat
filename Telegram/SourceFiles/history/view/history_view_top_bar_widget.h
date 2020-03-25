@@ -75,11 +75,12 @@ private:
 	void refreshLang();
 	void updateControlsGeometry();
 	void selectedShowCallback();
-	void updateInfoToggleActive();
+	void updateToggleActive();
 
 	void onCall();
 	void onSearch();
 	void showMenu();
+	void toggleQuickReplySection();
 	void toggleInfoSection();
 
 	void updateConnectingState();
@@ -124,7 +125,8 @@ private:
 	object_ptr<Ui::AbstractButton> _info = { nullptr };
 
 	object_ptr<Ui::IconButton> _call;
-	object_ptr<Ui::IconButton> _search;    
+	object_ptr<Ui::IconButton> _search;
+	object_ptr<Ui::IconButton> _quickReplyToggle;
 	object_ptr<Ui::IconButton> _infoToggle;
 	object_ptr<Ui::IconButton> _menuToggle;
 	object_ptr<Ui::DropdownMenu> _menu = { nullptr };

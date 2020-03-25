@@ -1354,3 +1354,43 @@ quickReplyBox {
 defaultQuickReplyBox: quickReplyBox{
 	quickReplyFrameColor: quickReplyFrame;
 }
+
+TreeItem {
+	topLeft: IconButton;
+
+	titlefont: font;
+	titlecolor: color;
+	titlemargins: margins;
+
+	contentfont: font;
+	contentcolor: color;
+	contentmargins: margins;
+
+	showDuration: int;
+}
+
+defaultTreeItem: TreeItem {
+	topLeft: IconButton {
+		width: 32px;
+		height: 32px;
+		
+		icon: icon {{"tree_item_right", menuIconFg}};
+		iconOver: icon {{"tree_item_right", menuIconFgOver}};
+		iconPosition: point(5px, 5px);
+
+		duration: 500;
+
+		rippleAreaPosition: point(5px, 5px);
+		rippleAreaSize: 22px;
+		ripple: defaultRippleAnimation;
+	}
+	titlefont: boxTextFont;
+	titlecolor: windowFg;
+	titlemargins: margins(32px, 5px, 5px, 5px);
+
+	contentfont: boxTextFont;
+	contentcolor: lightButtonFg;
+	contentmargins: margins(32px, 5px, 5px, 5px);
+
+	showDuration: 200;
+}

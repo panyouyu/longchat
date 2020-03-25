@@ -117,6 +117,7 @@ public:
 		return _variables.tabbedSelectorSectionEnabled;
 	}
 	void setTabbedSelectorSectionEnabled(bool enabled);
+	rpl::producer<bool> thirdSectionQuickReplyEnableValue() const;
 	bool thirdSectionQuickReplyEnabled() const {
 		return _variables.thirdSectionQuickReplyEnabled;
 	}
@@ -257,7 +258,8 @@ private:
 		rpl::variable<bool> supportAllSearchResults = false;
 	};
 
-	rpl::event_stream<bool> _thirdSectionInfoEnabledValue;
+	rpl::event_stream<bool> _thirdSectionQuickReplyEnableValue;
+	rpl::event_stream<bool> _thirdSectionInfoEnabledValue;	
 	bool _tabbedReplacedWithInfo = false;
 	rpl::event_stream<bool> _tabbedReplacedWithInfoValue;
 

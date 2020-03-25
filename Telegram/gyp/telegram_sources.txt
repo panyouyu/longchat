@@ -652,6 +652,10 @@
 <(src_loc)/quick_reply/quick_reply_section.h
 <(src_loc)/quick_reply/quick_reply_selector.cpp
 <(src_loc)/quick_reply/quick_reply_selector.h
+<(src_loc)/quick_reply/quick_reply_simple_tree.cpp
+<(src_loc)/quick_reply/quick_reply_simple_tree.h
+<(src_loc)/quick_reply/quick_reply_top_bar.cpp
+<(src_loc)/quick_reply/quick_reply_top_bar.h
 <(src_loc)/quick_reply/text_list.cpp
 <(src_loc)/quick_reply/text_list.h
 <(src_loc)/settings/settings_advanced.cpp
