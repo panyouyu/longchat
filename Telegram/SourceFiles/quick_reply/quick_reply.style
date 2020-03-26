@@ -122,6 +122,11 @@ quickReplyTopBarHeight: 54px;
 
 quickReplyTopBar:InfoTopBar(infoLayerTopBar) {
 	height: quickReplyTopBarHeight;
+	title:  FlatLabel(boxTitle) {
+		style: TextStyle(defaultTextStyle) {
+			font: font(17px semibold);
+		}
+	}
 }
 
 quickReplyTreeItemRightIcon: icon {{"tree_item_right", menuIconFg}};

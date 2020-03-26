@@ -694,4 +694,52 @@ void IconTextButton::paintEvent(QPaintEvent* e)
 	auto rect = QRect(_st.height, 0, width() - _st.height, height());
 	p.drawText(rect, Qt::AlignLeft | Qt::AlignVCenter, _text);
 }
+
+TextButton::TextButton(QWidget* parent, QString text, const style::TextButton& st)
+	: RippleButton(parent, st.ripple)
+	, _text(text)
+	, _st(st) {
+	resize(width(), resizeGetHeight(width()));
+}
+
+int TextButton::resizeGetHeight(int newWidth) {
+	return _st.bordermargins.top() + _st.border + _st.textmargins.top() +
+		_st.font->height +
+		_st.textmargins.bottom() + _st.border + _st.bordermargins.bottom();
+}
+
+void TextButton::paintEvent(QPaintEvent* e) {
+	Painter p(this);
+	p.fillRect(rect(), st::boxBg);
+
+	p.setFont(_st.font);
+	paintRipple(p, 0, 0);
+
+	
+	QRect text_rect = textRect();
+	p.drawText(text_rect, style::al_center, _text);
+
+	QRect border_rect = text_rect.adjusted(_st.textmargins.left() * -1, 
+		_st.textmargins.top() * -1 - _st.border, 
+		_st.textmargins.right(), 
+		_st.textmargins.bottom() + _st.border);	
+	QPainterPath path;
+	int radius = border_rect.height() >> 1;
+	path.moveTo(border_rect.topLeft());
+	path.arcTo(border_rect.left() - radius, border_rect.top(), radius, radius << 1, 90, 180);
+	path.lineTo(border_rect.right(), border_rect.bottom());
+	path.arcTo(border_rect.right(), border_rect.top(), radius, radius << 1, 270, 180);
+	path.lineTo(border_rect.left(), border_rect.top());
+	p.setPen(QPen(_st.bordercolor, _st.border, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+	p.drawPath(path);
+}
+
+QRect TextButton::textRect() const {
+	int text_width = _st.font->width(_text);
+	int text_height = _st.font->height;
+	int x = (width() - text_width) >> 1;
+	int y = (height() - text_height) >> 1;
+	return { x, y, text_width, text_height };
+}
+
 } // namespace Ui

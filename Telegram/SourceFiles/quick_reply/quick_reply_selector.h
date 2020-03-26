@@ -8,6 +8,7 @@ namespace Window {
 
 namespace Ui {
     class ScrollArea;
+    class TextButton;
 }
 
 namespace QuickReply {
@@ -31,6 +32,7 @@ private:
     object_ptr<TopBar> _topBar;
     not_null<Ui::ScrollArea*> _scroll;
     QPointer<SimpleTree> _inner;
+    object_ptr<Ui::TextButton> _open;
 };
     
 } // namespace QuickReply

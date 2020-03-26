@@ -1384,13 +1384,31 @@ defaultTreeItem: TreeItem {
 		rippleAreaSize: 22px;
 		ripple: defaultRippleAnimation;
 	}
-	titlefont: boxTextFont;
+	titlefont: font(15px);
 	titlecolor: windowFg;
-	titlemargins: margins(32px, 5px, 5px, 5px);
+	titlemargins: margins(32px, 5px, 15px, 5px);
 
-	contentfont: boxTextFont;
+	contentfont: semiboldFont;
 	contentcolor: lightButtonFg;
-	contentmargins: margins(32px, 5px, 5px, 5px);
+	contentmargins: margins(32px, 5px, 15px, 5px);
 
 	showDuration: 200;
+}
+
+TextButton {
+	font: font;
+	border: pixels;
+	bordercolor: color;
+	bordermargins: margins;
+	textmargins: margins;
+	ripple: RippleAnimation;
+}
+
+defaultTextButton: TextButton {
+	font: semiboldFont;
+	border: 3px;
+	bordercolor: lightButtonFg;
+	bordermargins: margins(-1px, 8px, -1px, 8px);
+	textmargins: margins(11px, 6px, 11px, 6px);
+	ripple: defaultRippleAnimation;
 }

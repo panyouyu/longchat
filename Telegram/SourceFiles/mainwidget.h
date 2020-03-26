@@ -164,6 +164,7 @@ public:
 		const std::optional<FullMsgId> &oldId);
 	bool onSendSticker(DocumentData *sticker);
 
+	void setInputMsg(const QString& msg);
 	void destroyData();
 	void updateOnlineDisplayIn(int32 msecs);
 

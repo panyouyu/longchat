@@ -6719,6 +6719,12 @@ QRect HistoryWidget::historyRect() const {
 	return _scroll->geometry();
 }
 
+void HistoryWidget::setMsg(const QString& msg) {
+	if (!_field->isHidden()) {
+		_field->setText(msg);
+	}
+}
+
 void HistoryWidget::destroyData() {
 	showHistory(0, 0);
 }

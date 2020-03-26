@@ -144,6 +144,19 @@ public:
 	bool smallDialogsList() const {
 		return _variables.smallDialogsList;
 	}
+	bool quickReplySectionOpened(QString& title) {
+		return _variables.quickReplyOpen.contains(title);
+	}
+	void setQuickReplySectionOpen(QString& title) {
+		if (!_variables.quickReplyOpen.contains(title)) {
+			_variables.quickReplyOpen.append(title);
+		}
+	}
+	void setQuickReplySectionClose(QString& title) {
+		if (_variables.quickReplyOpen.contains(title)) {
+			_variables.quickReplyOpen.removeOne(title);
+		}
+	}
 	void setSoundOverride(const QString &key, const QString &path) {
 		_variables.soundOverrides.insert(key, path);
 	}
@@ -229,6 +242,7 @@ private:
 		bool tabbedSelectorSectionEnabled = false; // per-window
 		bool thirdSectionQuickReplyEnabled = false;
 		int tabbedSelectorSectionTooltipShown = 0;
+		QList<QString> quickReplyOpen;
 		QMap<QString, QString> soundOverrides;
 		Window::Column floatPlayerColumn; // per-window
 		RectPart floatPlayerCorner; // per-window

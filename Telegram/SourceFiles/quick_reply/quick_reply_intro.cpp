@@ -1,8 +1,8 @@
 #include "quick_reply/quick_reply_intro.h"
 
-#include "boxes/quick_reply_box.h"
-
-#include "boxes/confirm_box.h"
+#include "auth_session.h"
+#include "settings.h"
+#include "core/utils.h"
 #include "ui/wrap/fade_wrap.h"
 #include "ui/wrap/vertical_layout.h"
 #include "ui/widgets/shadow.h"
@@ -10,9 +10,13 @@
 #include "ui/widgets/buttons.h"
 #include "ui/widgets/scroll_area.h"
 #include "ui/widgets/popup_menu.h"
+#include "window/window_controller.h"
+#include "quick_reply/quick_reply_section.h"
+#include "quick_reply/quick_reply_selector.h"
 #include "quick_reply/quick_reply_top_bar.h"
 #include "quick_reply/text_list.h"
-#include "settings.h"
+#include "boxes/quick_reply_box.h"
+#include "boxes/confirm_box.h"
 #include "storage/localstorage.h"
 #include "lang/lang_keys.h"
 #include "facades.h"
@@ -25,7 +29,7 @@ namespace QuickReply {
 class QuickReplyWidget : public Ui::RpWidget {
 public:
 	QuickReplyWidget(QWidget* parent);
-
+	
 protected:
 	void resizeEvent(QResizeEvent* e) override;
 	void paintEvent(QPaintEvent* e) override;
@@ -55,6 +59,7 @@ private:
 	base::unique_qptr<Ui::PopupMenu> _menu;
 
 	QPointer<ConfirmBox> _confirmBox;
+
 };
 
 QuickReplyWidget::QuickReplyWidget(QWidget* parent)
@@ -204,7 +209,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 		if (group.isEmpty() || content.isEmpty()) return;
 
 		QString text = lang(lng_quick_reply_remove_words) + "\n  " + content;
-		_confirmBox = Ui::show(Box<ConfirmBox>(text, [this, group, content] {
+		_confirmBox = Ui::show(Box<ConfirmBox>(text, [this, &group, &content] {
 			auto& ref = cRefQuickReplyStrings();
 			if (ref.contains({ group, {} })) {
 				if (ref[ref.indexOf({ group, {} })].content.contains(content)) {
@@ -216,6 +221,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 					_contentRow = index < 0 ? QString() : ref[ref.indexOf({ group, {} })].content[index];
 					refreshTitle();
 					Local::writeSettings();
+					Auth().settings().setQuickReplySectionClose(group);
 					_confirmBox->closeBox();
 				}
 			}

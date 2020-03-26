@@ -3543,6 +3543,12 @@ void MainWidget::activate() {
 	App::wnd()->fixOrder();
 }
 
+void MainWidget::setInputMsg(const QString& msg) {
+	if (!_history->isHidden()) {
+		_history->setMsg(msg);
+	}
+}
+
 void MainWidget::destroyData() {
 	_history->destroyData();
 	_dialogs->destroyData();

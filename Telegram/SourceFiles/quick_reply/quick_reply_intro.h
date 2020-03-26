@@ -1,6 +1,7 @@
 #pragma once
 
 #include "window/layer_widget.h"
+#include "base/basic_types.h"
 
 namespace Ui {
 class VerticalLayout;

@@ -156,6 +156,7 @@ public:
 
 	void updateRecentStickers();
 
+	void setMsg(const QString& msg);
 	void destroyData();
 
 	void updateFieldPlaceholder();

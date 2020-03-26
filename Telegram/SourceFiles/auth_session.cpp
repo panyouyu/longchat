@@ -47,7 +47,10 @@ AuthSessionSettings::Variables::Variables()
 
 QByteArray AuthSessionSettings::serialize() const {
 	const auto autoDownload = _variables.autoDownload.serialize();
-	auto size = sizeof(qint32) * 23;
+	auto size = sizeof(qint32) * 24;
+	for (auto i = _variables.quickReplyOpen.cbegin(), e = _variables.quickReplyOpen.cend(); i != e; ++i) {
+		size += Serialize::stringSize(*i);
+	}
 	for (auto i = _variables.soundOverrides.cbegin(), e = _variables.soundOverrides.cend(); i != e; ++i) {
 		size += Serialize::stringSize(i.key()) + Serialize::stringSize(i.value());
 	}
@@ -63,6 +66,10 @@ QByteArray AuthSessionSettings::serialize() const {
 		stream << qint32(_variables.lastSeenWarningSeen ? 1 : 0);
 		stream << qint32(_variables.tabbedSelectorSectionEnabled ? 1 : 0);
 		stream << qint32(_variables.thirdSectionQuickReplyEnabled ? 1 : 0);
+		stream << qint32(_variables.quickReplyOpen.size());
+		for (auto i = _variables.quickReplyOpen.cbegin(), e = _variables.quickReplyOpen.cend(); i != e; ++i) {
+			stream << *i;
+		}
 		stream << qint32(_variables.soundOverrides.size());
 		for (auto i = _variables.soundOverrides.cbegin(), e = _variables.soundOverrides.cend(); i != e; ++i) {
 			stream << i.key() << i.value();
@@ -112,6 +119,7 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	qint32 tabbedSelectorSectionTooltipShown = 0;
 	qint32 floatPlayerColumn = static_cast<qint32>(Window::Column::Second);
 	qint32 floatPlayerCorner = static_cast<qint32>(RectPart::TopRight);
+	QList<QString> quickReplyOpen;
 	QMap<QString, QString> soundOverrides;
 	base::flat_set<PeerId> groupStickersSectionHidden;
 	qint32 thirdSectionInfoEnabled = 0;
@@ -139,6 +147,17 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	}
 	if (!stream.atEnd()) {
 		stream >> thirdSectionQuickReplyEnabled;
+	}
+	if (!stream.atEnd()) {
+		auto count = qint32(0);
+		stream >> count;
+		if (stream.status() == QDataStream::Ok) {
+			for (auto i = 0; i != count; ++i) {
+				QString title;
+				stream >> title;
+				quickReplyOpen.append(title);
+			}
+		}
 	}
 	if (!stream.atEnd()) {
 		auto count = qint32(0);
@@ -232,6 +251,7 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	_variables.lastSeenWarningSeen = (lastSeenWarningSeen == 1);
 	_variables.tabbedSelectorSectionEnabled = (tabbedSelectorSectionEnabled == 1);
 	_variables.thirdSectionQuickReplyEnabled = (thirdSectionQuickReplyEnabled == 1);
+	_variables.quickReplyOpen = std::move(quickReplyOpen);
 	_variables.soundOverrides = std::move(soundOverrides);
 	_variables.tabbedSelectorSectionTooltipShown = tabbedSelectorSectionTooltipShown;
 	auto uncheckedColumn = static_cast<Window::Column>(floatPlayerColumn);

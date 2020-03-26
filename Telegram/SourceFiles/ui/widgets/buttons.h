@@ -259,4 +259,18 @@ private:
 	int _textw = 0;
 };
 
+class TextButton : public RippleButton {
+public:
+	TextButton(QWidget* parent, QString text, const style::TextButton& st = st::defaultTextButton);
+
+protected:
+	int resizeGetHeight(int newWidth) override;
+	void paintEvent(QPaintEvent* e) override;
+
+private:
+	QRect textRect() const;
+	QString _text;
+	const style::TextButton& _st;
+};
+
 } // namespace Ui
