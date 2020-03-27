@@ -111,7 +111,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 			QString group, content;
 			QuickReplyString& tmp = cRefQuickReplyStrings();
 			while (!file.atEnd()) {
-				line = file.readLine();
+				line = QString::fromLocal8Bit(file.readLine());
 				line = line.remove('\n');
 				line = line.remove('\r');
 				list = line.split(',');
@@ -150,7 +150,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 		if (csvFile.open(QIODevice::WriteOnly)) {
 			for (int i = 0; i < tmp.size(); i++) {
 				for (int j = 0; j < tmp.at(i).content.size(); j++)
-					csvFile.write((tmp.at(i).group + "," + tmp.at(i).content.at(j) + "\n").toLocal8Bit());
+					csvFile.write(QString(tmp.at(i).group + "," + tmp.at(i).content.at(j) + "\n").toLocal8Bit());
 			}
 			csvFile.close();
 			Ui::show(Box<InformBox>(lang(lng_quick_reply_export_succeed)), LayerOption::KeepOther);
@@ -366,9 +366,11 @@ void QuickReplyWidget::refreshTitle() {
 	}
 
 	static_cast<TextListWidget*>(_title->wrapped())->setCheckedItem(ref.indexOf({ _groupRow, {} }));
+	refreshContent(_groupRow);
 }
 void QuickReplyWidget::refreshContent(QString group) {
 	static_cast<TextListWidget*>(_content->wrapped())->clear();
+	if (group.isEmpty()) return;
 	auto& ref = cRefQuickReplyStrings();
 	if (ref.contains({ group, {} })) {
 		static_cast<TextListWidget*>(_content->wrapped())->appendRows(ref[ref.indexOf({ group, {} })].content);
