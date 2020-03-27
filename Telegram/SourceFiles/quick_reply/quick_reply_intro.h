@@ -1,6 +1,9 @@
 #pragma once
 
 #include "window/layer_widget.h"
+
+#include "auth_session.h"
+#include "window/section_widget.h"
 #include "base/basic_types.h"
 
 namespace Ui {
@@ -29,7 +32,9 @@ protected:
 	void paintEvent(QPaintEvent* e) override;
 	virtual void closeHook() {
 		if (const auto callback = base::take(_callback)) {
-			callback();
+			// only for thirdSection of QuickReply update
+			if (Auth().settings().floatPlayerColumn() == Window::Column::Third)
+				callback();
 		}
 	}
 

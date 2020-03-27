@@ -4,7 +4,8 @@ using "ui/widgets/widgets.style";
 using "intro/intro.style";
 using "info/info.style";
 
-quickReplyWidgetWidth: 600px;
+quickReplyWidgetMaxWidth: 600px;
+quickReplyWidgetMaxHeight: 500px;
 
 quickReplyLayerTopMinimal: 20px;
 quickReplyLayerTopMaximal: 40px;

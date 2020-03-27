@@ -1,6 +1,5 @@
 #include "quick_reply/quick_reply_intro.h"
 
-#include "auth_session.h"
 #include "settings.h"
 #include "core/utils.h"
 #include "ui/wrap/fade_wrap.h"
@@ -433,14 +432,10 @@ void LayerWidget::parentResized() {
 	const auto parentSize = parentWidget()->size();
 	auto windowWidth = parentSize.width();
 	auto windowHeight = parentSize.height();
-	const auto newWidth = windowWidth < st::quickReplyWidgetWidth ? windowWidth : st::quickReplyWidgetWidth;
+	const auto newWidth = windowWidth < st::quickReplyWidgetMaxWidth ? windowWidth : st::quickReplyWidgetMaxWidth;
+	const auto newHeight = windowHeight < st::quickReplyWidgetMaxHeight ? windowHeight : st::quickReplyWidgetMaxHeight;
 	const auto newLeft = (windowWidth - newWidth) >> 1;
-	auto newTop = 0;
-	if (newLeft)
-		newTop = snap(windowHeight / 24, st::quickReplyLayerTopMinimal, st::quickReplyLayerTopMaximal);
-	
-	auto newBottom = newTop;
-	auto newHeight = windowHeight - newTop - newBottom;
+	const auto newTop = (windowHeight - newHeight) >> 1;
 	setGeometry(newLeft, newTop, newWidth, newHeight);
 	_content->setGeometry(0, 0, newWidth, newHeight);
 }
