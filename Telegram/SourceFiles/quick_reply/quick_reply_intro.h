@@ -33,7 +33,7 @@ protected:
 	virtual void closeHook() {
 		if (const auto callback = base::take(_callback)) {
 			// only for thirdSection of QuickReply update
-			if (Auth().settings().floatPlayerColumn() == Window::Column::Third)
+			if (Auth().settings().thirdSectionQuickReplyEnabled())
 				callback();
 		}
 	}
