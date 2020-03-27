@@ -1400,6 +1400,7 @@ TextButton {
 	border: pixels;
 	bordercolor: color;
 	bordermargins: margins;
+	textcolor: color;
 	textmargins: margins;
 	ripple: RippleAnimation;
 }
@@ -1409,6 +1410,7 @@ defaultTextButton: TextButton {
 	border: 3px;
 	bordercolor: lightButtonFg;
 	bordermargins: margins(-1px, 8px, -1px, 8px);
+	textcolor: windowFg;
 	textmargins: margins(11px, 6px, 11px, 6px);
 	ripple: defaultRippleAnimation;
 }

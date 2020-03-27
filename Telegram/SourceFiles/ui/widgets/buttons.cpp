@@ -717,6 +717,7 @@ void TextButton::paintEvent(QPaintEvent* e) {
 
 	
 	QRect text_rect = textRect();
+	p.setPen(QPen(_st.textcolor));
 	p.drawText(text_rect, style::al_center, _text);
 
 	QRect border_rect = text_rect.adjusted(_st.textmargins.left() * -1, 
