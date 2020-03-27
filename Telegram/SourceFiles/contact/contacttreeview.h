@@ -34,6 +34,7 @@ signals:
 	void selectedUser(PeerData*);
 	void selectedUser(ContactInfo* pCI);
 	void switchUser(ContactInfo* pCI);
+	void showUserInfo(ContactInfo* pCI);
 	// 点击Item信号 具体到点到的Role
 	void signalClicked(const QModelIndex& iIndex, int role);
 
@@ -42,6 +43,7 @@ public slots:
 	void slotAddGroup();
 	void slotModGroup();
 	void slotDelGroup();
+	void slotUserInfo();
 private:
 	void initConnection();
 	// 自定义的点击事件处理

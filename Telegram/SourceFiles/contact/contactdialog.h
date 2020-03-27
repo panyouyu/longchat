@@ -13,7 +13,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "contactdelegate.h"
 #include "base/observer.h"
 #include "mtproto/sender.h"
-
+#include "window/window_controller.h"
 
 
 namespace Contact {
@@ -24,7 +24,7 @@ class Dialog : public QDialog , public RPCSender, private base::Subscriber {
 	Q_OBJECT
 
 public:
-	Dialog(QWidget *parent = 0);
+	Dialog(Window::Controller* controller, QWidget *parent = 0);
 	~Dialog();
 
 	virtual void accept() override;
@@ -35,6 +35,7 @@ private slots:
 	void slotAddGroup();
 	void slotModGroup(ContactInfo* pCI);
 	void slotDelGroup(ContactInfo* pCI);
+	void slotShowUserInfo(ContactInfo* pCI);
 
 private:
 	QLabel* _labTitle;
@@ -49,6 +50,8 @@ private:
 	QVector<ContactInfo*> _vecContactPData;
 	QVector<ContactInfo*> _vecContactPData4Search; //qt5.10以后才支持下级查询，所以这里把下级提升为1级查询 且把parentid设置为0
 	QMap<uint64, QSet<uint64>> _mapUser2Group;
+
+	Window::Controller* _controller = { nullptr };
 protected:
 	virtual void closeEvent(QCloseEvent* event) override;
 

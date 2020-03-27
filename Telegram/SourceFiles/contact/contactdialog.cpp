@@ -19,7 +19,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 namespace Contact {
 
-Dialog::Dialog(QWidget *parent) : QDialog(parent) {
+Dialog::Dialog(Window::Controller* controller, QWidget *parent) : QDialog(parent), _controller(controller) {
 	setObjectName(QStringLiteral("_contactdialog"));
 	//setWindowFlags(Qt::CustomizeWindowHint | Qt::Dialog | Qt::FramelessWindowHint);
 	setWindowFlags(Qt::CustomizeWindowHint);
@@ -89,6 +89,11 @@ void Dialog::slotDelGroup(ContactInfo* pCI)
 	_allUserTagDelRequest = MTP::send(MTPcontacts_DelUserGroups(MTP_long(pCI->id)), rpcDone(&Dialog::userGroupDelDone), rpcFail(&Dialog::userGroupDelFail));
 }
 
+void Dialog::slotShowUserInfo(ContactInfo* pCI)
+{
+	_controller->showPeerInfo(pCI->peerData);
+}
+
 void Dialog::closeEvent(QCloseEvent* event)
 {
 	//QMessageBox::question(this,
@@ -155,6 +160,7 @@ void Dialog::init()
 	connect(_contactTree, SIGNAL(addGroup()), this, SLOT(slotAddGroup()));
 	connect(_contactTree, SIGNAL(modGroup(ContactInfo*)), this, SLOT(slotModGroup(ContactInfo*)));
 	connect(_contactTree, SIGNAL(delGroup(ContactInfo*)), this, SLOT(slotDelGroup(ContactInfo*)));
+	connect(_contactTree, SIGNAL(showUserInfo(ContactInfo*)), this, SLOT(slotShowUserInfo(ContactInfo*)));
 
 	subscribe(App::main()->signalGroupChanged(), [this](int value) {
 		updateGroupInfoData();

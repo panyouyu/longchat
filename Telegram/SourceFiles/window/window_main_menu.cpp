@@ -167,7 +167,7 @@ void MainMenu::refreshMenu() {
 		//	widget.exec();
 		//	}, &st::mainMenuNewChannel, &st::mainMenuNewChannelOver);
 		_menu->addAction(lang(lng_menu_contacts), [] {
-			Contact::Dialog widget;
+			Contact::Dialog widget(App::wnd()->controller());
 			widget.exec();
 			//Ui::show(Box<PeerListBox>(std::make_unique<ContactsBoxController>(), [](not_null<PeerListBox*> box) {
 			//	box->addButton(langFactory(lng_close), [box] { box->closeBox(); });

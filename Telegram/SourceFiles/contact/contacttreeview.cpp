@@ -56,9 +56,10 @@ void ContactTreeView::slotCustomContextMenu(const QPoint& point)
 			QModelIndex curIndex = indexAt(point);
 			ContactInfo* pCI = (ContactInfo*)curIndex.data(Qt::DisplayRole).value<void*>();
 
-			menu->addAction(lang(lng_dlg_contact_group_add), this, SLOT(slotAddGroup()));
+			
 			if (pCI && pCI->isGroup && pCI->otherId == 0)
 			{
+				menu->addAction(lang(lng_dlg_contact_group_add), this, SLOT(slotAddGroup()));
 				QAction* pModGroup = new QAction(lang(lng_dlg_contact_group_rename), this);
 				pModGroup->setData(QVariant::fromValue(pCI));
 				connect(pModGroup, SIGNAL(triggered()), this, SLOT(slotModGroup()));
@@ -68,6 +69,12 @@ void ContactTreeView::slotCustomContextMenu(const QPoint& point)
 				pDelGroup->setData(QVariant::fromValue(pCI));
 				connect(pDelGroup, SIGNAL(triggered()), this, SLOT(slotDelGroup()));
 				menu->addAction(pDelGroup);
+			}
+			if (pCI && !pCI->isGroup) {
+				QAction* pUserInfo = new QAction(lang(lng_context_view_profile), this);
+				pUserInfo->setData(QVariant::fromValue(pCI));
+				connect(pUserInfo, SIGNAL(triggered()), this, SLOT(slotUserInfo()));
+				menu->addAction(pUserInfo);
 			}
 			menu->exec(this->mapToGlobal(point));
 		}
@@ -112,6 +119,18 @@ void ContactTreeView::slotDelGroup()
 		pCI = pSendMsg->data().value<ContactInfo*>();
 	} while (false);
 	emit delGroup(pCI);
+}
+
+void ContactTreeView::slotUserInfo()
+{
+	QAction* pSendMsg = nullptr;
+	ContactInfo* pCI = nullptr;
+	do
+	{
+		pSendMsg = qobject_cast<QAction*>(sender());
+		pCI = pSendMsg->data().value<ContactInfo*>();
+	} while (false);
+	emit showUserInfo(pCI);
 }
 
 void ContactTreeView::initConnection()
