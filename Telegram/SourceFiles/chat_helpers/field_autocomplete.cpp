@@ -232,18 +232,36 @@ void FieldAutocomplete::updateFiltered(bool resetScroll) {
 		}
 	} else if (_type == Type::Hashtags) {
 		bool listAllSuggestions = _filter.isEmpty();
-		auto &recent(cRecentWriteHashtags());
-		hrows.reserve(recent.size());
-		for (const auto &item : recent) {
-			const auto &tag = item.first;
-			if (!listAllSuggestions
-				&& (tag.size() == _filter.size()
-					|| !TextUtilities::RemoveAccents(tag).startsWith(
-						_filter,
-						Qt::CaseInsensitive))) {
-				continue;
+		//auto &recent(cRecentWriteHashtags());
+		//hrows.reserve(recent.size());
+		//for (const auto &item : recent) {
+		//	const auto &tag = item.first;
+		//	if (!listAllSuggestions
+		//		&& (tag.size() == _filter.size()
+		//			|| !TextUtilities::RemoveAccents(tag).startsWith(
+		//				_filter,
+		//				Qt::CaseInsensitive))) {
+		//		continue;
+		//	}
+		//	hrows.push_back(tag);
+		//}
+		auto& quickReply = cRefQuickReplyStrings();
+		int size = 0;
+		for (auto i = quickReply.cbegin(), e = quickReply.cend(); i != e; ++i) {
+			size += i->content.size();
+		}
+		hrows.reserve(size);
+		for (const auto& group : quickReply) {
+			for (const auto& item : group.content) {
+				if (!listAllSuggestions
+					&& (item.size() == _filter.size()
+						|| !TextUtilities::RemoveAccents(item).startsWith(
+							_filter,
+							Qt::CaseInsensitive))) {
+					continue;
+				}
+				hrows.push_back(item);
 			}
-			hrows.push_back(tag);
 		}
 	} else if (_type == Type::BotCommands) {
 		bool listAllSuggestions = _filter.isEmpty();
@@ -749,7 +767,7 @@ bool FieldAutocompleteInner::chooseSelected(FieldAutocomplete::ChooseMethod meth
 		}
 	} else if (!_hrows->isEmpty()) {
 		if (_sel >= 0 && _sel < _hrows->size()) {
-			emit hashtagChosen('#' + _hrows->at(_sel), method);
+			emit hashtagChosen(/*'#' + */_hrows->at(_sel), method);
 			return true;
 		}
 	} else if (!_brows->isEmpty()) {

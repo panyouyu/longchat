@@ -45,9 +45,9 @@ constexpr auto kMaxConnectedTimeout = crl::time(8000);
 constexpr auto kMinReceiveTimeout = crl::time(4000);
 constexpr auto kMaxReceiveTimeout = crl::time(64000);
 constexpr auto kMarkConnectionOldTimeout = crl::time(192000);
-constexpr auto kPingDelayDisconnect = 60;
-constexpr auto kPingSendAfter = crl::time(30000);
-constexpr auto kPingSendAfterForce = crl::time(45000);
+constexpr auto kPingDelayDisconnect = 3;
+constexpr auto kPingSendAfter = crl::time(3000);
+constexpr auto kPingSendAfterForce = crl::time(4500);
 constexpr auto kTestModeDcIdShift = 10000;
 
 // If we can't connect for this time we will ask _instance to update config.

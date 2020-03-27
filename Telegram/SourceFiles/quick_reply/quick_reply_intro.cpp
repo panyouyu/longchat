@@ -150,7 +150,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 		if (csvFile.open(QIODevice::WriteOnly)) {
 			for (int i = 0; i < tmp.size(); i++) {
 				for (int j = 0; j < tmp.at(i).content.size(); j++)
-					csvFile.write((tmp.at(i).group + "," + tmp.at(i).content.at(j) + "\n").toUtf8());
+					csvFile.write((tmp.at(i).group + "," + tmp.at(i).content.at(j) + "\n").toLocal8Bit());
 			}
 			csvFile.close();
 			Ui::show(Box<InformBox>(lang(lng_quick_reply_export_succeed)), LayerOption::KeepOther);
