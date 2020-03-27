@@ -38,7 +38,6 @@ int TreeItem::resizeGetHeight(int newWidth) {
 			result += _rect_list.at(i).height();
 		}
 	}
-	
 	return result;
 }
 
@@ -149,7 +148,6 @@ void TreeItem::handleMousePos(QPoint pt) {
 
 SimpleTree::SimpleTree(QWidget* parent)
 	: RpWidget(parent){
-	setAttribute(Qt::WA_OpaquePaintEvent);
 	load();
 }
 
@@ -160,9 +158,9 @@ void SimpleTree::load() {
 		_items.push_back(std::make_unique<TreeItem>(this, i->group, i->content));
 	}
 	for (auto i = _items.cbegin(), e = _items.cend(); i != e; ++i) {
+		i->get()->show();
 		i->get()->sizeUpdate() | rpl::start_with_next([this] { resize(width(), resizeGetHeight(width())); }, lifetime());
 	}
-	update();
 }
 
 int SimpleTree::resizeGetHeight(int newWidth) {

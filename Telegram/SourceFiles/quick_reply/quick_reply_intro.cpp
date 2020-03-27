@@ -29,7 +29,9 @@ namespace QuickReply {
 class QuickReplyWidget : public Ui::RpWidget {
 public:
 	QuickReplyWidget(QWidget* parent);
-	
+	~QuickReplyWidget() {
+		Local::writeSettings();
+	}
 protected:
 	void resizeEvent(QResizeEvent* e) override;
 	void paintEvent(QPaintEvent* e) override;
@@ -190,11 +192,11 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 		modifyBox->titleSubmid() | rpl::start_with_next([this](QString group) {
 			_groupRow = group;
 			refreshTitle();
-			}, lifetime());
+		}, lifetime());
 		modifyBox->contentSubmit() | rpl::start_with_next([this](QString content) {
 			_contentRow = content;
 			refreshContent(_groupRow);
-			}, lifetime());
+		}, lifetime());
 	};
 
 	auto remove = [this] {
@@ -209,7 +211,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 		if (group.isEmpty() || content.isEmpty()) return;
 
 		QString text = lang(lng_quick_reply_remove_words) + "\n  " + content;
-		_confirmBox = Ui::show(Box<ConfirmBox>(text, [this, &group, &content] {
+		_confirmBox = Ui::show(Box<ConfirmBox>(text, [this, group, content] {
 			auto& ref = cRefQuickReplyStrings();
 			if (ref.contains({ group, {} })) {
 				if (ref[ref.indexOf({ group, {} })].content.contains(content)) {
@@ -217,14 +219,13 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 					ref[ref.indexOf({ group, {} })].content.removeAt(index);
 					if (index == ref[ref.indexOf({ group, {} })].content.size()) {
 						index--;
-					}						
+					}
 					_contentRow = index < 0 ? QString() : ref[ref.indexOf({ group, {} })].content[index];
-					refreshTitle();
-					Local::writeSettings();
-					Auth().settings().setQuickReplySectionClose(group);
+					refreshTitle();					
 					_confirmBox->closeBox();
 				}
 			}
+			
 		}), LayerOption::KeepOther);
 	};
 
@@ -269,7 +270,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 		_confirmBox = Ui::show(Box<ConfirmBox>(text, [this, group] {
 			auto& ref = cRefQuickReplyStrings();
 			if (ref.contains({ group, {} })) {
-				int index = ref.indexOf({ group, {} });
+				int index = ref.indexOf({ group, {} });				
 				ref.removeAt(index);
 				if (index == ref.size()) {
 					index--;
@@ -278,7 +279,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 				_contentRow = index < 0 ? QString() :
 					ref.at(index).content.size() > 0 ? ref.at(index).content.first() : QString();
 				refreshTitle();
-				Local::writeSettings();
+				Auth().settings().setQuickReplySectionClose(group);
 				_confirmBox->closeBox();
 			}
 		}), LayerOption::KeepOther);

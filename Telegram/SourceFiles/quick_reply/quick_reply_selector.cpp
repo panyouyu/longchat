@@ -21,7 +21,7 @@ Selector::Selector(QWidget *parent, not_null<Window::Controller *> controller)
 	, _topBar(this, st::quickReplyTopBar)
 	, _scroll(Ui::CreateChild<Ui::ScrollArea>(this, st::quickReplyTitleScroll))
 	, _open(this, lang(lng_quick_reply_open)){
-	setAttribute(Qt::WA_OpaquePaintEvent);
+	//setAttribute(Qt::WA_OpaquePaintEvent);
 	_topBar->setTitle(Lang::Viewer(lng_quick_reply));
 	auto close = _topBar->addButton(
 		base::make_unique_q<Ui::IconButton>(
@@ -31,7 +31,12 @@ Selector::Selector(QWidget *parent, not_null<Window::Controller *> controller)
 		_controller->closeThirdSection();
 	});
 	_open->setClickedCallback([this] {
-		App::wnd()->showSpecialLayer(Box<QuickReply::LayerWidget>(), anim::type::normal);
+		QuickReply::LayerWidget *layer = new QuickReply::LayerWidget(nullptr);
+		layer->setCloseHook([this] {
+			_inner->load();
+			updateControlsGeometry();
+		});
+		App::wnd()->showSpecialLayer(/*Box<QuickReply::LayerWidget>()*/object_ptr<Window::LayerWidget>::fromRaw(static_cast<Window::LayerWidget*>(layer)), anim::type::instant);
 	});
 	_inner = _scroll->setOwnedWidget(object_ptr<SimpleTree>(this));
 	_inner->move(0, 0);

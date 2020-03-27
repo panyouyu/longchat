@@ -144,15 +144,15 @@ public:
 	bool smallDialogsList() const {
 		return _variables.smallDialogsList;
 	}
-	bool quickReplySectionOpened(QString& title) {
+	bool quickReplySectionOpened(const QString& title) {
 		return _variables.quickReplyOpen.contains(title);
 	}
-	void setQuickReplySectionOpen(QString& title) {
+	void setQuickReplySectionOpen(const QString& title) {
 		if (!_variables.quickReplyOpen.contains(title)) {
 			_variables.quickReplyOpen.append(title);
 		}
 	}
-	void setQuickReplySectionClose(QString& title) {
+	void setQuickReplySectionClose(const QString& title) {
 		if (_variables.quickReplyOpen.contains(title)) {
 			_variables.quickReplyOpen.removeOne(title);
 		}
