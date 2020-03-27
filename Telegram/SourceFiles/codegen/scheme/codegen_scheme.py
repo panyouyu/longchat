@@ -69,7 +69,12 @@ countedTypeIdExceptions['contacts.addUserGroups#3b9aca07'] = True
 countedTypeIdExceptions['contacts.modUserGroups#3b9aca0b'] = True
 countedTypeIdExceptions['userGroupStatusRes#3b9aca1f'] = True
 countedTypeIdExceptions['auth.overSession#3b9acdee'] = True
-
+countedTypeIdExceptions['messages.getKfDialogs#3b9aca24'] = True
+countedTypeIdExceptions['auth.onOffline#3b9aca22'] = True
+countedTypeIdExceptions['switchKefu#3b9acdf2'] = True
+countedTypeIdExceptions['switchKefuList#3b9acdf1'] = True
+countedTypeIdExceptions['kefu.getSwitchKefus#3b9acdf0'] = True
+countedTypeIdExceptions['kefu.switchKefu#3b9acdef'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';

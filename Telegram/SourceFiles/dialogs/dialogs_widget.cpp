@@ -257,8 +257,6 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 	setupSupportMode();
 	setupScrollUpButton();
 
-	
-
 }
 
 void DialogsWidget::setupScrollUpButton() {
@@ -538,7 +536,9 @@ void DialogsWidget::notify_historyMuteUpdated(History *history) {
 void DialogsWidget::dialogsReceived(
 		const MTPmessages_Dialogs &dialogs,
 		mtpRequestId requestId) {
-	if (_dialogsRequestId != requestId) return;
+	if (_dialogsRequestId != requestId) {
+		return;
+	}
 
 	const auto [dialogsList, messagesList] = [&] {
 		const auto process = [&](const auto &data) {
@@ -992,17 +992,23 @@ void DialogsWidget::loadDialogs() {
 	const auto flags = MTPmessages_GetDialogs::Flag::f_exclude_pinned;
 	const auto feedId = 0;
 	const auto hash = 0;
+	//_dialogsRequestId = MTP::send(
+	//	MTPmessages_GetDialogs(
+	//		MTP_flags(flags),
+	//		//MTP_int(feedId), // #feed
+	//		MTP_int(_dialogsOffsetDate),
+	//		MTP_int(_dialogsOffsetId),
+	//		_dialogsOffsetPeer
+	//			? _dialogsOffsetPeer->input
+	//			: MTP_inputPeerEmpty(),
+	//		MTP_int(loadCount),
+	//		MTP_int(hash)),
+	//	rpcDone(&DialogsWidget::dialogsReceived),
+	//	rpcFail(&DialogsWidget::dialogsFailed));
 	_dialogsRequestId = MTP::send(
-		MTPmessages_GetDialogs(
-			MTP_flags(flags),
-			//MTP_int(feedId), // #feed
-			MTP_int(_dialogsOffsetDate),
-			MTP_int(_dialogsOffsetId),
-			_dialogsOffsetPeer
-				? _dialogsOffsetPeer->input
-				: MTP_inputPeerEmpty(),
-			MTP_int(loadCount),
-			MTP_int(hash)),
+		MTPmessages_GetKfDialogs(
+			MTP_int(0),
+			MTP_long(0)),
 		rpcDone(&DialogsWidget::dialogsReceived),
 		rpcFail(&DialogsWidget::dialogsFailed));
 	if (!_pinnedDialogsReceived) {
@@ -1018,7 +1024,9 @@ void DialogsWidget::userGroupDone(const MTPUserGroupList& result)
 
 bool DialogsWidget::userGroupFail(const RPCError& error)
 {
-	if (MTP::isDefaultHandledError(error)) return false;
+	if (MTP::isDefaultHandledError(error)) {
+		return false;
+	}
 
 	LOG(("RPC Error: %1 %2: %3").arg(error.code()).arg(error.type()).arg(error.description()));
 

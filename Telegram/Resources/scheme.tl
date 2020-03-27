@@ -1045,6 +1045,9 @@ userGroup#3b9aca21 tag_id:long tag_name:string other_id:int user_ids:Vector<long
 userGroupList#3b9aca0e tag_users:Vector<UserGroup> = UserGroupList;
 userGroupReturn#3b9aca15 is_success:int = UserGroupReturn;
 userGroupStatusRes#3b9aca1f flags:int other_id:int = UserGroupStatusRes;
+switchKefu#3b9acdf2 kefu_id:int waiting_count:int service_count:int service_max:int nick_name:string = SwitchKefu;
+switchKefuList#3b9acdf1 kefus:Vector<SwitchKefu> = SwitchKefuList;
+
 
 account.takeout#4dba4501 id:long = account.Takeout;
 
@@ -1155,6 +1158,7 @@ auth.signIn#bcd51581 phone_number:string phone_code_hash:string phone_code:strin
 auth.kefuLogin#3b9acde9 kefu_login_name:string kefu_login_password:string auth_code:string = auth.Authorization;
 auth.logOut#5717da40 = Bool;
 auth.overSession#3b9acdee user_id:long = Bool;
+auth.onOffline#3b9aca22 flags:int state:int = Bool;
 auth.resetAuthorizations#9fab0d1a = Bool;
 auth.exportAuthorization#e5bfffcd dc_id:int = auth.ExportedAuthorization;
 auth.importAuthorization#e3ef9613 id:int bytes:bytes = auth.Authorization;
@@ -1248,9 +1252,12 @@ contacts.getUserGroups#3b9aca0d = UserGroupList;
 contacts.delUserGroups#3b9aca09 tag_id:long = UserGroupReturn;
 contacts.addUserGroups#3b9aca07 tag_name:string user_ids:Vector<long> = UserGroupReturn;
 contacts.modUserGroups#3b9aca0b tag_id:long tag_name:string user_ids:Vector<long> = UserGroupReturn;
+kefu.getSwitchKefus#3b9acdf0 player_user_id:int = SwitchKefuList;
+kefu.switchKefu#3b9acdef kefu_user_id:long player_user_id:long = Bool;
 
 messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
 messages.getDialogs#b098aee6 flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:int = messages.Dialogs;
+messages.getKfDialogs#3b9aca24 flags:int tag_id:long = messages.Dialogs;
 messages.getHistory#dcbb8260 peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:int = messages.Messages;
 messages.search#8614ef68 flags:# peer:InputPeer q:string from_id:flags.0?InputUser filter:MessagesFilter min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:int = messages.Messages;
 messages.readHistory#e306d3a peer:InputPeer max_id:int = messages.AffectedMessages;

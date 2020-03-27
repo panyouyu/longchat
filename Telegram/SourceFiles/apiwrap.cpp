@@ -655,6 +655,22 @@ QString ApiWrap::exportDirectMessageLink(not_null<HistoryItem*> item) {
 	return current;
 }
 
+void ApiWrap::requestOnOffLine(int state)
+{
+	if (_onOffLineRequestId) {
+		return;
+	}
+	_onOffLineRequestId = request(MTPauth_OnOffline(
+		MTP_int(0), MTP_int(state)
+	)).done([=](const MTPBool& result) {
+		_onOffLineRequestId = 0;
+		}).fail([=](const RPCError& error) {
+			_onOffLineRequestId = 0;
+			LOG(("MTP OnOffline: bad : %1"
+				).arg(error.code()));
+			}).send();
+}
+
 void ApiWrap::requestContacts() {
 	if (_session->data().contactsLoaded().value() || _contactsRequestId) {
 		return;

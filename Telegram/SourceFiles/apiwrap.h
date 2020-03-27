@@ -78,6 +78,7 @@ public:
 		RequestMessageDataCallback callback);
 	QString exportDirectMessageLink(not_null<HistoryItem*> item);
 
+	void requestOnOffLine(int state);
 	void requestContacts();
 	void requestDialogEntry(not_null<Data::Feed*> feed);
 	//void requestFeedDialogsEntries(not_null<Data::Feed*> feed);
@@ -699,6 +700,7 @@ private:
 
 	base::flat_map<mtpTypeId, mtpRequestId> _privacySaveRequests;
 
+	mtpRequestId _onOffLineRequestId = 0;
 	mtpRequestId _contactsRequestId = 0;
 	mtpRequestId _contactsStatusesRequestId = 0;
 	base::flat_set<not_null<Data::Feed*>> _dialogFeedRequests;

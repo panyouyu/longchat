@@ -1115,6 +1115,7 @@ void Application::QuitAttempt() {
 				prevents = true;
 			}
 		}
+		Auth().api().requestOnOffLine(0);
 		if (Auth().api().isQuitPrevent()) {
 			prevents = true;
 		}

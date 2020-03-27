@@ -230,7 +230,7 @@ void MainWindow::setupMain() {
 
 	auto animated = (_intro || _passcodeLock);
 	auto bg = animated ? grabInner() : QPixmap();
-
+	Auth().api().requestOnOffLine(1);
 	clearWidgets();
 
 	_main.create(bodyWidget(), controller());

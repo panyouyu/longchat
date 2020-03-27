@@ -165,6 +165,76 @@ void ContactTreeView::initConnection()
 	{
 			_sortFilterProxyModel->setExtDataExpanded(index, false); //_contactModel _sortFilterProxyModel
 	});
+	if (_ctt == CTT_SWITCH) {
+		// 自定义点击事件
+			//connect(this, QOverload<const QModelIndex&, int>::of(&ContactTreeView::signalClicked), this, &ContactTreeView::onClickedHandle);
+		connect(this, static_cast<void (ContactTreeView::*)(const QModelIndex&, int)>(&ContactTreeView::signalClicked), this, &ContactTreeView::onClickedHandle);
+	}
+	}
+	
+
+void ContactTreeView::onClickedHandle(const QModelIndex& index, int role)
+{
+	ContactInfo* pCI = (ContactInfo*)index.data(Qt::DisplayRole).value<void*>();
+	switch (role)
+	{
+		case static_cast<int>(CustomRole::SwitchRole) : 
+		{
+			emit switchUser(pCI);
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+}
+
+bool ContactTreeView::viewportEvent(QEvent* pEvent)
+{
+	bool result = QTreeView::viewportEvent(pEvent);
+	QEvent::Type eventType = pEvent->type();
+	int role = -1;
+
+	switch (eventType)
+	{
+	case QEvent::MouseButtonPress:
+	case QEvent::MouseButtonRelease:
+	case QEvent::MouseButtonDblClick:
+	{
+		int role = -1;
+		QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(pEvent);
+		QModelIndex modelIndex = indexAt(mouseEvent->pos());
+		QStyleOptionViewItemV4 option = viewOptions();
+		option.rect = visualRect(modelIndex);
+		option.widget = this;
+
+		QMetaObject::invokeMethod(qobject_cast<ContactDelegate*>(itemDelegate(modelIndex)), "mouseEvent",
+			Q_RETURN_ARG(int, role),
+			Q_ARG(QMouseEvent*, mouseEvent),
+			Q_ARG(QAbstractItemView*, this),
+			Q_ARG(QStyleOptionViewItem, option),
+			Q_ARG(QModelIndex, modelIndex));
+
+		if (modelIndex.isValid())
+		{
+			if (eventType == QEvent::MouseButtonRelease &&
+				Qt::LeftButton == mouseEvent->button())
+			{
+				// 左键按下
+				if (role != -1)
+				{
+					emit signalClicked(modelIndex, role);
+				}
+			}
+		}
+	}
+	break;
+	default:
+		break;
+	}
+
+	return result;
 }
 
 } // namespace Contact

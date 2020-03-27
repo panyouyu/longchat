@@ -306,7 +306,7 @@ void Filler::addBlockUser(not_null<UserData*> user) {
 
 void Filler::addSwitchboardUser(not_null<UserData*> user) {
 	auto blockAction = _addAction(lang(lng_switchboard_user), [=] {
-		Contact::SwitchDialog dlg;
+		Contact::SwitchDialog dlg(user->id);
 		dlg.exec();
 		});
 }

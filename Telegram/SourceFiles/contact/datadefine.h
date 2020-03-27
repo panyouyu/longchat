@@ -14,6 +14,9 @@ namespace Contact {
         ContactInfo()
             : id(DEFAULT_VALUE_ZERO)
             , parentId(DEFAULT_VALUE_ZERO)
+            , serverNum(0)
+            , serviceMax(5)
+            , queueNum(0)
             , userTotalCount(0)
             , userOnlineCount(0)
             , otherId(0)
@@ -35,7 +38,10 @@ namespace Contact {
         QString lastLoginTime; //最后一次上线时间
         QString showUserCount; //分组内用户数信息 在线数/总数
         QString serverCount; //服务人数
+        int32 serverNum; //服务人数
+        int32 serviceMax; //服务最大人数
         QString queueCount; //排队人数
+        int32 queueNum; //排队人数
         int32 userTotalCount; //总用户数
         int32 userOnlineCount; //在线用户数
         int32 otherId;//功能 0=普通组 1=咨询中 2=已结束
@@ -78,6 +84,7 @@ namespace Contact {
         IsExpandedRole = Qt::UserRole + 1000, // 是否展开
         IsGroupRole, // 是否是群组
         PeerRole, // 获取peer
+        SwitchRole, //转接
     };
     //创建树类型
 	enum CreatingTreeType {

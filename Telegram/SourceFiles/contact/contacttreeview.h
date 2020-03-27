@@ -33,6 +33,9 @@ signals:
 	void delGroup(ContactInfo* pCI);
 	void selectedUser(PeerData*);
 	void selectedUser(ContactInfo* pCI);
+	void switchUser(ContactInfo* pCI);
+	// 点击Item信号 具体到点到的Role
+	void signalClicked(const QModelIndex& iIndex, int role);
 
 public slots:
 	void slotCustomContextMenu(const QPoint& point);//创建右键菜单的槽函数
@@ -41,13 +44,17 @@ public slots:
 	void slotDelGroup();
 private:
 	void initConnection();
-
+	// 自定义的点击事件处理
+	void onClickedHandle(const QModelIndex& index, int role);
 private:
 	TreeModel* _contactModel{ nullptr };
 	ContactDelegate* _contactDelegate{ nullptr };
 	MySortFilterProxyModel* _sortFilterProxyModel{ nullptr };
 	QString _searchKey;
 	CreatingTreeType _ctt;
+
+protected:
+	virtual bool viewportEvent(QEvent* pEvent) override;
 
 };
 

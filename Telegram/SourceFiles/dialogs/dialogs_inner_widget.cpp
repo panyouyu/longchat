@@ -1345,14 +1345,14 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 					auto userId = user->id;
 					_mapUserInfo[userId] = peer->name;
 					//循环所有用户
-					qDebug() << "u:" << userId << _mapUserInfo[userId];
+					//qDebug() << "u:" << userId << _mapUserInfo[userId];
 					if (existUser(userId)) //当前用户在分组中
 					{
 						//遍历用户下的所有分组，并加入到对应分组中去
 						QSet<uint64>::const_iterator i = _mapUser2Group[userId].constBegin();
 						while (i != _mapUser2Group[userId].constEnd()) {
 							Contact::ContactInfo* ci = new Contact::ContactInfo();
-							qDebug() << "     gId:" << *i << "gName" << peer->name;
+							//qDebug() << "     gId:" << *i << "gName" << peer->name;
 							genContact(ci, user, peer, *i);
 							Contact::ContactInfo* ci4s = new Contact::ContactInfo();
 							genContact(ci4s, user, peer, 0);
@@ -2966,7 +2966,7 @@ bool DialogsInner::existUser(uint64 userId)
 	}
 	QString noUser = QString("uid: %1 name: %2 not in any group").arg(userId).arg(_mapUserInfo[userId]);
 	LOG((noUser));
-	qDebug() << noUser;
+	//qDebug() << noUser;
 	return false;
 }
 

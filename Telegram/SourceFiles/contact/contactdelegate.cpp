@@ -161,6 +161,9 @@ namespace Contact {
 	{
 		DelegateHelper delegateHelper;
 		QString name = pCI->firstName + " " + pCI->lastName;
+		if (m_ctt == CTT_SWITCH) {
+			name = pCI->firstName;
+		}
 		QRect cellRect = option.rect;
 		cellRect.setLeft(10);
 		QRect avatarRect = cellRect;
@@ -182,6 +185,7 @@ namespace Contact {
 		}
 		///////////画姓名///////////
 		int heightRevise = 5;
+		int pointSize = 6;
 		QRect nameRect = cellRect;
 		int halfHeight = cellRect.height() / 2;
 		QRect recName = delegateHelper.calTextRect(painter, m_si.fontSize, name);
@@ -190,19 +194,40 @@ namespace Contact {
 		nameRect.setTop(cellRect.top() + (halfHeight - showNameHeight) / 2 + heightRevise);
 		delegateHelper.paintText(painter, Qt::AlignLeft, m_si.fontColor, nameRect, m_si.fontSize, name);
 
-		//画最近登录时间
+		
 		QString midbutStr = pCI->lastLoginTime;
 		if (m_ctt == CTT_SWITCH)
 		{
 			midbutStr = pCI->serverCount + " " + pCI->queueCount;
+
+			// 画绿点红点
+			QRect pointIconRect(cellRect.left() + avatarRect.width() + ArrorRectWidth, cellRect.top() + halfHeight + (halfHeight - pointSize) / 2 - heightRevise,
+				pointSize , pointSize);
+			QString arrorPath{ ":/gui/art/ic_point_greed.png" };
+			if (pCI->serverNum > pCI->serviceMax)
+			{
+				arrorPath = ":/gui/art/ic_point_red.png";
+			}
+			painter->drawPixmap(pointIconRect, QPixmap(arrorPath));
+			//画服务人数
+			QRect recentLoginRect = cellRect;
+			QRect recRecLogin = delegateHelper.calTextRect(painter, m_si.fontSize, midbutStr);
+			showNameHeight = recRecLogin.height();
+			recentLoginRect.setLeft(cellRect.left() + avatarRect.width() + ArrorRectWidth + pointIconRect.width() + heightRevise);
+			recentLoginRect.setTop(cellRect.top() + halfHeight + (halfHeight - showNameHeight) / 2 - heightRevise);
+			delegateHelper.paintText(painter, Qt::AlignLeft, m_si.userCountFontColor, recentLoginRect, m_si.fontSize, midbutStr);
 			
 		}
-		QRect recentLoginRect = cellRect;
-		QRect recRecLogin = delegateHelper.calTextRect(painter, m_si.fontSize, midbutStr);
-		showNameHeight = recRecLogin.height();
-		recentLoginRect.setLeft(cellRect.left() + avatarRect.width() + ArrorRectWidth);
-		recentLoginRect.setTop(cellRect.top() + halfHeight + (halfHeight - showNameHeight) / 2 - heightRevise);
-		delegateHelper.paintText(painter, Qt::AlignLeft, m_si.userCountFontColor, recentLoginRect, m_si.fontSize, midbutStr);
+		else  //画最近登录时间
+		{
+			QRect recentLoginRect = cellRect;
+			QRect recRecLogin = delegateHelper.calTextRect(painter, m_si.fontSize, midbutStr);
+			showNameHeight = recRecLogin.height();
+			recentLoginRect.setLeft(cellRect.left() + avatarRect.width() + ArrorRectWidth);
+			recentLoginRect.setTop(cellRect.top() + halfHeight + (halfHeight - showNameHeight) / 2 - heightRevise);
+			delegateHelper.paintText(painter, Qt::AlignLeft, m_si.userCountFontColor, recentLoginRect, m_si.fontSize, midbutStr);
+		}
+		
 
 		if (m_ctt == CTT_SWITCH)
 		{
@@ -227,6 +252,15 @@ namespace Contact {
 		
 	}
 
+	QRect ContactDelegate::calSwitchUserInfoBackRect(const QStyleOptionViewItem& option, int textWidth, int textHeight, int marginRight) const {
+		QRect switchUserInfoBackRect = option.rect;
+		switchUserInfoBackRect.setTop(option.rect.top() + (option.rect.height() - textHeight) / 2);
+		switchUserInfoBackRect.setLeft(option.rect.width() - textWidth - marginRight);
+		switchUserInfoBackRect.setWidth(textWidth);
+		switchUserInfoBackRect.setHeight(textHeight);
+		return switchUserInfoBackRect;
+	}
+
 	QSize ContactDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 	{
 		Q_ASSERT(index.isValid());
@@ -244,6 +278,62 @@ namespace Contact {
 			size.setHeight(62);
 		}
 		return size;
+	}
+
+	int ContactDelegate::getMouseEventRole(const QPoint& pos, const QStyleOptionViewItem& option, const QModelIndex& index) const
+	{
+		//转接所在区域
+		QRect switchRect = calSwitchUserInfoBackRect(option, 24, 17, 10);
+		if (switchRect.contains(pos))
+		{
+			return static_cast<int>(CustomRole::SwitchRole);
+		}
+
+		return -1;
+	}
+
+	Q_INVOKABLE int ContactDelegate::mouseEvent(QMouseEvent* mouseEvent, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& modelIndex)
+	{
+		if (nullptr == mouseEvent || nullptr == view || !modelIndex.isValid())
+		{
+			return -1;
+		}
+
+		auto curModel = view->model();
+		if (nullptr == curModel)
+		{
+			return -1;
+		}
+
+		auto pos = mouseEvent->pos();
+
+		//curModel->setData(modelIndex, pos, ItemRole::PosRole);
+
+		//auto eventType = mouseEvent->type();
+		//switch (eventType)
+		//{
+		//case QMouseEvent::MouseMove:
+		//	curModel->setData(modelIndex, true, ItemRole::MouseHoverRole);
+		//	break;
+		//case QMouseEvent::MouseButtonPress:
+		//	curModel->setData(modelIndex, true, ItemRole::MousePressRole);
+		//	break;
+		//case QMouseEvent::MouseButtonRelease:
+		//	curModel->setData(modelIndex, true, ItemRole::MousePressRole);
+		//	break;
+		//default:
+		//	break;
+		//}
+
+		//view->update(modelIndex);
+
+		if (option.rect.contains(pos))
+		{
+			// 点到的区域
+			return getMouseEventRole(pos, option, modelIndex);
+		}
+
+		return -1;
 	}
 
 	QPixmap ContactDelegate::rixmapToRound(const QPixmap& src, int radius) const

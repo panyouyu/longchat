@@ -55,6 +55,8 @@
     <file alias="icons/pic_signin_logo.png">../icons/pic_signin_logo.png</file>
     <file alias="art/ic_arrow_close.png">../art/ic_arrow_close.png</file>
     <file alias="art/ic_arrow_open.png">../art/ic_arrow_open.png</file>
+    <file alias="art/ic_point_greed.png">../art/ic_point_greed.png</file>
+    <file alias="art/ic_point_red.png">../art/ic_point_red.png</file>
     <file alias="art/ic_kefu_search.png">../art/ic_kefu_search.png</file>
     <file alias="day-blue.tdesktop-theme">../day-blue.tdesktop-theme</file>
     <file alias="night.tdesktop-theme">../night.tdesktop-theme</file>
