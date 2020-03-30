@@ -154,4 +154,4 @@ private:
 
 	base::unique_qptr<Ui::PopupMenu> _contextMenu;
 };
-}
+} // namespace QuickReply

@@ -48,8 +48,7 @@ void TreeItem::paintEvent(QPaintEvent* e) {
 
 	p.setFont(_st.titlefont);
 	p.setPen(_st.titlecolor);
-	QRect title_rect = QRect(_st.titlemargins.left(), _st.titlemargins.top(), width() - _st.titlemargins.left() - _st.titlemargins.right(), _st.titlefont->height);
-	p.drawText(title_rect, style::al_left, _title);
+	p.drawText(title_rect(), style::al_left, _title);
 
 	if (Auth().settings().quickReplySectionOpened(_title)) {
 		p.setFont(_st.contentfont);
@@ -85,6 +84,13 @@ void TreeItem::mouseReleaseEvent(QMouseEvent* e)
 		(_content.size() > _hover_index)) {
 		if (App::main())
 			App::main()->setInputMsg(_content.at(_hover_index));
+	}
+}
+
+void TreeItem::mouseDoubleClickEvent(QMouseEvent* e) {
+	if (title_rect().contains(e->pos())) {
+		update_button_state();
+		_size_update.fire({});
 	}
 }
 
@@ -146,6 +152,10 @@ void TreeItem::handleMousePos(QPoint pt) {
 	setCursor(_hover_index >= 0 ? style::cur_pointer : style::cur_default);
 }
 
+QRect TreeItem::title_rect() const {
+	return { _st.titlemargins.left(), _st.titlemargins.top(), width() - _st.titlemargins.left() - _st.titlemargins.right(), _st.titlefont->height };
+}
+
 SimpleTree::SimpleTree(QWidget* parent)
 	: RpWidget(parent){
 	load();
@@ -179,4 +189,4 @@ void SimpleTree::paintEvent(QPaintEvent* event) {
 	p.fillRect(rect(), st::boxBg);
 }
 
-}
+} // namespace QuickReply

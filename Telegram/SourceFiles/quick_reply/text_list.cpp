@@ -418,4 +418,4 @@ void TextListWidget::contextMenuEvent(QContextMenuEvent* e)
 	}
 }
 
-}
+} // namespace QuickReply

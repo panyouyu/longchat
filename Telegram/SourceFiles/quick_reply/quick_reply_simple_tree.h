@@ -10,7 +10,6 @@ namespace Ui {
 
 namespace QuickReply {
 
-	
 class TreeItem : public Ui::RpWidget {
 public:
 	TreeItem(QWidget* parent, const QString& title, const QList<QString>& content, const style::TreeItem &st = st::defaultTreeItem);
@@ -23,12 +22,14 @@ protected:
 	void leaveEventHook(QEvent* e) override;
 	void mousePressEvent(QMouseEvent* e) override;
 	void mouseReleaseEvent(QMouseEvent* e) override;
+	void mouseDoubleClickEvent(QMouseEvent* e) override;
 	void mouseMoveEvent(QMouseEvent* e) override;
 private:
 	void init_content_rect(int width);
 	void init_button_state();
 	void update_button_state();
 	void handleMousePos(QPoint pt);
+	QRect title_rect() const;
 	QString _title;
 	QList<QString> _content;
 	QList<QRect> _rect_list;
@@ -51,5 +52,5 @@ private:
 	std::vector<std::unique_ptr<TreeItem>> _items;
 };
 
-}
+} // namespace QuickReply
 

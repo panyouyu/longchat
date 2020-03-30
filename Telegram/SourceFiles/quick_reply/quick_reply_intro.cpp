@@ -492,4 +492,4 @@ void LayerWidget::closeHook() {
 	Auth().settings().setThirdSectionQuickReplyUpdate();
 }
 
-}
+} // namespace QuickReply

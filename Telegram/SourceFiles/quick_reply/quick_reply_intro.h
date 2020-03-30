@@ -19,4 +19,4 @@ protected:
 private:
 	object_ptr<IntroWidget> _content;
 };
-}
+} // namespace QuickReply
