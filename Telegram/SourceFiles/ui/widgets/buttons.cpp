@@ -703,9 +703,9 @@ TextButton::TextButton(QWidget* parent, QString text, const style::TextButton& s
 }
 
 int TextButton::resizeGetHeight(int newWidth) {
-	return _st.bordermargins.top() + _st.border + _st.textmargins.top() +
+	return _st.bordermargins.top() + _st.textmargins.top() +
 		_st.font->height +
-		_st.textmargins.bottom() + _st.border + _st.bordermargins.bottom();
+		_st.textmargins.bottom() + _st.bordermargins.bottom();
 }
 
 void TextButton::paintEvent(QPaintEvent* e) {
@@ -714,25 +714,20 @@ void TextButton::paintEvent(QPaintEvent* e) {
 
 	p.setFont(_st.font);
 	paintRipple(p, 0, 0);
-
 	
 	QRect text_rect = textRect();
-	p.setPen(QPen(_st.textcolor));
+	p.setPen(_st.textcolor);
 	p.drawText(text_rect, style::al_center, _text);
 
 	QRect border_rect = text_rect.adjusted(_st.textmargins.left() * -1, 
-		_st.textmargins.top() * -1 - _st.border, 
+		_st.textmargins.top() * -1, 
 		_st.textmargins.right(), 
-		_st.textmargins.bottom() + _st.border);	
-	QPainterPath path;
+		_st.textmargins.bottom());	
 	int radius = border_rect.height() >> 1;
-	path.moveTo(border_rect.topLeft());
-	path.arcTo(border_rect.left() - radius, border_rect.top(), radius, radius << 1, 90, 180);
-	path.lineTo(border_rect.right(), border_rect.bottom());
-	path.arcTo(border_rect.right(), border_rect.top(), radius, radius << 1, 270, 180);
-	path.lineTo(border_rect.left(), border_rect.top());
-	p.setPen(QPen(_st.bordercolor, _st.border, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-	p.drawPath(path);
+
+	p.setPen(_st.bordercolor);
+	p.setRenderHint(QPainter::Antialiasing, true);
+	p.drawRoundedRect(border_rect, radius, radius);
 }
 
 QRect TextButton::textRect() const {

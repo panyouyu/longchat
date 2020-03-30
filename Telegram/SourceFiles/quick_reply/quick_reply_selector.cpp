@@ -31,13 +31,13 @@ Selector::Selector(QWidget *parent, not_null<Window::Controller *> controller)
 		_controller->closeThirdSection();
 	});
 	_open->setClickedCallback([this] {
-		QuickReply::LayerWidget *layer = new QuickReply::LayerWidget(nullptr);
-		layer->setCloseHook([this] {
+		App::wnd()->showSpecialLayer(Box<QuickReply::LayerWidget>(), anim::type::instant);
+	});
+	Auth().settings().thirdSectionQuickReplyUpdate() |
+		rpl::start_with_next([this] {
 			_inner->load();
 			updateControlsGeometry();
-		});
-		App::wnd()->showSpecialLayer(/*Box<QuickReply::LayerWidget>()*/object_ptr<Window::LayerWidget>::fromRaw(static_cast<Window::LayerWidget*>(layer)), anim::type::instant);
-	});
+		}, lifetime());
 	_inner = _scroll->setOwnedWidget(object_ptr<SimpleTree>(this));
 	_inner->move(0, 0);
 	updateControlsGeometry();

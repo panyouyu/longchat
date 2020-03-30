@@ -1407,10 +1407,10 @@ TextButton {
 
 defaultTextButton: TextButton {
 	font: semiboldFont;
-	border: 3px;
+	border: 2px;
 	bordercolor: lightButtonFg;
 	bordermargins: margins(-1px, 8px, -1px, 8px);
 	textcolor: windowFg;
-	textmargins: margins(11px, 6px, 11px, 6px);
+	textmargins: margins(12px, 6px, 12px, 6px);
 	ripple: defaultRippleAnimation;
 }

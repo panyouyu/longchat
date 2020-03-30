@@ -360,6 +360,16 @@ rpl::producer<bool> AuthSessionSettings::tabbedReplacedWithInfoValue() const {
 		tabbedReplacedWithInfo());
 }
 
+void AuthSessionSettings::setThirdSectionQuickReplyUpdate()
+{
+	_thirdSectionQuickReplyUpdateValue.fire({});
+}
+
+rpl::producer<> AuthSessionSettings::thirdSectionQuickReplyUpdate() const
+{
+	return _thirdSectionQuickReplyUpdateValue.events();
+}
+
 void AuthSessionSettings::setThirdSectionInfoEnabled(bool enabled) {
 	if (_variables.thirdSectionInfoEnabled != enabled) {
 		_variables.thirdSectionInfoEnabled = enabled;

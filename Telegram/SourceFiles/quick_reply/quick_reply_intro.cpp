@@ -1,6 +1,7 @@
 #include "quick_reply/quick_reply_intro.h"
 
 #include "settings.h"
+#include "auth_session.h"
 #include "core/utils.h"
 #include "ui/wrap/fade_wrap.h"
 #include "ui/wrap/vertical_layout.h"
@@ -31,11 +32,12 @@ public:
 	~QuickReplyWidget() {
 		Local::writeSettings();
 	}
+	void importFromFile(QString& file);
 protected:
 	void resizeEvent(QResizeEvent* e) override;
 	void paintEvent(QPaintEvent* e) override;
 
-private:
+private:	
 	void titleClicked(TextListRow* row);
 	void contentClicked(TextListRow* row);
 	void refreshTitle();
@@ -105,38 +107,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 
 		if (fileName.isEmpty()) return;
 
-		QFile file(fileName);
-		if (file.open(QIODevice::ReadOnly)) {
-			QString line;
-			QList<QString> list;
-			QString group, content;
-			QuickReplyString& tmp = cRefQuickReplyStrings();
-			while (!file.atEnd()) {
-				line = QString::fromLocal8Bit(file.readLine());
-				line = line.remove('\n');
-				line = line.remove('\r');
-				list = line.split(',');
-				if (list.size() != 2 || list.at(0).isEmpty() || list.at(1).isEmpty()) {
-					continue;
-				}
-				group = list.at(0);
-				content = list.at(1);
-				if (tmp.contains({ group, {} })) {
-					if (!tmp.at(tmp.indexOf({ group, {} })).content.contains(content)) {
-						tmp[tmp.indexOf({ group, {} })].content.append(content);
-					}
-				}
-				else {
-					tmp.append({ group, {content} });
-				}
-			}
-			file.close();
-			Ui::show(Box<InformBox>(lang(lng_quick_reply_import_succeed)), LayerOption::KeepOther);
-			refreshTitle();
-		}
-		else {
-			Ui::show(Box<InformBox>(lang(lng_quick_reply_import_failed)), LayerOption::KeepOther);
-		}		
+		importFromFile(fileName);
 	};
 
 	auto exportCsv = [this] {
@@ -306,6 +277,41 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 	refreshTitle();
 }
 
+void QuickReplyWidget::importFromFile(QString& fileName) {
+	QFile file(fileName);
+	if (file.open(QIODevice::ReadOnly)) {
+		QString line;
+		QList<QString> list;
+		QString group, content;
+		QuickReplyString& tmp = cRefQuickReplyStrings();
+		while (!file.atEnd()) {
+			line = QString::fromLocal8Bit(file.readLine());
+			line = line.remove('\n');
+			line = line.remove('\r');
+			list = line.split(',');
+			if (list.size() != 2 || list.at(0).isEmpty() || list.at(1).isEmpty()) {
+				continue;
+			}
+			group = list.at(0);
+			content = list.at(1);
+			if (tmp.contains({ group, {} })) {
+				if (!tmp.at(tmp.indexOf({ group, {} })).content.contains(content)) {
+					tmp[tmp.indexOf({ group, {} })].content.append(content);
+				}
+			}
+			else {
+				tmp.append({ group, {content} });
+			}
+		}
+		file.close();
+		Ui::show(Box<InformBox>(lang(lng_quick_reply_import_succeed)), LayerOption::KeepOther);
+		refreshTitle();
+	}
+	else {
+		Ui::show(Box<InformBox>(lang(lng_quick_reply_import_failed)), LayerOption::KeepOther);
+	}
+}
+
 void QuickReplyWidget::resizeEvent(QResizeEvent* e)
 {	
 	int left = st::quickReplyImport.margin.left();
@@ -384,6 +390,8 @@ public:
 
 protected:
 	void resizeEvent(QResizeEvent* e) override;
+	void dragEnterEvent(QDragEnterEvent* e) override;
+	void dropEvent(QDropEvent* e) override;
 private:
 	QRect contentGeometry() const;
 
@@ -398,6 +406,7 @@ IntroWidget::IntroWidget(QWidget* parent)
 	, _topBar(this, st::quickReplyTopBar)
 	, _inner(_wrap){
 	_wrap->setAttribute(Qt::WA_OpaquePaintEvent);
+	setAcceptDrops(true);
 	_wrap->paintRequest(
 	) | rpl::start_with_next([=](QRect clip) {
 		Painter p(_wrap.data());
@@ -424,9 +433,25 @@ void IntroWidget::resizeEvent(QResizeEvent* e) {
 	_inner->setGeometry(_wrap->rect());
 }
 
-LayerWidget::LayerWidget(QWidget*)
-	: _content(this) {
+const auto protocol = qsl("file:///");
+const auto fileType = qsl(".csv");
+
+void IntroWidget::dragEnterEvent(QDragEnterEvent* e) {
+	if (e->mimeData()->hasText() && 
+		e->mimeData()->text().startsWith(protocol) &&
+		e->mimeData()->text().endsWith(fileType))
+		e->acceptProposedAction();
 }
+
+void IntroWidget::dropEvent(QDropEvent* e) {
+	if (rect().contains(e->pos())) {
+		auto fileName = e->mimeData()->text().mid(protocol.size());
+		_inner->importFromFile(fileName);
+	}
+}
+
+LayerWidget::LayerWidget(QWidget*)
+	: _content(this) {}
 
 void LayerWidget::parentResized() {
 	const auto parentSize = parentWidget()->size();
@@ -461,6 +486,10 @@ void LayerWidget::paintEvent(QPaintEvent* e) {
 			nullptr,
 			parts);
 	}
+}
+
+void LayerWidget::closeHook() {
+	Auth().settings().setThirdSectionQuickReplyUpdate();
 }
 
 }

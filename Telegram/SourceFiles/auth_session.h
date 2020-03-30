@@ -138,6 +138,8 @@ public:
 	}
 	void setTabbedReplacedWithInfo(bool enabled);
 	rpl::producer<bool> tabbedReplacedWithInfoValue() const;
+	void setThirdSectionQuickReplyUpdate();
+	rpl::producer<> thirdSectionQuickReplyUpdate() const;
 	void setSmallDialogsList(bool enabled) {
 		_variables.smallDialogsList = enabled;
 	}
@@ -272,10 +274,11 @@ private:
 		rpl::variable<bool> supportAllSearchResults = false;
 	};
 
-	rpl::event_stream<bool> _thirdSectionQuickReplyEnableValue;
-	rpl::event_stream<bool> _thirdSectionInfoEnabledValue;	
+	rpl::event_stream<bool> _thirdSectionQuickReplyEnableValue;	
+	rpl::event_stream<bool> _thirdSectionInfoEnabledValue;
 	bool _tabbedReplacedWithInfo = false;
 	rpl::event_stream<bool> _tabbedReplacedWithInfoValue;
+	rpl::event_stream<> _thirdSectionQuickReplyUpdateValue;
 
 	Variables _variables;
 
