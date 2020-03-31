@@ -137,6 +137,7 @@ void TreeItem::update_button_state()
 		Auth().settings().setQuickReplySectionOpen(_title);
 		_button->setIconOverride(&st::quickReplyTreeItemBottomIcon, &st::quickReplyTreeItemBottomOver);
 	}
+	Auth().saveSettingsDelayed();
 	_button->forceRippled();
 }
 

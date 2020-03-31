@@ -21,7 +21,6 @@ Selector::Selector(QWidget *parent, not_null<Window::Controller *> controller)
 	, _topBar(this, st::quickReplyTopBar)
 	, _scroll(Ui::CreateChild<Ui::ScrollArea>(this, st::quickReplyTitleScroll))
 	, _open(this, lang(lng_quick_reply_open)){
-	//setAttribute(Qt::WA_OpaquePaintEvent);
 	_topBar->setTitle(Lang::Viewer(lng_quick_reply));
 	auto close = _topBar->addButton(
 		base::make_unique_q<Ui::IconButton>(
@@ -43,9 +42,7 @@ Selector::Selector(QWidget *parent, not_null<Window::Controller *> controller)
 	updateControlsGeometry();
 }
 
-Selector::~Selector() {
-	Auth().saveSettingsDelayed();
-}
+Selector::~Selector() {}
 
 void Selector::resizeEvent(QResizeEvent* event) {
 	updateControlsGeometry();
