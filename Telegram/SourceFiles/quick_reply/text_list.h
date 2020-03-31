@@ -67,7 +67,12 @@ public:
 	void appendRow(QString row);
 	void appendRow(std::unique_ptr<TextListRow> row);
 	void appendRows(QList<QString> rows);
-	void setRowClickCallBack(Fn<void(TextListRow*)> rowClickCallBack);
+	void setRowClickCallBack(Fn<void(TextListRow*)> rowClickCallBack) {
+		_rowClickCallBack = rowClickCallBack;
+	}
+	void setRowSwapUpCallBack(Fn<void(int, int)> rowSwapCallBack) {
+		_rowSwapCallBack = rowSwapCallBack;
+	}
 	TextListRow* getCheckedItem();
 	void setCheckedItem(TextListRow* row);
 	void setCheckedItem(QString& string);
@@ -143,7 +148,8 @@ private:
 	Selected _pressed;
 	Selected _contexted;
 
-	Fn<void(TextListRow*)> _rowClickCallBack;
+	Fn<void(TextListRow*)> _rowClickCallBack = nullptr;
+	Fn<void(int, int)> _rowSwapCallBack = nullptr;
 
 	bool _mouseSelection = false;
 	std::optional<QPoint> _lastMousePosition;

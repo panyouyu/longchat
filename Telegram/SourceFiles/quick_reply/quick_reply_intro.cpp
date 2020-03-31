@@ -39,7 +39,9 @@ protected:
 
 private:	
 	void titleClicked(TextListRow* row);
+	void titleSwap(int index1, int index2);
 	void contentClicked(TextListRow* row);
+	void contentSwap(int index1, int index2);
 	void refreshTitle();
 	void refreshContent(QString title);
 
@@ -52,11 +54,11 @@ private:
 	object_ptr<Ui::IconTextButton> _modify;
 
 	not_null<Ui::ScrollArea*> _scrollTitle;
-	Ui::PaddingWrap<Ui::RpWidget>* _title = nullptr;
+	QPointer<TextListWidget> _title;
 	QString _groupRow;
 
 	not_null<Ui::ScrollArea*> _scrollContent;
-	Ui::PaddingWrap<Ui::RpWidget>* _content = nullptr;
+	QPointer<TextListWidget> _content;
 	QString _contentRow;
 
 	base::unique_qptr<Ui::PopupMenu> _menu;
@@ -79,27 +81,15 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 {
 	auto& ref = cRefQuickReplyStrings();
 	_groupRow = ref.size() ? ref.first().group : QString();
-	_contentRow = ref.size() ? ref.first().content.size() ? ref.first().content.first() : QString() : QString();
+	_contentRow = ref.size() ? ref.first().content.size() ? ref.first().content.first() : QString() : QString();	
 
-	_title = _scrollTitle->setOwnedWidget(
-		object_ptr<Ui::PaddingWrap<Ui::RpWidget>>(
-			this,
-			object_ptr<TextListWidget>(_scrollTitle, st::quickReplyTitleList),
-			_title ? _title->padding() : style::margins()));
+	_title = _scrollTitle->setOwnedWidget(object_ptr<TextListWidget>(_scrollTitle, st::quickReplyTitleList));
+	_title->setRowClickCallBack([this](TextListRow* row) {	titleClicked(row); });
+	_title->setRowSwapUpCallBack([this](int index1, int index2) { titleSwap(index1, index2); });
 
-	static_cast<TextListWidget*>(_title->wrapped())->setRowClickCallBack([&](TextListRow* row) {
-		titleClicked(row);
-	});
-
-	_content = _scrollContent->setOwnedWidget(
-		object_ptr<Ui::PaddingWrap<Ui::RpWidget>>(
-			this,
-			object_ptr<TextListWidget>(_scrollContent, st::quickReplyContentList),
-			_content ? _content->padding() : style::margins()));
-
-	static_cast<TextListWidget*>(_content->wrapped())->setRowClickCallBack([&](TextListRow* row) {
-		contentClicked(row);
-	});
+	_content = _scrollContent->setOwnedWidget(object_ptr<TextListWidget>(_scrollContent, st::quickReplyContentList));
+	_content->setRowClickCallBack([this](TextListRow* row) { contentClicked(row); });
+	_content->setRowSwapUpCallBack([this](int index1, int index2) { contentSwap(index1, index2); });
 
 	auto importCsv = [this] {
 		QString fileName = QFileDialog::getOpenFileName(this,
@@ -134,7 +124,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 
 	auto add = [this] {
 		QString group;
-		if (auto row = static_cast<TextListWidget*>(_title->wrapped())->getCheckedItem()) {
+		if (auto row = _title->getCheckedItem()) {
 			group = row->toString();
 			group = group.left(group.lastIndexOf(' '));
 		}
@@ -151,11 +141,11 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 
 	auto modify = [this] {
 		QString group, content;
-		if (auto row = static_cast<TextListWidget*>(_title->wrapped())->getCheckedItem()) {
+		if (auto row = _title->getCheckedItem()) {
 			group = row->toString();
 			group = group.left(group.lastIndexOf(' '));
 		}
-		if (auto row = static_cast<TextListWidget*>(_content->wrapped())->getCheckedItem()) {
+		if (auto row = _content->getCheckedItem()) {
 			content = row->toString();
 		}
 		auto modifyBox = Ui::show(Box<QuickReplyBox>(group, content), LayerOption::KeepOther);
@@ -171,11 +161,11 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 
 	auto remove = [this] {
 		QString group, content;
-		if (auto row = static_cast<TextListWidget*>(_title->wrapped())->getCheckedItem()) {
+		if (auto row = _title->getCheckedItem()) {
 			group = row->toString();
 			group = group.left(group.lastIndexOf(' '));
 		}
-		if (auto row = static_cast<TextListWidget*>(_content->wrapped())->getCheckedItem()) {
+		if (auto row = _content->getCheckedItem()) {
 			content = row->toString();
 		}
 		if (group.isEmpty() || content.isEmpty()) return;
@@ -216,7 +206,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 		
 	auto rename_group = [this] {
 		QString group;
-		if (auto row = static_cast<TextListWidget*>(_title->wrapped())->getCheckedItem()) {
+		if (auto row = _title->getCheckedItem()) {
 			group = row->toString();
 			group = group.left(group.lastIndexOf(' '));
 		}
@@ -230,7 +220,7 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 	
 	auto remove_group = [this] {
 		QString group;
-		if (auto row = static_cast<TextListWidget*>(_title->wrapped())->getCheckedItem()) {
+		if (auto row = _title->getCheckedItem()) {
 			group = row->toString();
 			group = group.left(group.lastIndexOf(' '));
 		}
@@ -256,9 +246,9 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 	};
 	QuickReply::Action removeGroup = { lang(lng_quick_reply_remove_group), remove_group, &st::quickReplyRemoveGroup, &st::quickReplyRemoveGroupOver };
 	
-	static_cast<TextListWidget*>(_title->wrapped())->addAction(createGroup);
-	static_cast<TextListWidget*>(_title->wrapped())->addAction(renameGroup);
-	static_cast<TextListWidget*>(_title->wrapped())->addAction(removeGroup);
+	_title->addAction(createGroup);
+	_title->addAction(renameGroup);
+	_title->addAction(removeGroup);
 		
 	auto manage = [this, createGroup, renameGroup, removeGroup] {
 		if (!_menu) {
@@ -329,9 +319,9 @@ void QuickReplyWidget::resizeEvent(QResizeEvent* e)
 	top += st::quickReplyImport.height + st::quickReplyImport.margin.bottom();
 	int scroll_h = height() - top - (st::quickReplyManager.margin.top() + st::quickReplyManager.height + st::quickReplyManager.margin.bottom());
 	_scrollTitle->setGeometry(0, top, width() / 4, scroll_h);
-	_title->wrapped()->resizeToWidth(_scrollTitle->width());
+	_title->resizeToWidth(_scrollTitle->width());
 	_scrollContent->setGeometry(width() / 4 + 1, top, width() * 3 / 4 - 1, scroll_h);
-	_content->wrapped()->resizeToWidth(_scrollContent->width());
+	_content->resizeToWidth(_scrollContent->width());
 
 	top = height() - st::quickReplyManager.height;
 	int managerx = (_scrollTitle->width() - st::quickReplyManager.width) / 2;
@@ -360,27 +350,46 @@ void QuickReplyWidget::titleClicked(TextListRow* row) {
 	refreshContent(_groupRow);
 }
 
+void QuickReplyWidget::titleSwap(int index1, int index2) {
+	auto& ref = cRefQuickReplyStrings();
+	auto count = ref.size();
+	if (count > index1 && count > index2 && index1 >= 0 && index2 >= 0) {
+		std::swap(ref[index1], ref[index2]);
+	}
+}
+
 void QuickReplyWidget::contentClicked(TextListRow* row) {
 	_contentRow = row->toString();
 }
 
+void QuickReplyWidget::contentSwap(int index1, int index2) {
+	auto& ref = cRefQuickReplyStrings();
+	if (ref.contains({ _groupRow, {} })) {
+		auto& content = ref[ref.indexOf({ _groupRow, {} })].content;
+		auto count = content.size();
+		if (count > index1 && count > index2 && index1 >= 0 && index2 >= 0) {
+			std::swap(content[index1], content[index2]);
+		}
+	}	
+}
+
 void QuickReplyWidget::refreshTitle() {
-	static_cast<TextListWidget*>(_title->wrapped())->clear();
+	_title->clear();
 	auto& ref = cRefQuickReplyStrings();
 	for (int i = 0; i < ref.size(); i++) {
-		static_cast<TextListWidget*>(_title->wrapped())->appendRow(ref.at(i).group + " (" + QString::number(ref.at(i).content.size()) + ")");
+		_title->appendRow(ref.at(i).group + " (" + QString::number(ref.at(i).content.size()) + ")");
 	}
 
-	static_cast<TextListWidget*>(_title->wrapped())->setCheckedItem(ref.indexOf({ _groupRow, {} }));
+	_title->setCheckedItem(ref.indexOf({ _groupRow, {} }));
 	refreshContent(_groupRow);
 }
 void QuickReplyWidget::refreshContent(QString group) {
-	static_cast<TextListWidget*>(_content->wrapped())->clear();
+	_content->clear();
 	if (group.isEmpty()) return;
 	auto& ref = cRefQuickReplyStrings();
 	if (ref.contains({ group, {} })) {
-		static_cast<TextListWidget*>(_content->wrapped())->appendRows(ref[ref.indexOf({ group, {} })].content);
-		static_cast<TextListWidget*>(_content->wrapped())->setCheckedItem(_contentRow);
+		_content->appendRows(ref[ref.indexOf({ group, {} })].content);
+		_content->setCheckedItem(_contentRow);
 	}
 }
 

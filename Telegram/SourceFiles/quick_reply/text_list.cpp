@@ -72,11 +72,6 @@ void TextListWidget::appendRows(QList<QString> rows)
 	resizeToWidth(width());
 }
 
-void TextListWidget::setRowClickCallBack(Fn<void(TextListRow*)> rowClickCallBack)
-{
-	_rowClickCallBack = rowClickCallBack;
-}
-
 TextListRow* TextListWidget::getCheckedItem()
 {
 	return getRow(_contexted.index);
@@ -143,7 +138,8 @@ void TextListWidget::moveUp(Selected selcted)
 {
 	RowIndex index = selcted.index;
 	if (index.value <= 0 || index.value >= _rows.size() || _rows.size() < 2) return;
-	swap(_rows[index.value], _rows[index.value - 1]);
+	std::swap(_rows[index.value], _rows[index.value - 1]);
+	if (_rowSwapCallBack) _rowSwapCallBack(index.value, index.value - 1);
 	setContexted(Selected(RowIndex(index.value - 1), false));
 	updateRow(index);
 	updateRow(RowIndex(index.value - 1));
@@ -153,7 +149,8 @@ void TextListWidget::moveDown(Selected selcted)
 {
 	RowIndex index = _contexted.index;
 	if (index.value < 0 || index.value > _rows.size() - 1 || _rows.size() < 2) return;
-	swap(_rows[index.value], _rows[index.value + 1]);
+	std::swap(_rows[index.value], _rows[index.value + 1]);
+	if (_rowSwapCallBack) _rowSwapCallBack(index.value, index.value + 1);
 	setContexted(Selected(RowIndex(index.value + 1), false));
 	updateRow(index);
 	updateRow(RowIndex(index.value + 1));
