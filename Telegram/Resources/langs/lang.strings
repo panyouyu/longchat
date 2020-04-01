@@ -801,11 +801,13 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_profile_common_groups_section" = "共同加入的群组";
 "lng_profile_share_contact" = "分享联系人信息";
 "lng_info_edit_contact" = "编辑联系人";
-"lng_info_edit_contact_group_no" = "不属于任何分组";
+"lng_info_edit_contact_group_no" = "编辑分组";
+"lng_info_edit_contact_group_in" = "所属分组";
 "lng_info_delete_contact" = "删除联系人";
 "lng_info_share_contact" = "分享联系方式";
 "lng_profile_clear_history" = "清除历史记录";
 "lng_profile_delete_conversation" = "删除会话";
+"lng_profile_delete_conversation_ok" = "确认结束会话吗";
 "lng_profile_block_user" = "屏蔽此用户";
 "lng_switchboard_user" = "转接";
 "lng_switchboard_online_user" = "在线客服转接";

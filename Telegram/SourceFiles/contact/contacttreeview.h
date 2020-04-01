@@ -23,8 +23,9 @@ public:
 	~ContactTreeView();
 
 	// ¸³Öµ
-	void loadDatas(const QVector<ContactInfo*> _vecContactPData);
+	void loadDatas(const QVector<ContactInfo*> vecContactPData);
 	void setSearchKey(const QString& searchKey);
+	QVector<MTPlong> getCheckedGroup();
 
 signals:
 	void startChat();
@@ -54,6 +55,7 @@ private:
 	MySortFilterProxyModel* _sortFilterProxyModel{ nullptr };
 	QString _searchKey;
 	CreatingTreeType _ctt;
+	QVector<ContactInfo*> _vecContactPData;
 
 protected:
 	virtual bool viewportEvent(QEvent* pEvent) override;

@@ -570,3 +570,23 @@ quickReplyContentTextFgOver: #000000;
 quickReplyContentTextFgHover: #000000;
 quickReplyContentRipple: #e8f1ff;
 quickReplyContentRippleOver: #e8f1ff;
+
+
+userGroupFrame: #b9c3d4;
+userGroupTitleTextBg: #ffffff;
+userGroupTitleTextBgOver: #ffffff;
+userGroupTitleTextBgHover: #f3f3f3;
+userGroupTitleTextFg: #979797;
+userGroupTitleTextFgOver: #2e78f5;
+userGroupTitleTextFgHover: #000000;
+userGroupTitleRipple: #e7e7e7;
+userGroupTitleRippleOver: #e7e7e7;
+
+userGroupContentTextBg: userGroupTitleTextBg;
+userGroupContentTextBgOver: #e8f1ff;
+userGroupContentTextBgHover: userGroupTitleTextBgHover;
+userGroupContentTextFg: userGroupTitleTextFg;
+userGroupContentTextFgOver: #000000;
+userGroupContentTextFgHover: #000000;
+userGroupContentRipple: #e8f1ff;
+userGroupContentRippleOver: #e8f1ff;

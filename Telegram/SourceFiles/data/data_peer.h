@@ -303,6 +303,7 @@ protected:
 		const QString &newName,
 		const QString &newNameOrPhone,
 		const QString &newUsername);
+	void updateGroupDelayed(const QString& groupInfos);
 	void updateUserpic(
 		PhotoId photoId,
 		MTP::DcId dcId,

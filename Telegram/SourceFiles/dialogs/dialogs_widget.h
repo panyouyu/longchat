@@ -58,10 +58,11 @@ public:
 	void updateDragInScroll(bool inScroll);
 
 	void searchInChat(Dialogs::Key chat);
-
+	QMutex& getUserGroupMutex();
 	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
 	QVector<Contact::ContactInfo*>& getGroupInfo();
 	QString getUserGroupInfo(uint64 userId);
+	QString getGroupName(uint64 groupId);
 	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
 
 	void loadDialogs();

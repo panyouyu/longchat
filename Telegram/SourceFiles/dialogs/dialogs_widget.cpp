@@ -1331,6 +1331,11 @@ void DialogsWidget::searchInChat(Dialogs::Key chat) {
 	applyFilterUpdate(true);
 }
 
+QMutex& DialogsWidget::getUserGroupMutex()
+{
+	return _inner->getUserGroupMutex();
+}
+
 QMap<uint64, QSet<uint64>>& DialogsWidget::getUserGroupInfo()
 {
 	return _inner->getUserGroupInfo();
@@ -1339,6 +1344,11 @@ QMap<uint64, QSet<uint64>>& DialogsWidget::getUserGroupInfo()
 QString DialogsWidget::getUserGroupInfo(uint64 userId)
 {
 	return _inner->getUserGroupInfo(userId);
+}
+
+QString DialogsWidget::getGroupName(uint64 groupId)
+{
+	return _inner->getGroupName(groupId);
 }
 
 QVector<Contact::ContactInfo*>& DialogsWidget::getGroupInfo()

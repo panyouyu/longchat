@@ -845,5 +845,6 @@ private:
 
 	object_ptr<Ui::PlainShadow> _topShadow;
 	bool _inGrab = false;
+	QPointer<ConfirmBox> _confirmBox;
 
 };

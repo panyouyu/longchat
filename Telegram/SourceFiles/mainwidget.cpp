@@ -991,6 +991,16 @@ QString MainWidget::getUserGroupInfo(uint64 userId)
 	return _dialogs->getUserGroupInfo(userId);
 }
 
+QString MainWidget::getGroupName(uint64 groupId)
+{
+	return _dialogs->getGroupName(groupId);
+}
+
+QMutex& MainWidget::getUserGroupMutex()
+{
+	return _dialogs->getUserGroupMutex();
+}
+
 QVector<Contact::ContactInfo*>& MainWidget::getGroupInfo()
 {
 	return _dialogs->getGroupInfo();
@@ -1003,6 +1013,7 @@ QVector<Contact::ContactInfo*>& MainWidget::getGroupInfo4Search()
 
 void MainWidget::loadGroupDialogs()
 {
+	_dialogs->loadDialogs();
 	return _dialogs->loadGroupDialogs();
 }
 

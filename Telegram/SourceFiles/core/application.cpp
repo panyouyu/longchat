@@ -999,6 +999,7 @@ void Application::checkMediaViewActivation() {
 
 void Application::logOut() {
 	if (_mtproto) {
+		Auth().api().requestOnOffLine(0);
 		_mtproto->logout(::rpcDone([=] {
 			loggedOut();
 		}), ::rpcFail([=] {
@@ -1009,6 +1010,7 @@ void Application::logOut() {
 		// We log out because we've forgotten passcode.
 		// So we just start mtproto from scratch.
 		startMtp();
+		Auth().api().requestOnOffLine(0);
 		loggedOut();
 	}
 }

@@ -6,7 +6,8 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "info/profile/info_profile_actions.h"
-
+#include "app.h"
+#include "mainwindow.h"
 #include <rpl/flatten_latest.h>
 #include <rpl/combine.h>
 #include "data/data_peer_values.h"
@@ -26,7 +27,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/peer_list_controllers.h"
 #include "boxes/add_contact_box.h"
 #include "boxes/report_box.h"
-#include "contact/usergroupdialog.h"
+#include "contact/usergroupbox.h"
 #include "lang/lang_keys.h"
 #include "info/info_controller.h"
 #include "info/info_memento.h"
@@ -260,6 +261,12 @@ object_ptr<Ui::RpWidget> DetailsFiller::setupInfo() {
 			lng_info_mobile_label,
 			PhoneValue(user),
 			lang(lng_profile_copy_phone));
+		QString userInfo = App::main()->getUserGroupInfo(user->id);
+		addInfoOneLine(
+			lng_info_edit_contact_group_in,
+			GroupValue(user),
+			lang(lng_info_edit_contact_group_in));
+		user->setGroup(userInfo);
 		if (user->botInfo) {
 			addInfoLine(lng_info_about_label, AboutValue(user));
 		} else {
@@ -493,15 +500,16 @@ void ActionsFiller::addEditContactAction(not_null<UserData*> user) {
 }
 
 void ActionsFiller::addContactGroupAction(not_null<UserData*> user) {
-	QString userInfo = App::main()->getUserGroupInfo(user->id);
-	AddActionButton(
+	//QString userInfo = App::main()->getUserGroupInfo(user->id);
+	auto groupButton = AddActionButton(
 		_wrap,
-		rpl::single(userInfo),
+		rpl::single(lang(lng_info_edit_contact_group_no)),
 		IsContactValue(user),
 		[user] { 
-			Contact::UserGroupDialog dlg(user);
-			dlg.exec();
+			//App::wnd()->showSpecialLayer(Box<Contact::UserGroupWrap>(user), anim::type::instant);
+			Ui::show(Box<Contact::UserGroupBox>(user));
 		});
+	//groupButton->setWindowTitle(lang(lng_info_edit_contact_group_no));
 }
 
 void ActionsFiller::addDeleteContactAction(

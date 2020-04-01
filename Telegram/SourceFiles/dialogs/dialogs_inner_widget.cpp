@@ -1308,6 +1308,7 @@ void DialogsInner::createDialog(Dialogs::Key key) {
 void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 {
 	removeGroupDialog();	
+	QMutexLocker lock(&_userGroupMutex);
 	for (const auto& userGroup : result.c_userGroupList().vtag_users.v) {
 		Contact::ContactInfo* info = new Contact::ContactInfo();
 		info->otherId = userGroup.c_userGroup().vother_id.v;
@@ -1373,12 +1374,14 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 
 void DialogsInner::removeGroupDialog()
 {
+	QMutexLocker lock(&_userGroupMutex);	
 	_mapUserInfo.clear();
-	_mapUser2Group.clear();
-	qDeleteAll(_vecContactAndGroupData);
+	_mapUser2Group.clear();	
 	qDeleteAll(_vecContactAndGroupData4Search);
+	_vecContactAndGroupData4Search.clear();	
+	qDeleteAll(_vecContactAndGroupData);
 	_vecContactAndGroupData.clear();
-	_vecContactAndGroupData4Search.clear();
+
 }
 
 void DialogsInner::removeDialog(Dialogs::Key key) {
@@ -2232,7 +2235,7 @@ void DialogsInner::refresh(bool toTop) {
 		if (shownDialogs()->isEmpty()) {
 			h = st::noContactsHeight;
 			if (Auth().data().contactsLoaded().value()) {
-				if (_addContactLnk->isHidden()) _addContactLnk->show();
+				if (_addContactLnk->isHidden()) _addContactLnk->hide();
 			} else {
 				if (!_addContactLnk->isHidden()) _addContactLnk->hide();
 			}
@@ -2481,6 +2484,11 @@ void DialogsInner::scrollToEntry(const Dialogs::RowDescriptor &entry) {
 	if (fromY >= 0) {
 		emit mustScrollTo(fromY, fromY + st::dialogsRowHeight);
 	}
+}
+
+QMutex& DialogsInner::getUserGroupMutex()
+{
+	return  _userGroupMutex;
 }
 
 void DialogsInner::selectSkipPage(int32 pixels, int32 direction) {
@@ -2925,16 +2933,16 @@ QMap<uint64, QSet<uint64>> & DialogsInner::getUserGroupInfo() {
 
 QString DialogsInner::getUserGroupInfo(uint64 userId)
 {
-	QString userGroupInfo = "";
+	QString userGroupInfo = "";// = lang(lng_info_edit_contact_group_in);
 	if (existUser(userId)) {
 		foreach(const uint64 & uid, _mapUser2Group[userId]) {
 			userGroupInfo = userGroupInfo + getGroupName(uid) + " ";
 		}
 			
 	}
-	if (userGroupInfo.isEmpty()){
-		userGroupInfo = lang(lng_info_edit_contact_group_no);
-	}
+	//if (userGroupInfo.isEmpty()){
+	//	userGroupInfo = lang(lng_info_edit_contact_group_no);
+	//}
 	return userGroupInfo;
 }
 

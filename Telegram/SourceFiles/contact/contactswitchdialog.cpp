@@ -45,7 +45,7 @@ void SwitchDialog::on_switchUser(ContactInfo* pCI)
 		return;
 	if (pCI)
 	{
-		_switchKefuRequest = MTP::send(MTPkefu_SwitchKefu(MTP_long(pCI->id), MTP_long(_playerId)), rpcDone(&SwitchDialog::switchKefuDone), rpcFail(&SwitchDialog::switchKefuFail));
+		_switchKefuRequest = MTP::send(MTPkefu_SwitchKefu(MTP_int(pCI->id), MTP_int(_playerId)), rpcDone(&SwitchDialog::switchKefuDone), rpcFail(&SwitchDialog::switchKefuFail));
 	}	
 }
 

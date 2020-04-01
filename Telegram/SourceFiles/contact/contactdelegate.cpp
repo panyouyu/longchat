@@ -58,9 +58,11 @@
 #include "contactdelegate.h"
 #include "delegatehelper.h"
 #include "ui/image/image.h"
+#include "mainwidget.h"
 
 namespace Contact {
 	const QRect GroupArrorIconRect{ 5,12,10,10 }; // 分组折叠箭头区域
+	const QRect GroupCheckBoxRect{ 23,8,22,22 }; // 分组复选区域
 	const int ArrorRectWidth = 20;
 
 	ContactDelegate::ContactDelegate(CreatingTreeType ctt, QObject* parent)
@@ -93,7 +95,6 @@ namespace Contact {
 			bool isHovered = (option.state & QStyle::State_MouseOver) == QStyle::State_MouseOver ? true : false;
 			QColor color;
 			color = (isHovered) ? QColor("#f0f0f0") : QColor("#ffffff"); // hover时变灰
-
 			// 背景色
 			painter->setPen(Qt::NoPen);
 			painter->setBrush(color);
@@ -115,45 +116,81 @@ namespace Contact {
 				painter->drawText(cellRect, Qt::AlignLeft, text);
 			}
 		}
-
 	}
 
 	void ContactDelegate::paintGroup(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, ContactInfo* pCI) const
 	{
 		DelegateHelper delegateHelper;
-		//////////绘制折叠箭头区域//////////
-		if (pCI->userTotalCount > 0)
+		if (m_ctt == CTT_USERINGROUP)
 		{
-			// 箭头图标区域
-			QRect arrowIconRect(option.rect.left() + GroupArrorIconRect.x(), option.rect.top() + GroupArrorIconRect.y(),
-				GroupArrorIconRect.width(), GroupArrorIconRect.height());
-			QString arrorPath{ ":/gui/art/ic_arrow_open.png" };
-			if (!index.data(static_cast<int>(CustomRole::IsExpandedRole)).toBool())
-			{
-				arrorPath = ":/gui/art/ic_arrow_close.png";
-			}
-			painter->drawPixmap(arrowIconRect, QPixmap(arrorPath));
-		}
+			//画复选框
+			bool checked = pCI->userInGroup;
 
-		/////////画组名/////
-		QString groupName = pCI->firstName;
-		int groupFontSize = 15;
-		QRect grouNameRect = option.rect;
-		grouNameRect.setLeft(option.rect.left() + ArrorRectWidth);
-		QRect groupTextRec = delegateHelper.calTextRect(painter, groupFontSize, groupName);
-		grouNameRect.setTop(option.rect.top() + (option.rect.height() - groupTextRec.height()) / 2);
-		delegateHelper.paintText(painter, Qt::AlignLeft, m_si.fontColor, grouNameRect, groupFontSize, groupName);
-		//////////////画组成员数量////////////////////////////////////
-		int groupUserInfoFontSize = 12;
-		QString userCountInfo = pCI->showUserCount;
-		QRect groupUserInfoTextRec = delegateHelper.calTextRect(painter, groupUserInfoFontSize, userCountInfo);
-		//字符串所占的像素宽度,高度
-		int textWidth = groupUserInfoTextRec.width();
-		int textHeight = groupUserInfoTextRec.height();
-		QRect grouUserInfoRect = option.rect;
-		grouUserInfoRect.setTop(option.rect.top() + (option.rect.height() - textHeight) / 2);
-		grouUserInfoRect.setLeft(option.rect.width() - textWidth);
-		delegateHelper.paintText(painter, Qt::AlignLeft, m_si.userCountFontColor, grouUserInfoRect, groupUserInfoFontSize, userCountInfo);
+			// 箭头图标区域
+			QRect ceckBoxRect = calGroupCheckBoxRect(option);
+
+			QPixmap indicatorPixmap;
+			QStyleOptionButton check_box_style_option;
+			if (checked)
+			{
+				check_box_style_option.state |= QStyle::State_On;
+				indicatorPixmap = QPixmap(":/gui/images/checkbox_checked.png");
+			}
+			else
+			{
+				check_box_style_option.state |= QStyle::State_Off;
+				indicatorPixmap = QPixmap(":/gui/images/checkbox_unchecked.png");
+			}
+			QApplication::style()->drawItemPixmap(painter, ceckBoxRect, 0, indicatorPixmap);
+
+			
+
+			/////////画组名/////
+			QString groupName = pCI->firstName;
+			int groupFontSize = 15;
+			QRect grouNameRect = option.rect;
+			int left = GroupCheckBoxRect.x() + GroupCheckBoxRect.width() + ArrorRectWidth;
+			grouNameRect.setLeft(option.rect.left() + left);
+			QRect groupTextRec = delegateHelper.calTextRect(painter, groupFontSize, groupName);
+			grouNameRect.setTop(option.rect.top() + (option.rect.height() - groupTextRec.height()) / 2);
+			delegateHelper.paintText(painter, Qt::AlignLeft, m_si.fontColor, grouNameRect, groupFontSize, groupName);
+		}
+		else {
+			//////////绘制折叠箭头区域//////////
+			if (pCI->userTotalCount > 0)
+			{
+				// 箭头图标区域
+				QRect arrowIconRect(option.rect.left() + GroupArrorIconRect.x(), option.rect.top() + GroupArrorIconRect.y(),
+					GroupArrorIconRect.width(), GroupArrorIconRect.height());
+				QString arrorPath{ ":/gui/images/ic_arrow_open.png" };
+				if (!index.data(static_cast<int>(CustomRole::IsExpandedRole)).toBool())
+				{
+					arrorPath = ":/gui/images/ic_arrow_close.png";
+				}
+				painter->drawPixmap(arrowIconRect, QPixmap(arrorPath));
+			}
+
+			/////////画组名/////
+			QString groupName = pCI->firstName;
+			int groupFontSize = 15;
+			QRect grouNameRect = option.rect;
+			grouNameRect.setLeft(option.rect.left() + ArrorRectWidth);
+			QRect groupTextRec = delegateHelper.calTextRect(painter, groupFontSize, groupName);
+			grouNameRect.setTop(option.rect.top() + (option.rect.height() - groupTextRec.height()) / 2);
+			delegateHelper.paintText(painter, Qt::AlignLeft, m_si.fontColor, grouNameRect, groupFontSize, groupName);
+			//////////////画组成员数量////////////////////////////////////
+			int groupUserInfoFontSize = 12;
+			QString userCountInfo = pCI->showUserCount;
+			QRect groupUserInfoTextRec = delegateHelper.calTextRect(painter, groupUserInfoFontSize, userCountInfo);
+			//字符串所占的像素宽度,高度
+			int textWidth = groupUserInfoTextRec.width();
+			int textHeight = groupUserInfoTextRec.height();
+			QRect grouUserInfoRect = option.rect;
+			grouUserInfoRect.setTop(option.rect.top() + (option.rect.height() - textHeight) / 2);
+			grouUserInfoRect.setLeft(option.rect.width() - textWidth);
+			delegateHelper.paintText(painter, Qt::AlignLeft, m_si.userCountFontColor, grouUserInfoRect, groupUserInfoFontSize, userCountInfo);
+		}
+		
 
 	}
 
@@ -261,6 +298,12 @@ namespace Contact {
 		return switchUserInfoBackRect;
 	}
 
+	QRect ContactDelegate::calGroupCheckBoxRect(const QStyleOptionViewItem& option) const
+	{
+		return QRect(option.rect.left() + GroupCheckBoxRect.x(), option.rect.top() + GroupCheckBoxRect.y(),
+			GroupCheckBoxRect.width(), GroupCheckBoxRect.height());
+	}
+
 	QSize ContactDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 	{
 		Q_ASSERT(index.isValid());
@@ -271,12 +314,19 @@ namespace Contact {
 		{
 			return size;
 		}
-		if (pCI->isGroup) {
-			size.setHeight(34);
+		if (m_ctt == CTT_USERINGROUP)
+		{
+			size.setHeight(38);
 		}
 		else {
-			size.setHeight(62);
+			if (pCI->isGroup) {
+				size.setHeight(34);
+			}
+			else {
+				size.setHeight(62);
+			}
 		}
+		
 		return size;
 	}
 
@@ -290,6 +340,24 @@ namespace Contact {
 		}
 
 		return -1;
+	}
+
+	bool ContactDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index)
+	{
+		if (m_ctt == CTT_USERINGROUP) {
+			//复选框区域
+			QRect ceckBoxRect = calGroupCheckBoxRect(option);
+
+			QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+			if (event->type() == QEvent::MouseButtonPress && ceckBoxRect.contains(mouseEvent->pos()))
+			{
+				bool data = model->data(index, CustomRole::GroupCheckRole).toBool();
+				QMutexLocker lock(&App::main()->getUserGroupMutex());
+				model->setData(index, !data, CustomRole::GroupCheckRole);
+			}
+		}
+		
+		return QItemDelegate::editorEvent(event, model, option, index);
 	}
 
 	Q_INVOKABLE int ContactDelegate::mouseEvent(QMouseEvent* mouseEvent, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& modelIndex)

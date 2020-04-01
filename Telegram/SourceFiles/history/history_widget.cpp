@@ -88,6 +88,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "styles/style_profile.h"
 #include "styles/style_chat_helpers.h"
 #include "styles/style_info.h"
+#include "dialogs/dialogs_indexed_list.h"
 
 namespace {
 
@@ -6787,17 +6788,29 @@ void HistoryWidget::synteticScrollToY(int y) {
 
 void HistoryWidget::onOverSession()
 {
-	const auto requestId = MTP::send(
-		MTPauth_OverSession(MTP_long(_history->peer->id)),
-		rpcDone(&HistoryWidget::sendOverSessionDone));
-	_sendOverSessionRequests.insert(_history, requestId);
+	_confirmBox = Ui::show(Box<ConfirmBox>(lang(lng_profile_delete_conversation_ok), [this] {
+		const auto requestId = MTP::send(
+			MTPauth_OverSession(MTP_long(_history->peer->id)),
+			rpcDone(&HistoryWidget::sendOverSessionDone));
+		_sendOverSessionRequests.insert(_history, requestId);
+		_confirmBox->closeBox();
+		}), LayerOption::KeepOther);
+
+	//const auto requestId = MTP::send(
+	//	MTPauth_OverSession(MTP_long(_history->peer->id)),
+	//	rpcDone(&HistoryWidget::sendOverSessionDone));
+	//_sendOverSessionRequests.insert(_history, requestId);
 	//Ui::show(Box<DeleteMessagesBox>(_history->peer, false), LayerOption::KeepOther);
 	//const auto box = Ui::show(Box<DeleteMessagesBox>(std::move(items))).data();
-	const auto box = Ui::show(Box<DeleteMessagesBox>(_history->peer, false)).data();
+	//const auto box = Ui::show(Box<DeleteMessagesBox>(_history->peer, false)).data();
+	//DeleteMessagesBox
 }
 
 void HistoryWidget::sendOverSessionDone(const MTPBool& result, mtpRequestId req)
 {
+	//App::main()->dialogsList()->del(_history);
+	App::main()->removeDialog(_history);
+	showHistory(0, 0);
 	for (auto i = _sendOverSessionRequests.begin(), e = _sendOverSessionRequests.end(); i != e; ++i) {
 		if (i.value() == req) {
 			_sendOverSessionRequests.erase(i);

@@ -113,6 +113,28 @@ namespace Contact {
 		return success;
 	}
 
+	Q_INVOKABLE bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int role /*= Qt::EditRole*/)
+	{
+		if (!index.isValid())
+			return false;
+		TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+		ContactInfo* pCI = item->data();
+		switch (role)
+		{
+		    case CustomRole::GroupCheckRole:
+		    {
+                pCI->userInGroupTemp = pCI->userInGroup;
+                pCI->userInGroup = value.toBool();
+			    emit dataChanged(index, index);
+			    return true;
+
+		    }
+		    default:
+			    return false;
+		}
+		return false;
+	}
+
 	/*  QVariant TreeModel::extData(const QModelIndex& index, int column)
     {
         if (!index.isValid())
@@ -129,7 +151,8 @@ namespace Contact {
 
         if (role != Qt::DisplayRole && CustomRole::IsExpandedRole != role
             && CustomRole::IsGroupRole != role 
-            && CustomRole::PeerRole != role)
+            && CustomRole::PeerRole != role 
+            && CustomRole::GroupCheckRole != role)
             return QVariant();
 
         TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
@@ -152,6 +175,12 @@ namespace Contact {
             ContactInfo* pCI = item->data();
 			return QVariant::fromValue((void*)pCI->peerData);
         }
+		else if (CustomRole::GroupCheckRole == role)
+		{
+			//ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
+			ContactInfo* pCI = item->data();
+			return pCI->userInGroup;
+		}
         ContactInfo* pCI = item->data();
 
         return QVariant::fromValue((void*)pCI);

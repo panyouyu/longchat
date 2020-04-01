@@ -75,6 +75,7 @@ countedTypeIdExceptions['switchKefu#3b9acdf2'] = True
 countedTypeIdExceptions['switchKefuList#3b9acdf1'] = True
 countedTypeIdExceptions['kefu.getSwitchKefus#3b9acdf0'] = True
 countedTypeIdExceptions['kefu.switchKefu#3b9acdef'] = True
+countedTypeIdExceptions['contacts.importContacts#2c800be5'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';
@@ -108,6 +109,7 @@ forwards = '';
 forwTypedefs = '';
 
 with open(input_file) as f:
+  print('input_file: ' + input_file);
   for line in f:
     layerline = re.match(r'// LAYER (\d+)', line)
     if (layerline):

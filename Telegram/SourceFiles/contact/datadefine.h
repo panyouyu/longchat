@@ -26,6 +26,8 @@ namespace Contact {
             , online(false)
             , expanded(false)
             , isGroup(false)
+            , userInGroup(false)
+            , userInGroupTemp(false)
             
         {
         }
@@ -51,7 +53,9 @@ namespace Contact {
         bool hasAvatar; //是否有头像
         bool online; //是否在线
         bool expanded;
-        bool isGroup; //就否分组
+        bool isGroup; //是否分组
+        bool userInGroup; //是否用户所在分组
+        bool userInGroupTemp; //记录原来的值，如果点取消，则要恢复
 
     };
     
@@ -85,13 +89,15 @@ namespace Contact {
         IsGroupRole, // 是否是群组
         PeerRole, // 获取peer
         SwitchRole, //转接
+        GroupCheckRole, //群组是否选中
     };
     //创建树类型
 	enum CreatingTreeType {
 		CTT_FULL, //联系人主界面的树 支持搜索右键 二级目录
-        CTT_TOSELECT, //分组维护窗口 支持选择到右边树，不支持二级目录 
+        CTT_TOSELECT, //分组维护窗口 左侧树 支持选择到右边树，不支持二级目录 
 		CTT_SHOW, //分组维护窗口 右侧树 只显示选中的用户 不支持二级目录 
         CTT_SWITCH, //转换窗口
+        CTT_USERINGROUP, //用户所属分组选择窗口
 	};
 
 	//分组窗口操作类型

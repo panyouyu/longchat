@@ -32,10 +32,11 @@ ContactTreeView::~ContactTreeView() {
 	
 }
 
-void ContactTreeView::loadDatas(const QVector<ContactInfo*> _vecContactPData)
+void ContactTreeView::loadDatas(const QVector<ContactInfo*> vecContactPData)
 {
+	_vecContactPData = vecContactPData;
 	_sortFilterProxyModel->clear();
-	_contactModel->setupModelData(_vecContactPData);
+	_contactModel->setupModelData(vecContactPData);
 	_sortFilterProxyModel->setSourceModel(_contactModel);
 	
 }
@@ -46,6 +47,19 @@ void ContactTreeView::setSearchKey(const QString& searchKey)
 	_sortFilterProxyModel->setSearchKey(searchKey);
 }
 
+
+QVector<MTPlong> ContactTreeView::getCheckedGroup()
+{
+	QVector<MTPlong> userGroups;
+
+	for (int i = 0; i < _vecContactPData.size(); ++i) {
+		if (_vecContactPData[i]->userInGroup)
+		{
+			userGroups.push_back(MTP_long(_vecContactPData[i]->id));
+		}
+	}
+	return userGroups;
+}
 
 void ContactTreeView::slotCustomContextMenu(const QPoint& point)
 {
@@ -70,12 +84,12 @@ void ContactTreeView::slotCustomContextMenu(const QPoint& point)
 				connect(pDelGroup, SIGNAL(triggered()), this, SLOT(slotDelGroup()));
 				menu->addAction(pDelGroup);
 			}
-			if (pCI && !pCI->isGroup) {
-				QAction* pUserInfo = new QAction(lang(lng_context_view_profile), this);
-				pUserInfo->setData(QVariant::fromValue(pCI));
-				connect(pUserInfo, SIGNAL(triggered()), this, SLOT(slotUserInfo()));
-				menu->addAction(pUserInfo);
-			}
+			//if (pCI && !pCI->isGroup) {
+			//	QAction* pUserInfo = new QAction(lang(lng_context_view_profile), this);
+			//	pUserInfo->setData(QVariant::fromValue(pCI));
+			//	connect(pUserInfo, SIGNAL(triggered()), this, SLOT(slotUserInfo()));
+			//	menu->addAction(pUserInfo);
+			//}
 			menu->exec(this->mapToGlobal(point));
 		}
 	}

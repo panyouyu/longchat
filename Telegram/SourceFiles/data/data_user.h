@@ -71,6 +71,8 @@ public:
 		const QString &newPhoneName,
 		const QString &newUsername);
 
+	void setGroup(const QString& groupInfos);
+
 	void setPhone(const QString &newPhone);
 	void setBotInfoVersion(int version);
 	void setBotInfo(const MTPBotInfo &info);
@@ -159,6 +161,7 @@ public:
 	QString firstName;
 	QString lastName;
 	QString username;
+	QString groupInfo;
 	const QString &phone() const {
 		return _phone;
 	}

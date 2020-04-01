@@ -1,0 +1,137 @@
+using "basic.style";
+
+using "ui/widgets/widgets.style";
+using "intro/intro.style";
+using "info/info.style";
+
+userGroupWidgetMaxWidth: 364px;
+userGroupWidgetMaxHeight: 435px;
+
+userGroupLayerTopMinimal: 20px;
+userGroupLayerTopMaximal: 40px;
+
+userGroupImport: IconTextButton(defaultIconTextButton) {
+	margin: margins(20px, 2px, 2px, 2px);
+	icon: icon {{"quick_reply_import", menuIconFg}};
+}
+
+userGroupExport: IconTextButton(defaultIconTextButton) {
+	icon: icon {{"quick_reply_export", menuIconFg}};
+}
+
+userGroupTipPadding : margins(0px, 10px, 20px, 10px);
+
+userGroupTitleScroll: ScrollArea(defaultScrollArea) {
+	bottomsh: 0px;
+	topsh: 0px;
+}
+
+userGroupContentScroll: ScrollArea(defaultScrollArea) {
+	bottomsh: 0px;
+	topsh: 0px;
+}
+
+userGroupTitleList: TextList(defaultTextList) {
+	item: TextListItem(defaultTextListItem) {
+		textBg: userGroupTitleTextBg;
+		textBgOver: userGroupTitleTextBgOver;
+		textBgHover: userGroupTitleTextBgHover;
+
+		textFg: userGroupTitleTextFg;
+		textFgOver: userGroupTitleTextFgOver;
+		textFgHover: userGroupTitleTextFgHover;	
+	
+		ripple: RippleAnimation(defaultRippleAnimation) {
+			color: userGroupTitleRipple;
+		}
+		rippleOver: RippleAnimation(defaultRippleAnimation) {
+			color:userGroupTitleRippleOver;
+		}
+	}
+}
+
+userGroupContentList: TextList(defaultTextList) {
+	item: TextListItem(defaultTextListItem) {
+		textBg: userGroupContentTextBg;
+		textBgOver: userGroupContentTextBgOver;
+		textBgHover: userGroupContentTextBgHover;
+
+		textFg: userGroupContentTextFg;
+		textFgOver: userGroupContentTextFgOver;
+		textFgHover: userGroupContentTextFgHover;
+	
+		ripple: RippleAnimation(defaultRippleAnimation) {
+			color: userGroupContentRipple;
+		}
+		rippleOver: RippleAnimation(defaultRippleAnimation) {
+			color:userGroupContentRippleOver;
+		}
+	}
+}
+
+userGroupManager: IconTextButton(defaultIconTextButton) {
+	icon: icon {{"quick_reply_manager", menuIconFg}};
+}
+
+userGroupAdd: IconTextButton(defaultIconTextButton) {
+	icon: icon {{"quick_reply_add", menuIconFg}};
+}
+
+userGroupDelete: IconTextButton(defaultIconTextButton) {
+	icon: icon {{"quick_reply_delete", menuIconFg}};
+}
+
+userGroupModify: IconTextButton(defaultIconTextButton) {
+	margin: margins(2px, 2px, 20px, 2px);
+	icon: icon {{"quick_reply_modify", menuIconFg}};
+}
+
+userGroupScroll: ScrollArea(defaultScrollArea) {
+	bottomsh: 0px;
+	topsh: 0px;
+}
+
+userGroupTipLabel: LabelSimple(defaultLabelSimple) {
+	textFg: windowSubTextFg;
+}
+
+userGroupPopupMenu: PopupMenu(defaultPopupMenu) {
+	menu: Menu(defaultMenu){
+		itemIconPosition: point(10px, 10px);
+		itemPadding: margins(32px, 8px, 17px, 7px);
+		widthMin: 80px;
+		widthMax: 200px;
+	}
+}
+
+userGroupCreateGroup: icon {{"quick_reply_create_group", menuIconFg}};
+userGroupCreateGroupOver: icon {{"quick_reply_create_group", menuIconFgOver}};
+
+userGroupRenameGroup: icon {{"quick_reply_rename_group", menuIconFg}};
+userGroupRenameGroupOver: icon {{"quick_reply_rename_group", menuIconFgOver}};
+
+userGroupRemoveGroup: icon {{"quick_reply_remove_group", menuIconFg}};
+userGroupRemoveGroupOver: icon {{"quick_reply_remove_group", menuIconFgOver}};
+
+userGroupMoveUp: icon {{"quick_reply_move_up", menuIconFg}};
+userGroupMoveUpOver: icon {{"quick_reply_move_up", menuIconFgOver}};
+
+userGroupMoveDown: icon {{"quick_reply_move_down", menuIconFg}};
+userGroupMoveDownOver: icon {{"quick_reply_move_down", menuIconFgOver}};
+
+userGroupTopBarHeight: 54px;
+
+userGroupTopBar:InfoTopBar(infoLayerTopBar) {
+	height: userGroupTopBarHeight;
+	title:  FlatLabel(boxTitle) {
+		style: TextStyle(defaultTextStyle) {
+			font: font(17px semibold);
+		}
+	}
+}
+
+userGroupTreeItemRightIcon: icon {{"tree_item_right", menuIconFg}};
+userGroupTreeItemRightIconOver: icon {{"tree_item_right", menuIconFgOver}}; 
+
+userGroupTreeItemBottomIcon: icon {{"tree_item_bottom", menuIconFg}};
+userGroupTreeItemBottomOver: icon {{"tree_item_bottom", menuIconFgOver}};

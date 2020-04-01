@@ -22,6 +22,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "data/data_chat.h"
 #include "data/data_user.h"
 #include "data/data_session.h"
+#include "mainwidget.h"
 
 #include "boxes/peers/edit_peer_permissions_box.h"
 
@@ -44,6 +45,15 @@ rpl::producer<TextWithEntities> PhoneValue(not_null<UserData*> user) {
 	) | rpl::map([user] {
 		return App::formatPhone(user->phone());
 	}) | WithEmptyEntities();
+}
+
+rpl::producer<TextWithEntities> GroupValue(not_null<UserData*> user) {
+	return Notify::PeerUpdateValue(
+		user,
+		Notify::PeerUpdate::Flag::UserGroupChanged
+	) | rpl::map([user] {
+		return user->groupInfo;
+		}) | WithEmptyEntities();
 }
 
 auto PlainBioValue(not_null<UserData*> user) {

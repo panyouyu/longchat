@@ -160,6 +160,7 @@ inputUser#d8292816 user_id:int access_hash:long = InputUser;
 
 inputPhoneContact#f392b7f4 client_id:long phone:string first_name:string last_name:string = InputContact;
 
+
 inputFile#f52ff27f id:long parts:int name:string md5_checksum:string = InputFile;
 inputFileBig#fa4f0bb5 id:long parts:int name:string = InputFile;
 
@@ -1234,7 +1235,7 @@ users.setSecureValueErrors#90c894b5 id:InputUser errors:Vector<SecureValueError>
 contacts.getContactIDs#2caa4a42 hash:int = Vector<int>;
 contacts.getStatuses#c4a353ee = Vector<ContactStatus>;
 contacts.getContacts#c023849f hash:int = contacts.Contacts;
-contacts.importContacts#2c800be5 contacts:Vector<InputContact> = contacts.ImportedContacts;
+contacts.importContacts#2c800be5 contacts:Vector<InputContact> is_update:int tag_id:Vector<long> = contacts.ImportedContacts;
 contacts.deleteContact#8e953744 id:InputUser = contacts.Link;
 contacts.deleteContacts#59ab389e id:Vector<InputUser> = Bool;
 contacts.deleteByPhones#1013fd9e phones:Vector<string> = Bool;
@@ -1253,7 +1254,7 @@ contacts.delUserGroups#3b9aca09 tag_id:long = UserGroupReturn;
 contacts.addUserGroups#3b9aca07 tag_name:string user_ids:Vector<long> = UserGroupReturn;
 contacts.modUserGroups#3b9aca0b tag_id:long tag_name:string user_ids:Vector<long> = UserGroupReturn;
 kefu.getSwitchKefus#3b9acdf0 player_user_id:int = SwitchKefuList;
-kefu.switchKefu#3b9acdef kefu_user_id:long player_user_id:long = Bool;
+kefu.switchKefu#3b9acdef kefu_user_id:int player_user_id:int = Bool;
 
 messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
 messages.getDialogs#b098aee6 flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:int = messages.Dialogs;
@@ -1465,4 +1466,4 @@ langpack.getDifference#cd984aa5 lang_pack:string lang_code:string from_version:i
 langpack.getLanguages#42c6978f lang_pack:string = Vector<LangPackLanguage>;
 langpack.getLanguage#6a596502 lang_pack:string lang_code:string = LangPackLanguage;
 
-// LAYER 98
+// LAYER 97

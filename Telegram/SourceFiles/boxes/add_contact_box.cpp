@@ -307,14 +307,15 @@ void AddContactBox::save() {
 		lastName = QString();
 	}
 	_sentName = firstName;
+	QVector<MTPlong> userGroups;
 	if (_user) {
 		_contactId = rand_value<uint64>();
 		QVector<MTPInputContact> v(1, MTP_inputPhoneContact(MTP_long(_contactId), MTP_string(_user->phone()), MTP_string(firstName), MTP_string(lastName)));
-		_addRequest = MTP::send(MTPcontacts_ImportContacts(MTP_vector<MTPInputContact>(v)), rpcDone(&AddContactBox::onSaveUserDone), rpcFail(&AddContactBox::onSaveUserFail));
+		_addRequest = MTP::send(MTPcontacts_ImportContacts(MTP_vector<MTPInputContact>(v), MTP_int(0), MTP_vector<MTPlong>(userGroups)), rpcDone(&AddContactBox::onSaveUserDone), rpcFail(&AddContactBox::onSaveUserFail));
 	} else {
 		_contactId = rand_value<uint64>();
 		QVector<MTPInputContact> v(1, MTP_inputPhoneContact(MTP_long(_contactId), MTP_string(phone), MTP_string(firstName), MTP_string(lastName)));
-		_addRequest = MTP::send(MTPcontacts_ImportContacts(MTP_vector<MTPInputContact>(v)), rpcDone(&AddContactBox::onImportDone));
+		_addRequest = MTP::send(MTPcontacts_ImportContacts(MTP_vector<MTPInputContact>(v), MTP_int(0), MTP_vector<MTPlong>(userGroups)), rpcDone(&AddContactBox::onImportDone));
 	}
 }
 

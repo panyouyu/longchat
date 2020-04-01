@@ -53,14 +53,16 @@
     <file alias="art/logo_256_no_margin.png">../art/logo_256_no_margin.png</file>
     <file alias="art/sunrise.jpg">../art/sunrise.jpg</file>
     <file alias="icons/pic_signin_logo.png">../icons/pic_signin_logo.png</file>
-    <file alias="art/ic_arrow_close.png">../art/ic_arrow_close.png</file>
-    <file alias="art/ic_arrow_open.png">../art/ic_arrow_open.png</file>
     <file alias="art/ic_point_greed.png">../art/ic_point_greed.png</file>
     <file alias="art/ic_point_red.png">../art/ic_point_red.png</file>
     <file alias="art/ic_kefu_search.png">../art/ic_kefu_search.png</file>
     <file alias="day-blue.tdesktop-theme">../day-blue.tdesktop-theme</file>
     <file alias="night.tdesktop-theme">../night.tdesktop-theme</file>
     <file alias="night-green.tdesktop-theme">../night-green.tdesktop-theme</file>
+    <file alias="images/checkbox_checked.png">../images/checkbox_checked.png</file>
+    <file alias="images/checkbox_unchecked.png">../images/checkbox_unchecked.png</file>
+    <file alias="images/ic_arrow_close.png">../images/ic_arrow_close.png</file>
+    <file alias="images/ic_arrow_open.png">../images/ic_arrow_open.png</file>
   </qresource>
   <qresource prefix="/sounds">
     <file alias="msg_incoming.mp3">../sounds/msg_incoming.mp3</file>

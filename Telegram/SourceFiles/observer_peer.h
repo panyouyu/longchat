@@ -60,6 +60,7 @@ struct PeerUpdate {
 		UserHasCalls              = (1 << 25),
 		UserOccupiedChanged       = (1 << 26),
 		UserSupportInfoChanged    = (1 << 27),
+		UserGroupChanged          = (1 << 28),
 
 		// For channels
 		ChannelAmIn               = (1 << 17),

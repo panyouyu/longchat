@@ -123,6 +123,12 @@ void UserData::setName(const QString &newFirstName, const QString &newLastName, 
 	updateNameDelayed(newFullName, newPhoneName, newUsername);
 }
 
+void UserData::setGroup(const QString& groupInfos)
+{
+	groupInfo = groupInfos;
+	updateGroupDelayed(groupInfos);
+}
+
 void UserData::setPhone(const QString &newPhone) {
 	if (_phone != newPhone) {
 		_phone = newPhone;

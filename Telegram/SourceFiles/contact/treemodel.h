@@ -71,6 +71,9 @@ namespace Contact {
 
         virtual bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex()) override;
 
+
+        Q_INVOKABLE virtual bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
+
         //QVariant extData(const QModelIndex& index, int column);
 
     public:

@@ -68,11 +68,16 @@ namespace Contact {
         void paintUser(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, ContactInfo* pCI) const;
 
         QRect calSwitchUserInfoBackRect(const QStyleOptionViewItem& option, int textWidth, int textHeight, int marginRight) const;
+        QRect calGroupCheckBoxRect(const QStyleOptionViewItem& option) const;
+        
         virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
 		// 点击的role
 		virtual int getMouseEventRole(const QPoint& pos, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-	public slots:
+
+        virtual bool editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index) override;
+
+    public slots:
 		// view上层调用函数
 		Q_INVOKABLE virtual int mouseEvent(QMouseEvent* mouseEvent, QAbstractItemView* view, const QStyleOptionViewItem& option, const QModelIndex& modelIndex);
 

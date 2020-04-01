@@ -71,6 +71,7 @@ public:
 	void destroyData();
 
 	void scrollToEntry(const Dialogs::RowDescriptor &entry);
+	QMutex& getUserGroupMutex();
 	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
 	QString getUserGroupInfo(uint64 userId);
 	QString getGroupName(uint64 groupId);
@@ -309,6 +310,7 @@ private:
 	QMap<uint64, QSet<uint64>> _mapUser2Group; //用户属于哪些组
 	QMap<uint64,QString> _mapUserInfo; //所有用户信息方便查询跟踪
 	uint32 _queueCount; //排队中的数量
+	QMutex _userGroupMutex;
 
 	bool _mouseSelection = false;
 	std::optional<QPoint> _lastMousePosition;
