@@ -60,7 +60,6 @@ countedTypeIdExceptions['ipPortSecret#37982646'] = True
 countedTypeIdExceptions['accessPointRule#4679b65f'] = True
 countedTypeIdExceptions['help.configSimple#5a592a6c'] = True
 countedTypeIdExceptions['bots.sendBindUserRequest#3b9acded'] = True
-countedTypeIdExceptions['messages.getBotIntro#3b9acdea'] = True
 countedTypeIdExceptions['bots.sendConsultationType#3b9acdeb'] = True
 
 renamedTypes = {};

@@ -4915,16 +4915,6 @@ void ApiWrap::sendBotStart(not_null<UserData*> bot, PeerData *chat) {
 	}).send();
 }
 
-void ApiWrap::requestBotIntro(not_null<UserData*> bot)
-{
-	if (bot->isBot()) {
-		request(MTPmessages_GetBotIntro(bot->inputUser.c_inputUser().vuser_id, MTP_int(0))
-		).done([=](const MTPBool& result) {
-		}).fail([=](const RPCError& error) {
-		}).send();
-	}
-}
-
 void ApiWrap::sendConsultationType(not_null<UserData*> bot, int consult_id)
 {
 	if (bot->isBot()) {
