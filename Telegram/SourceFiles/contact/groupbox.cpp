@@ -5,7 +5,7 @@ the official desktop application for the Telegram messaging service.
 For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
-#include "contact/switchbox.h"
+#include "contact/GroupBox.h"
 #include "datadefine.h"
 #include "lang/lang_keys.h"
 #include "contact/filterwidget.h"
@@ -18,7 +18,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 namespace Contact {
 
-	SwitchBox::SwitchBox(QWidget*, UserData* user): _user(user)
+	GroupBox::GroupBox(QWidget*, UserData* user): _user(user)
 	{
 		_playerId = user->id;
 		freshData();
@@ -26,23 +26,23 @@ namespace Contact {
 	}
 
 	
-	SwitchBox::~SwitchBox()
+	GroupBox::~GroupBox()
 	{
 		clearData();
 	}
 
-	void SwitchBox::on_switchUser(ContactInfo* pCI)
+	void GroupBox::on_switchUser(ContactInfo* pCI)
 	{
 		if (_switchKefuRequest)
 			return;
 		if (pCI)
 		{
-			_switchKefuRequest = MTP::send(MTPkefu_SwitchKefu(MTP_int(pCI->id), MTP_int(_playerId)), rpcDone(&SwitchBox::switchKefuDone), rpcFail(&SwitchBox::switchKefuFail));
+			_switchKefuRequest = MTP::send(MTPkefu_SwitchKefu(MTP_int(pCI->id), MTP_int(_playerId)), rpcDone(&GroupBox::switchKefuDone), rpcFail(&GroupBox::switchKefuFail));
 		}
 	}
 
 
-	void SwitchBox::init()
+	void GroupBox::init()
 	{
 		_vLayout = new QVBoxLayout(this);
 		_vLayout->setSpacing(0);
@@ -59,7 +59,7 @@ namespace Contact {
 
 
 
-	void SwitchBox::prepare() {
+	void GroupBox::prepare() {
 		setTitle([] { return lang(lng_switchboard_online_user); });
 
 	    addButton(langFactory(lng_close), [this] { closeBox(); });
@@ -76,7 +76,7 @@ namespace Contact {
 
 	
 
-	void SwitchBox::clearData()
+	void GroupBox::clearData()
 	{
 		qDeleteAll(_vecContactPData);
 		_vecContactPData.clear();
@@ -84,15 +84,15 @@ namespace Contact {
 
 
 
-	void SwitchBox::freshData()
+	void GroupBox::freshData()
 	{
 		if (_getSwitchKefusRequest)
 			return;
-		_getSwitchKefusRequest = MTP::send(MTPkefu_GetSwitchKefus(MTP_int(_playerId)), rpcDone(&SwitchBox::getSwitchKefusDone), rpcFail(&SwitchBox::getSwitchKefusFail));
+		_getSwitchKefusRequest = MTP::send(MTPkefu_GetSwitchKefus(MTP_int(_playerId)), rpcDone(&GroupBox::getSwitchKefusDone), rpcFail(&GroupBox::getSwitchKefusFail));
 	}
 
 
-	void SwitchBox::getSwitchKefusDone(const MTPSwitchKefuList& result)
+	void GroupBox::getSwitchKefusDone(const MTPSwitchKefuList& result)
 	{
 		_getSwitchKefusRequest = 0;
 		clearData();
@@ -117,7 +117,7 @@ namespace Contact {
 		}
 	}
 
-	bool SwitchBox::getSwitchKefusFail(const RPCError& error)
+	bool GroupBox::getSwitchKefusFail(const RPCError& error)
 	{
 		if (MTP::isDefaultHandledError(error)) {
 			return false;
@@ -130,13 +130,13 @@ namespace Contact {
 		return true;
 	}
 
-	void SwitchBox::switchKefuDone(const MTPBool& result)
+	void GroupBox::switchKefuDone(const MTPBool& result)
 	{
 		App::main()->slotSwitchUser(_user);
 		closeBox();
 	}
 
-	bool SwitchBox::switchKefuFail(const RPCError& error)
+	bool GroupBox::switchKefuFail(const RPCError& error)
 	{
 		if (MTP::isDefaultHandledError(error)) {
 			return false;

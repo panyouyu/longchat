@@ -67,7 +67,7 @@ namespace Contact {
         void paintGroup(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, ContactInfo* pCI) const;
         void paintUser(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, ContactInfo* pCI) const;
 
-        QRect calSwitchUserInfoBackRect(const QStyleOptionViewItem& option, int textWidth, int textHeight, int marginRight) const;
+        QRect calSwitchUserInfoBackRect(const QStyleOptionViewItem& option/*, int textWidth, int textHeight, int marginRight*/) const;
         QRect calGroupCheckBoxRect(const QStyleOptionViewItem& option) const;
         
         virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;

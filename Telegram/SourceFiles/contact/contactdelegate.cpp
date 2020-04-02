@@ -59,10 +59,13 @@
 #include "delegatehelper.h"
 #include "ui/image/image.h"
 #include "mainwidget.h"
+#include "styles/style_contact.h"
 
 namespace Contact {
 	const QRect GroupArrorIconRect{ 5,12,10,10 }; // 分组折叠箭头区域
 	const QRect GroupCheckBoxRect{ 23,8,22,22 }; // 分组复选区域
+	const QRect SwitchBtnRect{ 307,17,54,28 }; // 转接矩形区域
+	const QRect SwitchBtnTxtRect{ 322,22,24,17 }; // 转接文字矩形区域
 	const int ArrorRectWidth = 20;
 
 	ContactDelegate::ContactDelegate(CreatingTreeType ctt, QObject* parent)
@@ -269,32 +272,28 @@ namespace Contact {
 		if (m_ctt == CTT_SWITCH)
 		{
 			//////////////画转接按钮////////////////////////////////////
-			int groupUserInfoFontSize = 12;
-			int marginRight = 10;
 			QString userSwitchInfo = pCI->lastName;
-			QRect switchUserInfoTextRec = delegateHelper.calTextRect(painter, groupUserInfoFontSize, userSwitchInfo);
-			//字符串所占的像素宽度,高度
-			int textWidth = switchUserInfoTextRec.width();
-			int textHeight = switchUserInfoTextRec.height();
-			QRect switchUserInfoRect = option.rect;
-			switchUserInfoRect.setTop(option.rect.top() + (option.rect.height() - textHeight) / 2);
-			switchUserInfoRect.setLeft(option.rect.width() - textWidth - marginRight);
-			QRect switchUserInfoBackRect = switchUserInfoRect;
-			switchUserInfoBackRect.setWidth(textWidth);
-			switchUserInfoBackRect.setHeight(textHeight);
-			delegateHelper.paintRect(painter, QColor("#0f88e8"), switchUserInfoBackRect);
-			delegateHelper.paintText(painter, Qt::AlignLeft, m_si.fontColor, switchUserInfoRect, groupUserInfoFontSize, userSwitchInfo);
+
+			QRect switchUserInfoBackRect = calSwitchUserInfoBackRect(option);
+			QRect switchUserInfoRect = option.rect; ;
+			switchUserInfoRect.setTop(option.rect.top() + SwitchBtnTxtRect.y());
+			switchUserInfoRect.setLeft(SwitchBtnTxtRect.x());
+			switchUserInfoRect.setWidth(SwitchBtnTxtRect.width());
+			switchUserInfoRect.setHeight(SwitchBtnTxtRect.height());
+			delegateHelper.paintRect(painter, QColor(st::switchButton.bgcolor->c), switchUserInfoBackRect);
+			delegateHelper.paintText(painter, Qt::AlignLeft, QColor(st::switchButton.fontcolor->c), switchUserInfoRect, st::switchButton.fontsize, userSwitchInfo);
 
 		}
 		
 	}
 
-	QRect ContactDelegate::calSwitchUserInfoBackRect(const QStyleOptionViewItem& option, int textWidth, int textHeight, int marginRight) const {
+	QRect ContactDelegate::calSwitchUserInfoBackRect(const QStyleOptionViewItem& option/*, int textWidth, int textHeight, int marginRight*/) const {
 		QRect switchUserInfoBackRect = option.rect;
-		switchUserInfoBackRect.setTop(option.rect.top() + (option.rect.height() - textHeight) / 2);
-		switchUserInfoBackRect.setLeft(option.rect.width() - textWidth - marginRight);
-		switchUserInfoBackRect.setWidth(textWidth);
-		switchUserInfoBackRect.setHeight(textHeight);
+		switchUserInfoBackRect.setTop(option.rect.top() + SwitchBtnRect.y() );
+		switchUserInfoBackRect.setLeft(SwitchBtnRect.x());
+		switchUserInfoBackRect.setWidth(SwitchBtnRect.width());
+		switchUserInfoBackRect.setHeight(SwitchBtnRect.height());
+		//qDebug() << "----" << option.rect.top() << SwitchBtnRect.y();
 		return switchUserInfoBackRect;
 	}
 
@@ -333,7 +332,7 @@ namespace Contact {
 	int ContactDelegate::getMouseEventRole(const QPoint& pos, const QStyleOptionViewItem& option, const QModelIndex& index) const
 	{
 		//转接所在区域
-		QRect switchRect = calSwitchUserInfoBackRect(option, 24, 17, 10);
+		QRect switchRect = calSwitchUserInfoBackRect(option/*, 24, 17, 10*/);
 		if (switchRect.contains(pos))
 		{
 			return static_cast<int>(CustomRole::SwitchRole);

@@ -102,6 +102,10 @@
 <(src_loc)/contact/usergroupbox.h
 <(src_loc)/contact/switchbox.cpp
 <(src_loc)/contact/switchbox.h
+<(src_loc)/contact/contactbox.cpp
+<(src_loc)/contact/contactbox.h
+<(src_loc)/contact/groupbox.cpp
+<(src_loc)/contact/groupbox.h
 <(src_loc)/contact/contacttreeview.cpp
 <(src_loc)/contact/contacttreeview.h
 <(src_loc)/contact/contactdelegate.cpp
