@@ -13,12 +13,6 @@ QTreeView {
     background:#ffffff;
 }
 
-QTreeView::branch:closed:has-children{
-    image: url(:/gui/images/ic_arrow_close.png);
-}
-QTreeView::branch:open:has-children{
-    image: url(:/gui/images/ic_arrow_open.png);
-}
 
 QPushButton {
   background-color:#ffffff;

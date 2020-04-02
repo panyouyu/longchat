@@ -1013,8 +1013,18 @@ QVector<Contact::ContactInfo*>& MainWidget::getGroupInfo4Search()
 
 void MainWidget::loadGroupDialogs()
 {
-	_dialogs->loadDialogs();
-	return _dialogs->loadGroupDialogs();
+	//_dialogs->loadGroupDialogs();
+	return _dialogs->loadDialogs(); 
+}
+
+void MainWidget::loadDialogs()
+{
+	return _dialogs->loadDialogs();
+}
+
+void MainWidget::setDialogGetFull(bool full)
+{
+	_dialogs->setDialogGetFull(full);
 }
 
 base::Observable<int>& MainWidget::signalGroupChanged()
@@ -1356,6 +1366,12 @@ void MainWidget::inlineResultLoadFailed(FileLoader *loader, bool started) {
 	//result->loaded();
 
 	//Ui::repaintInlineItem();
+}
+
+void MainWidget::slotSwitchUser(UserData* user)
+{
+	_dialogs->removeDialog(session().data().historyLoaded(user->id));
+	_history->showHistory(0, 0);
 }
 
 void MainWidget::onSendFileConfirm(

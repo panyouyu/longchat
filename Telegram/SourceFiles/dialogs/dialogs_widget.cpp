@@ -979,7 +979,8 @@ bool DialogsWidget::loadingBlockedByDate() const {
 }
 
 void DialogsWidget::loadDialogs() {
-	if (_dialogsRequestId) return;
+	if (_dialogsRequestId) 
+		return;
 	if (_dialogsFull) {
 		_inner->addAllSavedPeers();
 		return;
@@ -1041,6 +1042,11 @@ void DialogsWidget::loadGroupDialogs()
 	if (_allUserTagRequest) 
 		return;
 	_allUserTagRequest = MTP::send(MTPcontacts_GetUserGroups(), rpcDone(&DialogsWidget::userGroupDone), rpcFail(&DialogsWidget::userGroupFail));
+}
+
+void DialogsWidget::setDialogGetFull(bool full)
+{
+	_dialogsFull = full;
 }
 
 base::Observable<int>& DialogsWidget::signalGroupChanged()

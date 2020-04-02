@@ -212,6 +212,8 @@ public:
 	QVector<Contact::ContactInfo*>& getGroupInfo();
 	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
 	void loadGroupDialogs();
+	void loadDialogs();
+	void setDialogGetFull(bool full);
 	base::Observable<int>& signalGroupChanged();
 
 	// While HistoryInner is not HistoryView::ListWidget.
@@ -316,6 +318,7 @@ public slots:
 	void documentLoadFailed(FileLoader *loader, bool started);
 	void inlineResultLoadProgress(FileLoader *loader);
 	void inlineResultLoadFailed(FileLoader *loader, bool started);
+	void slotSwitchUser(UserData* user);
 
 	void dialogsCancelled();
 

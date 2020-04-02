@@ -67,6 +67,7 @@ public:
 
 	void loadDialogs();
 	void loadGroupDialogs();
+	void setDialogGetFull(bool full);
 	base::Observable<int>& signalGroupChanged();
 	void loadPinnedDialogs();
 	void createDialog(Dialogs::Key key);

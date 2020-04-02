@@ -64,7 +64,7 @@ void UserLoginWidget::onInputPwdChange()
 void UserLoginWidget::onChangeCode()
 {
 	_picCode->onReflushVerification();
-	_codeField->setText(_picCode->getVerificationCode());
+	//_codeField->setText(_picCode->getVerificationCode());
 }
 
 

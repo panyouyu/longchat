@@ -11,7 +11,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/confirm_box.h"
 #include "boxes/mute_settings_box.h"
 #include "boxes/add_contact_box.h"
-#include "contact/contactswitchdialog.h"
+#include "contact/switchbox.h"
 #include "boxes/report_box.h"
 #include "boxes/create_poll_box.h"
 #include "boxes/peers/add_participants_box.h"
@@ -306,8 +306,7 @@ void Filler::addBlockUser(not_null<UserData*> user) {
 
 void Filler::addSwitchboardUser(not_null<UserData*> user) {
 	auto blockAction = _addAction(lang(lng_switchboard_user), [=] {
-		Contact::SwitchDialog dlg(user->id);
-		dlg.exec();
+		Ui::show(Box<Contact::SwitchBox>(user));
 		});
 }
 

@@ -772,7 +772,9 @@ void Application::authSessionCreate(const MTPUser &user) {
 	}));
 	_mtproto->setUserGroupChangedHandler(::rpcDone([](int32 state) {
 			if (const auto main = App::main()) {
-				main->loadGroupDialogs();
+				//main->loadGroupDialogs();
+				main->setDialogGetFull(false);
+				main->loadDialogs();
 			}
 		}));
 	authSessionChanged().notify(true);
