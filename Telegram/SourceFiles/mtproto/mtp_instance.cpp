@@ -783,10 +783,10 @@ void Instance::Private::configLoadDone(const MTPConfig &result) {
 	Global::SetCallRingTimeoutMs(data.vcall_ring_timeout_ms.v);
 	Global::SetCallConnectTimeoutMs(data.vcall_connect_timeout_ms.v);
 	Global::SetCallPacketTimeoutMs(data.vcall_packet_timeout_ms.v);
-	if (Global::PhoneCallsEnabled() != data.is_phonecalls_enabled()) {
-		Global::SetPhoneCallsEnabled(data.is_phonecalls_enabled());
-		Global::RefPhoneCallsEnabledChanged().notify();
-	}
+	//if (Global::PhoneCallsEnabled() != data.is_phonecalls_enabled()) {
+	//	Global::SetPhoneCallsEnabled(data.is_phonecalls_enabled());
+	//	Global::RefPhoneCallsEnabledChanged().notify();
+	//}
 	Global::SetBlockedMode(data.is_blocked_mode());
 	Global::SetCaptionLengthMax(data.vcaption_length_max.v);
 

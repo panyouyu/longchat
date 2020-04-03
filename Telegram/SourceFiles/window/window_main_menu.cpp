@@ -158,9 +158,9 @@ MainMenu::MainMenu(
 void MainMenu::refreshMenu() {
 	_menu->clearActions();
 	if (!Auth().supportMode()) {
-		_menu->addAction(lang(lng_create_group_title), [] {
-			App::wnd()->onShowNewGroup();
-		}, &st::mainMenuNewGroup, &st::mainMenuNewGroupOver);
+		//_menu->addAction(lang(lng_create_group_title), [] {
+		//	App::wnd()->onShowNewGroup();
+		//	}, &st::mainMenuNewGroup, &st::mainMenuNewGroupOver);
 		//_menu->addAction(lang(lng_create_channel_title), [] {
 		//	//App::wnd()->onShowNewChannel();
 		//	Contact::Dialog widget;
