@@ -358,6 +358,8 @@ public slots:
 	void createScreenShot();
 	void destoryScreenShot(bool = false);
 
+	void onKfSessionTimeOut(int64 peerId);
+
 private slots:
 	void onHashtagOrBotCommandInsert(QString str, FieldAutocomplete::ChooseMethod method);
 	void onMentionInsert(UserData *user);

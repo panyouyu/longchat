@@ -57,6 +57,7 @@ public:
 	void createDialog(Dialogs::Key key);
 	void createGroupDialog(const MTPUserGroupList& result);
 	void removeGroupDialog();
+	void diffGroup(const MTPUserGroupList& result);
 	void removeDialog(Dialogs::Key key);
 	void repaintDialogRow(Dialogs::Mode list, not_null<Dialogs::Row*> row);
 	void repaintDialogRow(Dialogs::RowDescriptor row);
@@ -128,6 +129,7 @@ signals:
 	void refreshHashtags();
 	void queueCountChanged(int count);
 	void contactStatusChanged();
+	void kfSessionTimeOut(int64 peerId);
 
 protected:
 	void visibleTopBottomUpdated(
@@ -309,6 +311,7 @@ private:
 	QVector<Contact::ContactInfo*> _vecContactAndGroupData4Search; //用于查询的组信息
 	QMap<uint64, QSet<uint64>> _mapUser2Group; //用户属于哪些组
 	QMap<uint64,QString> _mapUserInfo; //所有用户信息方便查询跟踪
+	QVector<uint64> _vecSeeking; //咨询中的用户
 	uint32 _queueCount; //排队中的数量
 	QMutex _userGroupMutex;
 

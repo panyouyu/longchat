@@ -1307,6 +1307,8 @@ void DialogsInner::createDialog(Dialogs::Key key) {
 
 void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 {
+	
+	diffGroup(result);
 	removeGroupDialog();	
 	QMutexLocker lock(&_userGroupMutex);
 	for (const auto& userGroup : result.c_userGroupList().vtag_users.v) {
@@ -1328,6 +1330,10 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 			for (const auto& userId : userGroup.c_userGroup().vuser_ids.v) {
 				info->userIds.push_back(userId.v);
 				_mapUser2Group[userId.v].insert(info->id);
+				if (Contact::GFT_SEEKING == info->otherId) {
+					_vecSeeking.push_back(userId.v);
+				}
+				
 			}
 			info->userTotalCount = info->userIds.size();
 			info->showUserCount = QString("(%1)").arg(info->userTotalCount);
@@ -1381,7 +1387,46 @@ void DialogsInner::removeGroupDialog()
 	_vecContactAndGroupData4Search.clear();	
 	qDeleteAll(_vecContactAndGroupData);
 	_vecContactAndGroupData.clear();
+	_vecSeeking.clear();
 
+}
+
+void DialogsInner::diffGroup(const MTPUserGroupList& result)
+{
+	//先判断找出咨询中不存在的用户，然后把它删除
+	QVector<uint64> vecSeekingNew;
+	//先取出新咨询中的用户
+	for (const auto& userGroup : result.c_userGroupList().vtag_users.v) {
+		int32 otherId = userGroup.c_userGroup().vother_id.v;
+		if (Contact::GFT_SEEKING == otherId)
+		{
+			for (const auto& userId : userGroup.c_userGroup().vuser_ids.v) {
+				vecSeekingNew.push_back(userId.v);
+			}
+		}
+	}
+	//从现有咨询中的用户中删除不存在的用户
+	bool findDialog = false;
+	for (int i = 0; i < _vecSeeking.size(); ++i)
+	{
+		findDialog = false;
+		for (int j = 0; j < vecSeekingNew.size(); ++j)
+		{
+			if (_vecSeeking[i] == vecSeekingNew[j])
+			{
+				findDialog = true;
+				break;
+			}
+		}
+		if (findDialog)
+		{
+			continue;
+		}
+		//没有查找到移除
+		const auto history = Auth().data().history(_vecSeeking[i]);
+		emit kfSessionTimeOut(_vecSeeking[i]);
+		removeDialog(history);
+	}
 }
 
 void DialogsInner::removeDialog(Dialogs::Key key) {

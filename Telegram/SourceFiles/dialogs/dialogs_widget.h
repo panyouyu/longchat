@@ -107,6 +107,7 @@ public:
 
 signals:
 	void cancelled();
+	void kfSessionTimeOut(int64 peerId);
 public slots:
 	void onDraggingScrollDelta(int delta);
 
@@ -126,6 +127,7 @@ public slots:
 	void onChooseByDrag();
 	void onQueueCountChanged(int count);
 	void onContactStatus();
+	void onKfSessionTimeOut(int64 peerId);
 
 private slots:
 	void onDraggingScrollTimer();

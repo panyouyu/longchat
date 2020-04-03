@@ -388,6 +388,7 @@ MainWidget::MainWidget(
 	connect(_dialogs, SIGNAL(cancelled()), this, SLOT(dialogsCancelled()));
 	connect(this, SIGNAL(dialogsUpdated()), _dialogs, SLOT(onListScroll()));
 	connect(_history, SIGNAL(cancelled()), _dialogs, SLOT(activate()));
+	connect(_dialogs, SIGNAL(kfSessionTimeOut(int64)), _history, SLOT(onKfSessionTimeOut(int64)));
 	subscribe(
 		Media::Player::instance()->updatedNotifier(),
 		[=](const Media::Player::TrackState &state) { handleAudioUpdate(state); });

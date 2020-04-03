@@ -6819,4 +6819,12 @@ void HistoryWidget::sendOverSessionDone(const MTPBool& result, mtpRequestId req)
 	}
 }
 
+void HistoryWidget::onKfSessionTimeOut(int64 peerId)
+{
+	if (_peer && _peer->id == peerId)
+	{
+		showHistory(0, 0);
+	}
+}
+
 HistoryWidget::~HistoryWidget() = default;

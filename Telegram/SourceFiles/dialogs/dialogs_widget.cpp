@@ -180,6 +180,7 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 	connect(_inner, SIGNAL(cancelSearchInChat()), this, SLOT(onCancelSearchInChat()));
 	connect(_inner, SIGNAL(queueCountChanged(int)), this, SLOT(onQueueCountChanged(int)));
 	connect(_inner, SIGNAL(contactStatusChanged()), this, SLOT(onContactStatus()));
+	connect(_inner, SIGNAL(kfSessionTimeOut(int64)), this, SLOT(onKfSessionTimeOut(int64)));
 	subscribe(_inner->searchFromUserChanged, [this](UserData *user) {
 		setSearchInChat(_searchInChat, user);
 		applyFilterUpdate(true);
@@ -850,6 +851,11 @@ void DialogsWidget::onQueueCountChanged(int count)
 void DialogsWidget::onContactStatus()
 {
 	loadGroupDialogs();
+}
+
+void DialogsWidget::onKfSessionTimeOut(int64 peerId)
+{
+	emit kfSessionTimeOut(peerId);
 }
 
 void DialogsWidget::showMainMenu() {
