@@ -475,13 +475,13 @@ void Advanced::setupContent() {
 		}
 	};
 	const auto addUpdate = [&] {
-		if (HasUpdate()) {
-			addDivider();
-			AddSkip(content);
-			AddSubsectionTitle(content, lng_settings_version_info);
-			SetupUpdate(content);
-			AddSkip(content);
-		}
+		//if (HasUpdate()) {
+		//	addDivider();
+		//	AddSkip(content);
+		//	AddSubsectionTitle(content, lng_settings_version_info);
+		//	SetupUpdate(content);
+		//	AddSkip(content);
+		//}
 	};
 	if (!cAutoUpdate()) {
 		addUpdate();

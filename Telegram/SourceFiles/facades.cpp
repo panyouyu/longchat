@@ -401,7 +401,7 @@ struct Data {
 	QString TxtDomainString = cTestMode()
 		? qsl("testapv2.stel.com")
 		: qsl("apv2.stel.com");
-	bool PhoneCallsEnabled = true;
+	bool PhoneCallsEnabled = false;
 	bool BlockedMode = false;
 	int32 CaptionLengthMax = 1024;
 	base::Observable<void> PhoneCallsEnabledChanged;

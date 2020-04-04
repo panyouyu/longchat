@@ -668,7 +668,7 @@ void ActionsFiller::fillUserActions(not_null<UserData*> user) {
 	if (user->botInfo) {
 		addInviteToGroupAction(user);
 	}
-	addShareContactAction(user);
+	//addShareContactAction(user);
 	if (!user->isSelf()) {
 		addContactGroupAction(user);
 		addEditContactAction(user);

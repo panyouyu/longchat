@@ -72,19 +72,19 @@ void SetupSections(
 		AddDivider(container);
 		AddSkip(container);
 	} else {
-		addSection(
-			lng_settings_information,
-			Type::Information,
-			&st::settingsIconInformation);
+		//addSection(
+		//	lng_settings_information,
+		//	Type::Information,
+		//	&st::settingsIconInformation);
 	}
 	addSection(
 		lng_settings_section_notify,
 		Type::Notifications,
 		&st::settingsIconNotifications);
-	addSection(
-		lng_settings_section_privacy,
-		Type::PrivacySecurity,
-		&st::settingsIconPrivacySecurity);
+	//addSection(
+	//	lng_settings_section_privacy,
+	//	Type::PrivacySecurity,
+	//	&st::settingsIconPrivacySecurity);
 	addSection(
 		lng_settings_section_chat_settings,
 		Type::Chat,
