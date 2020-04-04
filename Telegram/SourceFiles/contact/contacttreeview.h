@@ -28,7 +28,7 @@ public:
 	QVector<MTPlong> getCheckedGroup();
 
 signals:
-	void startChat();
+	void startChat(int64 peerId);
 	void addGroup();
 	void modGroup(ContactInfo* pCI);
 	void delGroup(ContactInfo* pCI);

@@ -321,6 +321,8 @@ public slots:
 	void slotSwitchUser(UserData* user);
 
 	void dialogsCancelled();
+	void slotChat(int64 peerId);
+	void onTimeout();
 
 protected:
 	void paintEvent(QPaintEvent *e) override;
@@ -558,5 +560,8 @@ private:
 
 	bool _firstColumnResizing = false;
 	int _firstColumnResizingShift = 0;
+
+	QTimer _timer;
+	int64 _peerId;
 
 };

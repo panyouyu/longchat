@@ -40,14 +40,20 @@ namespace Contact {
 
 		void userGroupDelDone(const MTPUserGroupReturn& result);
 		bool userGroupDelFail(const RPCError& error);
+		//void resultHandler(int result);
 
+	signals:
+		void startChat(int64 peerId);
 	private slots:
+		void slotChat(int64 peerId);
 		void slotSaveGroup();
 		void textFilterChanged();
 		void slotAddGroup();
 		void slotModGroup(ContactInfo* pCI);
 		void slotDelGroup(ContactInfo* pCI);
 		void slotShowUserInfo(ContactInfo* pCI);
+		void slotSucess();
+		void onCloseWait();
 		
 	private:
 		FilterWidget* _filterWidget;
@@ -63,6 +69,8 @@ namespace Contact {
 		Window::Controller* _controller = { nullptr };
 
 		mtpRequestId _allUserTagDelRequest = 0;
+
+		object_ptr<QTimer> _closeWait;
 
 	};
 
