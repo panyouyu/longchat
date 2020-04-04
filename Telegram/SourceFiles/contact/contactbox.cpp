@@ -20,7 +20,6 @@ namespace Contact {
 
 	ContactBox::ContactBox(QWidget* parent, Window::Controller* controller): _controller(controller), _closeWait(this)
 	{
-		//_closeWait = new QTimer(this);
 		updateGroupInfoData();
 		init();
 	}
@@ -28,7 +27,6 @@ namespace Contact {
 	
 	ContactBox::~ContactBox()
 	{
-		//delete _closeWait;
 	}
 
 	void ContactBox::init()
@@ -64,10 +62,6 @@ namespace Contact {
 	void ContactBox::slotSaveGroup()
 	{
 		auto addBox = Ui::show(Box<GroupBox>(), LayerOption::KeepOther);
-		//GroupDialog dlg(nullptr, nullptr);
-		//if (QDialog::Accepted == dlg.exec()) {
-		//	App::main()->loadGroupDialogs();
-		//}
 	}
 
 	void ContactBox::prepare() {
@@ -113,32 +107,13 @@ namespace Contact {
 
 	void ContactBox::slotAddGroup()
 	{
-		//Ui::show(Box<Contact::GroupBox>(nullptr));
-		//GroupDialog dlg(nullptr, nullptr);
-		//if (QDialog::Accepted == dlg.exec()) {
-		//	App::main()->loadGroupDialogs();
-		//}
 		auto addBox = Ui::show(Box<GroupBox>(), LayerOption::KeepOther);
-		//addBox->titleSubmid() | rpl::start_with_next([this](QString group) {
-		//	_groupRow = group;
-		//	refreshTitle();
-		//	}, lifetime());
-		//addBox->contentSubmit() | rpl::start_with_next([this](QString content) {
-		//	_contentRow = content;
-		//	refreshTitle();
-		//	}, lifetime());
 	}
 
 
 	void ContactBox::slotModGroup(ContactInfo* pCI)
 	{
 		auto addBox = Ui::show(Box<GroupBox>(pCI, GOWT_MOD), LayerOption::KeepOther); 
-		//addBox->setResultHandler(resultHandler);
-
-		//GroupDialog dlg(nullptr, pCI, GOWT_MOD);
-		//if (QDialog::Accepted == dlg.exec()) {
-		//	App::main()->loadGroupDialogs();
-		//}
 	}
 
 	void ContactBox::slotDelGroup(ContactInfo* pCI)
@@ -194,7 +169,6 @@ namespace Contact {
 	bool ContactBox::userGroupDelFail(const RPCError& error)
 	{
 		if (MTP::isFloodError(error)) {
-			//stopCheck();
 			_allUserTagDelRequest = 0;
 			showCodeError(langFactory(lng_flood_error));
 			return true;
@@ -203,7 +177,6 @@ namespace Contact {
 			return false;
 		}
 
-		//stopCheck();
 		_allUserTagDelRequest = 0;
 		auto& err = error.type();
 		if (err == qstr("PASSWORD_WRONG")) {
@@ -219,11 +192,5 @@ namespace Contact {
 		}
 		return false;
 	}
-
-
-	//void ContactBox::resultHandler(int result)
-	//{
-	//	App::main()->loadGroupDialogs();
-	//}
 
 }

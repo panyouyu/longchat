@@ -1361,10 +1361,20 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 							Contact::ContactInfo* ci = new Contact::ContactInfo();
 							//qDebug() << "     gId:" << *i << "gName" << peer->name;
 							genContact(ci, user, peer, *i);
-							Contact::ContactInfo* ci4s = new Contact::ContactInfo();
-							genContact(ci4s, user, peer, 0);
 							_vecContactAndGroupData.push_back(ci);
-							_vecContactAndGroupData4Search.push_back(ci4s);
+							bool find = false;
+							for (int j = 0; j < _vecContactAndGroupData4Search.size(); ++j) {
+								if (_vecContactAndGroupData4Search.at(j)->id == userId) {
+									find = true;
+									break;
+								}
+							}
+							if (!find) {
+								Contact::ContactInfo* ci4s = new Contact::ContactInfo();
+								genContact(ci4s, user, peer, 0);
+								_vecContactAndGroupData4Search.push_back(ci4s);
+							}
+							
 							++i;
 						}
 					}
