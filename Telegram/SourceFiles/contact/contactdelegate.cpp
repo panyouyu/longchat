@@ -89,7 +89,7 @@ namespace Contact {
 		Q_ASSERT(index.isValid());
 		if (0 == index.column())
 		{
-			ContactInfo* pCI = (ContactInfo*)index.data(Qt::DisplayRole).value<void*>();
+			ContactInfo* pCI = dynamic_cast<ContactInfo*>(index.data(Qt::DisplayRole).value<ContactInfo*>());
 			if (pCI == nullptr)
 			{
 				return;
@@ -307,7 +307,7 @@ namespace Contact {
 	{
 		Q_ASSERT(index.isValid());
 
-		ContactInfo* pCI = (ContactInfo*)index.data(Qt::DisplayRole).value<void*>();
+		ContactInfo* pCI = dynamic_cast<ContactInfo*>(index.data(Qt::DisplayRole).value<ContactInfo*>());
 		QSize size = QItemDelegate::sizeHint(option, index);
 		if (nullptr == pCI)
 		{

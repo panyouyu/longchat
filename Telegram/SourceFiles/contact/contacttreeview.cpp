@@ -70,7 +70,7 @@ void ContactTreeView::slotCustomContextMenu(const QPoint& point)
 		{
 			QMenu* menu = new QMenu(this);
 			QModelIndex curIndex = indexAt(point);
-			ContactInfo* pCI = (ContactInfo*)curIndex.data(Qt::DisplayRole).value<void*>();
+			ContactInfo* pCI = dynamic_cast<ContactInfo*>(curIndex.data(Qt::DisplayRole).value<ContactInfo*>());
 
 			
 			if (pCI && pCI->isGroup && pCI->otherId == 0)
@@ -183,7 +183,7 @@ void ContactTreeView::initConnection()
 	{
 		if (CTT_TOSELECT == _ctt || CTT_SHOW == _ctt)
 		{
-			ContactInfo* pCI = (ContactInfo*)index.data(Qt::DisplayRole).value<void*>();
+			ContactInfo* pCI = dynamic_cast<ContactInfo*>(index.data(Qt::DisplayRole).value<ContactInfo*>());
 			if (pCI != nullptr)
 			{
 				emit selectedUser(pCI);
@@ -212,7 +212,7 @@ void ContactTreeView::initConnection()
 
 void ContactTreeView::onClickedHandle(const QModelIndex& index, int role)
 {
-	ContactInfo* pCI = (ContactInfo*)index.data(Qt::DisplayRole).value<void*>();
+	ContactInfo* pCI = dynamic_cast<ContactInfo*>(index.data(Qt::DisplayRole).value<ContactInfo*>());
 	switch (role)
 	{
 		case static_cast<int>(CustomRole::SwitchRole) : 
@@ -275,4 +275,3 @@ bool ContactTreeView::viewportEvent(QEvent* pEvent)
 }
 
 } // namespace Contact
-Q_DECLARE_METATYPE(Contact::ContactInfo*);

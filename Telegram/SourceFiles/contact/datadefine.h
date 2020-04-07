@@ -118,6 +118,6 @@ namespace Contact {
     QString getAllFileContent(const QString& path);
     void genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId);
 }
-
+Q_DECLARE_METATYPE(Contact::ContactInfo*);
 #endif // DATADEFINE
 
