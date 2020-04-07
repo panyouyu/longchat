@@ -182,9 +182,9 @@ void AddSubsectionTitle(
 
 void FillMenu(Fn<void(Type)> showOther, MenuCallback addAction) {
 	if (!Auth().supportMode()) {
-		addAction(
-			lang(lng_settings_information),
-			[=] { showOther(Type::Information); });
+		//addAction(
+		//	lang(lng_settings_information),
+		//	[=] { showOther(Type::Information); });
 	}
 	addAction(
 		lang(lng_settings_logout),
