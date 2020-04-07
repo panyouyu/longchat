@@ -62,6 +62,7 @@ public:
 	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
 	QVector<Contact::ContactInfo*>& getGroupInfo();
 	QString getUserGroupInfo(uint64 userId);
+	bool userInSeeked(uint64 userId);
 	QString getGroupName(uint64 groupId);
 	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
 

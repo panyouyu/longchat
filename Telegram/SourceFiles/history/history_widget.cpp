@@ -2039,6 +2039,11 @@ void HistoryWidget::updateControlsVisibility() {
 		_muteUnmute->hide();
 		_send->show();
 		_overSession->show();
+		if (_peer && App::main()->userInSeeked(_peer->id) ) //已结束的会话中不再显示结束会话
+		{
+			_overSession->hide();
+		}
+		
 		if (showRecordButton()) {
 			_record->show();
 		}
@@ -6796,14 +6801,6 @@ void HistoryWidget::onOverSession()
 		_confirmBox->closeBox();
 		}), LayerOption::KeepOther);
 
-	//const auto requestId = MTP::send(
-	//	MTPauth_OverSession(MTP_long(_history->peer->id)),
-	//	rpcDone(&HistoryWidget::sendOverSessionDone));
-	//_sendOverSessionRequests.insert(_history, requestId);
-	//Ui::show(Box<DeleteMessagesBox>(_history->peer, false), LayerOption::KeepOther);
-	//const auto box = Ui::show(Box<DeleteMessagesBox>(std::move(items))).data();
-	//const auto box = Ui::show(Box<DeleteMessagesBox>(_history->peer, false)).data();
-	//DeleteMessagesBox
 }
 
 void HistoryWidget::sendOverSessionDone(const MTPBool& result, mtpRequestId req)

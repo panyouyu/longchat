@@ -993,6 +993,11 @@ QString MainWidget::getUserGroupInfo(uint64 userId)
 	return _dialogs->getUserGroupInfo(userId);
 }
 
+bool MainWidget::userInSeeked(uint64 userId)
+{
+	return _dialogs->userInSeeked(userId);
+}
+
 QString MainWidget::getGroupName(uint64 groupId)
 {
 	return _dialogs->getGroupName(groupId);
@@ -1406,6 +1411,10 @@ void MainWidget::onTimeout()
 {
 	_timer.stop();
 	choosePeer(_peerId, ShowAtUnreadMsgId);
+	if (!_history->history()->inChatList(Dialogs::Mode::All)) {
+		createDialog(Auth().data().historyLoaded((PeerId)_peerId));
+	}
+	
 }
 
 bool MainWidget::isIdle() const {

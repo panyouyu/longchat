@@ -1358,6 +1358,11 @@ QString DialogsWidget::getUserGroupInfo(uint64 userId)
 	return _inner->getUserGroupInfo(userId);
 }
 
+bool DialogsWidget::userInSeeked(uint64 userId)
+{
+	return _inner->userInSeeked(userId);
+}
+
 QString DialogsWidget::getGroupName(uint64 groupId)
 {
 	return _inner->getGroupName(groupId);

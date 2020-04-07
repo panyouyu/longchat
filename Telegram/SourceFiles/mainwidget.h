@@ -208,6 +208,7 @@ public:
 	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
 	QMutex&  getUserGroupMutex();
 	QString getUserGroupInfo(uint64 userId);
+	bool userInSeeked(uint64 userId);
 	QString getGroupName(uint64 groupId);
 	QVector<Contact::ContactInfo*>& getGroupInfo();
 	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
