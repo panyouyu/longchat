@@ -123,9 +123,9 @@ namespace Contact {
     bool TreeItem::setExtDataExpanded(int column, bool value)
     {
         //ContactInfo* pCI = (ContactInfo*)m_itemData[column].value<void*>();
-        if (!value) {
-            int xx = 0;
-        }
+        //if (!value) {
+        //    int xx = 0;
+        //}
         m_pCI->expanded = value;
         //qDebug() << "TreeItem::setExtDataExpanded[" << this << this->m_pCI << "]" << m_pCI << m_pCI->expanded; // << m_pCI->firstName;
         return true;

@@ -40,6 +40,18 @@ void ContactTreeView::loadDatas(const QVector<ContactInfo*> vecContactPData)
 	_sortFilterProxyModel->clear();
 	_contactModel->setupModelData(vecContactPData);
 	_sortFilterProxyModel->setSourceModel(_contactModel);
+
+	//设置父节点的折叠展开状态
+	for (int i = 0; i < _sortFilterProxyModel->rowCount(); i++)
+	{
+		QModelIndex index = _sortFilterProxyModel->index(i, 0);
+		ContactInfo* pCI = dynamic_cast<ContactInfo*>(index.data(Qt::DisplayRole).value<ContactInfo*>());
+		if (pCI && pCI->isGroup && pCI->expanded)
+		{
+			setExpanded(index, true);
+		}
+		
+	}
 	
 }
 
