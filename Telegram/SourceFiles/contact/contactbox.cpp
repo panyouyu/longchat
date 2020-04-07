@@ -6,6 +6,7 @@ For license and copyright information please follow this link:
 https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "contact/contactbox.h"
+#include "contact/groupbox.h"
 #include "datadefine.h"
 #include "lang/lang_keys.h"
 #include "contact/filterwidget.h"
@@ -17,9 +18,10 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 namespace Contact {
 
-	ContactBox::ContactBox(QWidget* parent, Window::Controller* controller): _controller(controller)
+	ContactBox::ContactBox(QWidget* parent, Window::Controller* controller): _controller(controller), _closeWait(this)
 	{
-
+		updateGroupInfoData();
+		init();
 	}
 
 	
@@ -31,12 +33,13 @@ namespace Contact {
 	{
 		_vLayout = new QVBoxLayout(this);
 		_vLayout->setSpacing(0);
-		_vLayout->setContentsMargins(0, 0, 0, 0);
+		_vLayout->setContentsMargins(10, 0, 17, 0);
 		_vLayout->setObjectName(QStringLiteral("_vLayout"));
 
 
 		_filterWidget = new FilterWidget(this);
 		_filterWidget->setObjectName(QStringLiteral("_filterWidget"));
+		_filterWidget->setPlaceholderText(lang(lng_dlg_filter));
 		_vLayout->addWidget(_filterWidget);
 
 		_contactTree = new ContactTreeView(CTT_FULL, this);
@@ -48,12 +51,17 @@ namespace Contact {
 
 	}
 
+	void ContactBox::slotChat(int64 peerId)
+	{
+		emit startChat(peerId);
+		//App::main()->choosePeer(peerId, ShowAtUnreadMsgId);
+		_closeWait->start(100);
+		//closeBox();
+	}
+
 	void ContactBox::slotSaveGroup()
 	{
-		//GroupDialog dlg(nullptr, nullptr);
-		//if (QDialog::Accepted == dlg.exec()) {
-		//	App::main()->loadGroupDialogs();
-		//}
+		auto addBox = Ui::show(Box<GroupBox>(), LayerOption::KeepOther);
 	}
 
 	void ContactBox::prepare() {
@@ -65,13 +73,16 @@ namespace Contact {
 
 		setDimensions(365, 560);
 
-		connect(_filterWidget, &FilterWidget::filterChanged, this, &ContactBox::textFilterChanged);
-		connect(_contactTree, SIGNAL(startChat()), this, SLOT(closeBox()));
+		connect(_filterWidget, SIGNAL(filterChanged()), this, SLOT(textFilterChanged()));
+		connect(_contactTree, SIGNAL(startChat(int64)), this, SLOT(slotChat(int64)));
+		//connect(_contactTree, &ContactTreeView::startChat, this, &ContactBox::slotChat);
 		connect(_contactTree, SIGNAL(addGroup()), this, SLOT(slotAddGroup()));
 		connect(_contactTree, SIGNAL(modGroup(ContactInfo*)), this, SLOT(slotModGroup(ContactInfo*)));
 		connect(_contactTree, SIGNAL(delGroup(ContactInfo*)), this, SLOT(slotDelGroup(ContactInfo*)));
 		connect(_contactTree, SIGNAL(showUserInfo(ContactInfo*)), this, SLOT(slotShowUserInfo(ContactInfo*)));
-
+		connect(this, SIGNAL(startChat(int64)), App::main(), SLOT(slotChat(int64)));
+		connect(_closeWait, SIGNAL(timeout()), this, SLOT(onCloseWait()));
+		
 		subscribe(App::main()->signalGroupChanged(), [this](int value) {
 			updateGroupInfoData();
 			});
@@ -96,20 +107,13 @@ namespace Contact {
 
 	void ContactBox::slotAddGroup()
 	{
-		//GroupDialog dlg(nullptr, nullptr);
-		//if (QDialog::Accepted == dlg.exec()) {
-		//	App::main()->loadGroupDialogs();
-		//}
-
+		auto addBox = Ui::show(Box<GroupBox>(), LayerOption::KeepOther);
 	}
 
 
 	void ContactBox::slotModGroup(ContactInfo* pCI)
 	{
-		//GroupDialog dlg(nullptr, pCI, GOWT_MOD);
-		//if (QDialog::Accepted == dlg.exec()) {
-		//	App::main()->loadGroupDialogs();
-		//}
+		auto addBox = Ui::show(Box<GroupBox>(pCI, GOWT_MOD), LayerOption::KeepOther); 
 	}
 
 	void ContactBox::slotDelGroup(ContactInfo* pCI)
@@ -122,6 +126,16 @@ namespace Contact {
 		_controller->showPeerInfo(pCI->peerData);
 	}
 
+
+	void ContactBox::slotSucess()
+	{
+		App::main()->loadGroupDialogs();
+	}
+
+	void ContactBox::onCloseWait()
+	{
+		closeBox();
+	}
 
 	void ContactBox::updateGroupInfoData()
 	{
@@ -155,7 +169,6 @@ namespace Contact {
 	bool ContactBox::userGroupDelFail(const RPCError& error)
 	{
 		if (MTP::isFloodError(error)) {
-			//stopCheck();
 			_allUserTagDelRequest = 0;
 			showCodeError(langFactory(lng_flood_error));
 			return true;
@@ -164,7 +177,6 @@ namespace Contact {
 			return false;
 		}
 
-		//stopCheck();
 		_allUserTagDelRequest = 0;
 		auto& err = error.type();
 		if (err == qstr("PASSWORD_WRONG")) {
@@ -180,6 +192,5 @@ namespace Contact {
 		}
 		return false;
 	}
-
 
 }

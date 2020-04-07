@@ -36,7 +36,13 @@ QLabel#_labTitle {
 }
 
 QLineEdit {
-      border-bottom: 2px solid;
-      border-color: rgb(55, 161, 222);
+      border-bottom: 1px solid;
+      border-color: #EBEBEB;
       padding: 0 8px;
+      height: 30px;
   }
+
+QLineEdit#_lineGroupName {
+    border-bottom: 2px solid;
+     border-color: #2E78F5;
+}

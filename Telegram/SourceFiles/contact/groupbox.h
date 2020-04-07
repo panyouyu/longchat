@@ -17,38 +17,67 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 
 namespace Contact {
+	class FilterWidget;
 	class GroupBox : public BoxContent, public RPCSender {
 		Q_OBJECT
 	public:
-		GroupBox(QWidget*, UserData* user);
+		GroupBox(QWidget*, ContactInfo* pCI = nullptr, GroupOperWindowType gowt = GOWT_ADD);
 		~GroupBox();
 		
+
+		//setResultHandler(Fn<void(int result)> handler) {
+		//	_resultHandler = std::move(handler);
+		//}
 	protected:
 		void prepare() override;
 
+
 	private:
 		void init();
-		void clearData();
 		void freshData();
+		void bindData();
+		void genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId);
+		void freshTree();
+		void eraseFromVector(QVector<ContactInfo*>& vecData, ContactInfo* pCI);
+		bool userInGroup(uint64 uId);
 
-		void getSwitchKefusDone(const MTPSwitchKefuList& result);
-		bool getSwitchKefusFail(const RPCError& error);
 
-		void switchKefuDone(const MTPBool& result);
-		bool switchKefuFail(const RPCError& error);
+		void showCodeError(Fn<QString()> textFactory);
+
+		void userGroupDone(const MTPUserGroupReturn& result);
+		bool userGroupFail(const RPCError& error);
+
+	
+	signals:
+		void signSucess();
 
 	private slots:
-		void on_switchUser(ContactInfo* pCI);
+		void slotSaveClicked();
+		void slotTextFilterChanged();
+		void slotSelectedUser(ContactInfo* pCI);
+		void slotRemoveSelectedUser(ContactInfo* pCI);
 		
 	private:
+		QHBoxLayout* _hGroupNameLayout;
+		QLineEdit* _lineGroupName;
+		QVBoxLayout* _vLeftTreeLayout;
+		FilterWidget* _filterWidget;
 		ContactTreeView* _contactTree;
+		ContactTreeView* _contactSelectedTree;
+		QHBoxLayout* _hMiddleLayout;
+
 		QVBoxLayout* _vLayout;
+
 		QVector<ContactInfo*> _vecContactPData;
-		UserData* _user;
-		uint64 _playerId = 0;
-		
-		mtpRequestId _getSwitchKefusRequest = 0;
-		mtpRequestId _switchKefuRequest = 0;
+		QVector<ContactInfo*> _vecContactSelected;
+
+		mtpRequestId _allUserTagAddRequest = 0;
+		mtpRequestId _allUserTagModRequest = 0;
+
+		ContactInfo* _pCI{ nullptr };
+		GroupOperWindowType _gowt;
+
+		//Fn<void(int result)> _resultHandler;
 
 	};
 

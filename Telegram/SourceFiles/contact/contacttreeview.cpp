@@ -8,6 +8,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "contact/contacttreeview.h"
 #include "contact/mysortfilterproxymodel.h"
 #include "lang/lang_keys.h"
+#include "auth_session.h"
+#include "data/data_session.h"
 
 namespace Contact {
 	
@@ -161,12 +163,14 @@ void ContactTreeView::initConnection()
 				setExpanded(index, !isExpanded(index)); // 单击展开/收缩列表
 			}
 			else //打开聊天
-			{
+			{				
 				PeerData* peer = (PeerData*)index.data(static_cast<int>(CustomRole::PeerRole)).value<void*>();
-				if (peer)
+				if (peer != nullptr)
 				{
-					Ui::showPeerHistory(peer, ShowAtUnreadMsgId);
-					emit startChat();
+					//qDebug() << peer->id << peer->name << peer->nameText.toString();
+					//qDebug() << (Auth().data().peerLoaded(peer->id) == nullptr);
+					//Ui::showPeerHistory(peer->id, ShowAtUnreadMsgId);
+					emit startChat(peer->id);
 				}
 
 			}

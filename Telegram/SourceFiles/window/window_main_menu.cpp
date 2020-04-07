@@ -19,6 +19,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "support/support_templates.h"
 #include "settings/settings_common.h"
 #include "contact/contactdialog.h"
+#include "contact/contactbox.h"
 #include "core/qt_signal_producer.h"
 #include "boxes/about_box.h"
 #include "boxes/peer_list_controllers.h"
@@ -167,8 +168,9 @@ void MainMenu::refreshMenu() {
 		//	widget.exec();
 		//	}, &st::mainMenuNewChannel, &st::mainMenuNewChannelOver);
 		_menu->addAction(lang(lng_menu_contacts), [] {
-			Contact::Dialog widget(App::wnd()->controller());
-			widget.exec();
+			//Contact::Dialog widget(App::wnd()->controller());
+			//widget.exec();
+			Ui::show(Box<Contact::ContactBox>(App::wnd()->controller()));
 			//Ui::show(Box<PeerListBox>(std::make_unique<ContactsBoxController>(), [](not_null<PeerListBox*> box) {
 			//	box->addButton(langFactory(lng_close), [box] { box->closeBox(); });
 			//	box->addLeftButton(langFactory(lng_profile_add_contact), [] { App::wnd()->onShowAddContact(); });

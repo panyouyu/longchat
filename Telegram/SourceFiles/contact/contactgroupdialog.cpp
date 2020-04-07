@@ -38,9 +38,6 @@ GroupDialog::~GroupDialog() {
 }
 
 
-
-
-
 void GroupDialog::reject()
 {
 	return QDialog::reject();

@@ -478,6 +478,7 @@ MainWidget::MainWidget(
 		Core::UpdateChecker checker;
 		checker.start();
 	}
+	connect(&_timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
 }
 
 AuthSession &MainWidget::session() const {
@@ -1391,6 +1392,20 @@ void MainWidget::dialogsCancelled() {
 		clearHider(_hider);
 	}
 	_history->activate();
+}
+
+void MainWidget::slotChat(int64 peerId)
+{
+	_timer.start(500);
+	_peerId = peerId;
+	//choosePeer(peerId, ShowAtUnreadMsgId);
+	//Ui::showPeerHistory(peerId, ShowAtUnreadMsgId);
+}
+
+void MainWidget::onTimeout()
+{
+	_timer.stop();
+	choosePeer(_peerId, ShowAtUnreadMsgId);
 }
 
 bool MainWidget::isIdle() const {
