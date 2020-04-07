@@ -244,7 +244,7 @@ namespace Contact {
 			QRect pointIconRect(cellRect.left() + avatarRect.width() + ArrorRectWidth, cellRect.top() + halfHeight + (halfHeight - pointSize) / 2 - heightRevise,
 				pointSize , pointSize);
 			QString arrorPath{ ":/gui/art/ic_point_greed.png" };
-			if (pCI->serverNum > pCI->serviceMax)
+			if (pCI->queueNum > 0) //排队人数大于0 显示红色
 			{
 				arrorPath = ":/gui/art/ic_point_red.png";
 			}
