@@ -2021,6 +2021,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_quick_reply_modify" = "修改";
 "lng_quick_reply_import_csv" = "导入快捷回复文件";
 "lng_quick_reply_export_csv" = "导出快捷回复文件";
+"lng_quick_reply_phrase" = "快捷短语";
+"lng_quick_reply_phrase_group" = "快捷短语分组";
+"lng_quick_reply_phrase_sort" = "快捷短语排序";
 "lng_quick_reply_import_succeed" = "导入成功";
 "lng_quick_reply_import_failed" = "导入失败";
 "lng_quick_reply_export_succeed" = "导出成功";
