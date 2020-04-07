@@ -93,6 +93,7 @@ namespace Contact {
         
 	}
 
+
 	//! [2]
 
     //! [3]
@@ -103,7 +104,7 @@ namespace Contact {
         if (m_searchKey.isEmpty() || m_searchKey.isNull()) {
             return true;
         }
-        ContactInfo* pCI = static_cast<ContactInfo*>(index0.data(Qt::DisplayRole).value<void*>());
+        ContactInfo* pCI = dynamic_cast<ContactInfo*>(index0.data(Qt::DisplayRole).value<ContactInfo*>());
         if (pCI != nullptr) {
             if (pCI->isGroup)
             {

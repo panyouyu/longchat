@@ -74,7 +74,6 @@ namespace Contact {
 
         Q_INVOKABLE virtual bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
 
-        //QVariant extData(const QModelIndex& index, int column);
 
     public:
         void setupModelData(const QVector<ContactInfo*>& vecData);

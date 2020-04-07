@@ -135,55 +135,44 @@ namespace Contact {
 		return false;
 	}
 
-	/*  QVariant TreeModel::extData(const QModelIndex& index, int column)
-    {
-        if (!index.isValid())
-            return QVariant();
-        TreeItem* item = getItem(index);
-        return item->data(column);
-    }*/
 
 
     QVariant TreeModel::data(const QModelIndex& index, int role) const
     {
-        if (!index.isValid())
-            return QVariant();
-
         if (role != Qt::DisplayRole && CustomRole::IsExpandedRole != role
-            && CustomRole::IsGroupRole != role 
-            && CustomRole::PeerRole != role 
-            && CustomRole::GroupCheckRole != role)
+            && CustomRole::IsGroupRole != role
+            && CustomRole::PeerRole != role
+            && CustomRole::GroupCheckRole != role) {
             return QVariant();
-
-        TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
-        if (CustomRole::IsExpandedRole == role)
-        {
-			//ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
-            ContactInfo* pCI = item->data();
-            //qDebug() <<"paint:" << pCI << pCI->expanded << pCI->firstName;
-            return item->data()->expanded;
         }
-        else if (CustomRole::IsGroupRole == role)
-        {
-            //ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
-            ContactInfo* pCI = item->data();
-            return pCI->isGroup;
+			
+        if (index.isValid()) {
+            TreeItem* item = dynamic_cast<TreeItem*>((TreeItem*)index.internalPointer());
+			if (item) {
+                ContactInfo* pCI = dynamic_cast<ContactInfo*>(item->data());
+                if (pCI)
+                {
+					if (CustomRole::IsExpandedRole == role)
+					{
+						return item->data()->expanded;
+					}
+					else if (CustomRole::IsGroupRole == role)
+					{
+						return pCI->isGroup;
+					}
+					else if (CustomRole::PeerRole == role)
+					{
+						return QVariant::fromValue((void*)pCI->peerData);
+					}
+					else if (CustomRole::GroupCheckRole == role)
+					{
+						return pCI->userInGroup;
+					}
+					return QVariant::fromValue((ContactInfo*)pCI);
+                }
+			}
         }
-        else if (CustomRole::PeerRole == role)
-        {
-			//ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
-            ContactInfo* pCI = item->data();
-			return QVariant::fromValue((void*)pCI->peerData);
-        }
-		else if (CustomRole::GroupCheckRole == role)
-		{
-			//ContactInfo* pCI = (ContactInfo*)item->data(index.column()).value<void*>();
-			ContactInfo* pCI = item->data();
-			return pCI->userInGroup;
-		}
-        ContactInfo* pCI = item->data();
-
-        return QVariant::fromValue((void*)pCI);
+        return QVariant();
     }
     //! [3]
 
@@ -269,6 +258,7 @@ namespace Contact {
 
     void TreeModel::setupModelData(const QVector<ContactInfo*>& vecData)
     {
+        beginResetModel();
         //qDebug() << "setupModel start";
         //removeRows(0, rowCount());
         QList<TreeItem*> parents;
@@ -312,6 +302,7 @@ namespace Contact {
             }
         }
         PrintNodeData(headItem);
+        endResetModel();
     }
 
     TreeItem* TreeModel::getItem(const QModelIndex& index) const

@@ -48,7 +48,6 @@ namespace Contact {
 
 		_vLayout->addWidget(_contactTree);
 
-
 	}
 
 	void ContactBox::slotChat(int64 peerId)

@@ -18,7 +18,6 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "storage/localstorage.h"
 #include "support/support_templates.h"
 #include "settings/settings_common.h"
-#include "contact/contactdialog.h"
 #include "contact/contactbox.h"
 #include "core/qt_signal_producer.h"
 #include "boxes/about_box.h"

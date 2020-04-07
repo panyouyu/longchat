@@ -40,6 +40,18 @@ void ContactTreeView::loadDatas(const QVector<ContactInfo*> vecContactPData)
 	_sortFilterProxyModel->clear();
 	_contactModel->setupModelData(vecContactPData);
 	_sortFilterProxyModel->setSourceModel(_contactModel);
+
+	//设置父节点的折叠展开状态
+	for (int i = 0; i < _sortFilterProxyModel->rowCount(); i++)
+	{
+		QModelIndex index = _sortFilterProxyModel->index(i, 0);
+		ContactInfo* pCI = dynamic_cast<ContactInfo*>(index.data(Qt::DisplayRole).value<ContactInfo*>());
+		if (pCI && pCI->isGroup && pCI->expanded)
+		{
+			setExpanded(index, true);
+		}
+		
+	}
 	
 }
 
@@ -70,7 +82,7 @@ void ContactTreeView::slotCustomContextMenu(const QPoint& point)
 		{
 			QMenu* menu = new QMenu(this);
 			QModelIndex curIndex = indexAt(point);
-			ContactInfo* pCI = (ContactInfo*)curIndex.data(Qt::DisplayRole).value<void*>();
+			ContactInfo* pCI = dynamic_cast<ContactInfo*>(curIndex.data(Qt::DisplayRole).value<ContactInfo*>());
 
 			
 			if (pCI && pCI->isGroup && pCI->otherId == 0)
@@ -183,7 +195,7 @@ void ContactTreeView::initConnection()
 	{
 		if (CTT_TOSELECT == _ctt || CTT_SHOW == _ctt)
 		{
-			ContactInfo* pCI = (ContactInfo*)index.data(Qt::DisplayRole).value<void*>();
+			ContactInfo* pCI = dynamic_cast<ContactInfo*>(index.data(Qt::DisplayRole).value<ContactInfo*>());
 			if (pCI != nullptr)
 			{
 				emit selectedUser(pCI);
@@ -212,7 +224,7 @@ void ContactTreeView::initConnection()
 
 void ContactTreeView::onClickedHandle(const QModelIndex& index, int role)
 {
-	ContactInfo* pCI = (ContactInfo*)index.data(Qt::DisplayRole).value<void*>();
+	ContactInfo* pCI = dynamic_cast<ContactInfo*>(index.data(Qt::DisplayRole).value<ContactInfo*>());
 	switch (role)
 	{
 		case static_cast<int>(CustomRole::SwitchRole) : 
@@ -275,4 +287,3 @@ bool ContactTreeView::viewportEvent(QEvent* pEvent)
 }
 
 } // namespace Contact
-Q_DECLARE_METATYPE(Contact::ContactInfo*);
