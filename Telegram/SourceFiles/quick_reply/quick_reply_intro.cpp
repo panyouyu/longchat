@@ -110,9 +110,16 @@ QuickReplyWidget::QuickReplyWidget(QWidget* parent)
 
 		QFile csvFile(fileName);
 		if (csvFile.open(QIODevice::WriteOnly)) {
+			csvFile.write(QString("%1,%2,%3\n").
+				arg(lang(lng_quick_reply_phrase)).
+				arg(lang(lng_quick_reply_phrase_group)).
+				arg(lang(lng_quick_reply_phrase_sort)).toLocal8Bit());
 			for (int i = 0; i < tmp.size(); i++) {
 				for (int j = 0; j < tmp.at(i).content.size(); j++)
-					csvFile.write(QString(tmp.at(i).group + "," + tmp.at(i).content.at(j) + "\n").toLocal8Bit());
+					csvFile.write(QString("%1,%2,%3\n").
+						arg(tmp.at(i).content.at(j)).
+						arg(tmp.at(i).group)
+						.arg(j).toLocal8Bit());
 			}
 			csvFile.close();
 			Ui::show(Box<InformBox>(lang(lng_quick_reply_export_succeed)), LayerOption::KeepOther);
@@ -273,17 +280,28 @@ void QuickReplyWidget::importFromFile(QString& fileName) {
 		QString line;
 		QList<QString> list;
 		QString group, content;
+		line = QString::fromLocal8Bit(file.readLine());
+		line = line.remove('\n');
+		line = line.remove('\r');
+		list = line.split(',');
+		if (list.size() != 3 || 
+			list.at(0) != lang(lng_quick_reply_phrase) || 
+			list.at(1) != lang(lng_quick_reply_phrase_group) ||
+			list.at(2) != lang(lng_quick_reply_phrase_sort)) {
+			file.close();
+			return;
+		}
 		QuickReplyString& tmp = cRefQuickReplyStrings();
 		while (!file.atEnd()) {
 			line = QString::fromLocal8Bit(file.readLine());
 			line = line.remove('\n');
 			line = line.remove('\r');
 			list = line.split(',');
-			if (list.size() != 2 || list.at(0).isEmpty() || list.at(1).isEmpty()) {
+			if (list.size() != 3 || list.at(0).isEmpty() || list.at(1).isEmpty()) {
 				continue;
 			}
-			group = list.at(0);
-			content = list.at(1);
+			content = list.at(0);
+			group = list.at(1);
 			if (tmp.contains({ group, {} })) {
 				if (!tmp.at(tmp.indexOf({ group, {} })).content.contains(content)) {
 					tmp[tmp.indexOf({ group, {} })].content.append(content);
