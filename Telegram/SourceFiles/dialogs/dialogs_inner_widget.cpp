@@ -1307,10 +1307,9 @@ void DialogsInner::createDialog(Dialogs::Key key) {
 
 void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 {
-	
-	diffGroup(result);
-	removeGroupDialog();	
 	QMutexLocker lock(&_userGroupMutex);
+	diffGroup(result);
+	removeGroupDialog();
 	for (const auto& userGroup : result.c_userGroupList().vtag_users.v) {
 		Contact::ContactInfo* info = new Contact::ContactInfo();
 		info->otherId = userGroup.c_userGroup().vother_id.v;
@@ -1360,7 +1359,7 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 						while (i != _mapUser2Group[userId].constEnd()) {
 							Contact::ContactInfo* ci = new Contact::ContactInfo();
 							//qDebug() << "     gId:" << *i << "gName" << peer->name;
-							genContact(ci, user, peer, *i);
+							genContact(ci, peer->id, *i);
 							_vecContactAndGroupData.push_back(ci);
 							bool find = false;
 							for (int j = 0; j < _vecContactAndGroupData4Search.size(); ++j) {
@@ -1371,7 +1370,7 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 							}
 							if (!find) {
 								Contact::ContactInfo* ci4s = new Contact::ContactInfo();
-								genContact(ci4s, user, peer, 0);
+								genContact(ci4s, peer->id, 0);
 								_vecContactAndGroupData4Search.push_back(ci4s);
 							}
 							
@@ -1382,6 +1381,7 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 			}
 		}
 		_signalGroupChanged.notify(1);
+		//qDebug() << "---clear data ---end";
 		return count;
 	};
 	appendList(_contacts.get());
@@ -1390,7 +1390,7 @@ void DialogsInner::createGroupDialog(const MTPUserGroupList& result)
 
 void DialogsInner::removeGroupDialog()
 {
-	QMutexLocker lock(&_userGroupMutex);	
+	//qDebug() << "---clear data ---start";
 	_mapUserInfo.clear();
 	_mapUser2Group.clear();	
 	qDeleteAll(_vecContactAndGroupData4Search);
@@ -1909,6 +1909,7 @@ void DialogsInner::onHashtagFilterUpdate(QStringRef newFilter) {
 }
 
 DialogsInner::~DialogsInner() {
+	QMutexLocker lock(&_userGroupMutex);
 	clearSearchResults();
 	removeGroupDialog();
 }

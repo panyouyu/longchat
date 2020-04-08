@@ -24,6 +24,7 @@ namespace Contact {
 		GroupBox(QWidget*, ContactInfo* pCI = nullptr, GroupOperWindowType gowt = GOWT_ADD);
 		~GroupBox();
 		
+		void setResultHandler(Fn<void(int)> handler);
 
 		//setResultHandler(Fn<void(int result)> handler) {
 		//	_resultHandler = std::move(handler);
@@ -36,7 +37,7 @@ namespace Contact {
 		void init();
 		void freshData();
 		void bindData();
-		void genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId);
+		void genContact(ContactInfo* ci, uint64 peerId, uint64 parentId);
 		void freshTree();
 		void eraseFromVector(QVector<ContactInfo*>& vecData, ContactInfo* pCI);
 		bool userInGroup(uint64 uId);
@@ -77,7 +78,7 @@ namespace Contact {
 		ContactInfo* _pCI{ nullptr };
 		GroupOperWindowType _gowt;
 
-		//Fn<void(int result)> _resultHandler;
+		Fn<void(int)> _resultHandler{ nullptr };
 
 	};
 

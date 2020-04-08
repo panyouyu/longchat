@@ -27,6 +27,7 @@ namespace Contact {
 	
 	ContactBox::~ContactBox()
 	{
+		clearData();
 	}
 
 	void ContactBox::init()
@@ -107,6 +108,7 @@ namespace Contact {
 	void ContactBox::slotAddGroup()
 	{
 		auto addBox = Ui::show(Box<GroupBox>(), LayerOption::KeepOther);
+		addBox->setResultHandler(std::bind(&ContactBox::resultHandler, this, std::placeholders::_1));
 	}
 
 
@@ -122,14 +124,10 @@ namespace Contact {
 
 	void ContactBox::slotShowUserInfo(ContactInfo* pCI)
 	{
-		_controller->showPeerInfo(pCI->peerData);
+		_controller->showPeerInfo(pCI->peerId);
 	}
 
 
-	void ContactBox::slotSucess()
-	{
-		App::main()->loadGroupDialogs();
-	}
 
 	void ContactBox::onCloseWait()
 	{
@@ -138,14 +136,35 @@ namespace Contact {
 
 	void ContactBox::updateGroupInfoData()
 	{
+		clearData();
 		_mapUser2Group = App::main()->getUserGroupInfo();
-		_vecContactPData = App::main()->getGroupInfo();
-		_vecContactPData4Search = App::main()->getGroupInfo4Search();
+		//防止网络更新树中数据找不到原来的地址，这里做一个副本
+		for (int i = 0; i < App::main()->getGroupInfo().size(); ++i) {
+			ContactInfo* pCI = new ContactInfo();
+			(*pCI) = (*App::main()->getGroupInfo().at(i));
+			_vecContactPData.push_back(pCI);
+		}
+		for (int i = 0; i < App::main()->getGroupInfo4Search().size(); ++i) {
+			ContactInfo* pCI = new ContactInfo();
+			(*pCI) = (*App::main()->getGroupInfo4Search().at(i));
+			_vecContactPData4Search.push_back(pCI);
+		}
+		//_vecContactPData = App::main()->getGroupInfo();
+		//_vecContactPData4Search = App::main()->getGroupInfo4Search();
 		if (_contactTree != nullptr)
 		{
+			//qDebug() << "---ContactBox::updateGroupInfoData";
 			_contactTree->loadDatas(_vecContactPData);
 		}
 
+	}
+
+	void ContactBox::clearData()
+	{
+		qDeleteAll(_vecContactPData);
+		qDeleteAll(_vecContactPData4Search);
+		_vecContactPData.clear();
+		_vecContactPData4Search.clear();
 	}
 
 	void ContactBox::showCodeError(Fn<QString()> textFactory)
@@ -190,6 +209,11 @@ namespace Contact {
 			showCodeError(&Lang::Hard::ServerError);
 		}
 		return false;
+	}
+
+	void ContactBox::resultHandler(int result)
+	{
+		qDebug() << result;
 	}
 
 }

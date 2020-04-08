@@ -60,6 +60,8 @@
 #include "ui/image/image.h"
 #include "mainwidget.h"
 #include "styles/style_contact.h"
+#include "auth_session.h"
+#include "data/data_session.h"
 
 namespace Contact {
 	const QRect GroupArrorIconRect{ 5,12,10,10 }; // 分组折叠箭头区域
@@ -214,7 +216,8 @@ namespace Contact {
 		{
 			//QPixmap pic = rixmapToRound(QPixmap(":/gui/art/sunrise.jpg"), 24);
 			//QPixmap pic(pCI->pAvatarImage->pixCircled(userpicOrigin(), m_si.avatarWidth, m_si.avatarHeight));
-			painter->drawPixmap(avatarRect, pCI->peerData->genUserpic(m_si.avatarWidth));//.scaled(48, 48)
+			PeerData* peer = Auth().data().peerLoaded(pCI->peerId);
+			painter->drawPixmap(avatarRect, peer->genUserpic(m_si.avatarWidth));//.scaled(48, 48)
 		}
 		else
 		{

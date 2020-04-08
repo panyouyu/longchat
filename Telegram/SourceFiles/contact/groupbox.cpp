@@ -14,7 +14,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/history.h"
 #include "data/data_user.h"
 #include "data/data_peer_values.h"
-
+#include "auth_session.h"
+#include "data/data_session.h"
 
 
 namespace Contact {
@@ -31,6 +32,11 @@ namespace Contact {
 	{
 		qDeleteAll(_vecContactSelected);
 		qDeleteAll(_vecContactPData);
+	}
+
+	void GroupBox::setResultHandler(Fn<void(int)> handler)
+	{
+		_resultHandler = handler;
 	}
 
 	void GroupBox::slotSaveClicked()
@@ -58,7 +64,7 @@ namespace Contact {
 	void GroupBox::slotSelectedUser(ContactInfo* pCI)
 	{
 		ContactInfo* pCi = new ContactInfo();
-		genContact(pCi, pCI->peerData->asUser(), pCI->peerData, 0);
+		genContact(pCi, pCI->peerId, 0);
 		_vecContactSelected.push_back(pCi);
 		eraseFromVector(_vecContactPData, pCI);
 		freshTree();
@@ -67,7 +73,7 @@ namespace Contact {
 	void GroupBox::slotRemoveSelectedUser(ContactInfo* pCI)
 	{
 		ContactInfo* pCi = new ContactInfo();
-		genContact(pCi, pCI->peerData->asUser(), pCI->peerData, 0);
+		genContact(pCi, pCI->peerId, 0);
 		_vecContactPData.push_back(pCi);
 		eraseFromVector(_vecContactSelected, pCI);
 		freshTree();
@@ -88,7 +94,6 @@ namespace Contact {
 		connect(_filterWidget, &FilterWidget::filterChanged, this, &GroupBox::slotTextFilterChanged);
 		connect(_contactTree, SIGNAL(selectedUser(ContactInfo*)), this, SLOT(slotSelectedUser(ContactInfo*)));
 		connect(_contactSelectedTree, SIGNAL(selectedUser(ContactInfo*)), this, SLOT(slotRemoveSelectedUser(ContactInfo*)));
-		connect(this, SIGNAL(signSucess()), parent(), SLOT(slotSucess(ContactInfo*)));
 		
 		setStyleSheet(getAllFileContent(":/style/qss/contactdialog.qss"));
 	}
@@ -153,13 +158,13 @@ namespace Contact {
 						if (!userInGroup(user->id))
 						{
 							ContactInfo* ci = new ContactInfo();
-							genContact(ci, user, peer, 0);
+							genContact(ci, peer->id, 0);
 							_vecContactPData.push_back(ci);
 						}
 						else
 						{
 							ContactInfo* ci = new ContactInfo();
-							genContact(ci, user, peer, 0);
+							genContact(ci, peer->id, 0);
 							_vecContactSelected.push_back(ci);
 						}
 					}
@@ -178,9 +183,11 @@ namespace Contact {
 		}
 	}
 
-	void GroupBox::genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId)
+	void GroupBox::genContact(ContactInfo* ci, uint64 peerId, uint64 parentId)
 	{
 		auto time = unixtime();
+		PeerData* peer = Auth().data().peerLoaded(peerId);
+		UserData* user = peer->asUser();
 		//qDebug() << user->id << peer->name << Data::OnlineText(user, time);
 		ci->id = user->id;
 		ci->firstName = peer->name;
@@ -188,7 +195,7 @@ namespace Contact {
 		if (auto userpic = peer->currentUserpic()) {
 			ci->hasAvatar = true;
 		}
-		ci->peerData = peer;
+		ci->peerId = peerId;
 		ci->parentId = parentId;
 		ci->online = Data::OnlineTextActive(user, time);
 		ci->lastLoginTime = Data::OnlineText(user, time);
@@ -243,6 +250,10 @@ namespace Contact {
 		if (succeed == 0)
 		{
 			//emit signSucess();
+			if (_resultHandler)
+			{
+				_resultHandler(succeed);
+			}
 			closeBox();
 		}
 		//QMessageBox::StandardButton reply;

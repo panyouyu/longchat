@@ -176,13 +176,13 @@ void ContactTreeView::initConnection()
 			}
 			else //打开聊天
 			{				
-				PeerData* peer = (PeerData*)index.data(static_cast<int>(CustomRole::PeerRole)).value<void*>();
-				if (peer != nullptr)
+				uint64 peerId = index.data(CustomRole::PeerRole).toULongLong();
+				if (peerId != 0)
 				{
 					//qDebug() << peer->id << peer->name << peer->nameText.toString();
 					//qDebug() << (Auth().data().peerLoaded(peer->id) == nullptr);
 					//Ui::showPeerHistory(peer->id, ShowAtUnreadMsgId);
-					emit startChat(peer->id);
+					emit startChat(peerId);
 				}
 
 			}

@@ -33,14 +33,14 @@ namespace Contact {
 	private:
 		void init();
 		void updateGroupInfoData();
+		void clearData();
 
 		void showCodeError(Fn<QString()> textFactory);
 
-		void userGroupDone(const MTPUserGroupList& result);
 
 		void userGroupDelDone(const MTPUserGroupReturn& result);
 		bool userGroupDelFail(const RPCError& error);
-		//void resultHandler(int result);
+		void resultHandler(int result);
 
 	signals:
 		void startChat(int64 peerId);
@@ -52,7 +52,6 @@ namespace Contact {
 		void slotModGroup(ContactInfo* pCI);
 		void slotDelGroup(ContactInfo* pCI);
 		void slotShowUserInfo(ContactInfo* pCI);
-		void slotSucess();
 		void onCloseWait();
 		
 	private:

@@ -7,7 +7,6 @@
 #include <QString>
 namespace Contact {
 #define DEFAULT_VALUE_ZERO    0
-    //#define NOT_SET_VALUE    4294967295 //-1 99999999  4294967295
 
     struct ContactInfo
     {
@@ -20,8 +19,7 @@ namespace Contact {
             , userTotalCount(0)
             , userOnlineCount(0)
             , otherId(0)
-            //, pAvatarImage(nullptr)
-            , peerData(nullptr)
+            , peerId(0)
             , hasAvatar(false)
             , online(false)
             , expanded(false)
@@ -49,13 +47,42 @@ namespace Contact {
         int32 otherId;//功能 0=普通组 1=咨询中 2=已结束
         
         QVector<uint64> userIds;
-        PeerData* peerData;
+        uint64 peerId;
         bool hasAvatar; //是否有头像
         bool online; //是否在线
         bool expanded;
         bool isGroup; //是否分组
         bool userInGroup; //是否用户所在分组
         bool userInGroupTemp; //记录原来的值，如果点取消，则要恢复
+
+        ContactInfo& operator =(ContactInfo& r)
+        {
+            id = r.id;
+			parentId = r.parentId;
+			firstName = r.firstName;
+			lastName = r.lastName;
+			phoneNum = r.phoneNum;
+			lastLoginTime = r.lastLoginTime;
+			showUserCount = r.showUserCount;
+			serverCount = r.serverCount;
+			serverNum = r.serverNum;
+			serviceMax = r.serviceMax;
+			queueCount = r.queueCount;
+			queueNum = r.queueNum;
+			userTotalCount = r.userTotalCount;
+			userOnlineCount = r.userOnlineCount;
+			otherId = r.otherId;
+
+			userIds = r.userIds;
+			peerId = r.peerId;
+			hasAvatar = r.hasAvatar;
+			online = r.online;
+			expanded = r.expanded;
+			isGroup = r.isGroup;
+			userInGroup = r.userInGroup;
+			userInGroupTemp = r.userInGroupTemp;
+            return *this;
+        }
 
     };
     
@@ -116,7 +143,7 @@ namespace Contact {
 	};
 
     QString getAllFileContent(const QString& path);
-    void genContact(ContactInfo* ci, UserData* user, PeerData* peer, uint64 parentId);
+    void genContact(ContactInfo* ci, uint64 peerId, uint64 parentId);
 }
 Q_DECLARE_METATYPE(Contact::ContactInfo*);
 #endif // DATADEFINE

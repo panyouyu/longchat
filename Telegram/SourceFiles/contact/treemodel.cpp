@@ -162,7 +162,7 @@ namespace Contact {
 					}
 					else if (CustomRole::PeerRole == role)
 					{
-						return QVariant::fromValue((void*)pCI->peerData);
+						return QVariant::fromValue(pCI->peerId);
 					}
 					else if (CustomRole::GroupCheckRole == role)
 					{
