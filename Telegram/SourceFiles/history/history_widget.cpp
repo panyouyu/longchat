@@ -2038,10 +2038,10 @@ void HistoryWidget::updateControlsVisibility() {
 		_joinChannel->hide();
 		_muteUnmute->hide();
 		_send->show();
-		_overSession->show();
-		if (_peer && App::main()->userInSeeked(_peer->id) ) //已结束的会话中不再显示结束会话
+		
+		if (_peer && App::main()->userInSeeking(_peer->id) ) //已结束的会话中不再显示结束会话
 		{
-			_overSession->hide();
+			_overSession->show(); 
 		}
 		
 		if (showRecordButton()) {

@@ -75,7 +75,7 @@ public:
 	QMutex& getUserGroupMutex();
 	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
 	QString getUserGroupInfo(uint64 userId);
-	bool userInSeeked(uint64 userId);
+	bool userInSeeking(uint64 userId);
 	QString getGroupName(uint64 groupId);
 	QVector<Contact::ContactInfo*>& getGroupInfo();
 	QVector<Contact::ContactInfo*>& getGroupInfo4Search();

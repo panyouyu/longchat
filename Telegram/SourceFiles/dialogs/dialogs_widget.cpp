@@ -1358,9 +1358,9 @@ QString DialogsWidget::getUserGroupInfo(uint64 userId)
 	return _inner->getUserGroupInfo(userId);
 }
 
-bool DialogsWidget::userInSeeked(uint64 userId)
+bool DialogsWidget::userInSeeking(uint64 userId)
 {
-	return _inner->userInSeeked(userId);
+	return _inner->userInSeeking(userId);
 }
 
 QString DialogsWidget::getGroupName(uint64 groupId)

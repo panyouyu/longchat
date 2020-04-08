@@ -360,7 +360,10 @@ void Filler::addUserActions(not_null<UserData*> user) {
 	if (!user->isInaccessible() && user != Auth().user()) {
 		addBlockUser(user);
 	}
-	addSwitchboardUser(user);
+	if (App::main()->userInSeeking(user->id)) {
+		addSwitchboardUser(user);
+	}
+	
 }
 
 void Filler::addChatActions(not_null<ChatData*> chat) {

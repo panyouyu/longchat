@@ -3002,11 +3002,11 @@ QString DialogsInner::getUserGroupInfo(uint64 userId)
 	return userGroupInfo;
 }
 
-bool DialogsInner::userInSeeked(uint64 userId)
+bool DialogsInner::userInSeeking(uint64 userId)
 {
 	uint64 seekingGroupId = 0;
 	for (int i = 0; i < _vecContactAndGroupData.size(); ++i) {
-		if (_vecContactAndGroupData.at(i)->isGroup && _vecContactAndGroupData.at(i)->otherId == Contact::GFT_SEEKED) {
+		if (_vecContactAndGroupData.at(i)->isGroup && _vecContactAndGroupData.at(i)->otherId == Contact::GFT_SEEKING) {
 			seekingGroupId = _vecContactAndGroupData.at(i)->id;
 			break;
 		}
