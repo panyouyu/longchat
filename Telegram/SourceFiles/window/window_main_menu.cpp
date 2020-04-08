@@ -116,15 +116,15 @@ MainMenu::MainMenu(
 	_cloudButton->setClickedCallback(showSelfChat);
 	_cloudButton->show();
 
-	_nightThemeSwitch.setCallback([this] {
-		if (const auto action = *_nightThemeAction) {
-			const auto nightMode = Window::Theme::IsNightMode();
-			if (action->isChecked() != nightMode) {
-				Window::Theme::ToggleNightMode();
-				Window::Theme::KeepApplied();
-			}
-		}
-	});
+	//_nightThemeSwitch.setCallback([this] {
+	//	if (const auto action = *_nightThemeAction) {
+	//		const auto nightMode = Window::Theme::IsNightMode();
+	//		if (action->isChecked() != nightMode) {
+	//			Window::Theme::ToggleNightMode();
+	//			Window::Theme::KeepApplied();
+	//		}
+	//	}
+	//});
 
 	resize(st::mainMenuWidth, parentWidget()->height());
 	_menu->setTriggeredCallback([](QAction *action, int actionTop, Ui::Menu::TriggeredSource source) {
@@ -211,16 +211,16 @@ void MainMenu::refreshMenu() {
 		App::wnd()->showSettings();
 	}, &st::mainMenuSettings, &st::mainMenuSettingsOver);
 
-	_nightThemeAction = std::make_shared<QPointer<QAction>>();
-	auto action = _menu->addAction(lang(lng_menu_night_mode), [=] {
-		if (auto action = *_nightThemeAction) {
-			action->setChecked(!action->isChecked());
-			_nightThemeSwitch.callOnce(st::mainMenu.itemToggle.duration);
-		}
-	}, &st::mainMenuNightMode, &st::mainMenuNightModeOver);
-	*_nightThemeAction = action;
-	action->setCheckable(true);
-	action->setChecked(Window::Theme::IsNightMode());
+	//_nightThemeAction = std::make_shared<QPointer<QAction>>();
+	//auto action = _menu->addAction(lang(lng_menu_night_mode), [=] {
+	//	if (auto action = *_nightThemeAction) {
+	//		action->setChecked(!action->isChecked());
+	//		_nightThemeSwitch.callOnce(st::mainMenu.itemToggle.duration);
+	//	}
+	//}, &st::mainMenuNightMode, &st::mainMenuNightModeOver);
+	//*_nightThemeAction = action;
+	//action->setCheckable(true);
+	//action->setChecked(Window::Theme::IsNightMode());
 	_menu->finishAnimating();
 
 	updatePhone();
