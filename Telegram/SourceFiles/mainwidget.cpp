@@ -3241,6 +3241,7 @@ void MainWidget::start() {
 	_history->start();
 
 	Core::App().checkStartUrl();
+	Core::App().CheckClipboardUrl();
 }
 
 bool MainWidget::started() {

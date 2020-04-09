@@ -848,6 +848,18 @@ void Application::checkStartUrl() {
 	}
 }
 
+void Application::CheckClipboardUrl() {
+	const QClipboard* clipboard = QApplication::clipboard();
+	const QMimeData* mimeData = clipboard->mimeData();
+	if (mimeData->hasText()) {
+		QString url = mimeData->text();
+		const auto protocol = qstr("lc://binduser/?");
+		if (url.startsWith(protocol)) {
+			openLocalUrl(url, {});
+		}
+	}
+}
+
 bool Application::openLocalUrl(const QString &url, QVariant context) {
 	auto urlTrimmed = url.trimmed();
 	if (urlTrimmed.size() > 8192) urlTrimmed = urlTrimmed.mid(0, 8192);

@@ -179,6 +179,7 @@ public:
 	QString createInternalLink(const QString &query) const;
 	QString createInternalLinkFull(const QString &query) const;
 	void checkStartUrl();
+	void CheckClipboardUrl();
 	bool openLocalUrl(const QString &url, QVariant context);
 
 	void forceLogOut(const TextWithEntities &explanation);
