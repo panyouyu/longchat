@@ -2043,6 +2043,10 @@ void HistoryWidget::updateControlsVisibility() {
 		{
 			_overSession->show(); 
 		}
+		else
+		{
+			_overSession->hide();
+		}
 		
 		if (showRecordButton()) {
 			_record->show();
