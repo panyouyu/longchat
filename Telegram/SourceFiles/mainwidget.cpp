@@ -1379,6 +1379,11 @@ void MainWidget::slotSwitchUser(UserData* user)
 {
 	_dialogs->removeDialog(session().data().historyLoaded(user->id));
 	_history->showHistory(0, 0);
+	if (Adaptive::ThreeColumn()
+		&& (Auth().settings().thirdSectionInfoEnabled()
+			|| Auth().settings().tabbedReplacedWithInfo())) {
+		_controller->closeThirdSection();
+	}
 }
 
 void MainWidget::onSendFileConfirm(

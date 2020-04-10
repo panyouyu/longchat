@@ -55,9 +55,9 @@ public:
 	void selectSkipPage(int32 pixels, int32 direction);
 
 	void createDialog(Dialogs::Key key);
-	void createGroupDialog(const MTPUserGroupList& result);
+	void createGroupDialog(const MTPUserGroupData& result);
 	void removeGroupDialog();
-	void diffGroup(const MTPUserGroupList& result);
+	void diffGroup();
 	void removeDialog(Dialogs::Key key);
 	void repaintDialogRow(Dialogs::Mode list, not_null<Dialogs::Row*> row);
 	void repaintDialogRow(Dialogs::RowDescriptor row);
@@ -77,6 +77,9 @@ public:
 	QString getUserGroupInfo(uint64 userId);
 	bool userInSeeking(uint64 userId);
 	QString getGroupName(uint64 groupId);
+	bool userInGroup(uint64 userId);
+	//void setUserGroupVersion(int32 version);
+	uint32 getUserGroupVersion();
 	QVector<Contact::ContactInfo*>& getGroupInfo();
 	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
 	bool existUser(uint64 userId);
@@ -308,12 +311,14 @@ private:
 	std::unique_ptr<Dialogs::IndexedList> _contactsNoDialogs;
 	std::unique_ptr<Dialogs::IndexedList> _contacts;
 
+	QVector<Contact::GroupInfo> _vecGroupOrgInfo; //同步来的组原始信息 下面的数据都基于此生成
 	QVector<Contact::ContactInfo*> _vecContactAndGroupData; //组信息
 	QVector<Contact::ContactInfo*> _vecContactAndGroupData4Search; //用于查询的组信息
 	QMap<uint64, QSet<uint64>> _mapUser2Group; //用户属于哪些组
 	QMap<uint64,QString> _mapUserInfo; //所有用户信息方便查询跟踪
 	QVector<uint64> _vecSeeking; //咨询中的用户
 	uint32 _queueCount; //排队中的数量
+	uint32 _ugVersion; //用户分组数据版本号
 	QMutex _userGroupMutex;
 
 	bool _mouseSelection = false;

@@ -249,21 +249,17 @@ namespace Contact {
 		int32 succeed = result.c_userGroupReturn().vis_success.v;
 		if (succeed == 0)
 		{
-			//emit signSucess();
 			if (_resultHandler)
 			{
 				_resultHandler(succeed);
 			}
 			closeBox();
 		}
-		//QMessageBox::StandardButton reply;
-		//reply = QMessageBox::information(this, tr("QMessageBox::information()"), "fail!");
 	}
 
 	bool GroupBox::userGroupFail(const RPCError& error)
 	{
 		if (MTP::isFloodError(error)) {
-			//stopCheck();
 			_allUserTagAddRequest = 0;
 			_allUserTagModRequest = 0;
 			showCodeError(langFactory(lng_flood_error));

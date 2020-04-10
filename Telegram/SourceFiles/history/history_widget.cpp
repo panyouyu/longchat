@@ -6814,6 +6814,11 @@ void HistoryWidget::sendOverSessionDone(const MTPBool& result, mtpRequestId req)
 			break;
 		}
 	}
+	if (Adaptive::ThreeColumn()
+		&& (Auth().settings().thirdSectionInfoEnabled()
+			|| Auth().settings().tabbedReplacedWithInfo())) {
+		this->controller()->closeThirdSection();
+	}
 }
 
 void HistoryWidget::onKfSessionTimeOut(int64 peerId)
@@ -6821,6 +6826,11 @@ void HistoryWidget::onKfSessionTimeOut(int64 peerId)
 	if (_peer && _peer->id == peerId)
 	{
 		showHistory(0, 0);
+		if (Adaptive::ThreeColumn()
+			&& (Auth().settings().thirdSectionInfoEnabled()
+				|| Auth().settings().tabbedReplacedWithInfo())) {
+			this->controller()->closeThirdSection();
+		}
 	}
 }
 

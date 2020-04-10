@@ -143,7 +143,7 @@ protected:
 	void paintEvent(QPaintEvent *e) override;
 
 private:
-	void userGroupDone(const MTPUserGroupList& result);
+	void userGroupDone(const MTPUserGroupData& result);
 	bool userGroupFail(const RPCError& error);
 	void animationCallback();
 	void dialogsReceived(

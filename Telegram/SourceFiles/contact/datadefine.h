@@ -85,6 +85,23 @@ namespace Contact {
         }
 
     };
+
+
+	struct GroupInfo
+	{
+        GroupInfo()
+			: id(DEFAULT_VALUE_ZERO)
+            , otherId(0)
+
+		{
+		}
+
+		uint64 id; //组id
+        int32 otherId;//功能 0=普通组 1=咨询中 2=已结束
+        QString gName;  //组名
+        QVector<uint64> userIds; //组内的用户
+	};
+
     
     struct ContactStyleInfo
     {

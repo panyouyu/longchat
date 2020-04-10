@@ -1023,7 +1023,7 @@ void DialogsWidget::loadDialogs() {
 	}
 	refreshLoadMoreButton();
 }
-void DialogsWidget::userGroupDone(const MTPUserGroupList& result)
+void DialogsWidget::userGroupDone(const MTPUserGroupData& result)
 {
 	_allUserTagRequest = 0;
 	_inner->createGroupDialog(result);
@@ -1047,7 +1047,8 @@ void DialogsWidget::loadGroupDialogs()
 {
 	if (_allUserTagRequest) 
 		return;
-	_allUserTagRequest = MTP::send(MTPcontacts_GetUserGroups(), rpcDone(&DialogsWidget::userGroupDone), rpcFail(&DialogsWidget::userGroupFail));
+
+	_allUserTagRequest = MTP::send(MTPcontacts_GetUserGroups(MTP_int(_inner->getUserGroupVersion())), rpcDone(&DialogsWidget::userGroupDone), rpcFail(&DialogsWidget::userGroupFail));
 }
 
 void DialogsWidget::setDialogGetFull(bool full)

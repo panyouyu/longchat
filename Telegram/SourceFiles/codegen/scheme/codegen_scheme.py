@@ -62,7 +62,7 @@ countedTypeIdExceptions['help.configSimple#5a592a6c'] = True
 countedTypeIdExceptions['auth.kefuLogin#3b9acde9'] = True
 countedTypeIdExceptions['contacts.getUserGroups#3b9aca0d'] = True
 countedTypeIdExceptions['userGroup#3b9aca21'] = True
-countedTypeIdExceptions['userGroupList#3b9aca0e'] = True
+countedTypeIdExceptions['userGroupData#3b9aca0e'] = True
 countedTypeIdExceptions['contacts.delUserGroups#3b9aca09'] = True
 countedTypeIdExceptions['userGroupReturn#3b9aca15'] = True
 countedTypeIdExceptions['contacts.addUserGroups#3b9aca07'] = True
@@ -76,6 +76,8 @@ countedTypeIdExceptions['switchKefuList#3b9acdf1'] = True
 countedTypeIdExceptions['kefu.getSwitchKefus#3b9acdf0'] = True
 countedTypeIdExceptions['kefu.switchKefu#3b9acdef'] = True
 countedTypeIdExceptions['contacts.importContacts#2c800be5'] = True
+countedTypeIdExceptions['tlv#3b9aca26'] = True
+countedTypeIdExceptions['tlv_list#3b9aca23'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';
