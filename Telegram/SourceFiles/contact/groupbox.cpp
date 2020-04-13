@@ -155,17 +155,20 @@ namespace Contact {
 				if (const auto history = row->history()) {
 					auto peer = history->peer;
 					if (const auto user = history->peer->asUser()) {
-						if (!userInGroup(user->id))
+						if (!user->isSelf())
 						{
-							ContactInfo* ci = new ContactInfo();
-							genContact(ci, peer->id, 0);
-							_vecContactPData.push_back(ci);
-						}
-						else
-						{
-							ContactInfo* ci = new ContactInfo();
-							genContact(ci, peer->id, 0);
-							_vecContactSelected.push_back(ci);
+							if (!userInGroup(user->id))
+							{
+								ContactInfo* ci = new ContactInfo();
+								genContact(ci, peer->id, 0);
+								_vecContactPData.push_back(ci);
+							}
+							else
+							{
+								ContactInfo* ci = new ContactInfo();
+								genContact(ci, peer->id, 0);
+								_vecContactSelected.push_back(ci);
+							}
 						}
 					}
 				}
