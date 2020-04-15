@@ -1037,7 +1037,7 @@ Chat::Chat(QWidget *parent, not_null<UserData*> self)
 void Chat::setupContent() {
 	const auto content = Ui::CreateChild<Ui::VerticalLayout>(this);
 
-	SetupThemeOptions(content);
+	//SetupThemeOptions(content);
 	SetupChatBackground(content);
 	SetupStickersEmoji(content);
 	SetupMessages(content);

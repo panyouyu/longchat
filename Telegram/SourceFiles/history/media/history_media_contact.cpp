@@ -72,7 +72,7 @@ HistoryContact::HistoryContact(
 
 	_name.setText(
 		st::semiboldTextStyle,
-		lng_full_name(lt_first_name, first, lt_last_name, last).trimmed(),
+		lng_full_name(lt_last_name, last, lt_first_name, first).trimmed(),
 		Ui::NameTextOptions());
 	_phonew = st::normalFont->width(_phone);
 }

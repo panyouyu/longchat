@@ -817,10 +817,11 @@ QString MediaContact::pinnedTextSubstring() const {
 TextForMimeData MediaContact::clipboardText() const {
 	const auto text = qsl("[ ") + lang(lng_in_dlg_contact) + qsl(" ]\n")
 		+ lng_full_name(
-			lt_first_name,
-			_contact.firstName,
 			lt_last_name,
-			_contact.lastName).trimmed()
+			_contact.lastName,
+			lt_first_name,
+			_contact.firstName
+			).trimmed()
 		+ '\n'
 		+ _contact.phoneNumber;
 	return TextForMimeData::Simple(text);
