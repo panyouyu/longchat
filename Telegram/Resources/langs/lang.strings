@@ -1499,7 +1499,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_formatting_link_url" = "链接";
 "lng_formatting_link_create" = "创建";
 
-"lng_full_name" = "{first_name} {last_name}";
+"lng_full_name" = "{last_name} {first_name}";
 
 "lng_confirm_phone_link_invalid" = "这个链接已损坏或已过期。";
 "lng_confirm_phone_title" = "撤销账号重置请求";
