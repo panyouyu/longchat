@@ -61,6 +61,9 @@ struct PeerUpdate {
 		UserOccupiedChanged       = (1 << 26),
 		UserSupportInfoChanged    = (1 << 27),
 		UserGroupChanged          = (1 << 28),
+		UserInfoChanged		      = (1 << 29),
+		UserLabelChanged		  = (1 << 30),
+		UserShieldBlack	          = (1 << 16),
 
 		// For channels
 		ChannelAmIn               = (1 << 17),

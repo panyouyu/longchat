@@ -117,6 +117,13 @@ public:
 		return _variables.tabbedSelectorSectionEnabled;
 	}
 	void setTabbedSelectorSectionEnabled(bool enabled);
+
+	rpl::producer<bool> thirdSectionGuestEnabledValue() const;
+	bool thirdSectionGuestEnabled() const {
+		return _variables.thirdSectionGuestEnabled;
+	}
+	void setThirdSectionGuestEnabled(bool enable);
+
 	rpl::producer<bool> thirdSectionQuickReplyEnableValue() const;
 	bool thirdSectionQuickReplyEnabled() const {
 		return _variables.thirdSectionQuickReplyEnabled;
@@ -243,6 +250,7 @@ private:
 		ChatHelpers::SelectorTab selectorTab; // per-window
 		bool tabbedSelectorSectionEnabled = false; // per-window
 		bool thirdSectionQuickReplyEnabled = false;
+		bool thirdSectionGuestEnabled = false;
 		int tabbedSelectorSectionTooltipShown = 0;
 		QList<QString> quickReplyOpen;
 		QMap<QString, QString> soundOverrides;
@@ -274,6 +282,7 @@ private:
 		rpl::variable<bool> supportAllSearchResults = false;
 	};
 
+	rpl::event_stream<bool> _thirdSectionGuestValue;
 	rpl::event_stream<bool> _thirdSectionQuickReplyEnableValue;	
 	rpl::event_stream<bool> _thirdSectionInfoEnabledValue;
 	bool _tabbedReplacedWithInfo = false;

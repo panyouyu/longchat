@@ -5437,6 +5437,59 @@ void ApiWrap::clearPeerPhoto(not_null<PhotoData*> photo) {
 	}
 }
 
+void ApiWrap::requestPeerRelatedInfo(not_null<PeerData*> peer) {
+
+}
+
+void ApiWrap::requestPeerLabels(not_null<PeerData*> peer) {
+	if (!peer->isUser() || peer->isSelf()) return;
+
+	if (UserData* user = peer->asUser()) {
+		request(MTPkefu_GetUserLabels(MTP_int(user->id))
+		).done([user](const MTPUserLabels &result) {
+			const auto &labels = result.c_userLabels().vlabels.v;
+			user->setLabels(labels);
+		}).send();
+	}
+}
+
+void ApiWrap::uploadPeerLabel(not_null<PeerData*> peer, const QString& label) {
+	if (!peer->isUser() || peer->isSelf()) return;
+
+	if (UserData* user = peer->asUser()) {
+		request(MTPkefu_ModifyUserLabel(MTP_int(user->id), MTP_string(label), MTP_int(0))
+		).done([user, label](const MTPBool& result) {
+			if (mtpIsTrue(result)) {
+				user->addLabel(label);
+			}			
+		}).send();
+	}
+}
+
+void ApiWrap::removePeerLabel(not_null<PeerData*> peer, const QString& label) {
+	if (!peer->isUser() || peer->isSelf()) return;
+
+	if (UserData* user = peer->asUser()) {
+		request(MTPkefu_ModifyUserLabel(MTP_int(user->id), MTP_string(label), MTP_int(1))
+		).done([user, label](const MTPBool& result) {
+			if (mtpIsTrue(result)) {
+				user->removeLabel(label);
+			}
+		}).send();
+	}
+}
+
+void ApiWrap::pullBlackUser(not_null<PeerData*> peer) {
+	if (!peer->isUser() || peer->isSelf()) return;
+
+	if (UserData* user = peer->asUser()) {
+		request(MTPkefu_BlockUser(MTP_int(user->id))
+		).done([user](const MTPBool& result) {
+			user->setShieldBlack(mtpIsTrue(result));
+		}).send();
+	}
+}
+
 void ApiWrap::reloadPasswordState() {
 	if (_passwordRequestId) {
 		return;

@@ -29,6 +29,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "window/window_peer_menu.h"
 #include "quick_reply/quick_reply_section.h"
 #include "quick_reply/quick_reply_selector.h"
+#include "guest/guest_section.h"
+#include "guest/guest_selector.h"
 #include "calls/calls_instance.h"
 #include "data/data_peer_values.h"
 #include "data/data_feed.h"
@@ -57,6 +59,7 @@ TopBarWidget::TopBarWidget(
 , _back(this, st::historyTopBarBack)
 , _call(this, st::topBarCall)
 , _search(this, st::topBarSearch)
+, _guestToggle(this, st::topBarGuest)
 , _quickReplyToggle(this, st::topBarQuickReply)
 , _infoToggle(this, st::topBarInfo)
 , _menuToggle(this, st::topBarMenuToggle)
@@ -73,6 +76,7 @@ TopBarWidget::TopBarWidget(
 	_call->setClickedCallback([this] { onCall(); });
 	_search->setClickedCallback([this] { onSearch(); });
 	_menuToggle->setClickedCallback([this] { showMenu(); });
+	_guestToggle->setClickedCallback([this] { toggleGuestSection(); });
 	_quickReplyToggle->setClickedCallback([this] { toggleQuickReplySection(); });
 	_infoToggle->setClickedCallback([this] { toggleInfoSection(); });
 	_back->addClickHandler([this] { backClicked(); });
@@ -135,7 +139,8 @@ TopBarWidget::TopBarWidget(
 	rpl::combine(
 		Auth().settings().thirdSectionInfoEnabledValue(),
 		Auth().settings().tabbedReplacedWithInfoValue(),
-		Auth().settings().thirdSectionQuickReplyEnableValue()
+		Auth().settings().thirdSectionQuickReplyEnableValue(),
+		Auth().settings().thirdSectionGuestEnabledValue()
 	) | rpl::start_with_next(
 		[this] { updateToggleActive(); },
 		lifetime());
@@ -235,6 +240,29 @@ void TopBarWidget::showMenu() {
 	}
 	_menu->moveToRight((parentWidget()->width() - width()) + st::topBarMenuPosition.x(), st::topBarMenuPosition.y());
 	_menu->showAnimated(Ui::PanelAnimation::Origin::TopRight);
+}
+
+void TopBarWidget::toggleGuestSection() {
+	if (Adaptive::ThreeColumn() && (Auth().settings().thirdSectionGuestEnabled())) {
+		_controller->closeThirdSection();
+	}
+	else if (_activeChat) {
+		if (_controller->canShowThirdSection()) {
+			Auth().settings().setThirdSectionGuestEnabled(true);
+			Auth().saveSettingsDelayed();
+			if (Adaptive::ThreeColumn()) {
+				_controller->showSection(Guest::Memento(object_ptr<Guest::Selector>(this, _controller, _activeChat)),
+					Window::SectionShow().withThirdColumn());
+			}
+			else {
+				_controller->resizeForThirdSection();
+				_controller->updateColumnLayout();
+			}
+		}
+	}
+	else {
+		updateControlsVisibility();
+	}
 }
 
 void TopBarWidget::toggleQuickReplySection() {
@@ -557,6 +585,10 @@ void TopBarWidget::updateControlsGeometry() {
 	if (!_quickReplyToggle->isHidden()) {
 		_rightTaken += _quickReplyToggle->width() + st::topBarSkip;
 	}
+	_guestToggle->moveToRight(_rightTaken, otherButtonsTop);
+	if (!_guestToggle->isHidden()) {
+		_rightTaken += _guestToggle->width() + st::topBarSkip;
+	}
 	if (!_search->isHidden()) {
 		_search->moveToRight(_rightTaken, otherButtonsTop);
 		_rightTaken += _search->width() + st::topBarCallSkip;
@@ -601,10 +633,23 @@ void TopBarWidget::updateControlsVisibility() {
 	}
 	_search->hide();
 	_menuToggle->show();
-	_infoToggle->setVisible(!Adaptive::OneColumn()
-		&& _controller->canShowThirdSection());
+	//_infoToggle->setVisible(!Adaptive::OneColumn()
+	//	&& _controller->canShowThirdSection());
+	_infoToggle->setVisible(false);
 	_quickReplyToggle->setVisible(!Adaptive::OneColumn()
 		&& _controller->canShowThirdSection());
+	auto guestVisable = [this] {
+		if (auto peer = _activeChat.peer()) {
+			if (peer->isUser() && !peer->isSelf()) {
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}();
+	_guestToggle->setVisible(!Adaptive::OneColumn()
+		&& _controller->canShowThirdSection()
+		&& guestVisable);
 	const auto callsEnabled = [&] {
 		if (const auto peer = _activeChat.peer()) {
 			if (const auto user = peer->asUser()) {
@@ -760,6 +805,12 @@ void TopBarWidget::updateToggleActive() {
 	rippleOverride = quickReplyThirdActive ? &st::lightButtonBgOver : nullptr;
 	_quickReplyToggle->setIconOverride(iconOverride, iconOverride);
 	_quickReplyToggle->setRippleColorOverride(rippleOverride);
+
+	auto guestToggleActive = Adaptive::ThreeColumn() && Auth().settings().thirdSectionGuestEnabled();
+	iconOverride = guestToggleActive ? &st::topBarGuestActive : nullptr;
+	rippleOverride = guestToggleActive ? &st::lightButtonBgOver : nullptr;
+	_guestToggle->setIconOverride(iconOverride, iconOverride);
+	_guestToggle->setRippleColorOverride(rippleOverride);
 }
 
 void TopBarWidget::updateOnlineDisplay() {

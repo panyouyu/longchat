@@ -1,0 +1,142 @@
+using "basic.style";
+using "ui/widgets/widgets.style";
+using "info/info.style";
+
+guestTopBarHeight: 54px;
+guestInterval: 8px;
+
+guestTopBar:InfoTopBar(infoLayerTopBar) {
+	height: guestTopBarHeight;
+	title:  FlatLabel(boxTitle) {
+		style: TextStyle(defaultTextStyle) {
+			font: font(17px semibold);
+		}
+	}
+}
+
+subTitleFont: font(15px);
+subTitleMargins: margins(10px, 10px, 10px, 10px);
+
+propertyMargins: margins(8px, 5px, 8px, 5px);
+
+guestScroll: ScrollArea(defaultScrollArea) {
+	bottomsh: 0px;
+	topsh: 0px;
+}
+
+guestTitleField: InputField(defaultInputField) {
+	font: subTitleFont;
+	textMargins: subTitleMargins;
+	textAlign: align(left);
+	textFg: windowFg;
+	textBg: windowBg;
+	heightMin: 0px;
+	heightMax: 44px;
+	placeholderFg: placeholderFg;
+	placeholderFgActive: placeholderFgActive;
+	placeholderFgError: placeholderFgActive;
+	placeholderMargins: margins(7px, 5px, 7px, 5px);
+	placeholderAlign: align(topleft);
+	placeholderScale: 0.;
+	placeholderFont: normalFont;
+	placeholderShift: -50px;
+	border: 0px;
+	borderActive: 0px;
+	duration: 100;
+}
+
+guestContentField: InputField(defaultInputField) {
+	font: msgFont;
+	textMargins: margins(10px, 5px, 10px, 5px);
+	textAlign: align(left);
+	textFg: windowSubTextFg;
+	textBg: windowBg;
+	heightMin: 0px;
+	heightMax: 500px;
+	placeholderFg: placeholderFg;
+	placeholderFgActive: placeholderFgActive;
+	placeholderFgError: placeholderFgActive;
+	placeholderMargins: margins(7px, 5px, 7px, 5px);
+	placeholderAlign: align(topleft);
+	placeholderScale: 0.;
+	placeholderFont: normalFont;
+	placeholderShift: -50px;
+	border: 0px;
+	borderActive: 0px;
+	duration: 100;
+}
+
+guestProperty: RoundButton(defaultActiveButton) {
+	textFg: activeButtonFg;
+	textFgOver: activeButtonFgOver;
+	numbersTextFg: activeButtonSecondaryFg;
+	numbersTextFgOver: activeButtonSecondaryFgOver;
+	textBg: activeButtonBg;
+	textBgOver: activeButtonBgOver;
+
+	numbersSkip: 7px;
+
+	width: -34px;
+	height: 34px;
+	padding: margins(0px, 0px, 0px, 0px);
+
+	textTop: 7px;
+
+	iconPosition: point(0px, 0px);
+
+	font: semiboldFont;
+
+	ripple: RippleAnimation(defaultRippleAnimation) {
+		color: activeButtonBgRipple;
+	}
+}
+
+guestRemoveProperty: IconButton {
+	width: 12px;
+	height: 12px;
+
+	icon: icon {{ "history_audio_cancel", activeButtonFg }};
+	iconOver: icon {{ "history_audio_cancel", activeButtonFgOver }};
+	iconPosition: point(0px, 0px);
+
+	rippleAreaPosition: point(0px, 0px);
+	rippleAreaSize: 12px;
+	ripple: RippleAnimation(defaultRippleAnimation) {
+		color: activeButtonBgRipple;
+	}
+}
+
+guestAddProperty: IconButton {
+	width: 34px;
+	height: 34px;
+
+	icon: icon {{ "guest_property_add", activeButtonFg }};
+	iconOver: icon {{ "guest_property_add", activeButtonFgOver }};
+	iconPosition: point(5px, 5px);
+
+	rippleAreaPosition: point(2px, 2px);
+	rippleAreaSize: 30px;
+	ripple: RippleAnimation(defaultRippleAnimation) {
+		color: activeButtonBgRipple;
+	}
+}
+
+shieldButton: FlatButton {
+	color: windowActiveTextFg;
+	overColor: windowActiveTextFg;
+
+	bgColor: windowBg;
+	overBgColor: windowBgOver;
+
+	width: -32px;
+	height: 46px;
+
+	textTop: 14px;
+
+	font: subTitleFont;
+	overFont: subTitleFont;
+
+	ripple: RippleAnimation(defaultRippleAnimation) {
+		color: windowBgRipple;
+	}
+}

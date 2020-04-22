@@ -160,15 +160,12 @@ void PeerData::updateNameDelayed(
 	Notify::PeerUpdated().notify(update, true);
 }
 
-void PeerData::updateGroupDelayed(const QString& groupInfos)
-{
+void PeerData::updateGroupDelayed(const QString& groupInfos) {
 	if (isUser()) {
 		Notify::PeerUpdate update(this);
 		update.flags |= UpdateFlag::UserGroupChanged;
 		Notify::PeerUpdated().notify(update, true);
 	}
-	
-
 }
 
 std::unique_ptr<Ui::EmptyUserpic> PeerData::createEmptyUserpic() const {

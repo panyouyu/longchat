@@ -75,6 +75,15 @@ void UserData::setContactStatus(ContactStatus status) {
 	}
 }
 
+void UserData::setShieldBlack(bool flag) {
+	if (_shieldBlack != flag) {
+		_shieldBlack = flag;
+		Notify::peerUpdatedDelayed(
+			this,
+			Notify::PeerUpdate::Flag::UserShieldBlack);
+	}
+}
+
 // see Local::readPeer as well
 void UserData::setPhoto(const MTPUserProfilePhoto &photo) {
 	if (photo.type() == mtpc_userProfilePhoto) {
@@ -132,6 +141,30 @@ void UserData::setGroup(const QString& groupInfos)
 void UserData::setPhone(const QString &newPhone) {
 	if (_phone != newPhone) {
 		_phone = newPhone;
+	}
+}
+
+void UserData::setLabels(const QVector<MTPstring> &labels) {
+	if (_labels.size() == labels.size()) return;
+
+	_labels.clear();
+	for (auto i = labels.begin(), e = labels.end(); i < e; ++i) {
+		_labels.push_back(qs(*i));
+	}
+	Notify::peerUpdatedDelayed(this, Notify::PeerUpdate::Flag::UserLabelChanged);
+}
+
+void UserData::addLabel(const QString& label) {
+	if (_labels.contains(label)) return;
+
+	_labels.push_back(std::move(label));
+	Notify::peerUpdatedDelayed(this, Notify::PeerUpdate::Flag::UserLabelChanged);
+}
+
+void UserData::removeLabel(const QString& label) {
+	if (_labels.contains(label)) {
+		_labels.removeOne(label);
+		Notify::peerUpdatedDelayed(this, Notify::PeerUpdate::Flag::UserLabelChanged);
 	}
 }
 

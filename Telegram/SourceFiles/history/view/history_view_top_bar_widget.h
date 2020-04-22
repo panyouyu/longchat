@@ -80,6 +80,7 @@ private:
 	void onCall();
 	void onSearch();
 	void showMenu();
+	void toggleGuestSection();
 	void toggleQuickReplySection();
 	void toggleInfoSection();
 
@@ -126,6 +127,7 @@ private:
 
 	object_ptr<Ui::IconButton> _call;
 	object_ptr<Ui::IconButton> _search;
+	object_ptr<Ui::IconButton> _guestToggle;
 	object_ptr<Ui::IconButton> _quickReplyToggle;
 	object_ptr<Ui::IconButton> _infoToggle;
 	object_ptr<Ui::IconButton> _menuToggle;

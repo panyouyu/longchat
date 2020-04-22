@@ -286,7 +286,8 @@ Controller::ColumnLayout Controller::computeColumnLayout() const {
 		}
 		if (!session().settings().tabbedSelectorSectionEnabled()
 			&& !session().settings().thirdSectionInfoEnabled()
-			&& !session().settings().thirdSectionQuickReplyEnabled()) {
+			&& !session().settings().thirdSectionQuickReplyEnabled()
+			&& !session().settings().thirdSectionGuestEnabled()) {
 			return true;
 		}
 		return false;
@@ -381,9 +382,12 @@ void Controller::resizeForThirdSection() {
 		session().settings().thirdSectionQuickReplyEnabled();
 	auto thirdSectionInfoEnabled =
 		session().settings().thirdSectionInfoEnabled();
+	auto thirdSectionGuestEnabled =
+		session().settings().thirdSectionGuestEnabled();
 	session().settings().setTabbedSelectorSectionEnabled(false);
 	session().settings().setThirdSectionQuickReplyEnabled(false);
 	session().settings().setThirdSectionInfoEnabled(false);
+	session().settings().setThirdSectionGuestEnabled(false);
 
 	auto wanted = countThirdColumnWidthFromRatio(layout.bodyWidth);
 	auto minimal = st::columnMinimalWidthThird;
@@ -421,6 +425,8 @@ void Controller::resizeForThirdSection() {
 		thirdQuickReplySectionEnabled);
 	session().settings().setThirdSectionInfoEnabled(
 		thirdSectionInfoEnabled);
+	session().settings().setThirdSectionGuestEnabled(
+		thirdSectionGuestEnabled);
 }
 
 void Controller::closeThirdSection() {
@@ -446,6 +452,7 @@ void Controller::closeThirdSection() {
 	session().settings().setTabbedSelectorSectionEnabled(false);
 	session().settings().setThirdSectionQuickReplyEnabled(false);
 	session().settings().setThirdSectionInfoEnabled(false);
+	session().settings().setThirdSectionGuestEnabled(false);
 	session().saveSettingsDelayed();
 	if (window()->size() != newWindowSize) {
 		window()->resize(newWindowSize);

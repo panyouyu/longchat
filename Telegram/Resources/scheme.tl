@@ -1050,7 +1050,7 @@ userGroupReturn#3b9aca15 is_success:int = UserGroupReturn;
 userGroupStatusRes#3b9aca1f flags:int other_id:int = UserGroupStatusRes;
 switchKefu#3b9acdf2 kefu_id:int waiting_count:int service_count:int service_max:int nick_name:string = SwitchKefu;
 switchKefuList#3b9acdf1 kefus:Vector<SwitchKefu> = SwitchKefuList;
-
+userLabels#3b9acdf5 labels:Vector<string> = UserLabels;
 
 account.takeout#4dba4501 id:long = account.Takeout;
 
@@ -1257,6 +1257,10 @@ contacts.addUserGroups#3b9aca07 tag_name:string user_ids:Vector<long> = UserGrou
 contacts.modUserGroups#3b9aca0b tag_id:long tag_name:string user_ids:Vector<long> = UserGroupReturn;
 kefu.getSwitchKefus#3b9acdf0 player_user_id:int = SwitchKefuList;
 kefu.switchKefu#3b9acdef kefu_user_id:int player_user_id:int = Bool;
+
+kefu.getUserLabels#3b9acdf4 user_id:int = UserLabels;
+kefu.modifyUserLabel#3b9acdf3 user_id:int label:string is_delete:int = Bool;
+kefu.blockUser#3b9acdf6 user_id:int = Bool;
 
 messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
 messages.getDialogs#b098aee6 flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:int = messages.Dialogs;

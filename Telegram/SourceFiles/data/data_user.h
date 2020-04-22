@@ -74,6 +74,9 @@ public:
 	void setGroup(const QString& groupInfos);
 
 	void setPhone(const QString &newPhone);
+	void setLabels(const QVector<MTPstring> &labels);
+	void addLabel(const QString& label);
+	void removeLabel(const QString& label);
 	void setBotInfoVersion(int version);
 	void setBotInfo(const MTPBotInfo &info);
 
@@ -162,9 +165,15 @@ public:
 	QString lastName;
 	QString username;
 	QString groupInfo;
+
 	const QString &phone() const {
 		return _phone;
 	}
+
+	const QVector<QString>& labels() const {
+		return _labels;
+	}
+
 	QString nameOrPhone;
 	Text phoneText;
 	TimeId onlineTill = 0;
@@ -178,6 +187,12 @@ public:
 		return _contactStatus;
 	}
 	void setContactStatus(ContactStatus status);
+
+	bool isShieldBlack() const {
+		return (_shieldBlack == true);
+	}
+
+	void setShieldBlack(bool flag);
 
 	enum class BlockStatus : char {
 		Unknown,
@@ -220,8 +235,10 @@ private:
 
 	QString _unavailableReason;
 	QString _phone;
+	QVector<QString> _labels;
 	ContactStatus _contactStatus = ContactStatus::PhoneUnknown;
 	BlockStatus _blockStatus = BlockStatus::Unknown;
+	bool _shieldBlack = false;
 	CallsStatus _callsStatus = CallsStatus::Unknown;
 	int _commonChatsCount = 0;
 

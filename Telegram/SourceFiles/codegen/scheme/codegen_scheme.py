@@ -78,6 +78,10 @@ countedTypeIdExceptions['kefu.switchKefu#3b9acdef'] = True
 countedTypeIdExceptions['contacts.importContacts#2c800be5'] = True
 countedTypeIdExceptions['tlv#3b9aca26'] = True
 countedTypeIdExceptions['tlv_list#3b9aca23'] = True
+countedTypeIdExceptions['userLabels#3b9acdf5'] = True
+countedTypeIdExceptions['kefu.getUserLabels#3b9acdf4'] = True
+countedTypeIdExceptions['kefu.modifyUserLabel#3b9acdf3'] = True
+countedTypeIdExceptions['kefu.blockUser#3b9acdf6'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';

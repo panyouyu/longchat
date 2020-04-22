@@ -95,6 +95,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "storage/storage_user_photos.h"
 #include "quick_reply/quick_reply_section.h"
 #include "quick_reply/quick_reply_selector.h"
+#include "guest/guest_section.h"
+#include "guest/guest_selector.h"
 #include "styles/style_dialogs.h"
 #include "styles/style_history.h"
 #include "styles/style_boxes.h"
@@ -1379,9 +1381,7 @@ void MainWidget::slotSwitchUser(UserData* user)
 {
 	_dialogs->removeDialog(session().data().historyLoaded(user->id));
 	_history->showHistory(0, 0);
-	if (Adaptive::ThreeColumn()
-		&& (Auth().settings().thirdSectionInfoEnabled()
-			|| Auth().settings().tabbedReplacedWithInfo())) {
+	if (Adaptive::ThreeColumn()) {
 		_controller->closeThirdSection();
 	}
 }
@@ -1802,6 +1802,12 @@ void MainWidget::ui_showPeerHistory(
 					kWaitForChannelGetDifference);
 			}
 			_viewsIncremented.remove(nowActivePeer);
+			if (nowActivePeer->isUser() && !nowActivePeer->isSelf()) {
+				if (AuthSession::Exists()) {
+					Auth().api().requestPeerRelatedInfo(nowActivePeer);
+					Auth().api().requestPeerLabels(nowActivePeer);
+				}				
+			}
 		}
 		if (Adaptive::OneColumn() && !_dialogs->isHidden()) {
 			_dialogs->hide();
@@ -2493,6 +2499,12 @@ void MainWidget::updateControlsGeometry() {
 			else if (session().settings().thirdSectionQuickReplyEnabled()) {
 				if (const auto key = _controller->activeChatCurrent()) {
 					_controller->showSection(QuickReply::Memento(object_ptr<QuickReply::Selector>(this, _controller)),
+						params.withThirdColumn());
+				}
+			}
+			else if (session().settings().thirdSectionGuestEnabled()) {
+				if (const auto key = _controller->activeChatCurrent()) {
+					_controller->showSection(Guest::Memento(object_ptr<Guest::Selector>(this, _controller, key)),
 						params.withThirdColumn());
 				}
 			}

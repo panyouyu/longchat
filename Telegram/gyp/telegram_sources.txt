@@ -18,6 +18,8 @@
 <(src_loc)/boxes/abstract_box.h
 <(src_loc)/boxes/add_contact_box.cpp
 <(src_loc)/boxes/add_contact_box.h
+<(src_loc)/boxes/add_label_box.cpp
+<(src_loc)/boxes/add_label_box.h
 <(src_loc)/boxes/auto_lock_box.cpp
 <(src_loc)/boxes/auto_lock_box.h
 <(src_loc)/boxes/auto_download_box.cpp
@@ -270,6 +272,10 @@
 <(src_loc)/export/view/export_view_settings.h
 <(src_loc)/export/view/export_view_top_bar.cpp
 <(src_loc)/export/view/export_view_top_bar.h
+<(src_loc)/guest/guest_section.cpp
+<(src_loc)/guest/guest_section.h
+<(src_loc)/guest/guest_selector.cpp
+<(src_loc)/guest/guest_selector.h
 <(src_loc)/history/admin_log/history_admin_log_filter.cpp
 <(src_loc)/history/admin_log/history_admin_log_filter.h
 <(src_loc)/history/admin_log/history_admin_log_inner.cpp

@@ -34,9 +34,9 @@ Selector::Selector(QWidget *parent, not_null<Window::Controller *> controller)
 	});
 	Auth().settings().thirdSectionQuickReplyUpdate() |
 		rpl::start_with_next([this] {
-			_inner->load();
-			updateControlsGeometry();
-		}, lifetime());
+		_inner->load();
+		updateControlsGeometry();
+			}, lifetime());
 	_inner = _scroll->setOwnedWidget(object_ptr<SimpleTree>(this));
 	_inner->move(0, 0);
 	updateControlsGeometry();

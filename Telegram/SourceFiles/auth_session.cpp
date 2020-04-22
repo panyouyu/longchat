@@ -47,7 +47,7 @@ AuthSessionSettings::Variables::Variables()
 
 QByteArray AuthSessionSettings::serialize() const {
 	const auto autoDownload = _variables.autoDownload.serialize();
-	auto size = sizeof(qint32) * 24;
+	auto size = sizeof(qint32) * 25;
 	for (auto i = _variables.quickReplyOpen.cbegin(), e = _variables.quickReplyOpen.cend(); i != e; ++i) {
 		size += Serialize::stringSize(*i);
 	}
@@ -66,6 +66,7 @@ QByteArray AuthSessionSettings::serialize() const {
 		stream << qint32(_variables.lastSeenWarningSeen ? 1 : 0);
 		stream << qint32(_variables.tabbedSelectorSectionEnabled ? 1 : 0);
 		stream << qint32(_variables.thirdSectionQuickReplyEnabled ? 1 : 0);
+		stream << qint32(_variables.thirdSectionGuestEnabled ? 1 : 0);
 		stream << qint32(_variables.quickReplyOpen.size());
 		for (auto i = _variables.quickReplyOpen.cbegin(), e = _variables.quickReplyOpen.cend(); i != e; ++i) {
 			stream << *i;
@@ -114,8 +115,9 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	stream.setVersion(QDataStream::Qt_5_1);
 	qint32 selectorTab = static_cast<qint32>(ChatHelpers::SelectorTab::Emoji);
 	qint32 lastSeenWarningSeen = 0;
-	qint32 tabbedSelectorSectionEnabled = 1;
+	qint32 tabbedSelectorSectionEnabled = 0;
 	qint32 thirdSectionQuickReplyEnabled = 1;
+	qint32 thirdSectionGuestEnabled = 0;
 	qint32 tabbedSelectorSectionTooltipShown = 0;
 	qint32 floatPlayerColumn = static_cast<qint32>(Window::Column::Second);
 	qint32 floatPlayerCorner = static_cast<qint32>(RectPart::TopRight);
@@ -147,6 +149,9 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	}
 	if (!stream.atEnd()) {
 		stream >> thirdSectionQuickReplyEnabled;
+	}
+	if (!stream.atEnd()) {
+		stream >> thirdSectionGuestEnabled;
 	}
 	if (!stream.atEnd()) {
 		auto count = qint32(0);
@@ -251,6 +256,7 @@ void AuthSessionSettings::constructFromSerialized(const QByteArray &serialized) 
 	_variables.lastSeenWarningSeen = (lastSeenWarningSeen == 1);
 	_variables.tabbedSelectorSectionEnabled = (tabbedSelectorSectionEnabled == 1);
 	_variables.thirdSectionQuickReplyEnabled = (thirdSectionQuickReplyEnabled == 1);
+	_variables.thirdSectionGuestEnabled = (thirdSectionGuestEnabled == 1);
 	_variables.quickReplyOpen = std::move(quickReplyOpen);
 	_variables.soundOverrides = std::move(soundOverrides);
 	_variables.tabbedSelectorSectionTooltipShown = tabbedSelectorSectionTooltipShown;
@@ -332,10 +338,24 @@ rpl::producer<bool> AuthSessionSettings::supportAllSearchResultsValue() const {
 void AuthSessionSettings::setTabbedSelectorSectionEnabled(bool enabled) {
 	_variables.tabbedSelectorSectionEnabled = enabled;
 	if (enabled) {
+		setThirdSectionGuestEnabled(false);
 		setThirdSectionInfoEnabled(false);
 		setThirdSectionQuickReplyEnabled(false);
 	}
 	setTabbedReplacedWithInfo(false);
+}
+
+void AuthSessionSettings::setThirdSectionGuestEnabled(bool enabled) {
+	if (_variables.thirdSectionGuestEnabled != enabled) {
+		_variables.thirdSectionGuestEnabled = enabled;
+		if (enabled) {			
+			setTabbedSelectorSectionEnabled(false);
+			setThirdSectionQuickReplyEnabled(false);
+			setThirdSectionInfoEnabled(false);
+		}
+		setTabbedReplacedWithInfo(false);
+		_thirdSectionGuestValue.fire_copy(enabled);
+	}
 }
 
 void AuthSessionSettings::setThirdSectionQuickReplyEnabled(bool enabled) {
@@ -343,11 +363,17 @@ void AuthSessionSettings::setThirdSectionQuickReplyEnabled(bool enabled) {
 		_variables.thirdSectionQuickReplyEnabled = enabled;
 		if (enabled) {
 			setTabbedSelectorSectionEnabled(false);
+			setThirdSectionGuestEnabled(false);
 			setThirdSectionInfoEnabled(false);
 		}
 		setTabbedReplacedWithInfo(false);
 		_thirdSectionQuickReplyEnableValue.fire_copy(enabled);
 	}
+}
+
+rpl::producer<bool> AuthSessionSettings::thirdSectionGuestEnabledValue() const {
+	return _thirdSectionGuestValue.events_starting_with(
+		thirdSectionGuestEnabled());
 }
 
 rpl::producer<bool> AuthSessionSettings::thirdSectionQuickReplyEnableValue() const {
@@ -376,6 +402,7 @@ void AuthSessionSettings::setThirdSectionInfoEnabled(bool enabled) {
 		if (enabled) {
 			setTabbedSelectorSectionEnabled(false);
 			setThirdSectionQuickReplyEnabled(false);
+			setThirdSectionGuestEnabled(false);
 		}
 		setTabbedReplacedWithInfo(false);
 		_thirdSectionInfoEnabledValue.fire_copy(enabled);

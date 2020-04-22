@@ -382,6 +382,12 @@ public:
 	void uploadPeerPhoto(not_null<PeerData*> peer, QImage &&image);
 	void clearPeerPhoto(not_null<PhotoData*> photo);
 
+	void requestPeerRelatedInfo(not_null<PeerData*> peer);
+	void requestPeerLabels(not_null<PeerData*> peer);
+	void uploadPeerLabel(not_null<PeerData*> peer, const QString& label);
+	void removePeerLabel(not_null<PeerData*> peer, const QString& label);
+	void pullBlackUser(not_null<PeerData*> peer);
+
 	void reloadPasswordState();
 	void clearUnconfirmedPassword();
 	rpl::producer<Core::CloudPasswordState> passwordState() const;

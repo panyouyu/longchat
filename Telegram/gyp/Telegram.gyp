@@ -28,6 +28,7 @@
         '<(src_loc)/calls/calls.style',
         '<(src_loc)/dialogs/dialogs.style',
         '<(src_loc)/export/view/export.style',
+		'<(src_loc)/guest/guest.style',
         '<(src_loc)/history/history.style',
         '<(src_loc)/info/info.style',
         '<(src_loc)/intro/intro.style',

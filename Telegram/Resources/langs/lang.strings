@@ -2004,7 +2004,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_polls_create_maximum" = "您已经添加了最大选项数。";
 "lng_polls_create_button" = "创建";
 
-// and by panyouyu
+
 "lng_setting_screenshot_tip" = "隐藏当前窗口";
 "lng_save_screenshot_image" = "保存截图";
 
@@ -2045,6 +2045,22 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_quick_reply_remove_group_name" = "确定要删除分组:\n\n{group}";
 "lng_quick_reply_move_up" = "上移";
 "lng_quick_reply_move_down" = "下移";
+
+// guest_info
+"lng_guest_cancel" = "取消";
+"lng_guest_add" = "添加";
+"lng_guest_remove" = "删除";
+"lng_guest_pull_black" = "拉黑";
+"lng_guest_topbar" = "用户相关信息";
+"lng_guest_property" = "标签";
+"lng_guest_add_label" = "添加标签";
+"lng_guest_add_placeholder" = "标签名";
+"lng_guest_add_label_error" = "标签已存在";
+"lng_guest_remove_label_tip" = "确定要删除标签:";
+"lng_guest_normal_guest" = "普通用户";
+"lng_guest_pull_black_guest" = "拉黑用户";
+"lng_guest_pull_blacked_guest" = "已拉黑";
+"lng_guest_pull_black_tip" = "确定要拉黑用户\n{user} 吗?";
 
 // Wnd specific
 
