@@ -28,6 +28,7 @@ class LayerStackWidget;
 class SectionMemento;
 struct SectionShow;
 class PasscodeLockWidget;
+class MainMenu;
 namespace Theme {
 struct BackgroundUpdate;
 class WarningWidget;
@@ -167,6 +168,7 @@ private:
 
 	object_ptr<Window::PasscodeLockWidget> _passcodeLock = { nullptr };
 	object_ptr<Intro::Widget> _intro = { nullptr };
+	object_ptr<Window::MainMenu> _mainMenu = { nullptr };
 	object_ptr<MainWidget> _main = { nullptr };
 	base::unique_qptr<Window::LayerStackWidget> _layer;
 	object_ptr<MediaPreviewWidget> _mediaPreview = { nullptr };

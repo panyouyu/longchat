@@ -66,6 +66,7 @@ enum UnreadBadgeSize {
 	UnreadBadgeInHistoryToDown,
 	UnreadBadgeInStickersPanel,
 	UnreadBadgeInStickersBox,
+	UnreadBadgeInLeftMenu,
 
 	UnreadBadgeSizesCount
 };
@@ -76,6 +77,7 @@ struct UnreadBadgeStyle {
 	bool active;
 	bool selected;
 	bool muted;
+	bool menu;
 	int textTop = 0;
 	int size;
 	int padding;

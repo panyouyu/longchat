@@ -150,7 +150,6 @@ void DialogsWidget::BottomButton::paintEvent(QPaintEvent *e) {
 }
 
 DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> controller) : Window::AbstractSectionWidget(parent, controller)
-, _mainMenuToggle(this, st::dialogsMenuToggle)
 , _filter(this, st::dialogsFilter, langFactory(lng_dlg_filter))
 , _chooseFromUser(
 	this,
@@ -222,7 +221,6 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 		Core::App().lockByPasscode();
 		_lockUnlock->setIconOverride(nullptr);
 	});
-	_mainMenuToggle->setClickedCallback([this] { showMainMenu(); });
 
 	_chooseByDragTimer.setSingleShot(true);
 	connect(&_chooseByDragTimer, SIGNAL(timeout()), this, SLOT(onChooseByDrag()));
@@ -479,7 +477,6 @@ void DialogsWidget::showAnimated(Window::SlideDirection direction, const Window:
 	_cacheOver = App::main()->grabForShowAnimation(params);
 
 	_scroll->hide();
-	_mainMenuToggle->hide();
 	if (_forwardCancel) _forwardCancel->hide();
 	_filter->hide();
 	_cancelSearch->hide(anim::type::instant);
@@ -511,7 +508,6 @@ void DialogsWidget::animationCallback() {
 		_cacheUnder = _cacheOver = QPixmap();
 
 		_scroll->show();
-		_mainMenuToggle->show();
 		if (_forwardCancel) _forwardCancel->show();
 		_filter->show();
 		_connecting->setForceHidden(false);
@@ -1530,15 +1526,13 @@ void DialogsWidget::updateControlsGeometry() {
 	}
 	auto smallLayoutWidth = (st::dialogsPadding.x() + st::dialogsPhotoSize + st::dialogsPadding.x());
 	auto smallLayoutRatio = (width() < st::columnMinimalWidthLeft) ? (st::columnMinimalWidthLeft - width()) / float64(st::columnMinimalWidthLeft - smallLayoutWidth) : 0.;
-	auto filterLeft = st::dialogsFilterPadding.x() + _mainMenuToggle->width() + st::dialogsFilterPadding.x();
+	auto filterLeft = st::dialogsFilterPadding.x() + st::dialogsFilterPadding.x();
 	auto filterRight = (Global::LocalPasscode() ? (st::dialogsFilterPadding.x() + _lockUnlock->width()) : st::dialogsFilterSkip) + st::dialogsFilterPadding.x();
 	auto filterWidth = qMax(width(), st::columnMinimalWidthLeft) - filterLeft - filterRight;
-	auto filterAreaHeight = st::dialogsFilterPadding.y() + _mainMenuToggle->height() + st::dialogsFilterPadding.y();
+	auto filterAreaHeight = st::dialogsFilterPadding.y() + _filter->height() + st::dialogsFilterPadding.y();
 	auto filterTop = filterAreaTop + (filterAreaHeight - _filter->height()) / 2;
 	filterLeft = anim::interpolate(filterLeft, smallLayoutWidth, smallLayoutRatio);
 	_filter->setGeometryToLeft(filterLeft, filterTop, filterWidth, _filter->height());
-	auto mainMenuLeft = anim::interpolate(st::dialogsFilterPadding.x(), (smallLayoutWidth - _mainMenuToggle->width()) / 2, smallLayoutRatio);
-	_mainMenuToggle->moveToLeft(mainMenuLeft, filterAreaTop + st::dialogsFilterPadding.y());
 	auto right = filterLeft + filterWidth;
 	_lockUnlock->moveToLeft(right + st::dialogsFilterPadding.x(), filterAreaTop + st::dialogsFilterPadding.y());
 	_cancelSearch->moveToLeft(right - _cancelSearch->width(), _filter->y());

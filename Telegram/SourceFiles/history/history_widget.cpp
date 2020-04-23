@@ -3088,9 +3088,6 @@ void HistoryWidget::chooseAttach() {
 
 void HistoryWidget::createScreenShot()
 {
-	//App::wnd()->showSpecialLayer(Box<QuickReply::LayerWidget>(), anim::type::normal);
-	//return;
-
 	if (_shotScreen.data()) return;
     
 	_shotScreen.create(nullptr);

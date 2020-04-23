@@ -9,12 +9,12 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 #include "base/timer.h"
 #include "ui/rp_widget.h"
+#include "ui/effects/animations.h"
 
 namespace Ui {
-class IconButton;
-class FlatLabel;
-class Menu;
 class UserpicButton;
+class MainMenuButton;
+class MainMenuMsgButton;
 } // namespace Ui
 
 namespace Window {
@@ -28,6 +28,8 @@ public:
 	void setInnerFocus() {
 		setFocus();
 	}
+	
+	void showAnimated(const QPixmap& bgAnimCache, bool back = false);
 
 protected:
 	void paintEvent(QPaintEvent *e) override;
@@ -35,23 +37,16 @@ protected:
 
 private:
 	void updateControlsGeometry();
-	void updatePhone();
-	void initResetScaleButton();
-	void refreshMenu();
 
-	class ResetScaleButton;
 	not_null<Controller*> _controller;
 	object_ptr<Ui::UserpicButton> _userpicButton = { nullptr };
-	object_ptr<Ui::IconButton> _cloudButton = { nullptr };
-	object_ptr<ResetScaleButton> _resetScaleButton = { nullptr };
-	object_ptr<Ui::Menu> _menu;
-	object_ptr<Ui::FlatLabel> _telegram;
-	object_ptr<Ui::FlatLabel> _version;
-	std::shared_ptr<QPointer<QAction>> _nightThemeAction;
-	base::Timer _nightThemeSwitch;
+	object_ptr<Ui::MainMenuMsgButton> _mseeage;
+	object_ptr<Ui::MainMenuButton> _contact;
+	object_ptr<Ui::MainMenuButton> _call;
+	object_ptr<Ui::MainMenuButton> _setting;
+	Ui::Animations::Simple _a_show;
 
 	QString _phoneText;
-
 };
 
 } // namespace Window

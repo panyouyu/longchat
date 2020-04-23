@@ -7,6 +7,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "settings/settings_main.h"
 
+#include "window/themes/window_theme.h"
 #include "settings/settings_common.h"
 #include "settings/settings_codes.h"
 #include "settings/settings_chat.h"
@@ -97,6 +98,26 @@ void SetupSections(
 	SetupLanguageButton(container);
 
 	AddSkip(container);
+}
+
+void SetupNightMode(not_null<Ui::VerticalLayout*> container, bool icon) {
+	const auto toggled = Ui::CreateChild<rpl::event_stream<bool>>(
+		container.get());
+	const auto switched = Window::Theme::IsNightMode();
+	const auto button = AddButton(
+		container,
+		lng_menu_night_mode,
+		icon ? st::settingsSectionButton : st::settingsButton,
+		icon ? &st::settingsIconNightMode : nullptr
+	)->toggleOn(toggled->events_starting_with_copy(switched));
+
+	auto themeUpdate = [](bool checked) {
+		if (checked != Window::Theme::IsNightMode()) {
+			Window::Theme::ToggleNightMode();
+			Window::Theme::KeepApplied();
+		}
+	};
+	button->toggledChanges() | rpl::start_with_next(themeUpdate, button->lifetime());
 }
 
 bool HasInterfaceScale() {
@@ -275,6 +296,7 @@ void Main::setupContent(not_null<Window::Controller*> controller) {
 	if (HasInterfaceScale()) {
 		AddDivider(content);
 		AddSkip(content);
+		//SetupNightMode(content);
 		SetupInterfaceScale(content);
 		AddSkip(content);
 	}

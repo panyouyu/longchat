@@ -307,4 +307,33 @@ private:
 	object_ptr<Ui::Checkbox> _screenShotOptions;
 };
 
+class MainMenuButton : public RippleButton {
+public:
+	MainMenuButton(QWidget* parent, const style::MainMenuButton& st, QString text);
+
+	bool isChecked() const {
+		return _checked;
+	}
+	void setChecked(bool checked);
+protected:
+	int resizeGetHeight(int newWidth) override;
+	void paintEvent(QPaintEvent* e) override;
+	QPoint iconTopRight() const;
+private:
+	const style::MainMenuButton& _st;
+	QString _text;
+	bool _checked = false;
+};
+
+class MainMenuMsgButton : public MainMenuButton {
+public:
+	MainMenuMsgButton(QWidget* parent, const style::MainMenuButton& st, QString text, bool checked = true);
+
+	void updateUnreadCounter();
+protected:
+	void paintEvent(QPaintEvent* e) override;
+private:
+	uint _unreadCount = 0;
+};
+
 } // namespace Ui

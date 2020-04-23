@@ -267,7 +267,7 @@ bool Controller::forceWideDialogs() const {
 Controller::ColumnLayout Controller::computeColumnLayout() const {
 	auto layout = Adaptive::WindowLayout::OneColumn;
 
-	auto bodyWidth = window()->bodyWidget()->width();
+	auto bodyWidth = window()->bodyWidget()->width() - st::mainMenuWidth;
 	auto dialogsWidth = 0, chatWidth = 0, thirdWidth = 0;
 
 	auto useOneColumnLayout = [&] {

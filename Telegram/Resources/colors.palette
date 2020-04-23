@@ -65,6 +65,14 @@ menuSubmenuArrowFg: #373737; // default popup menu submenu arrow icon (like in m
 menuFgDisabled: #cccccc; // default popup menu item disabled text (like unavailable items in message field context menu)
 menuSeparatorFg: #f1f1f1; // default popup menu separator (like in message field context menu)
 
+leftMenuBg: #0091FF; // left main menu background
+leftMenuBgOver: #0091FF; // left main menu item background with mouse over
+leftMenuBgRipple: #0075c8; // left main menu item ripple effect
+leftMenuIconFg: #d1d1d1; // left main menu item icon (like main menu)
+leftMenuIconFgOver: #ffffff; // left main menu item icon with mouse over
+leftMenuUnReadBg: #ff551c;	// left main menu unread count background
+leftMenuUnReadFg: #ffffff;  //left main menu unread count num color
+
 scrollBarBg: #00000053; // default scroll bar current rectangle, the bar itself (like in chats list)
 scrollBarBgOver: #0000007a; // default scroll bar current rectangle with mouse over it
 scrollBg: #0000001a; // default scroll bar background
