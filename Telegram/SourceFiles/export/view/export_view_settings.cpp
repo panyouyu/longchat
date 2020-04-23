@@ -247,7 +247,7 @@ void SettingsWidget::addLocationLabel(
 	}) | rpl::distinct_until_changed(
 	) | rpl::map([](const QString &path) {
 		const auto text = IsDefaultPath(path)
-			? QString("Downloads/Telegram Desktop")
+			? QString("Downloads/LongChat Desktop")
 			: path;
 		auto pathLink = TextWithEntities{
 			QDir::toNativeSeparators(text),
