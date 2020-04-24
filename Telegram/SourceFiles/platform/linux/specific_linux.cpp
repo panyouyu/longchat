@@ -328,7 +328,7 @@ void RegisterCustomScheme() {
 			s.setCodec("UTF-8");
 			s << "[Desktop Entry]\n";
 			s << "Version=1.0\n";
-			s << "Name=Telegram Desktop\n";
+			s << "Name=LongChat Desktop\n";
 			s << "Comment=Official desktop application for the Telegram messaging service\n";
 			s << "TryExec=" << EscapeShell(QFile::encodeName(cExeDir() + cExeName())) << "\n";
 			s << "Exec=" << EscapeShell(QFile::encodeName(cExeDir() + cExeName())) << " -- %u\n";

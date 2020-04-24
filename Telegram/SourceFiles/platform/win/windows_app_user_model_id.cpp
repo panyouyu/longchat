@@ -256,10 +256,10 @@ bool validateShortcut() {
 		path += qsl("TelegramAlpha.lnk");
 		if (validateShortcutAt(path)) return true;
 	} else {
-		if (validateShortcutAt(path + qsl("Telegram Desktop/Telegram.lnk"))) return true;
-		if (validateShortcutAt(path + qsl("Telegram Win (Unofficial)/Telegram.lnk"))) return true;
+		if (validateShortcutAt(path + qsl("LongChat Desktop/LongChat.lnk"))) return true;
+		if (validateShortcutAt(path + qsl("LongChat Win (Unofficial)/LongChat.lnk"))) return true;
 
-		path += qsl("Telegram.lnk");
+		path += qsl("LongChat.lnk");
 		if (validateShortcutAt(path)) return true;
 	}
 

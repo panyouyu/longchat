@@ -148,7 +148,7 @@ QString psAppDataPath() {
 	if (GetEnvironmentVariable(L"APPDATA", wstrPath, maxFileLen)) {
 		QDir appData(QString::fromStdWString(std::wstring(wstrPath)));
 #ifdef OS_WIN_STORE
-		return appData.absolutePath() + qsl("/Telegram Desktop UWP/");
+		return appData.absolutePath() + qsl("/LongChat Desktop UWP/");
 #else // OS_WIN_STORE
 		return appData.absolutePath() + '/' + str_const_toString(AppName) + '/';
 #endif // OS_WIN_STORE
@@ -597,13 +597,13 @@ void RegisterCustomScheme() {
 
 	if (!_psOpenRegKey(L"Software\\TelegramDesktop", &rkey)) return;
 	if (!_psOpenRegKey(L"Software\\TelegramDesktop\\Capabilities", &rkey)) return;
-	if (!_psSetKeyValue(rkey, L"ApplicationName", qsl("Telegram Desktop"))) return;
-	if (!_psSetKeyValue(rkey, L"ApplicationDescription", qsl("Telegram Desktop"))) return;
+	if (!_psSetKeyValue(rkey, L"ApplicationName", qsl("LongChat Desktop"))) return;
+	if (!_psSetKeyValue(rkey, L"ApplicationDescription", qsl("LongChat Desktop"))) return;
 	if (!_psOpenRegKey(L"Software\\TelegramDesktop\\Capabilities\\UrlAssociations", &rkey)) return;
 	if (!_psSetKeyValue(rkey, L"tg", qsl("tdesktop.tg"))) return;
 
 	if (!_psOpenRegKey(L"Software\\RegisteredApplications", &rkey)) return;
-	if (!_psSetKeyValue(rkey, L"Telegram Desktop", qsl("SOFTWARE\\TelegramDesktop\\Capabilities"))) return;
+	if (!_psSetKeyValue(rkey, L"LongChat Desktop", qsl("SOFTWARE\\LongChatDesktop\\Capabilities"))) return;
 #endif // !TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME
 }
 

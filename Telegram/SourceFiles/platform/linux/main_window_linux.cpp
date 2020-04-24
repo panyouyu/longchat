@@ -470,7 +470,7 @@ void MainWindow::psCreateTrayIcon() {
 			QFileInfo iconFile(_trayIconImageFile());
 			if (iconFile.exists()) {
 				QByteArray path = QFile::encodeName(iconFile.absoluteFilePath());
-				_trayIndicator = Libs::app_indicator_new("Telegram Desktop", path.constData(), APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
+				_trayIndicator = Libs::app_indicator_new("LongChat Desktop", path.constData(), APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
 				if (_trayIndicator) {
 					LOG(("Tray Icon: Using appindicator tray icon."));
 				} else {
@@ -511,8 +511,8 @@ void MainWindow::psCreateTrayIcon() {
 					Libs::g_signal_connect_helper(_trayIcon, "activate", GCallback(_trayIconActivate), _trayMenu);
 					Libs::g_signal_connect_helper(_trayIcon, "size-changed", GCallback(_trayIconResized), _trayMenu);
 
-					Libs::gtk_status_icon_set_title(_trayIcon, "Telegram Desktop");
-					Libs::gtk_status_icon_set_tooltip_text(_trayIcon, "Telegram Desktop");
+					Libs::gtk_status_icon_set_title(_trayIcon, "LongChat Desktop");
+					Libs::gtk_status_icon_set_tooltip_text(_trayIcon, "LongChat Desktop");
 					Libs::gtk_status_icon_set_visible(_trayIcon, true);
 				} else {
 					useStatusIcon = false;
