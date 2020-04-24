@@ -26,7 +26,7 @@ AboutBox::AboutBox(QWidget *parent)
 }
 
 void AboutBox::prepare() {
-	setTitle([] { return qsl("Telegram Desktop"); });
+	setTitle([] { return qsl("LongChat Desktop"); });
 
 	addButton(langFactory(lng_close), [this] { closeBox(); });
 
@@ -71,7 +71,7 @@ void AboutBox::showVersionHistory() {
 
 		QApplication::clipboard()->setText(url);
 
-		Ui::show(Box<InformBox>("The link to the current private alpha version of Telegram Desktop was copied to the clipboard."));
+		Ui::show(Box<InformBox>("The link to the current private alpha version of LongChat Desktop was copied to the clipboard."));
 	} else {
 		QDesktopServices::openUrl(qsl("https://desktop.telegram.org/changelog"));
 	}
