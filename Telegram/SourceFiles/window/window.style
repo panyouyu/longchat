@@ -101,7 +101,7 @@ mainMenuUnReadCountFont: font(12px bold);
 mainMenuUnReadCountPadding: 5px;
 mainMenuUnReadCountHeight: 19px;
 
-mainMenuLogo: icon {{"main_menu_logo", leftMenuIconFg}};
+mainMenuLogo: icon {{"main_menu_logo", leftMenuIconFgOver}};
 
 mainMenuMessage: icon {{"main_menu_message", leftMenuIconFg}};
 mainMenuMessageOver: icon {{"main_menu_message", leftMenuIconFgOver}};

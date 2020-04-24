@@ -114,7 +114,7 @@ void InfoWidget::append(QString& title, QStringList& content) {
 		splice_content += (*i) + "\n";
 	}
 	if (splice_content.endsWith("\n")) {
-		splice_content = splice_content.left(splice_content.size() - 1);
+		splice_content.chop(1);
 	}
 	connect(content_ptr, &Ui::InputField::resized, [this] {
 		int height = resizeGetHeight(width());
