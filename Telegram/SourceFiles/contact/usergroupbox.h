@@ -46,8 +46,6 @@ namespace Contact {
 		ContactTreeView* _contactTree;
 		QVBoxLayout* _vLayout;
 
-		QSpacerItem* _horizontalSpacer;
-
 		QVector<ContactInfo*> _vecContactPData;
 		QMap<uint64, QSet<uint64>> _mapUser2Group;
 		QVector<ContactInfo*> _allGroup;

@@ -11,7 +11,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "lang/lang_keys.h"
 #include "contact/filterwidget.h"
 #include "mainwidget.h"
-#include "Dialogs/Dialogs_indexed_list.h"
+#include "dialogs/dialogs_indexed_list.h"
 #include "history/history.h"
 #include "data/data_user.h"
 #include "data/data_peer_values.h"

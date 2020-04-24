@@ -59,10 +59,10 @@ MainMenu::MainMenu(
 	_userpicButton->setClickedCallback(showSelfChat);
 	_userpicButton->show();
 
-	_mseeage->setClickedCallback([this] { 
+	_mseeage->setClickedCallback([] {
 		App::wnd()->activate();
 	});
-	_contact->setClickedCallback([this] {
+	_contact->setClickedCallback([] {
 		Ui::show(Box<Contact::ContactBox>(App::wnd()->controller()));
 	});
 	_call->setClickedCallback([] {

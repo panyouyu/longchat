@@ -29,7 +29,7 @@ Selector::Selector(QWidget *parent, not_null<Window::Controller *> controller)
 	close->addClickHandler([this] {
 		_controller->closeThirdSection();
 	});
-	_open->setClickedCallback([this] {
+	_open->setClickedCallback([] {
 		App::wnd()->showSpecialLayer(Box<QuickReply::LayerWidget>(), anim::type::instant);
 	});
 	Auth().settings().thirdSectionQuickReplyUpdate() |

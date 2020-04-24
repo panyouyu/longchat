@@ -14,7 +14,7 @@ public:
 
 protected:
 	void paintEvent(QPaintEvent* e) override;
-	void closeHook();
+	void closeHook() override;
 
 private:
 	object_ptr<IntroWidget> _content;

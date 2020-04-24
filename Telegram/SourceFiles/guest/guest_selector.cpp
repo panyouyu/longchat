@@ -150,7 +150,7 @@ public:
 		return _sizeChanged.events();
 	}
 protected:
-	int resizeGetHeight(int newWidth);
+	int resizeGetHeight(int newWidth) override;
 	void paintEvent(QPaintEvent* e) override;
 
 private:
@@ -353,7 +353,7 @@ void Selector::updateBlock(not_null<UserData*> user) {
 				}), LayerOption::KeepOther);
 		}
 	};
-	auto pull_blacked = [this] { return; };
+	auto pull_blacked = [] { return; };
 	if (shieldBlack) {
 		_block->setClickedCallback(pull_blacked);
 	} else {
