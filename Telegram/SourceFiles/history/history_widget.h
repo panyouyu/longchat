@@ -363,7 +363,7 @@ private slots:
 
 	void onModerateKeyActivate(int index, bool *outHandled);
 	void createScreenShot();
-	void destoryScreenShot(bool);
+	void destoryScreenShot(bool send = false);
 
 private:
 	using TabbedPanel = ChatHelpers::TabbedPanel;

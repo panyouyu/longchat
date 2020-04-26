@@ -31,6 +31,7 @@ public slots:
     void init();
 private slots:
     void ontextchanged();
+    void onScreenResized(int screen);
 protected:
     void keyPressEvent(QKeyEvent*) override;
     void mousePressEvent(QMouseEvent* event) override;
@@ -39,6 +40,7 @@ protected:
     void paintEvent(QPaintEvent*) override;
 
 private:
+    void moveToScreen(bool force = false);
     QPainterPath maskPath();
     QRect activeRect();
     QRect controlWidgetRect();
@@ -96,7 +98,6 @@ public:
 protected:
     void resizeEvent(QResizeEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
-
 private:
     Type _type;
     Fn<void()> _callback;

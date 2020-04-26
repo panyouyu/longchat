@@ -3091,6 +3091,9 @@ void HistoryWidget::createScreenShot()
 		_shotScreen->init(); 
 		_shotScreen->show();
 	}
+	_shotScreen->activateWindow();
+	QApplication::setActiveWindow(_shotScreen);
+	_shotScreen->setFocus();
 	connect(_shotScreen.data(), SIGNAL(finished(bool)), this, SLOT(destoryScreenShot(bool)));
 }
 

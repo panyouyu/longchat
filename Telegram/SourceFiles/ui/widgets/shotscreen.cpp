@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "shotscreen.h"
 
+#include "core/application.h"
+#include "mainwindow.h"
 #include "styles/style_history.h"
 #include "lang/lang_keys.h"
 #include <QClipboard>
@@ -13,8 +15,26 @@ ShotScreen::ShotScreen(QWidget* parent)
     , _controlWidget(this)
     , _textEdit(this)
 {
-    setWindowFlags(Qt::ToolTip);
-    resize(QApplication::desktop()->screenGeometry().size());
+#ifdef Q_OS_LINUX
+    setWindowFlags(Qt::FramelessWindowHint | Qt::MaximizeUsingFullscreenGeometryHint);
+#else // Q_OS_LINUX
+    setWindowFlags(Qt::FramelessWindowHint);
+#endif // Q_OS_LINUX
+    moveToScreen();
+    setAttribute(Qt::WA_NoSystemBackground, true);
+    setAttribute(Qt::WA_TranslucentBackground, true);
+    setMouseTracking(true);
+
+    hide();
+    createWinId();
+    if (cPlatform() == dbipLinux32 || cPlatform() == dbipLinux64) {
+        windowHandle()->setTransientParent(App::wnd()->windowHandle());
+        setWindowModality(Qt::WindowModal);
+    }
+    if (cPlatform() != dbipMac && cPlatform() != dbipMacOld) {
+        setWindowState(Qt::WindowFullScreen);
+    }
+    connect(QApplication::desktop(), SIGNAL(resized(int)), this, SLOT(onScreenResized(int)));
 
     _controlWidget->hide();
     _textEdit->hide();
@@ -81,7 +101,22 @@ ShotScreen::~ShotScreen()
 
 void ShotScreen::init()
 {
-    _pixmap = QGuiApplication::primaryScreen()->grabWindow(0);
+    const auto widgetScreen = [&](auto&& widget) -> QScreen* {
+        if (auto handle = widget ? widget->windowHandle() : nullptr) {
+            return handle->screen();
+        }
+        return nullptr;
+    };
+    const auto activeWindow = Core::App().getActiveWindow();
+    const auto activeWindowScreen = widgetScreen(activeWindow);
+    const auto myScreen = widgetScreen(this);
+    if (activeWindowScreen && myScreen && myScreen != activeWindowScreen) {
+        windowHandle()->setScreen(activeWindowScreen);
+    }
+    const auto screen = activeWindowScreen
+        ? activeWindowScreen
+        : QApplication::primaryScreen();
+    _pixmap = screen->grabWindow(0);
     int width_p = _pixmap.width() / Mosaic::length + 1;
     int heigth_p = _pixmap.height() / Mosaic::length + 1;
     _pointArray.resize(width_p);
@@ -109,6 +144,46 @@ void ShotScreen::ontextchanged()
     width = width < max_width ? width : max_width;
     int height = _textEdit->document()->size().rheight() + 2 < max_height ? _textEdit->document()->size().rheight() + 2 : max_height;
     _textEdit->resize(width, height);
+}
+
+void ShotScreen::moveToScreen(bool force) {
+    const auto widgetScreen = [&](auto&& widget) -> QScreen* {
+        if (auto handle = widget ? widget->windowHandle() : nullptr) {
+            return handle->screen();
+        }
+        return nullptr;
+    };
+    const auto activeWindow = Core::App().getActiveWindow();
+    const auto activeWindowScreen = widgetScreen(activeWindow);
+    const auto myScreen = widgetScreen(this);
+    if (activeWindowScreen && myScreen && myScreen != activeWindowScreen) {
+        windowHandle()->setScreen(activeWindowScreen);
+    }
+    const auto screen = activeWindowScreen
+        ? activeWindowScreen
+        : QApplication::primaryScreen();
+    const auto available = screen->geometry();
+    if (!force && geometry() == available) {
+        return;
+    }
+    setGeometry(available);
+}
+
+void ShotScreen::onScreenResized(int screen) {
+    if (isHidden()) {
+        return;
+    }
+
+    const auto screens = QApplication::screens();
+    const auto changed = (screen >= 0 && screen < screens.size())
+        ? screens[screen]
+        : nullptr;
+    if (!windowHandle()
+        || !windowHandle()->screen()
+        || !changed
+        || windowHandle()->screen() == changed) {
+        moveToScreen();
+    }
 }
 
 void ShotScreen::keyPressEvent(QKeyEvent* e)
