@@ -450,7 +450,7 @@ const style::icon *ChatTypeIcon(
 			: (selected
 				? st::dialogsChannelIconOver
 				: st::dialogsChannelIcon));
-	} else if (const auto user = peer->asUser()) {
+	} /*else if (const auto user = peer->asUser()) {
 		if (ShowUserBotIcon(user)) {
 			return &(active
 				? st::dialogsBotIconActive
@@ -458,7 +458,7 @@ const style::icon *ChatTypeIcon(
 					? st::dialogsBotIconOver
 					: st::dialogsBotIcon));
 		}
-	}
+	}*/
 	return nullptr;
 }
 
