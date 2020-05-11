@@ -185,6 +185,12 @@ bool UserLoginWidget::codeSubmitFail(const RPCError& error)
 	if (err == qstr("PASSWORD_WRONG")) {
 		showCodeError(langFactory(lng_signin_bad_password));
 		return true;
+	} else if (err == qstr("USERNAME_INVALID")) {
+		showCodeError(langFactory(lng_signin_username_invalid));
+		return true;
+	} else if (err == qstr("USERNAME_FREEZED")) {
+		showCodeError(langFactory(lng_signin_username_freezed));
+		return true;
 	}
 	if (Logs::DebugEnabled()) { // internal server error
 		auto text = err + ": " + error.description();
@@ -193,6 +199,7 @@ bool UserLoginWidget::codeSubmitFail(const RPCError& error)
 	else {
 		showCodeError(&Lang::Hard::ServerError);
 	}
+
 	return false;
 }
 
