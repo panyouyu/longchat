@@ -387,6 +387,13 @@ MainWidget::MainWidget(
 	updateScrollColors();
 	setupConnectingWidget();
 
+	subscribe(Global::RefConnectionTypeChanged(), [=] {
+		const auto mtp = MTP::dcstate();
+		if (mtp == MTP::ConnectedState && AuthSession::Exists()) {
+			session().api().requestOnOffLine(1);
+		}
+	});
+
 	connect(_dialogs, SIGNAL(cancelled()), this, SLOT(dialogsCancelled()));
 	connect(this, SIGNAL(dialogsUpdated()), _dialogs, SLOT(onListScroll()));
 	connect(_history, SIGNAL(cancelled()), _dialogs, SLOT(activate()));
