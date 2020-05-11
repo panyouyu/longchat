@@ -544,18 +544,6 @@ FeedUserpicButton {
 	innerPart: UserpicButton;
 }
 
-MainMenuButton {
-	iconSize: size;
-	icon: icon;
-	iconOver: icon;
-	bg: color;
-	bgOver: color;
-	font: font;
-	interval: pixels;
-	margin: margins;
-	ripple: RippleAnimation;
-}
-
 InfoProfileButton {
 	textFg: color;
 	textFgOver: color;
@@ -1122,17 +1110,6 @@ defaultFeedUserpicButton: FeedUserpicButton {
 	innerSize: 76px;
 	innerPosition: point(-1px, -1px);
 	innerPart: defaultUserpicButton;
-}
-defaultMainMenuButton: MainMenuButton {
-	iconSize: size(28px, 28px);
-	bg: leftMenuBg;
-	bgOver: leftMenuBgOver;
-	font: font(14px);
-	interval: 4px;
-	margin: margins(-1px, 16px, -1px, 16px);
-	ripple: RippleAnimation(defaultRippleAnimation) {
-		color: leftMenuBgRipple;
-	}
 }
 
 historyToDownBelow: icon {

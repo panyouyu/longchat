@@ -87,47 +87,29 @@ notifySendReply: IconButton {
 titleUnreadCounterTop: 6px;
 titleUnreadCounterRight: 35px;
 
-mainMenuWidth: 70px;
+mainMenuWidth: 274px;
 mainMenuCoverHeight: 134px;
 mainMenuUserpicLeft: 24px;
-mainMenuUserpicTop: 44px;
+mainMenuUserpicTop: 20px;
 mainMenuUserpic: UserpicButton(defaultUserpicButton) {
 	size: size(48px, 48px);
 	photoSize: 48px;
 }
-mainMenuUnReadCountBg: leftMenuUnReadBg;
-mainMenuUnReadCountFg: leftMenuUnReadFg;
-mainMenuUnReadCountFont: font(12px bold);
-mainMenuUnReadCountPadding: 5px;
-mainMenuUnReadCountHeight: 19px;
+mainMenuCloudButton: IconButton {
+	width: 64px;
+	height: 64px;
 
-mainMenuLogo: icon {{"main_menu_logo", leftMenuIconFgOver}};
-
-mainMenuMessage: icon {{"main_menu_message", leftMenuIconFg}};
-mainMenuMessageOver: icon {{"main_menu_message", leftMenuIconFgOver}};
-mainMenuMessageButton: MainMenuButton(defaultMainMenuButton) {
-	icon: mainMenuMessage;
-	iconOver: mainMenuMessageOver;
+	icon: icon {
+//		{ "menu_cloud", mainMenuCloudFg },
+	};
+	iconPosition: point(22px, 22px);
 }
-mainMenuContact: icon {{"main_menu_contact", leftMenuIconFg}};
-mainMenuContactOver: icon {{"main_menu_contact", leftMenuIconFgOver}};
-mainMenuContactButton: MainMenuButton(defaultMainMenuButton) {
-	icon: mainMenuContact;
-	iconOver: mainMenuContactOver;
-}
-mainMenuCall: icon {{"main_menu_call", leftMenuIconFg}};
-mainMenuCallOver: icon {{"main_menu_call", leftMenuIconFgOver}};
-mainMenuCallButton: MainMenuButton(defaultMainMenuButton) {
-	icon: mainMenuCall;
-	iconOver: mainMenuCallOver;
-}
-mainMenuSetting: icon {{"main_menu_setting", leftMenuIconFg}};
-mainMenuSettingOver: icon {{"main_menu_setting", leftMenuIconFgOver}};
-mainMenuSettingButton: MainMenuButton(defaultMainMenuButton) {
-	icon: mainMenuSetting;
-	iconOver: mainMenuSettingOver;
-}
-
+mainMenuCloudSize: 32px;
+mainMenuResetScaleFont: font(20px semibold);
+mainMenuResetScaleLeft: 36px;
+mainMenuResetScaleRight: 12px;
+mainMenuResetScaleTop: 2px;
+mainMenuResetScaleIconLeft: 5px;
 mainMenuCoverTextLeft: 30px;
 mainMenuCoverNameTop: 84px;
 mainMenuCoverStatusTop: 102px;

@@ -55,7 +55,6 @@ settingsIconChat: icon {{ "settings_chat", menuIconFg }};
 settingsIconGeneral: icon {{ "settings_advanced", menuIconFg }};
 settingsIconPrivacySecurity: icon {{ "settings_privacy_security", menuIconFg }};
 settingsIconLanguage: icon {{ "settings_language", menuIconFg }};
-settingsIconNightMode: icon{{"menu_night_mode", menuIconFg}};
 settingsIconInterfaceScale: icon {{ "settings_interface_scale", menuIconFg }};
 settingsIconFaq: icon {{ "settings_faq", menuIconFg }};
 settingsIconStickers: icon {{ "settings_stickers", menuIconFg }};

@@ -343,7 +343,7 @@ HitTestResult MainWindow::hitTest(const QPoint &p) const {
 }
 
 void MainWindow::initSize() {
-	setMinimumWidth(st::mainMenuWidth + st::windowMinWidth);
+	setMinimumWidth(st::windowMinWidth);
 	setMinimumHeight((_title ? _title->height() : 0) + st::windowMinHeight);
 
 	auto position = cWindowPos();
@@ -558,7 +558,7 @@ void MainWindow::showRightColumn(object_ptr<TWidget> widget) {
 		App::wnd()->setInnerFocus();
 	}
 	auto nowRightWidth = _rightColumn ? _rightColumn->width() : 0;
-	setMinimumWidth(st::mainMenuWidth + st::windowMinWidth + nowRightWidth);
+	setMinimumWidth(st::windowMinWidth + nowRightWidth);
 	if (!isMaximized()) {
 		tryToExtendWidthBy(wasWidth + nowRightWidth - wasRightWidth - width());
 	} else {

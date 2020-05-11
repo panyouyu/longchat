@@ -2504,12 +2504,8 @@ void MainWidget::updateControlsGeometry() {
 			}
 			else if (session().settings().thirdSectionGuestEnabled()) {
 				if (const auto key = _controller->activeChatCurrent()) {
-					if (key.peer()->isSelf()) {
-						session().settings().setThirdSectionGuestEnabled(false);
-					} else {
-						_controller->showSection(Guest::Memento(object_ptr<Guest::Selector>(this, _controller, key)),
-							params.withThirdColumn());
-					}					
+					_controller->showSection(Guest::Memento(object_ptr<Guest::Selector>(this, _controller, key)),
+						params.withThirdColumn());
 				}
 			}
 		}

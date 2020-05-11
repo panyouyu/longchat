@@ -406,19 +406,18 @@ void paintRow(
 
 struct UnreadBadgeSizeData {
 	QImage circle;
-	QPixmap left[7], right[7];
+	QPixmap left[6], right[6];
 };
 class UnreadBadgeStyleData : public Data::AbstractStructure {
 public:
 	UnreadBadgeSizeData sizes[UnreadBadgeSizesCount];
-	style::color bg[7] = {
+	style::color bg[6] = {
 		st::dialogsUnreadBg,
 		st::dialogsUnreadBgOver,
 		st::dialogsUnreadBgActive,
 		st::dialogsUnreadBgMuted,
 		st::dialogsUnreadBgMutedOver,
-		st::dialogsUnreadBgMutedActive,
-		st::leftMenuUnReadBg
+		st::dialogsUnreadBgMutedActive
 	};
 };
 Data::GlobalStructurePointer<UnreadBadgeStyleData> unreadBadgeStyle;
@@ -474,7 +473,7 @@ const style::icon *FeedTypeIcon(
 void paintUnreadBadge(Painter &p, const QRect &rect, const UnreadBadgeStyle &st) {
 	Assert(rect.height() == st.size);
 
-	int index = (st.menu ? 0x06 : 0x00) + (st.muted ? 0x03 : 0x00) + (st.active ? 0x02 : (st.selected ? 0x01 : 0x00));
+	int index = (st.muted ? 0x03 : 0x00) + (st.active ? 0x02 : (st.selected ? 0x01 : 0x00));
 	int size = st.size, sizehalf = size / 2;
 
 	unreadBadgeStyle.createIfNull();
@@ -504,7 +503,6 @@ UnreadBadgeStyle::UnreadBadgeStyle()
 , active(false)
 , selected(false)
 , muted(false)
-, menu(false)
 , size(st::dialogsUnreadHeight)
 , padding(st::dialogsUnreadPadding)
 , sizeId(UnreadBadgeInDialogs)

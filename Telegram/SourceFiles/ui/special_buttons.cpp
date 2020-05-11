@@ -8,7 +8,6 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/special_buttons.h"
 
 #include "styles/style_boxes.h"
-#include "styles/style_window.h"
 #include "styles/style_history.h"
 #include "dialogs/dialogs_layout.h"
 #include "ui/effects/ripple_animation.h"
@@ -21,7 +20,6 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "data/data_feed.h"
 #include "data/data_channel.h"
 #include "history/history.h"
-#include "dialogs/dialogs_layout.h"
 #include "core/file_utilities.h"
 #include "core/application.h"
 #include "boxes/photo_crop_box.h"
@@ -1067,91 +1065,4 @@ void ScreenShotButton::showOptions()
 		}
 	});
 }
-
-MainMenuButton::MainMenuButton(QWidget* parent, const style::MainMenuButton& st, QString text)
-	: RippleButton(parent, st.ripple)
-	, _st(st)
-	, _text(text) {
-}
-
-void MainMenuButton::setChecked(bool checked)
-{
-	if (_checked != checked) {
-		_checked = checked;
-		update();
-	}
-}
-
-int MainMenuButton::resizeGetHeight(int newWidth)
-{
-	return _st.margin.top() + _st.iconSize.height() + _st.interval + _st.font->height + _st.margin.bottom();
-}
-
-void MainMenuButton::paintEvent(QPaintEvent* e)
-{
-	Painter p(this);
-	auto over = isOver() || isDown() || isChecked();
-	p.fillRect(rect(), over ? _st.bgOver : _st.bg);
-
-	paintRipple(p, 0, 0);
-
-	auto icon_x = (width() - _st.iconSize.width()) >> 1;
-	auto icon_y = _st.margin.top();
-
-	auto icon = over ? _st.iconOver : _st.icon;
-	icon.paint(p, icon_x, icon_y, width());
-
-	auto text_w = _st.font->width(_text);
-	auto text_h = _st.font->height;
-	auto text_x = (width() - text_w) >> 1;
-	auto text_y = _st.margin.top() + _st.iconSize.height() + _st.interval;
-	p.setPen(over ? st::leftMenuIconFgOver : st::leftMenuIconFg);
-	p.drawText(text_x, text_y, text_w, text_h, style::al_center, _text);
-}
-
-QPoint MainMenuButton::iconTopRight() const {
-	return { width() - ((width() - _st.iconSize.width()) >> 1), _st.margin.top() };
-}
-
-MainMenuMsgButton::MainMenuMsgButton(QWidget* parent, const style::MainMenuButton& st, QString text, bool checked)
-	: MainMenuButton(parent, st, text) {
-	setChecked(checked);
-}
-
-void MainMenuMsgButton::updateUnreadCounter()
-{
-	if (!Global::started() || App::quitting()) return;
-
-	_unreadCount = AuthSession::Exists() ? Auth().data().unreadBadge() : 0;
-	update();
-}
-
-void MainMenuMsgButton::paintEvent(QPaintEvent* e)
-{
-	MainMenuButton::paintEvent(e);
-
-	if (_unreadCount == 0) return;
-
-	QString str = _unreadCount > 99 ? qsl("99+") : QString("%1").arg(_unreadCount);
-
-	using namespace Dialogs::Layout;
-
-	UnreadBadgeStyle st;
-	st.menu = true;
-	st.sizeId = Dialogs::Layout::UnreadBadgeInLeftMenu;
-	st.size = st::mainMenuUnReadCountHeight;
-	st.padding = st::mainMenuUnReadCountPadding;
-
-	int unreadWidth = st::mainMenuUnReadCountFont->width(str);
-	int unreadRectWidth = unreadWidth + 2 * st::mainMenuUnReadCountPadding;
-	int unreadRectHeight = st::mainMenuUnReadCountHeight;
-	accumulate_max(unreadRectWidth, unreadRectHeight);
-
-	int unreadRectRight = iconTopRight().x() + (unreadRectWidth >> 1);
-	int unreadRectTop = iconTopRight().y() - (unreadRectHeight >> 1);
-
-	Painter p(this);
-	paintUnreadCount(p, str, unreadRectRight, unreadRectTop, st);
-}
-
 } // namespace Ui

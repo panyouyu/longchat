@@ -22,9 +22,6 @@ namespace Settings {
 void SetupLanguageButton(
 	not_null<Ui::VerticalLayout*> container,
 	bool icon = true);
-void SetupNightMode(
-	not_null<Ui::VerticalLayout*> container,
-	bool icon = true);
 bool HasInterfaceScale();
 void SetupInterfaceScale(
 	not_null<Ui::VerticalLayout*> container,

@@ -148,7 +148,6 @@ void MainWindow::firstShow() {
 void MainWindow::clearWidgetsHook() {
 	Expects(_passcodeLock == nullptr || !Global::LocalPasscode());
 
-	_mainMenu.destroy();
 	_main.destroy();
 	_passcodeLock.destroy();
 	_intro.destroy();
@@ -173,9 +172,6 @@ void MainWindow::setupPasscodeLock() {
 
 	Core::App().hideMediaView();
 	Ui::hideSettingsAndLayer(anim::type::instant);
-	if (_mainMenu) {
-		_mainMenu->hide();
-	}
 	if (_main) {
 		_main->hide();
 	}
@@ -197,9 +193,8 @@ void MainWindow::clearPasscodeLock() {
 	_passcodeLock.destroy();
 	if (_intro) {
 		_intro->showAnimated(bg, true);
-	} else if (_main && _mainMenu) {
+	} else if (_main) {
 		_main->showAnimated(bg, true);
-		_mainMenu->showAnimated(Ui::GrabWidget(_mainMenu));
 		Core::App().checkStartUrl();
 	} else {
 		Core::App().startMtp();
@@ -238,9 +233,6 @@ void MainWindow::setupMain() {
 	Auth().api().requestOnOffLine(1);
 	clearWidgets();
 
-	_mainMenu.create(bodyWidget(), controller());
-	_mainMenu->showAnimated(Ui::GrabWidget(_mainMenu));
-	
 	_main.create(bodyWidget(), controller());
 	_main->show();
 	updateControlsGeometry();
@@ -760,10 +752,7 @@ void MainWindow::updateControlsGeometry() {
 
 	auto body = bodyWidget()->rect();
 	if (_passcodeLock) _passcodeLock->setGeometry(body);
-	auto main_rect = body.marginsRemoved({ st::mainMenuWidth, 0, 0, 0 });
-	if (_main) _main->setGeometry(main_rect);
-	auto menu_rect = body.marginsRemoved({ 0, 0, main_rect.width(), 0 });
-	if (_mainMenu) _mainMenu->setGeometry(menu_rect);	
+	if (_main) _main->setGeometry(body);
 	if (_intro) _intro->setGeometry(body);
 	if (_layer) _layer->setGeometry(body);
 	if (_mediaPreview) _mediaPreview->setGeometry(body);
