@@ -204,11 +204,11 @@ ApiWrap::ApiWrap(not_null<AuthSession*> session)
 void ApiWrap::requestChangelog(
 		const QString &sinceVersion,
 		Fn<void(const MTPUpdates &result)> callback) {
-	request(MTPhelp_GetAppChangelog(
-		MTP_string(sinceVersion)
-	)).done(
-		callback
-	).send();
+	//request(MTPhelp_GetAppChangelog(
+	//	MTP_string(sinceVersion)
+	//)).done(
+	//	callback
+	//).send();
 }
 
 void ApiWrap::refreshProxyPromotion() {
