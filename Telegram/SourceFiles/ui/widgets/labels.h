@@ -68,7 +68,6 @@ private:
 	int _textWidth;
 
 	const style::LabelSimple &_st;
-
 };
 
 class LabelVerificationCode : public RpWidget {
@@ -112,7 +111,6 @@ private:
 	QColor* colorArray;
 
 	const style::LabelVerificationCode& _st;
-
 };
 
 class FlatLabel : public RpWidget, public ClickHandlerHost {

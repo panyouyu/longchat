@@ -506,6 +506,7 @@ void Application::startMtp() {
 			App::main()->getDifference();
 		}
 	});
+	connect(_mtproto.get(), SIGNAL(unReplyNum(qint32)), _window.get(), SIGNAL(unReplyNum(qint32)));
 
 	if (!_private->mtpKeysToDestroy.empty()) {
 		destroyMtpKeys(base::take(_private->mtpKeysToDestroy));
@@ -534,6 +535,7 @@ void Application::startMtp() {
 			MTPint(), // bot_info_version
 			MTPstring(), // restriction_reason
 			MTPstring(), // bot_inline_placeholder
+			MTPstring(),
 			MTPstring())); // lang_code
 		Local::readSelf(
 			base::take(_private->authSessionUserSerialized),

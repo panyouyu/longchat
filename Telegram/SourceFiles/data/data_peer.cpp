@@ -101,6 +101,7 @@ PeerData::PeerData(not_null<Data::Session*> owner, PeerId id)
 , _owner(owner)
 , _userpicEmpty(createEmptyUserpic()) {
 	nameText.setText(st::msgNameStyle, QString(), Ui::NameTextOptions());
+	labelText.setText(st::msgNameStyle, QString(), Ui::NameTextOptions());
 }
 
 Data::Session &PeerData::owner() const {
@@ -130,7 +131,7 @@ void PeerData::updateNameDelayed(
 		}
 	}
 	++nameVersion;
-	name = newName;
+	name = newName;	
 	nameText.setText(st::msgNameStyle, name, Ui::NameTextOptions());
 	refreshEmptyUserpic();
 
@@ -424,6 +425,37 @@ bool PeerData::setAbout(const QString &newAbout) {
 	return true;
 }
 
+bool PeerData::setExtra(const QByteArray &json) {
+	auto error = QJsonParseError{ 0, QJsonParseError::NoError };
+	const auto document = QJsonDocument::fromJson(json, &error);
+	if (error.error != QJsonParseError::NoError) {
+		DEBUG_LOG(("translate user label json failed!"));
+		return false;
+	}
+	else if (!document.isObject()) {
+		DEBUG_LOG(("Error: json of user label not an object received."));
+		return false;
+	}
+	auto object = document.object();
+	auto key = qsl("vip_name");
+	auto it = object.constFind(key);
+	if (it == object.constEnd()) {
+		DEBUG_LOG(("Error: json of key(%1) not find").arg(key));
+		return false;
+	} else if (!(*it).isString()) {
+		DEBUG_LOG(("Error: json of key(%1) not a string").arg(key));
+		return false;
+	} else {
+		auto newLabel = (*it).toString();
+		if (labelText.toString() == newLabel) {
+			return false;
+		}
+		labelText.setText(st::msgNameStyle, newLabel, Ui::NameTextOptions());
+		Notify::peerUpdatedDelayed(this, UpdateFlag::LabelChanged);
+		return true;
+	}	
+}
+
 void PeerData::fillNames() {
 	_nameWords.clear();
 	_nameFirstLetters.clear();
@@ -597,6 +629,10 @@ const Text &PeerData::dialogName() const {
 		: (isUser() && !asUser()->phoneText.isEmpty())
 			? asUser()->phoneText
 			: nameText;
+}
+
+const Text& PeerData::labelName() const {
+	return labelText;
 }
 
 const QString &PeerData::shortName() const {

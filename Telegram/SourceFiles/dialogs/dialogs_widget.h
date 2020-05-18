@@ -130,6 +130,7 @@ public slots:
 	void onContactStatus();
 	void onKfSessionTimeOut(int64 peerId);
 
+	void updateUnReplyState(int unReplyNum);
 private slots:
 	void onDraggingScrollTimer();
 
@@ -190,6 +191,8 @@ private:
 	bool searchFailed(DialogsSearchRequestType type, const RPCError &error, mtpRequestId req);
 	bool peopleFailed(const RPCError &error, mtpRequestId req);
 
+	void updateServiceState();
+
 	bool _dragInScroll = false;
 	bool _dragForward = false;
 	QTimer _chooseByDragTimer;
@@ -216,7 +219,8 @@ private:
 	class BottomButton;
 	object_ptr<BottomButton> _updateTelegram = { nullptr };
 	object_ptr<BottomButton> _loadMoreChats = { nullptr };
-	object_ptr<BottomButton> _custQueueCount = { nullptr };
+	object_ptr<BottomButton> _serviceState = { nullptr };
+	int _queue_num = 0, _unreply_num = 0;
 	std::unique_ptr<Window::ConnectionState> _connecting;
 
 	Ui::Animations::Simple _scrollToAnimation;

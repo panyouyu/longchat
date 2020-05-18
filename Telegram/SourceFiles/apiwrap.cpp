@@ -4351,7 +4351,7 @@ void ApiWrap::forwardMessages(
 		const auto finalFlags = sendFlags
 			| (currentGroupId == MessageGroupId()
 				? MTPmessages_ForwardMessages::Flag(0)
-				: MTPmessages_ForwardMessages::Flag::f_grouped);
+				: MTPmessages_ForwardMessages::Flag::f_grouped);	
 		history->sendRequestId = request(MTPmessages_ForwardMessages(
 			MTP_flags(finalFlags),
 			forwardFrom->input,
@@ -5438,7 +5438,97 @@ void ApiWrap::clearPeerPhoto(not_null<PhotoData*> photo) {
 }
 
 void ApiWrap::requestPeerRelatedInfo(not_null<PeerData*> peer) {
+	if (!peer->isUser() || peer->isSelf()) return;
 
+	if (UserData* user = peer->asUser()) {
+		request(MTPkegu_GetUserInfo(MTP_int(user->id), MTP_int(0))
+		).done([=](const MTPDataJSON& result) {
+			auto error = QJsonParseError{ 0, QJsonParseError::NoError };
+			const auto document = QJsonDocument::fromJson(result.c_dataJSON().vdata.v, &error);
+			if (error.error != QJsonParseError::NoError) {
+				DEBUG_LOG(("Error: failed to parse json of user related info, error: %1"
+					).arg(error.errorString()));
+				return;
+			} else if (!document.isObject()) {
+				DEBUG_LOG(("Error: json of user related info not an object received."));
+				return;
+			}
+			auto object = document.object();
+
+			QList<QPair<QString, QStringList>> userInfo;
+			for (auto i = object.constBegin(), e = object.constEnd(); i != e; ++i) {
+				auto title = i.key();
+				if (title.startsWith(qsl("3-"))) {
+					if ((*i).isString()) {
+						auto url = (*i).toString();
+						user->setUrl(std::move(url));
+					}
+					continue;
+				}
+				
+				QStringList contentList;
+				if ((*i).isObject()) {
+					for (auto ii = (*i).toObject().constBegin(), ee = (*i).toObject().constEnd(); ii != ee; ++ii) {
+						if ((*ii).isString()) {
+							auto key = ii.key();
+							key = key.right(key.size() - (key.indexOf('-') + 1));
+							contentList.append(key + qsl(": ") + (*ii).toString());
+						}
+					}
+				}
+				title = title.right(title.size() - (title.indexOf('-') + 1));
+				userInfo.append({ title, contentList });
+			}
+			user->setUserInfo(std::move(userInfo));
+
+			/*auto url_key = qsl("player_info_url");
+			auto it = object.constFind(url_key);
+			if (it == object.constEnd()) {
+				DEBUG_LOG(("Error: json of user related info not contains key(%1)").arg(url_key));
+				return;
+			} else if (!(*it).isString()) {
+				DEBUG_LOG(("Error: json of user url not string"));
+				return;
+			} else {
+				user->setUrl((*it).toString());
+			}
+
+			it = object.constFind(qsl("data"));
+			if (it == object.constEnd()) {
+				DEBUG_LOG(("Error: json of user related info not contains data"));
+				return;
+			} else if (!(*it).isObject()) {
+				DEBUG_LOG(("Error: json of user data not an object received"));
+			} else {
+				QList<QPair<QString, QStringList>> userInfo;
+				auto data = (*it).toObject();
+				for (auto i = data.constBegin(), e = data.constEnd(); i != e; ++i) {
+					auto title = i.key();
+					QStringList contentList;
+					if (!(*i).isObject()) {
+						DEBUG_LOG(("Error: json of user related info:"
+							"the value of key(%1) not an object received").arg(i.key()));
+						continue;
+					} else {
+						auto value = (*i).toObject();
+						for (auto j = value.constBegin(), ee = value.constEnd(); j != ee; ++j) {
+							if (!(*j).isString()) {
+								DEBUG_LOG(("Error: json of user related info:"
+									"the value of %1 not an string received").arg(j.key()));
+								continue;
+							} else {
+								auto type = j.key();
+								type = type.right(type.size() - (type.indexOf('_') + 1));
+								contentList.append(type + qsl(": ") + (*j).toString());
+							}
+						}
+					}
+					userInfo.append({ title.right(title.size() - (title.indexOf('_') + 1)), contentList });
+				}
+				user->setUserInfo(userInfo);
+			}*/
+		}).send();
+	}
 }
 
 void ApiWrap::requestPeerLabels(not_null<PeerData*> peer) {

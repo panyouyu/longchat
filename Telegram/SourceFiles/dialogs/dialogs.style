@@ -12,6 +12,7 @@ using "ui/widgets/widgets.style";
 dialogsUnreadFont: font(12px bold);
 dialogsUnreadHeight: 19px;
 dialogsUnreadPadding: 5px;
+dialogsLabelPadding: 5px;
 
 dialogsRipple: RippleAnimation(defaultRippleAnimation) {
 	color: dialogsRippleBg;
@@ -187,6 +188,7 @@ historySendingInvertedIcon: icon {{ "dialogs_sending", historySendingInvertedIco
 historyViewsSendingIcon: icon {{ "dialogs_sending", historySendingInIconFg, point(3px, 0px) }};
 historyViewsSendingInvertedIcon: icon  {{ "dialogs_sending", historySendingInvertedIconFg, point(3px, 0px) }};
 
+bottomButtonPadding: 2px;
 dialogsUpdateButton: FlatButton {
 	color: activeButtonFg;
 	overColor: activeButtonFgOver;
@@ -195,9 +197,9 @@ dialogsUpdateButton: FlatButton {
 	overBgColor: activeButtonBgOver;
 
 	width: -34px;
-	height: 46px;
+	height: 36px;
 
-	textTop: 14px;
+	textTop: 9px;
 
 	font: semiboldFont;
 	overFont: semiboldFont;
@@ -217,9 +219,6 @@ dialogsLoadMoreButton: FlatButton(dialogsUpdateButton) {
 	ripple: RippleAnimation(defaultRippleAnimation) {
 		color: lightButtonBgRipple;
 	}
-
-	height: 36px;
-	textTop: 9px;
 }
 dialogsLoadMore: icon {{ "install_update-flip_vertical", lightButtonFg }};
 dialogsLoadMoreLoading: InfiniteRadialAnimation(defaultInfiniteRadialAnimation) {
@@ -227,6 +226,19 @@ dialogsLoadMoreLoading: InfiniteRadialAnimation(defaultInfiniteRadialAnimation) 
 	thickness: 3px;
 	size: size(12px, 12px);
 }
+
+dialogsServiceStateButton: FlatButton(dialogsUpdateButton) {
+	color: dialogsServiceStateFg;
+	overColor: dialogsServiceStateFg;
+
+	bgColor: dialogsServiceStateBg;
+	overBgColor: dialogsServiceStateBg;
+
+	ripple: RippleAnimation(defaultRippleAnimation) {
+		color: dialogsServiceStateBg;
+	}
+}
+dialogsServiceState: icon {{ "service_state", attentionButtonFg }};
 
 dialogsForwardHeight: 32px;
 dialogsForwardTextLeft: 35px;

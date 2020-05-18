@@ -10,7 +10,7 @@ namespace Window {
 namespace Ui {
 	class ScrollArea;
 	class InputField;
-	class FlatButton;
+	class LeftFlatButton;
 }
 
 namespace QuickReply {
@@ -36,14 +36,14 @@ private:
 	void loadInfo(not_null<UserData*> user);
 	void loadLabels(not_null<UserData*> user);
 	void updateBlock(not_null<UserData*> user);
-	QRect scrollRect() const;
+	QRect intervalRect() const;
 	void updateControlsGeometry();
 	Window::Controller* _controller;
-	object_ptr<QuickReply::TopBar> _topBar;
 	object_ptr<Ui::ScrollArea> _scroll;
 	QPointer<InfoWidget> _info;
 	object_ptr<PropertyWidget> _property;
-	object_ptr<Ui::FlatButton> _block;
+	object_ptr<Ui::LeftFlatButton> _url;
+	object_ptr<Ui::LeftFlatButton> _block;
 	QPointer<ConfirmBox> _confirmBox;
 };
 

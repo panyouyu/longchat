@@ -215,7 +215,7 @@ storage.fileMp4#b3cea0e4 = storage.FileType;
 storage.fileWebp#1081464c = storage.FileType;
 
 userEmpty#200250ba id:int = User;
-user#2e13f4c3 flags:# self:flags.10?true contact:flags.11?true mutual_contact:flags.12?true deleted:flags.13?true bot:flags.14?true bot_chat_history:flags.15?true bot_nochats:flags.16?true verified:flags.17?true restricted:flags.18?true min:flags.20?true bot_inline_geo:flags.21?true support:flags.23?true id:int access_hash:flags.0?long first_name:flags.1?string last_name:flags.2?string username:flags.3?string phone:flags.4?string photo:flags.5?UserProfilePhoto status:flags.6?UserStatus bot_info_version:flags.14?int restriction_reason:flags.18?string bot_inline_placeholder:flags.19?string lang_code:flags.22?string = User;
+user#2e13f4c3 flags:# self:flags.10?true contact:flags.11?true mutual_contact:flags.12?true deleted:flags.13?true bot:flags.14?true bot_chat_history:flags.15?true bot_nochats:flags.16?true verified:flags.17?true restricted:flags.18?true min:flags.20?true bot_inline_geo:flags.21?true support:flags.23?true id:int access_hash:flags.0?long first_name:flags.1?string last_name:flags.2?string username:flags.3?string phone:flags.4?string photo:flags.5?UserProfilePhoto status:flags.6?UserStatus bot_info_version:flags.14?int restriction_reason:flags.18?string bot_inline_placeholder:flags.19?string lang_code:flags.22?string extra:flags.31?string = User;
 
 userProfilePhotoEmpty#4f11bae1 = UserProfilePhoto;
 userProfilePhoto#ecd75d8c photo_id:long photo_small:FileLocation photo_big:FileLocation dc_id:int = UserProfilePhoto;
@@ -1047,7 +1047,7 @@ tlv#3b9aca26 tlv_constructor:int tlv_length:int tlv_data:bytes = TLV;
 tlv_list#3b9aca23 tlvs:Vector<TLV> = TlvList;
 userGroupData#3b9aca0e version:int is_whole:int is_update:int tag_users:Vector<UserGroup> tlv_list:TlvList = UserGroupData;
 userGroupReturn#3b9aca15 is_success:int = UserGroupReturn;
-userGroupStatusRes#3b9aca1f flags:int other_id:int = UserGroupStatusRes;
+userGroupStatusRes#3b9aca1f flags:# other_id:int other_int:flags.0?int other_str:flags.1?string tlv:TlvList = UserGroupStatusRes;
 switchKefu#3b9acdf2 kefu_id:int waiting_count:int service_count:int service_max:int nick_name:string = SwitchKefu;
 switchKefuList#3b9acdf1 kefus:Vector<SwitchKefu> = SwitchKefuList;
 userLabels#3b9acdf5 labels:Vector<string> = UserLabels;
@@ -1258,6 +1258,7 @@ contacts.modUserGroups#3b9aca0b tag_id:long tag_name:string user_ids:Vector<long
 kefu.getSwitchKefus#3b9acdf0 player_user_id:int = SwitchKefuList;
 kefu.switchKefu#3b9acdef kefu_user_id:int player_user_id:int = Bool;
 
+kegu.getUserInfo#e2b66055 user_id:int bot_id:int = DataJSON;
 kefu.getUserLabels#3b9acdf4 user_id:int = UserLabels;
 kefu.modifyUserLabel#3b9acdf3 user_id:int label:string is_delete:int = Bool;
 kefu.blockUser#3b9acdf6 user_id:int = Bool;

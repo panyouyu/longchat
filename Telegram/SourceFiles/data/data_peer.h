@@ -189,6 +189,7 @@ public:
 	}
 
 	[[nodiscard]] const Text &dialogName() const;
+	[[nodiscard]] const Text &labelName() const;
 	[[nodiscard]] const QString &shortName() const;
 	[[nodiscard]] QString userName() const;
 
@@ -283,6 +284,7 @@ public:
 	const QString &about() const {
 		return _about;
 	}
+	bool setExtra(const QByteArray &json);
 
 	enum LoadedStatus {
 		NotLoaded = 0x00,
@@ -293,6 +295,7 @@ public:
 	const PeerId id;
 	QString name;
 	Text nameText;
+	Text labelText;
 	LoadedStatus loadedStatus = NotLoaded;
 	MTPinputPeer input;
 
@@ -339,7 +342,6 @@ private:
 	MsgId _pinnedMessageId = 0;
 
 	QString _about;
-
 };
 
 namespace Data {

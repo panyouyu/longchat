@@ -197,6 +197,7 @@ signals:
 		QString host,
 		QStringList ips,
 		qint64 expireAt);
+	void unReplyNum(qint32);
 
 private slots:
 	void onKeyDestroyed(qint32 shiftedDcId);

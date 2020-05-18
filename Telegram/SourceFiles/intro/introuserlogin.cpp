@@ -24,61 +24,44 @@ UserLoginWidget::UserLoginWidget(QWidget* parent, Widget::Data* data)
 	, _pwdField(this, st::introUserLoginName, langFactory(lng_login_input_password))
 	, _codeField(this, st::introUserLoginCode, langFactory(lng_login_input_code))
 	, _picCode(this, st::introUserLoginPicCode)
-	, _changeCode(this, lang(lng_login_code_change))
-	//, _checkRequest(this)
-{
-	        _checkRequest = new QTimer(this);
-			subscribe(Lang::Current().updated(), [this] { refreshLang(); });
+	, _changeCode(this, lang(lng_login_code_change)) {
+	_checkRequest = new QTimer(this);
+	connect(_unameField, SIGNAL(changed()), this, SLOT(onInputUnameChange()));
+	connect(_pwdField, SIGNAL(changed()), this, SLOT(onInputPwdChange()));
+	connect(_changeCode, SIGNAL(clicked()), this, SLOT(onChangeCode()));
+	connect(_unameField, &Ui::InputField::submitted, this, [this] { submit(); });
+	connect(_pwdField, &Ui::PasswordInput::submitted, this, [this] { submit(); });
+	connect(_codeField, &Ui::InputField::submitted, this, [this] { submit(); });
 
-			connect(_unameField, SIGNAL(changed()), this, SLOT(onInputUnameChange()));
-			connect(_pwdField, SIGNAL(changed()), this, SLOT(onInputPwdChange()));
-			connect(_changeCode, SIGNAL(clicked()), this, SLOT(onChangeCode()));
-		    connect(_checkRequest, SIGNAL(timeout()), this, SLOT(onCheckRequest()));
-			hideDescription();
-			//setTitleText(langFactory(lng_login_input_title));
-			
-			//setErrorBelowLink(true);
-			initData();
-			
-			_imageLogo = QImageReader(":/gui/icons/pic_signin_logo.png", Q_NULLPTR).read();
-			setMouseTracking(true);
+	connect(_checkRequest, SIGNAL(timeout()), this, SLOT(onCheckRequest()));
+	hideDescription();
+	initData();
+
+	_imageLogo = QImageReader(":/gui/icons/pic_signin_logo.png", Q_NULLPTR).read();
+	setMouseTracking(true);
 }
 
-
-
-UserLoginWidget::~UserLoginWidget()
-{
-	delete _checkRequest;
+UserLoginWidget::~UserLoginWidget() {
 }
 
-void UserLoginWidget::setInnerFocus()
-{
-
+void UserLoginWidget::setInnerFocus() {
+	_unameField->setFocus();
 }
 
-void UserLoginWidget::onInputPwdChange()
-{
+void UserLoginWidget::onInputPwdChange() {
 	hideError();
 }
 
-void UserLoginWidget::onChangeCode()
-{
+void UserLoginWidget::onChangeCode() {
 	_picCode->onReflushVerification();
-	//_codeField->setText(_picCode->getVerificationCode());
+	_codeField->setFocus();
 }
 
-
-void UserLoginWidget::onInputUnameChange()
-{
+void UserLoginWidget::onInputUnameChange() {
 	hideError();
 }
 
-
-
-
-
-void UserLoginWidget::onCheckRequest()
-{
+void UserLoginWidget::onCheckRequest() {
 	auto status = MTP::state(_kefuLoginRequest);
 	if (status < 0) {
 		auto leftms = -status;
@@ -93,14 +76,7 @@ void UserLoginWidget::onCheckRequest()
 	}
 }
 
-void UserLoginWidget::refreshLang()
-{
-	updateControlsGeometry();
-}
-
-
-void UserLoginWidget::updateControlsGeometry()
-{
+void UserLoginWidget::updateControlsGeometry() {
 	_unameField->moveToLeft(contentLeft(), contentTop() + st::introUserLoginNameTop);
 	_pwdField->moveToLeft(contentLeft(), contentTop() + st::introUserLoginPwdTop);
 	_codeField->moveToLeft(contentLeft(), contentTop() + st::introUserLoginCodeTop);
@@ -108,55 +84,37 @@ void UserLoginWidget::updateControlsGeometry()
 	_changeCode->moveToLeft(contentLeft() + st::introUserLoginCodeChangeLeft, contentTop() + st::introUserLoginCodeTop + st::introUserLoginCodeMarginTop);
 	auto remUserTop = contentTop() + st::introUserLoginCodeTop;
 	remUserTop += _codeField->height();
-	//remUserTop += st::introUserLoginRemberUserTop; //³¬³ö´°¿Ú·¶Î§
-	//_remberUser->moveToLeft(contentLeft() + st::introUserLoginCodePicLeft + st::introUserLoginCodeMarginTop, remUserTop);//introUserLoginRemberUserLeft
-	//qDebug() << "rect.height:" << rect().height() << "" << rect().width() << remUserTop;
-	
-	
 }
 
-void UserLoginWidget::initData()
-{
-//	_remberUser->setChecked(Global::RemberUserName());
+void UserLoginWidget::initData() {
 	if (Global::RemberUserName()) {
 		_unameField->setText(Global::KefuUserName());
 	}
-	
-	//_pwdField->setText("kf123");
-	
 }
 
-void UserLoginWidget::saveSets()
-{
-	if (Global::RemberUserName())
-	{
+void UserLoginWidget::saveSets() {
+	if (Global::RemberUserName()) {
 		Global::SetKefuUserName(_unameField->getLastText());
 		Local::writeUserSettings();
 	}
 }
 
-
-
-void UserLoginWidget::activate()
-{	
+void UserLoginWidget::activate() {	
 	Step::activate();
 }
 
-void UserLoginWidget::cancelled()
-{
+void UserLoginWidget::cancelled() {
 	MTP::cancel(base::take(_kefuLoginRequest));
 }
 
-void UserLoginWidget::finished()
-{
+void UserLoginWidget::finished() {
 	Step::finished();
 	_checkRequest->stop();
 	rpcInvalidate();
 	cancelled();
 }
 
-void UserLoginWidget::codeSubmitDone(const MTPauth_Authorization& result)
-{
+void UserLoginWidget::codeSubmitDone(const MTPauth_Authorization& result) {
 	_kefuLoginRequest = 0;
 	auto& d = result.c_auth_authorization();
 	if (d.vuser.type() != mtpc_user || !d.vuser.c_user().is_self()) { // wtf?
@@ -169,8 +127,7 @@ void UserLoginWidget::codeSubmitDone(const MTPauth_Authorization& result)
 	finish(d.vuser);
 }
 
-bool UserLoginWidget::codeSubmitFail(const RPCError& error)
-{
+bool UserLoginWidget::codeSubmitFail(const RPCError& error) {
 	if (MTP::isFloodError(error)) {
 		stopCheck();
 		_kefuLoginRequest = 0;
@@ -183,13 +140,22 @@ bool UserLoginWidget::codeSubmitFail(const RPCError& error)
 	_kefuLoginRequest = 0;
 	auto& err = error.type();
 	if (err == qstr("PASSWORD_WRONG")) {
-		showCodeError(langFactory(lng_signin_bad_password));
+		showCodeError(langFactory(lng_signin_bad_password), [&] {
+			_pwdField->showError();
+			_pwdField->setFocus();
+		});		
 		return true;
 	} else if (err == qstr("USERNAME_INVALID")) {
-		showCodeError(langFactory(lng_signin_username_invalid));
+		showCodeError(langFactory(lng_signin_username_invalid), [&] {
+			_unameField->showError();
+			_unameField->setFocus();
+		});
 		return true;
 	} else if (err == qstr("USERNAME_FREEZED")) {
-		showCodeError(langFactory(lng_signin_username_freezed));
+		showCodeError(langFactory(lng_signin_username_freezed), [&] {
+			_unameField->showError();
+			_unameField->setFocus();
+		});
 		return true;
 	}
 	if (Logs::DebugEnabled()) { // internal server error
@@ -203,75 +169,69 @@ bool UserLoginWidget::codeSubmitFail(const RPCError& error)
 	return false;
 }
 
-void UserLoginWidget::showCodeError(Fn<QString()> textFactory)
-{
-	//if (textFactory) _unameField->showError();
-	//showError(std::move(textFactory));
-	Ui::show(Box<InformBox>(textFactory()));
+void UserLoginWidget::showCodeError(Fn<QString()> textFactory, Fn<void()> closedCallback) {
+	Ui::show(Box<InformBox>(textFactory(), closedCallback));
 }
 
-void UserLoginWidget::stopCheck()
-{
+void UserLoginWidget::stopCheck() {
 	_checkRequest->stop();
 }
 
-void UserLoginWidget::submit()
-{
-	//goNext(new Intro::PwdCheckWidget(parentWidget(), getData()));
-
-	QString veriCode = _picCode->getVerificationCode();
-	if (QString::compare(veriCode, _codeField->getLastText(), Qt::CaseInsensitive) != 0)
-	{
-		Ui::show(Box<InformBox>(lang(lng_login_input_code_error)));
-		return;
-	}
-
+void UserLoginWidget::submit() {
 	if (_kefuLoginRequest) {
 		return;
 	}
-
-	hideError();
-	QString userName = _unameField->getLastText();
-	QString userPwd = _pwdField->getLastText();
-	if (userName.isEmpty() || userPwd.isEmpty())
-	{
-		Ui::show(Box<InformBox>(lang(lng_login_pwd_user_empty)));
+	if (_unameField->getLastText().isEmpty()) {
+		_unameField->showError();
+		_unameField->setFocus();
 		return;
 	}
-	//saveSets();
+	if (_pwdField->getLastText().isEmpty()) {
+		_pwdField->showError();
+		_pwdField->setFocus();
+		return;
+	}
+	if (_codeField->getLastText().isEmpty()) {
+		_codeField->showError();
+		_codeField->setFocus();
+		return;
+	}
+	if (QString::compare(_picCode->getVerificationCode(), _codeField->getLastText(), Qt::CaseInsensitive) != 0) {
+		showCodeError(langFactory(lng_login_input_code_error), [&] {
+			_codeField->showError();
+			_codeField->setFocus();
+		});		
+		return;
+	}
+
+	QString userName = _unameField->getLastText();
+	QString userPwd = _pwdField->getLastText();
+
 	char h[33] = { 0 };
 	QByteArray dataPwd = userPwd.toLatin1();
 	hashMd5Hex(dataPwd.constData(), dataPwd.size(), h);
 	
 	_checkRequest->start(1000);
-	//(const char*)md5.result()
 
-	_kefuLoginRequest = MTP::send(MTPauth_KefuLogin(MTP_string(userName), MTP_string(h), MTP_string(veriCode)), rpcDone(&UserLoginWidget::codeSubmitDone), rpcFail(&UserLoginWidget::codeSubmitFail));
+	_kefuLoginRequest = MTP::send(MTPauth_KefuLogin(MTP_string(userName), MTP_string(h), MTP_string(_picCode->getVerificationCode())),
+		rpcDone(&UserLoginWidget::codeSubmitDone), 
+		rpcFail(&UserLoginWidget::codeSubmitFail));
 }
 
-
-void UserLoginWidget::resizeEvent(QResizeEvent* e)
-{
+void UserLoginWidget::resizeEvent(QResizeEvent* e) {
 	Step::resizeEvent(e);
 	updateControlsGeometry();
 }
 
-
-void UserLoginWidget::paintEvent(QPaintEvent* e)
-{
+void UserLoginWidget::paintEvent(QPaintEvent* e) {
 	QPainter p(this);
 	auto x = contentLeft() + st::introUserLoginLogoIconLeft;
 	auto y = contentTop();
-	//st::introUserLoginLogoIcon.paint(p, x, y, st::introUserLoginLogoIconWidth);
 	p.setCompositionMode(QPainter::CompositionMode_SourceOver);
-	//st::introUserLoginLogoIcon.instance(Qt::white);
 	p.drawImage(x, y, _imageLogo);
-	//p.drawPixmap(x, y, _thumb);
-	//qDebug() << x << y << rect().width() << rect().height();
 }
 
-QString UserLoginWidget::nextButtonText() const
-{
+QString UserLoginWidget::nextButtonText() const {
 	return lang(lng_login_login);
 }
 

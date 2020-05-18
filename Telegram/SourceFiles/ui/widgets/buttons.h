@@ -100,6 +100,28 @@ private:
 
 };
 
+class LeftFlatButton : public RippleButton {
+public:
+	LeftFlatButton(QWidget* parent, const QString& text, const style::LeftFlatButton& st);
+
+	void setText(const QString& text);
+	void setWidth(int32 w);
+
+	int32 textWidth() const;
+
+protected:
+	void paintEvent(QPaintEvent* e) override;
+
+	void onStateChanged(State was, StateChangeSource source) override;
+
+private:
+	QString _text, _textForAutoSize;
+	int _width;
+
+	const style::LeftFlatButton& _st;
+
+};
+
 class RoundButton : public RippleButton, private base::Subscriber {
 public:
 	RoundButton(

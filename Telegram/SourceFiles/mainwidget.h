@@ -324,6 +324,7 @@ public slots:
 	void dialogsCancelled();
 	void slotChat(int64 peerId);
 	void onTimeout();
+	void updateUnReplyNum(qint32);
 
 protected:
 	void paintEvent(QPaintEvent *e) override;

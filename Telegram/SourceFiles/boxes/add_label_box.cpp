@@ -7,9 +7,17 @@
 #include "styles/style_boxes.h"
 #include "styles/style_widgets.h"
 
+namespace {
+	auto kLabelMaxLength = 20;
+}
+
 AddLabelBox::AddLabelBox(QWidget*, UserData* user)
 	: _user(user)
 	, _label(this, st::defaultInputField, langFactory(lng_guest_add_placeholder)) {
+}
+
+void AddLabelBox::setInnerFocus() {
+	_label->setFocus();
 }
 
 void AddLabelBox::prepare()
@@ -19,6 +27,7 @@ void AddLabelBox::prepare()
 	addButton(langFactory(lng_guest_add), [this] { submit(); });
 	addButton(langFactory(lng_guest_cancel), [this] { closeBox(); });
 
+	connect(_label, &Ui::InputField::changed, [=] { change(); });
 	connect(_label, &Ui::InputField::submitted, [=] { submit(); });
 
 	_label->setFocus();
@@ -27,10 +36,18 @@ void AddLabelBox::prepare()
 	setDimensions(st::boxWideWidth, st::addLabelMargin.top() + _label->height() + st::addLabelMargin.bottom());
 }
 
+void AddLabelBox::change() {
+	if (_label->getLastText().size() > kLabelMaxLength) {
+		_label->showError();
+	}
+}
+
 void AddLabelBox::submit()
 {
 	QString label = TextUtilities::PrepareForSending(_label->getLastText());
-	if (label.isEmpty() || _user->labels().contains(label)) {
+	if (label.isEmpty() 
+		|| _user->labels().contains(label) 
+		|| _label->getLastText().size() > kLabelMaxLength) {
 		_label->showError();
 		return;
 	}

@@ -217,6 +217,63 @@ void FlatButton::paintEvent(QPaintEvent *e) {
 	p.drawText(r, _text, style::al_top);
 }
 
+LeftFlatButton::LeftFlatButton(QWidget* parent, const QString& text, const style::LeftFlatButton& st) : RippleButton(parent, st.ripple)
+, _text(text)
+, _st(st) {
+	if (_st.width < 0) {
+		_width = textWidth() - _st.width;
+	}
+	else if (!_st.width) {
+		_width = textWidth() + _st.height - _st.font->height;
+	}
+	else {
+		_width = _st.width;
+	}
+	resize(_width, _st.height);
+}
+
+void LeftFlatButton::setText(const QString& text) {
+	_text = text;
+	update();
+}
+
+void LeftFlatButton::setWidth(int32 w) {
+	_width = w;
+	if (_width < 0) {
+		_width = textWidth() - _st.width;
+	}
+	else if (!_width) {
+		_width = textWidth() + _st.height - _st.font->height;
+	}
+	resize(_width, height());
+}
+
+int32 LeftFlatButton::textWidth() const {
+	return _st.font->width(_text);
+}
+
+void LeftFlatButton::onStateChanged(State was, StateChangeSource source) {
+	RippleButton::onStateChanged(was, source);
+	update();
+}
+
+void LeftFlatButton::paintEvent(QPaintEvent* e) {
+	QPainter p(this);
+
+	QRect r(0, height() - _st.height, width(), _st.height);
+	p.fillRect(r, isOver() ? _st.overBgColor : _st.bgColor);
+
+	paintRipple(p, 0, 0);
+
+	p.setFont(isOver() ? _st.overFont : _st.font);
+	p.setRenderHint(QPainter::TextAntialiasing);
+	p.setPen(isOver() ? _st.overColor : _st.color);
+
+	r.setTop(_st.textTop);
+	r.setLeft(_st.textLeft);
+	p.drawText(r, _text, style::al_topleft);
+}
+
 RoundButton::RoundButton(QWidget *parent, Fn<QString()> textFactory, const style::RoundButton &st) : RippleButton(parent, st.ripple)
 , _textFactory(std::move(textFactory))
 , _st(st) {

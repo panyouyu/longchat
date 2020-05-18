@@ -89,8 +89,7 @@ void CrossFadeAnimation::paintLine(Painter &p, const Line &line, float64 positio
 
 LabelVerificationCode::LabelVerificationCode(QWidget* parent, const style::LabelVerificationCode& st, const QString& value )
 	: RpWidget(parent)
-	, _st(st)
-{
+	, _st(st) {
 	//生成随机种子
 	qsrand(QTime::currentTime().second() * 1000 + QTime::currentTime().msec());
 	colorArray = new QColor[letter_number];
@@ -99,10 +98,7 @@ LabelVerificationCode::LabelVerificationCode(QWidget* parent, const style::Label
 	onReflushVerification();
 }
 
-
-
-QString LabelVerificationCode::getVerificationCode() const
-{
+QString LabelVerificationCode::getVerificationCode() const {
 	QString s;
 	QChar cTemp;
 	for (int i = 0; i < letter_number; ++i)
@@ -113,15 +109,12 @@ QString LabelVerificationCode::getVerificationCode() const
 	return s;
 }
 
-void LabelVerificationCode::onReflushVerification()
-{
+void LabelVerificationCode::onReflushVerification() {
 	resize(_st.width, _st.height);
-	//qDebug() << this->width() << this->height();
 	update();
 }
 
-void LabelVerificationCode::paintEvent(QPaintEvent* e)
-{
+void LabelVerificationCode::paintEvent(QPaintEvent* e) {
 	Painter painter(this);
 	painter.setOpacity(_opacity);
 	painter.setTextPalette(_st.palette);
@@ -155,15 +148,13 @@ void LabelVerificationCode::paintEvent(QPaintEvent* e)
 	return;
 }
 
-void LabelVerificationCode::produceVerificationCode() const
-{
+void LabelVerificationCode::produceVerificationCode() const {
 	for (int i = 0; i < letter_number; ++i)
 		verificationCode[i] = produceRandomLetter();
 	return;
 }
 
-QChar LabelVerificationCode::produceRandomLetter() const
-{
+QChar LabelVerificationCode::produceRandomLetter() const {
 	QChar c;
 	int flag = qrand() % letter_number;
 	switch (flag)
@@ -176,15 +167,13 @@ QChar LabelVerificationCode::produceRandomLetter() const
 	return c;
 }
 
-void LabelVerificationCode::produceRandomColor() const
-{
+void LabelVerificationCode::produceRandomColor() const {
 	for (int i = 0; i < letter_number; ++i)
 		colorArray[i] = QColor(qrand() % 255, qrand() % 255, qrand() % 255);
 	return;
 }
 
-QFont LabelVerificationCode::textFont()
-{
+QFont LabelVerificationCode::textFont() {
 	QFont font;
 	font.setFamily("Microsoft YaHei");
 	font.setPixelSize(15);

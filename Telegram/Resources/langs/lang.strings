@@ -815,7 +815,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_switchboard_online_user" = "在线客服转接";
 "lng_switchboard_num_server" = "服务人数：";
 "lng_switchboard_num_queue" = "排队人数：";
-"lng_switchboard_cust_queue_count" = "当前排队人数：";
+"lng_switchboard_unreply#one" = "{count} 人未回复";
+"lng_switchboard_unreply#other" = "{count} 人未回复";
+"lng_switchboard_cust_queue_count#one" = "{count} 人当前排队";
+"lng_switchboard_cust_queue_count#other" = "{count} 人当前排队";
+
 "lng_profile_unblock_user" = "取消屏蔽";
 "lng_profile_export_chat" = "导出聊天记录";
 "lng_profile_export_channel" = "导出频道记录";
@@ -2053,13 +2057,13 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_guest_add" = "添加";
 "lng_guest_remove" = "删除";
 "lng_guest_pull_black" = "拉黑";
-"lng_guest_topbar" = "用户相关信息";
 "lng_guest_property" = "标签";
 "lng_guest_add_label" = "添加标签";
 "lng_guest_add_placeholder" = "标签名";
 "lng_guest_add_label_error" = "标签已存在";
 "lng_guest_remove_label_tip" = "确定要删除标签:";
 "lng_guest_normal_guest" = "普通用户";
+"lng_guest_user_info_url" = "显示玩家详细信息";
 "lng_guest_pull_black_guest" = "拉黑用户";
 "lng_guest_pull_blacked_guest" = "已拉黑";
 "lng_guest_pull_black_tip" = "确定要拉黑用户\n{user} 吗?";

@@ -92,6 +92,25 @@ FlatButton {
 	ripple: RippleAnimation;
 }
 
+LeftFlatButton {
+	color: color;
+	overColor: color;
+
+	bgColor: color;
+	overBgColor: color;
+
+	width: pixels;
+	height: pixels;
+
+	textTop: pixels;
+	textLeft: pixels;
+
+	font: font;
+	overFont: font;
+
+	ripple: RippleAnimation;
+}
+
 RoundButton {
 	textFg: color;
 	textFgOver: color;

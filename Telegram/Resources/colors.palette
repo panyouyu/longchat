@@ -571,6 +571,8 @@ quickReplyContentTextFgHover: #000000;
 quickReplyContentRipple: #e8f1ff;
 quickReplyContentRippleOver: #e8f1ff;
 
+dialogsServiceStateFg: #313131;
+dialogsServiceStateBg: #f1f3f6;
 
 userGroupFrame: #b9c3d4;
 userGroupTitleTextBg: #ffffff;

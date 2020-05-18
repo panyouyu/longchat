@@ -74,9 +74,13 @@ public:
 	void setGroup(const QString& groupInfos);
 
 	void setPhone(const QString &newPhone);
+
+	void setUserInfo(const QList<QPair<QString, QStringList>> &userInfo);
 	void setLabels(const QVector<MTPstring> &labels);
 	void addLabel(const QString& label);
 	void removeLabel(const QString& label);
+	void setUrl(const QString &url);
+
 	void setBotInfoVersion(int version);
 	void setBotInfo(const MTPBotInfo &info);
 
@@ -169,9 +173,14 @@ public:
 	const QString &phone() const {
 		return _phone;
 	}
-
+	const QList<QPair<QString, QStringList>>& userInfo() {
+		return std::ref(_userInfo);
+	}
 	const QVector<QString>& labels() const {
 		return _labels;
+	}
+	const QString& url() const {
+		return _url;
 	}
 
 	QString nameOrPhone;
@@ -235,7 +244,9 @@ private:
 
 	QString _unavailableReason;
 	QString _phone;
+	QList<QPair<QString, QStringList>> _userInfo;
 	QVector<QString> _labels;
+	QString _url;
 	ContactStatus _contactStatus = ContactStatus::PhoneUnknown;
 	BlockStatus _blockStatus = BlockStatus::Unknown;
 	bool _shieldBlack = false;

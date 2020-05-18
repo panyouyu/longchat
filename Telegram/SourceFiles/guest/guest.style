@@ -2,22 +2,12 @@ using "basic.style";
 using "ui/widgets/widgets.style";
 using "info/info.style";
 
-guestTopBarHeight: 54px;
-guestInterval: 8px;
+guestInterval: 9px;
 
-guestTopBar:InfoTopBar(infoLayerTopBar) {
-	height: guestTopBarHeight;
-	title:  FlatLabel(boxTitle) {
-		style: TextStyle(defaultTextStyle) {
-			font: font(17px semibold);
-		}
-	}
-}
+subTitleFont: font(17px);
+subTitleMargins: margins(10px, 15px, 10px, 5px);
 
-subTitleFont: font(15px);
-subTitleMargins: margins(10px, 10px, 10px, 10px);
-
-propertyMargins: margins(8px, 5px, 8px, 5px);
+propertyMargins: margins(10px, 5px, 0px, 5px);
 
 guestScroll: ScrollArea(defaultScrollArea) {
 	bottomsh: 0px;
@@ -31,7 +21,7 @@ guestTitleField: InputField(defaultInputField) {
 	textFg: windowFg;
 	textBg: windowBg;
 	heightMin: 0px;
-	heightMax: 44px;
+	heightMax: 50px;
 	placeholderFg: placeholderFg;
 	placeholderFgActive: placeholderFgActive;
 	placeholderFgError: placeholderFgActive;
@@ -46,8 +36,8 @@ guestTitleField: InputField(defaultInputField) {
 }
 
 guestContentField: InputField(defaultInputField) {
-	font: msgFont;
-	textMargins: margins(10px, 5px, 10px, 5px);
+	font: normalFont;
+	textMargins: margins(10px, 7px, 10px, 7px);
 	textAlign: align(left);
 	textFg: windowSubTextFg;
 	textBg: windowBg;
@@ -71,23 +61,23 @@ guestProperty: RoundButton(defaultActiveButton) {
 	textFgOver: activeButtonFgOver;
 	numbersTextFg: activeButtonSecondaryFg;
 	numbersTextFgOver: activeButtonSecondaryFgOver;
-	textBg: activeButtonBg;
-	textBgOver: activeButtonBgOver;
+	textBg: activeButtonSecondaryFg;
+	textBgOver: activeButtonSecondaryFgOver;
 
 	numbersSkip: 7px;
 
 	width: -34px;
-	height: 34px;
+	height: 26px;
 	padding: margins(0px, 0px, 0px, 0px);
 
-	textTop: 7px;
+	textTop: 3px;
 
 	iconPosition: point(0px, 0px);
 
 	font: semiboldFont;
 
 	ripple: RippleAnimation(defaultRippleAnimation) {
-		color: activeButtonBgRipple;
+		color: lightButtonBgRipple;
 	}
 }
 
@@ -102,26 +92,28 @@ guestRemoveProperty: IconButton {
 	rippleAreaPosition: point(0px, 0px);
 	rippleAreaSize: 12px;
 	ripple: RippleAnimation(defaultRippleAnimation) {
-		color: activeButtonBgRipple;
+		color: lightButtonBgRipple;
 	}
 }
 
 guestAddProperty: IconButton {
-	width: 34px;
-	height: 34px;
+	width: 26px;
+	height: 26px;
 
 	icon: icon {{ "guest_property_add", activeButtonFg }};
 	iconOver: icon {{ "guest_property_add", activeButtonFgOver }};
-	iconPosition: point(5px, 5px);
+	iconPosition: point(1px, 1px);
 
-	rippleAreaPosition: point(2px, 2px);
-	rippleAreaSize: 30px;
+	rippleAreaPosition: point(1px, 1px);
+	rippleAreaSize: 25px;
 	ripple: RippleAnimation(defaultRippleAnimation) {
 		color: activeButtonBgRipple;
 	}
 }
 
-shieldButton: FlatButton {
+guestButtonMaxHeight: 148px;
+
+UrlButton: LeftFlatButton {
 	color: windowActiveTextFg;
 	overColor: windowActiveTextFg;
 
@@ -129,14 +121,27 @@ shieldButton: FlatButton {
 	overBgColor: windowBgOver;
 
 	width: -32px;
-	height: 46px;
+	height: 33px;
 
-	textTop: 14px;
+	textTop: 8px;
+	textLeft: 10px;
 
-	font: subTitleFont;
-	overFont: subTitleFont;
+	font: normalFont;
+	overFont: normalFont;
 
 	ripple: RippleAnimation(defaultRippleAnimation) {
 		color: windowBgRipple;
+	}
+}
+
+blockButton: LeftFlatButton(UrlButton) {
+	color: attentionButtonFg;
+	overColor: attentionButtonFgOver;
+
+	bgColor: windowBg;
+	overBgColor: attentionButtonBgOver;
+
+	ripple: RippleAnimation(defaultRippleAnimation) {
+		color: attentionButtonBgRipple;
 	}
 }

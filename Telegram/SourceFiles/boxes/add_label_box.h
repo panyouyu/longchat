@@ -11,10 +11,12 @@ class AddLabelBox : public BoxContent {
 public:
 	AddLabelBox(QWidget*, UserData* user);
 
+	void setInnerFocus() override;
 protected:
 	void prepare() override;
 
 private:
+	void change();
 	void submit();
 	not_null<UserData*> _user;
 	object_ptr<Ui::InputField> _label;

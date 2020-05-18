@@ -144,6 +144,11 @@ void UserData::setPhone(const QString &newPhone) {
 	}
 }
 
+void UserData::setUserInfo(const QList<QPair<QString, QStringList>> &userInfo) {
+	_userInfo = userInfo;
+	Notify::peerUpdatedDelayed(this, Notify::PeerUpdate::Flag::UserInfoChanged);
+}
+
 void UserData::setLabels(const QVector<MTPstring> &labels) {
 	if (_labels.size() == labels.size()) return;
 
@@ -166,6 +171,10 @@ void UserData::removeLabel(const QString& label) {
 		_labels.removeOne(label);
 		Notify::peerUpdatedDelayed(this, Notify::PeerUpdate::Flag::UserLabelChanged);
 	}
+}
+
+void UserData::setUrl(const QString &url) {
+	_url = url;
 }
 
 void UserData::setBotInfoVersion(int version) {

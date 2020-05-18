@@ -47,6 +47,7 @@ struct PeerUpdate {
 		BannedUsersChanged        = (1 << 14),
 		UnreadMentionsChanged     = (1 << 15),
 		RightsChanged             = (1 << 16),
+		LabelChanged              = (1 << 17),
 
 		// For users
 		UserCanShareContact       = (1 << 17),

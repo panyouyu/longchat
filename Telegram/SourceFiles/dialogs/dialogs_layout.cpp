@@ -14,6 +14,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "styles/style_dialogs.h"
 #include "storage/localstorage.h"
 #include "ui/empty_userpic.h"
+#include "ui/image/image_prepare.h"
 #include "ui/text_options.h"
 #include "lang/lang_keys.h"
 #include "support/support_helper.h"
@@ -389,6 +390,16 @@ void paintRow(
 			auto icon = &(active ? st::dialogsVerifiedIconActive : (selected ? st::dialogsVerifiedIconOver : st::dialogsVerifiedIcon));
 			rectForName.setWidth(rectForName.width() - icon->width());
 			icon->paint(p, rectForName.topLeft() + QPoint(qMin(from->dialogName().maxWidth(), rectForName.width()), 0), fullWidth);
+		}
+		if (!from->labelName().toString().isEmpty()) {
+			auto w = st::msgNameFont->width(from->labelName().toString()) + (st::dialogsLabelPadding << 1);
+			rectForName.setRight(rectForName.right() - w - st::dialogsLabelPadding);
+			auto left = rectForName.left() + qMin(from->dialogName().maxWidth(), rectForName.width()) + st::dialogsLabelPadding;
+			App::roundRect(p, QRect(left, rectForName.top(), w, rectForName.height()), st::historyPeer3UserpicBg, ImageRoundRadius::Small);
+			p.save();
+			p.setPen(st::dialogsNameFg);
+			from->labelName().drawElided(p, left + st::dialogsLabelPadding, rectForName.top(), w, style::al_center);
+			p.restore();
 		}
 		from->dialogName().drawElided(p, rectForName.left(), rectForName.top(), rectForName.width());
 	} else if (hiddenSenderInfo) {

@@ -380,6 +380,9 @@ not_null<UserData*> Session::processUser(const MTPUser &data) {
 		if (canShareThisContact != result->canShareThisContactFast()) {
 			update.flags |= UpdateFlag::UserCanShareContact;
 		}
+		if (data.has_extra()) {
+			result->setExtra(data.vextra.v);
+		}
 	});
 
 	if (minimal) {
@@ -3012,6 +3015,7 @@ void Session::serviceNotification(
 			MTP_userProfilePhotoEmpty(),
 			MTP_userStatusRecently(),
 			MTPint(),
+			MTPstring(),
 			MTPstring(),
 			MTPstring(),
 			MTPstring()));

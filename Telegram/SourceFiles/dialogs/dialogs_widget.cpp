@@ -129,14 +129,20 @@ void DialogsWidget::BottomButton::paintEvent(QPaintEvent *e) {
 	if (!isDisabled()) {
 		paintRipple(p, 0, 0);
 	}
-
-	p.setFont(over ? _st.overFont : _st.font);
+	auto font = over ? _st.overFont : _st.font;
+	p.setFont(font);
 	p.setRenderHint(QPainter::TextAntialiasing);
 	p.setPen(over ? _st.overColor : _st.color);
 
 	if (width() >= st::columnMinimalWidthLeft) {
-		r.setTop(_st.textTop);
-		p.drawText(r, _text, style::al_top);
+		p.drawText(r, _text, style::al_center);
+		auto icon = (over ? _iconOver : _icon);
+		auto w = icon.width() + st::bottomButtonPadding + font->width(_text);
+		auto right = (width() - font->width(_text)) >> 1;
+		auto left = right - icon.width() - st::bottomButtonPadding;		
+		r.setLeft(left);
+		r.setRight(right);
+		icon.paintInCenter(p, r);
 	} else if (isDisabled() && _loading) {
 		_loading->draw(
 			p,
@@ -162,12 +168,12 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 , _cancelSearch(this, st::dialogsCancelSearch)
 , _lockUnlock(this, st::dialogsLock)
 , _scroll(this, st::dialogsScroll)
-, _custQueueCount(
+, _serviceState(
 	this,
-	lang(lng_switchboard_cust_queue_count) + " 0",
-	st::dialogsLoadMoreButton,
-	st::dialogsLoadMore,
-	st::dialogsLoadMore)
+	lng_switchboard_unreply(lt_count, 0) + qsl("  /  ") + lng_switchboard_cust_queue_count(lt_count, 0),
+	st::dialogsServiceStateButton,
+	st::dialogsServiceState,
+	st::dialogsServiceState)
 , _scrollToTop(_scroll, st::dialogsToUp) {
 	_inner = _scroll->setOwnedWidget(object_ptr<DialogsInner>(this, controller, parent));
 	connect(_inner, SIGNAL(draggingScrollDelta(int)), this, SLOT(onDraggingScrollDelta(int)));
@@ -845,7 +851,21 @@ void DialogsWidget::onChooseByDrag() {
 
 void DialogsWidget::onQueueCountChanged(int count)
 {
-	_custQueueCount->setText(lang(lng_switchboard_cust_queue_count) + QString::number(count));
+	if (_queue_num != count) {
+		_queue_num = count;
+		updateServiceState();
+	}
+}
+
+void DialogsWidget::updateUnReplyState(int unReplyNum) {
+	if (_unreply_num != unReplyNum) {
+		_unreply_num = unReplyNum;
+		updateServiceState();
+	}
+}
+
+void DialogsWidget::updateServiceState() {
+	_serviceState->setText(lng_switchboard_unreply(lt_count, _unreply_num)  + qsl("  /  ") + lng_switchboard_cust_queue_count(lt_count, _queue_num));
 }
 
 void DialogsWidget::onContactStatus()
@@ -1562,7 +1582,7 @@ void DialogsWidget::updateControlsGeometry() {
 	};
 	putBottomButton(_updateTelegram);
 	putBottomButton(_loadMoreChats);
-	putBottomButton(_custQueueCount);
+	putBottomButton(_serviceState);
 	auto wasScrollHeight = _scroll->height();
 	_scroll->setGeometry(0, scrollTop, width(), scrollHeight);
 	if (scrollHeight != wasScrollHeight) {

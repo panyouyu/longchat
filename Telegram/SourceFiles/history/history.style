@@ -156,7 +156,7 @@ historyComposeField: InputField(defaultInputField) {
 	textFg: historyComposeAreaFg;
 	textBg: historyComposeAreaBg;
 	heightMin: 36px;
-	heightMax: 72px;
+	heightMax: 36px;
 	placeholderFg: placeholderFg;
 	placeholderFgActive: placeholderFgActive;
 	placeholderFgError: placeholderFgActive;

@@ -1425,8 +1425,11 @@ void MainWidget::onTimeout()
 	choosePeer(_peerId, ShowAtUnreadMsgId);
 	if (!_history->history()->inChatList(Dialogs::Mode::All)) {
 		createDialog(Auth().data().historyLoaded((PeerId)_peerId));
-	}
-	
+	}	
+}
+
+void MainWidget::updateUnReplyNum(qint32 num) {
+	_dialogs->updateUnReplyState(num);
 }
 
 bool MainWidget::isIdle() const {
@@ -2502,16 +2505,20 @@ void MainWidget::updateControlsGeometry() {
 						Info::Memento::Default(key),
 						params.withThirdColumn());
 				}
-			}
-			else if (session().settings().thirdSectionQuickReplyEnabled()) {
-				if (const auto key = _controller->activeChatCurrent()) {
-					_controller->showSection(QuickReply::Memento(object_ptr<QuickReply::Selector>(this, _controller)),
-						params.withThirdColumn());
-				}
-			}
+			}			
 			else if (session().settings().thirdSectionGuestEnabled()) {
 				if (const auto key = _controller->activeChatCurrent()) {
-					_controller->showSection(Guest::Memento(object_ptr<Guest::Selector>(this, _controller, key)),
+					if (auto peer = key.peer()) {
+						UserData* user = peer->asUser();
+						if (user != nullptr && !peer->isSelf()) {
+							_controller->showSection(Guest::Memento(object_ptr<Guest::Selector>(this, _controller, key)),
+								params.withThirdColumn());
+						}
+					}					
+				}
+			} else if (session().settings().thirdSectionQuickReplyEnabled()) {				
+				if (const auto key = _controller->activeChatCurrent()) {
+					_controller->showSection(QuickReply::Memento(object_ptr<QuickReply::Selector>(this, _controller)),
 						params.withThirdColumn());
 				}
 			}
