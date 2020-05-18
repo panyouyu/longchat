@@ -45,6 +45,7 @@ PropertyLabel::PropertyLabel(QWidget* parent, not_null<Window::Controller*> cont
 	, _controller(controller)
 	, _close(this, st::guestRemoveProperty)
 	, _text(text) {
+	setTextTransform(TextTransform::NoTransform);
 	sizeValue() | rpl::start_with_next([this](const QSize size) {
 		_close->moveToRight(0, 0);
 	}, lifetime());
