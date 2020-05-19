@@ -232,7 +232,7 @@ void PropertyWidget::paintEvent(QPaintEvent* e) {
 	p.setFont(st::subTitleFont);
 	p.drawTextLeft(st::subTitleMargins.left(), st::subTitleMargins.top(), width(), lang(lng_guest_property));
 	if (_property.size() > 0) {
-		App::roundRect(p, _property.back()->geometry(), st::activeButtonSecondaryFg, ImageRoundRadius::Small);
+		App::roundRect(p, _property.back()->geometry(), st::windowBgActive, ImageRoundRadius::Small);
 	}
 }
 

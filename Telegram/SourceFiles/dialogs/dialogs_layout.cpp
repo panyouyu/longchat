@@ -391,14 +391,18 @@ void paintRow(
 			rectForName.setWidth(rectForName.width() - icon->width());
 			icon->paint(p, rectForName.topLeft() + QPoint(qMin(from->dialogName().maxWidth(), rectForName.width()), 0), fullWidth);
 		}
-		if (!from->labelName().toString().isEmpty()) {
-			auto w = st::msgNameFont->width(from->labelName().toString()) + (st::dialogsLabelPadding << 1);
+		if (!from->labelName().toString().isEmpty()) {			
+			auto w = st::dialogsLabelFont->width(from->labelName().toString()) + (st::dialogsLabelPadding << 1);
 			rectForName.setRight(rectForName.right() - w - st::dialogsLabelPadding);
 			auto left = rectForName.left() + qMin(from->dialogName().maxWidth(), rectForName.width()) + st::dialogsLabelPadding;
-			App::roundRect(p, QRect(left, rectForName.top(), w, rectForName.height()), st::historyPeer3UserpicBg, ImageRoundRadius::Small);
+			auto top = rectForName.top() + ((rectForName.height() - st::dialogsLabelFont->height) >> 1);
+			auto label_rect = QRect(left, top, w, st::dialogsLabelFont->height);
 			p.save();
+			p.setFont(st::dialogsLabelFont);
 			p.setPen(st::dialogsNameFg);
-			from->labelName().drawElided(p, left + st::dialogsLabelPadding, rectForName.top(), w, style::al_center);
+			App::roundRect(p, label_rect, st::historyPeer3UserpicBg, ImageRoundRadius::Small);
+			p.drawText(label_rect, style::al_center, from->labelName().toString());
+			//from->labelName().drawElided(p, left + st::dialogsLabelPadding, rectForName.top(), w, style::al_center);
 			p.restore();
 		}
 		from->dialogName().drawElided(p, rectForName.left(), rectForName.top(), rectForName.width());

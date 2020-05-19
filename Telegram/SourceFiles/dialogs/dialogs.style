@@ -13,6 +13,7 @@ dialogsUnreadFont: font(12px bold);
 dialogsUnreadHeight: 19px;
 dialogsUnreadPadding: 5px;
 dialogsLabelPadding: 5px;
+dialogsLabelFont: font(11px);
 
 dialogsRipple: RippleAnimation(defaultRippleAnimation) {
 	color: dialogsRippleBg;
