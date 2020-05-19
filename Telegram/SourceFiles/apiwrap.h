@@ -14,6 +14,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "mtproto/sender.h"
 #include "chat_helpers/stickers.h"
 #include "data/data_messages.h"
+#include "data/data_user.h"
 
 class TaskQueue;
 class AuthSession;
@@ -384,8 +385,8 @@ public:
 
 	void requestPeerRelatedInfo(not_null<PeerData*> peer);
 	void requestPeerLabels(not_null<PeerData*> peer);
-	void uploadPeerLabel(not_null<PeerData*> peer, const QString& label);
-	void removePeerLabel(not_null<PeerData*> peer, const QString& label);
+	void uploadPeerLabel(not_null<PeerData*> peer, const LabelInfo& label);
+	void removePeerLabel(not_null<PeerData*> peer, const LabelInfo& label);
 	void pullBlackUser(not_null<PeerData*> peer);
 
 	void reloadPasswordState();

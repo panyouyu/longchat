@@ -5,7 +5,7 @@ using "info/info.style";
 guestInterval: 9px;
 
 subTitleFont: font(17px);
-subTitleMargins: margins(10px, 15px, 10px, 5px);
+subTitleMargins: margins(10px, 10px, 10px, 5px);
 
 propertyMargins: margins(10px, 5px, 0px, 5px);
 
@@ -121,13 +121,16 @@ UrlButton: LeftFlatButton {
 	overBgColor: windowBgOver;
 
 	width: -32px;
-	height: 33px;
+	height: 32px;
 
 	textTop: 8px;
 	textLeft: 10px;
 
+	iconLeft: 10px;
+	iconRight: 10px;
+
 	font: normalFont;
-	overFont: normalFont;
+	overFont: normalFont;	
 
 	ripple: RippleAnimation(defaultRippleAnimation) {
 		color: windowBgRipple;
@@ -140,6 +143,8 @@ blockButton: LeftFlatButton(UrlButton) {
 
 	bgColor: windowBg;
 	overBgColor: attentionButtonBgOver;
+
+	icon: icon {{"info_actions", windowSubTextFg}};
 
 	ripple: RippleAnimation(defaultRippleAnimation) {
 		color: attentionButtonBgRipple;

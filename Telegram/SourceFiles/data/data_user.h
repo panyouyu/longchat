@@ -37,6 +37,19 @@ struct BotInfo {
 	PeerId inlineReturnPeerId = 0;
 };
 
+struct LabelInfo {
+	QString label_name;
+	QString label_desc;
+	UserId from_id;
+	bool operator<(const LabelInfo& label) const {
+		return label_name < label.label_name;
+	}
+	bool operator==(const LabelInfo& label) const {
+		return label_name == label.label_name;
+	}
+
+};
+
 class UserData : public PeerData {
 public:
 	static constexpr auto kEssentialFlags = 0
@@ -76,9 +89,9 @@ public:
 	void setPhone(const QString &newPhone);
 
 	void setUserInfo(const QList<QPair<QString, QStringList>> &userInfo);
-	void setLabels(const QVector<MTPstring> &labels);
-	void addLabel(const QString& label);
-	void removeLabel(const QString& label);
+	void setLabels(const QVector<MTPUserLabelData> &labels);
+	void addLabel(const LabelInfo& label);
+	void removeLabel(const LabelInfo& label);
 	void setUrl(const QString &url);
 
 	void setBotInfoVersion(int version);
@@ -176,7 +189,8 @@ public:
 	const QList<QPair<QString, QStringList>>& userInfo() {
 		return std::ref(_userInfo);
 	}
-	const QVector<QString>& labels() const {
+
+	const auto& labels() const {
 		return _labels;
 	}
 	const QString& url() const {
@@ -245,7 +259,7 @@ private:
 	QString _unavailableReason;
 	QString _phone;
 	QList<QPair<QString, QStringList>> _userInfo;
-	QVector<QString> _labels;
+	QVector<LabelInfo> _labels;
 	QString _url;
 	ContactStatus _contactStatus = ContactStatus::PhoneUnknown;
 	BlockStatus _blockStatus = BlockStatus::Unknown;

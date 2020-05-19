@@ -105,8 +105,13 @@ LeftFlatButton {
 	textTop: pixels;
 	textLeft: pixels;
 
+	iconLeft: pixels;
+	iconRight: pixels;
+
 	font: font;
 	overFont: font;
+
+	icon: icon;
 
 	ripple: RippleAnimation;
 }

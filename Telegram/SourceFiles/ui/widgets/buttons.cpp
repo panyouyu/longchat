@@ -269,8 +269,15 @@ void LeftFlatButton::paintEvent(QPaintEvent* e) {
 	p.setRenderHint(QPainter::TextAntialiasing);
 	p.setPen(isOver() ? _st.overColor : _st.color);
 
+	auto left = 0;
+	if (!_st.icon.empty()) {
+		left += _st.iconLeft;
+		_st.icon.paint(p, left, 0, width());
+		left += _st.icon.width() + _st.iconRight;
+	}
+	left += _st.textLeft;
 	r.setTop(_st.textTop);
-	r.setLeft(_st.textLeft);
+	r.setLeft(left);
 	p.drawText(r, _text, style::al_topleft);
 }
 

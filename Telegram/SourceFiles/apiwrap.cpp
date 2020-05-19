@@ -19,7 +19,6 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "data/data_session.h"
 #include "data/data_channel.h"
 #include "data/data_chat.h"
-#include "data/data_user.h"
 #include "dialogs/dialogs_key.h"
 #include "core/core_cloud_password.h"
 #include "core/application.h"
@@ -5543,24 +5542,24 @@ void ApiWrap::requestPeerLabels(not_null<PeerData*> peer) {
 	}
 }
 
-void ApiWrap::uploadPeerLabel(not_null<PeerData*> peer, const QString& label) {
+void ApiWrap::uploadPeerLabel(not_null<PeerData*> peer, const LabelInfo& label) {
 	if (!peer->isUser() || peer->isSelf()) return;
 
 	if (UserData* user = peer->asUser()) {
-		request(MTPkefu_ModifyUserLabel(MTP_int(user->id), MTP_string(label), MTP_int(0))
+		request(MTPkefu_ModifyUserLabel(MTP_int(user->id), MTP_string(label.label_name), MTP_string(label.label_desc), MTP_int(0))
 		).done([user, label](const MTPBool& result) {
 			if (mtpIsTrue(result)) {
 				user->addLabel(label);
-			}			
+			}
 		}).send();
 	}
 }
 
-void ApiWrap::removePeerLabel(not_null<PeerData*> peer, const QString& label) {
+void ApiWrap::removePeerLabel(not_null<PeerData*> peer, const LabelInfo& label) {
 	if (!peer->isUser() || peer->isSelf()) return;
 
 	if (UserData* user = peer->asUser()) {
-		request(MTPkefu_ModifyUserLabel(MTP_int(user->id), MTP_string(label), MTP_int(1))
+		request(MTPkefu_ModifyUserLabel(MTP_int(user->id), MTP_string(label.label_name), MTP_string(label.label_desc), MTP_int(1))
 		).done([user, label](const MTPBool& result) {
 			if (mtpIsTrue(result)) {
 				user->removeLabel(label);

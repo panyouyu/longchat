@@ -2060,6 +2060,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_guest_property" = "标签";
 "lng_guest_add_label" = "添加标签";
 "lng_guest_add_placeholder" = "标签名";
+"lng_guest_add_description" = "描述";
 "lng_guest_add_label_error" = "标签已存在";
 "lng_guest_remove_label_tip" = "确定要删除标签:";
 "lng_guest_normal_guest" = "普通用户";

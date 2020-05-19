@@ -149,24 +149,23 @@ void UserData::setUserInfo(const QList<QPair<QString, QStringList>> &userInfo) {
 	Notify::peerUpdatedDelayed(this, Notify::PeerUpdate::Flag::UserInfoChanged);
 }
 
-void UserData::setLabels(const QVector<MTPstring> &labels) {
-	if (_labels.size() == labels.size()) return;
-
+void UserData::setLabels(const QVector<MTPUserLabelData> &labels) {
 	_labels.clear();
 	for (auto i = labels.begin(), e = labels.end(); i < e; ++i) {
-		_labels.push_back(qs(*i));
+		auto &data = (*i).c_userLabelData();
+		_labels.push_back({ qs(data.vlabel_name), qs(data.vlabel_desc), data.vadd_user_id.v });
 	}
 	Notify::peerUpdatedDelayed(this, Notify::PeerUpdate::Flag::UserLabelChanged);
 }
 
-void UserData::addLabel(const QString& label) {
+void UserData::addLabel(const LabelInfo& label) {
 	if (_labels.contains(label)) return;
 
 	_labels.push_back(std::move(label));
 	Notify::peerUpdatedDelayed(this, Notify::PeerUpdate::Flag::UserLabelChanged);
 }
 
-void UserData::removeLabel(const QString& label) {
+void UserData::removeLabel(const LabelInfo& label) {
 	if (_labels.contains(label)) {
 		_labels.removeOne(label);
 		Notify::peerUpdatedDelayed(this, Notify::PeerUpdate::Flag::UserLabelChanged);

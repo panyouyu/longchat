@@ -1050,7 +1050,8 @@ userGroupReturn#3b9aca15 is_success:int = UserGroupReturn;
 userGroupStatusRes#3b9aca1f flags:# other_id:int other_int:flags.0?int other_str:flags.1?string tlv:TlvList = UserGroupStatusRes;
 switchKefu#3b9acdf2 kefu_id:int waiting_count:int service_count:int service_max:int nick_name:string = SwitchKefu;
 switchKefuList#3b9acdf1 kefus:Vector<SwitchKefu> = SwitchKefuList;
-userLabels#3b9acdf5 labels:Vector<string> = UserLabels;
+userLabelData#3b9acdf7 label_name:string label_desc:string add_user_id:int is_delete:int = UserLabelData;
+userLabels#3b9acdf5 labels:Vector<UserLabelData> = UserLabels;
 
 account.takeout#4dba4501 id:long = account.Takeout;
 
@@ -1260,7 +1261,7 @@ kefu.switchKefu#3b9acdef kefu_user_id:int player_user_id:int = Bool;
 
 kegu.getUserInfo#e2b66055 user_id:int bot_id:int = DataJSON;
 kefu.getUserLabels#3b9acdf4 user_id:int = UserLabels;
-kefu.modifyUserLabel#3b9acdf3 user_id:int label:string is_delete:int = Bool;
+kefu.modifyUserLabel#3b9acdf3 user_id:int label:string label_desc:string is_delete:int = Bool;
 kefu.blockUser#3b9acdf6 user_id:int = Bool;
 
 messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;

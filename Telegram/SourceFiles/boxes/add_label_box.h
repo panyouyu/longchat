@@ -20,4 +20,5 @@ private:
 	void submit();
 	not_null<UserData*> _user;
 	object_ptr<Ui::InputField> _label;
+	object_ptr<Ui::InputField> _desc;
 };

@@ -1039,3 +1039,4 @@ quickReplyGroupInputWidth: 294px;
 quickReplyRenameGroupMargin: margins(16px, 8px, 16px, 8px);
 
 addLabelMargin: margins(23px, 8px, 23px, 8px);
+addLabelInterval: 7px;

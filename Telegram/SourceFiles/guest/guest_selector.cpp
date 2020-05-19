@@ -4,6 +4,7 @@
 #include "apiwrap.h"
 #include "app.h"
 #include "facades.h"
+#include "data/data_user.h"
 #include "window/window_controller.h"
 #include "boxes/confirm_box.h"
 #include "boxes/add_label_box.h"
@@ -24,10 +25,13 @@ public:
 	PropertyLabel(QWidget* parent,
 		not_null<Window::Controller*> controller,
 		const QString& text,
-		const style::RoundButton& st);
+		const QString& tooltip,
+		const style::RoundButton& st,
+		bool can_delete = false);
 	~PropertyLabel();
 protected:
 	void enterEventHook(QEvent* e) {
+		if (!_can_delete) return;
 		_close->setVisible(true);
 	}
 	void leaveEventHook(QEvent* e) {
@@ -37,14 +41,17 @@ private:
 	not_null<Window::Controller*> _controller;
 	object_ptr<Ui::IconButton> _close;
 	const QString _text;
+	bool _can_delete;
 	QPointer<ConfirmBox> _confirmBox;
 };
 
-PropertyLabel::PropertyLabel(QWidget* parent, not_null<Window::Controller*> controller, const QString& text, const style::RoundButton& st)
+PropertyLabel::PropertyLabel(QWidget* parent, not_null<Window::Controller*> controller, const QString& text, const QString& tooltip, const style::RoundButton& st, bool can_delete)
 	: RoundButton(parent, [&text] { return text; }, st)
 	, _controller(controller)
 	, _close(this, st::guestRemoveProperty)
-	, _text(text) {
+	, _text(text)
+	, _can_delete(can_delete) {
+	setToolTip(tooltip);
 	setTextTransform(TextTransform::NoTransform);
 	sizeValue() | rpl::start_with_next([this](const QSize size) {
 		_close->moveToRight(0, 0);
@@ -56,7 +63,7 @@ PropertyLabel::PropertyLabel(QWidget* parent, not_null<Window::Controller*> cont
 			if (_text == lang(lng_guest_normal_guest)) return;
 			QString text = lang(lng_guest_remove_label_tip) + "\n  " + _text;
 			_confirmBox = Ui::show(Box<ConfirmBox>(text, [this, nowActivePeer] {
-				Auth().api().removePeerLabel(nowActivePeer, _text);
+				Auth().api().removePeerLabel(nowActivePeer, { _text, qsl(""), 0 });
 				_confirmBox->closeBox();
 				_confirmBox.clear();
 			}), LayerOption::KeepOther);
@@ -145,8 +152,7 @@ public:
 	PropertyWidget(QWidget* parent, not_null<Window::Controller*> controller);
 
 	void clear();
-	void addPropertyLabel(const QString& label);
-	void addPropertyLabels(const QStringList& labels);
+	void addPropertyLabels(const QVector<LabelInfo>& labels, UserId selfId);
 
 	rpl::producer<> sizeChanged() const {
 		return _sizeChanged.events();
@@ -186,19 +192,11 @@ void PropertyWidget::clear() {
 	_sizeChanged.fire({});
 }
 
-void PropertyWidget::addPropertyLabel(const QString& label) {
-	Expects(_property.size() > 0);
-
-	_property.insert(_property.end() - 1, object_ptr<PropertyLabel>(this, _controller, label, st::guestProperty));
-
-	_sizeChanged.fire({});
-}
-
-void PropertyWidget::addPropertyLabels(const QStringList& labels) {
+void PropertyWidget::addPropertyLabels(const QVector<LabelInfo>& labels, UserId selfId) {
 	Expects(_property.size() > 0);
 
 	for (auto i = labels.begin(), e = labels.end(); i != e; ++i) {
-		_property.insert(_property.end() - 1, object_ptr<PropertyLabel>(this, _controller, *i, st::guestProperty));
+		_property.insert(_property.end() - 1, object_ptr<PropertyLabel>(this, _controller, (*i).label_name, (*i).label_desc, st::guestProperty, ((*i).from_id == selfId)));
 	}
 	_sizeChanged.fire({});
 }
@@ -335,8 +333,9 @@ void Selector::loadInfo(not_null<UserData*> user) {
 
 void Selector::loadLabels(not_null<UserData*> user) {
 	_property->clear();
-	auto labels = QList<QString>::fromVector(user->labels());
-	_property->addPropertyLabels(labels);
+	auto labels = user->labels();
+	auto self_id = AuthSession::Exists() ? Auth().userId() : 0;
+	_property->addPropertyLabels(labels, self_id);
 }
 
 void Selector::updateBlock(not_null<UserData*> user) {
@@ -367,13 +366,19 @@ QRect Selector::intervalRect() const {
 
 void Selector::updateControlsGeometry() {
 	if (width() == 0) return;
-	int top = 0, bottom = height() - st::guestButtonMaxHeight;
+	int top = st::guestInterval, bottom = height() - st::guestButtonMaxHeight;
 
 	_property->resizeToWidth(width());
 	bottom -= (_property->height() + st::guestInterval);
 	_property->moveToLeft(0, bottom);
 
-	_scroll->setGeometryToLeft(0, 0, width(), bottom - top);
+	if (!_url->isHidden()) {
+		_url->resize(width(), _url->height());
+		bottom -= _url->height();
+		_url->moveToLeft(0, bottom);
+	}
+
+	_scroll->setGeometryToLeft(0, top, width(), bottom - top);
 	if (_info) {
 		_info->resizeToWidth(_scroll->width());
 		auto scrollTop = _scroll->scrollTop();
@@ -384,10 +389,6 @@ void Selector::updateControlsGeometry() {
 
 	top = height() - st::guestButtonMaxHeight + st::guestInterval;
 
-	if (!_url->isHidden()) {
-		_url->resize(width(), _url->height());
-		_url->moveToLeft(0, top); top += _url->height();
-	}
 	_block->resize(width(), _block->height());
 	_block->moveToLeft(0, top);
 }
