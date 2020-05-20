@@ -20,6 +20,10 @@
 
 namespace Guest {
 
+	namespace {
+		const auto kMaxLabelNum = 5;
+	}
+
 class PropertyLabel : public Ui::RoundButton {
 public:
 	PropertyLabel(QWidget* parent,
@@ -173,6 +177,9 @@ PropertyWidget::PropertyWidget(QWidget* parent, not_null<Window::Controller*> co
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	auto add = object_ptr<Ui::IconButton>(this, st::guestAddProperty);
 	add->setClickedCallback([this] {
+		if (_property.size() > kMaxLabelNum) {
+			return;
+		}
 		const auto nowActivePeer = _controller->activeChatCurrent().peer();
 		if (nowActivePeer && nowActivePeer->isUser() && !nowActivePeer->isSelf() && AuthSession::Exists()) {
 			Ui::show(Box<AddLabelBox>(nowActivePeer->asUser()), LayerOption::KeepOther);

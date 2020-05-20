@@ -60,7 +60,7 @@ void AddLabelBox::submit()
 		return;
 	}
 	if (AuthSession::Exists()) {
-		Auth().api().uploadPeerLabel(_user, { label, desc, peerToUser(_user->id) });
+		Auth().api().uploadPeerLabel(_user, { label, desc, Auth().userId()});
 	}
 	closeBox();
 }

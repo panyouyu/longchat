@@ -84,8 +84,10 @@ namespace Contact {
 		connect(_closeWait, SIGNAL(timeout()), this, SLOT(onCloseWait()));
 		
 		subscribe(App::main()->signalGroupChanged(), [this](int value) {
+			DEBUG_LOG(("UserGroup: start update UI of contract! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
 			updateGroupInfoData();
-			});
+			DEBUG_LOG(("UserGroup: end update UI of contract! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
+		});
 
 		setStyleSheet(getAllFileContent(":/style/qss/contactdialog.qss"));
 	}
@@ -135,7 +137,7 @@ namespace Contact {
 	}
 
 	void ContactBox::updateGroupInfoData()
-	{
+	{		
 		clearData();
 		_mapUser2Group = App::main()->getUserGroupInfo();
 		//防止网络更新树中数据找不到原来的地址，这里做一个副本
@@ -155,8 +157,7 @@ namespace Contact {
 		{
 			//qDebug() << "---ContactBox::updateGroupInfoData";
 			_contactTree->loadDatas(_vecContactPData);
-		}
-
+		}		
 	}
 
 	void ContactBox::clearData()

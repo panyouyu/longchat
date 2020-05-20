@@ -1704,6 +1704,7 @@ ConnectionPrivate::HandleResult ConnectionPrivate::handleOneReceived(const mtpPr
 		auto& flag = d.vflags.v;
 		auto& otherId = d.vother_id.v;
 		if (otherId == 1) {
+			DEBUG_LOG(("UserGroup: receive update! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
 			emit groupStateChanged(otherId);
 		} else if (otherId == 5 && d.has_other_int()) {
 			emit unReplyNum(d.vother_int.v);

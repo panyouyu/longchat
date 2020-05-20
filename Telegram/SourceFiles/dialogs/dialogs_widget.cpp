@@ -579,6 +579,7 @@ void DialogsWidget::dialogsReceived(
 	if (_dialogsFull && _pinnedDialogsReceived) {
 		Auth().data().allChatsLoaded().set(true);
 	}
+	DEBUG_LOG(("UserGroup: loadDialogs finished! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
 	Auth().api().requestContacts();
 	loadGroupDialogs();//用户加载完成后，再加载分组
 }
@@ -1047,6 +1048,7 @@ void DialogsWidget::userGroupDone(const MTPUserGroupData& result)
 {
 	_allUserTagRequest = 0;
 	_inner->createGroupDialog(result);
+	DEBUG_LOG(("UserGroup: loadGroupDialogs finished! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
 }
 
 bool DialogsWidget::userGroupFail(const RPCError& error)
@@ -1067,7 +1069,7 @@ void DialogsWidget::loadGroupDialogs()
 {
 	if (_allUserTagRequest) 
 		return;
-
+	DEBUG_LOG(("UserGroup: start loadGroupDialogs! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
 	_allUserTagRequest = MTP::send(MTPcontacts_GetUserGroups(MTP_int(_inner->getUserGroupVersion())), rpcDone(&DialogsWidget::userGroupDone), rpcFail(&DialogsWidget::userGroupFail));
 }
 
