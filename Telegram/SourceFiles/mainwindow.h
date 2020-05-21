@@ -145,7 +145,6 @@ public slots:
 signals:
 	void tempDirCleared(int task);
 	void tempDirClearFailed(int task);
-	void unReplyNum(qint32);
 private:
 	[[nodiscard]] bool skipTrayClick() const;
 

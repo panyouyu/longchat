@@ -234,7 +234,6 @@ void MainWindow::setupMain() {
 	clearWidgets();
 
 	_main.create(bodyWidget(), controller());
-	connect(this, SIGNAL(unReplyNum(qint32)), _main, SLOT(updateUnReplyNum(qint32)));
 	_main->show();
 	updateControlsGeometry();
 

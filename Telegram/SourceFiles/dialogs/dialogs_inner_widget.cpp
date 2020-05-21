@@ -1485,7 +1485,6 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 			return count;
 		};
 		appendList(_contacts.get());
-		emit queueCountChanged(_queueCount);
 	}	
 }
 

@@ -437,8 +437,6 @@ ConnectionPrivate::ConnectionPrivate(
 	connect(sessionData->owner(), SIGNAL(needToRestart()), this, SLOT(restartNow()), Qt::QueuedConnection);
 	connect(this, SIGNAL(needToReceive()), sessionData->owner(), SLOT(tryToReceive()), Qt::QueuedConnection);
 	connect(this, SIGNAL(stateChanged(qint32)), sessionData->owner(), SLOT(onConnectionStateChange(qint32)), Qt::QueuedConnection);
-	connect(this, SIGNAL(groupStateChanged(qint32)), sessionData->owner(), SLOT(onGroupStateChange(qint32)), Qt::QueuedConnection);
-	connect(this, SIGNAL(unReplyNum(qint32)), _instance, SIGNAL(unReplyNum(qint32)), Qt::QueuedConnection);
 	connect(sessionData->owner(), SIGNAL(needToSend()), this, SLOT(tryToSend()), Qt::QueuedConnection);
 	connect(sessionData->owner(), SIGNAL(needToPing()), this, SLOT(onPingSendForce()), Qt::QueuedConnection);
 	connect(this, SIGNAL(sessionResetDone()), sessionData->owner(), SLOT(onResetDone()), Qt::QueuedConnection);
@@ -1695,23 +1693,6 @@ ConnectionPrivate::HandleResult ConnectionPrivate::handleOneReceived(const mtpPr
 		}
 		requestsAcked(ids);
 	} return HandleResult::Success;
-
-	case mtpc_userGroupStatusRes: {
-		MTPUserGroupStatusRes ugsRes;
-		ugsRes.read(from, end);
-		auto &d = ugsRes.c_userGroupStatusRes();
-
-		auto& flag = d.vflags.v;
-		auto& otherId = d.vother_id.v;
-		if (otherId == 1) {
-			DEBUG_LOG(("UserGroup: receive update! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
-			emit groupStateChanged(otherId);
-		} else if (otherId == 5 && d.has_other_int()) {
-			emit unReplyNum(d.vother_int.v);
-		}
-		return HandleResult::Success;
-	} return HandleResult::Success;
-
 	case mtpc_bad_msg_notification: {
 		MTPBadMsgNotification msg;
 		msg.read(from, end);

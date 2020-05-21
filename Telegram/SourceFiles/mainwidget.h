@@ -205,6 +205,7 @@ public:
 	Dialogs::IndexedList *contactsList();
 	Dialogs::IndexedList *dialogsList();
 	Dialogs::IndexedList *contactsNoDialogsList();
+
 	QMap<uint64, QSet<uint64>>& getUserGroupInfo();
 	QMutex&  getUserGroupMutex();
 	QString getUserGroupInfo(uint64 userId);
@@ -213,8 +214,6 @@ public:
 	QVector<Contact::ContactInfo*>& getGroupInfo();
 	QVector<Contact::ContactInfo*>& getGroupInfo4Search();
 	void loadGroupDialogs();
-	void loadDialogs();
-	void setDialogGetFull(bool full);
 	base::Observable<int>& signalGroupChanged();
 
 	// While HistoryInner is not HistoryView::ListWidget.
@@ -324,7 +323,6 @@ public slots:
 	void dialogsCancelled();
 	void slotChat(int64 peerId);
 	void onTimeout();
-	void updateUnReplyNum(qint32);
 
 protected:
 	void paintEvent(QPaintEvent *e) override;

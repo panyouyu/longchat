@@ -184,7 +184,6 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 	connect(_inner, SIGNAL(completeHashtag(QString)), this, SLOT(onCompleteHashtag(QString)));
 	connect(_inner, SIGNAL(refreshHashtags()), this, SLOT(onFilterCursorMoved()));
 	connect(_inner, SIGNAL(cancelSearchInChat()), this, SLOT(onCancelSearchInChat()));
-	connect(_inner, SIGNAL(queueCountChanged(int)), this, SLOT(onQueueCountChanged(int)));
 	connect(_inner, SIGNAL(kfSessionTimeOut(int64)), this, SLOT(onKfSessionTimeOut(int64)));
 	subscribe(_inner->searchFromUserChanged, [this](UserData *user) {
 		setSearchInChat(_searchInChat, user);
@@ -577,7 +576,6 @@ void DialogsWidget::dialogsReceived(
 	if (_dialogsFull && _pinnedDialogsReceived) {
 		Auth().data().allChatsLoaded().set(true);
 	}
-	DEBUG_LOG(("UserGroup: loadDialogs finished! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
 	Auth().api().requestContacts();
 }
 

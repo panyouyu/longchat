@@ -107,8 +107,6 @@ signals:
 	void needToReceive();
 	void needToRestart();
 	void stateChanged(qint32 newState);
-	void groupStateChanged(qint32 state);
-	void unReplyNum(qint32 num);
 	void sessionResetDone();
 
 	void needToSendAsync();

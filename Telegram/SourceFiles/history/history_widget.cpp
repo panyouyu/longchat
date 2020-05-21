@@ -2037,17 +2037,8 @@ void HistoryWidget::updateControlsVisibility() {
 		_botStart->hide();
 		_joinChannel->hide();
 		_muteUnmute->hide();
-		_send->show();
-		
-		if (_peer && App::main()->userInSeeking(_peer->id) ) //已结束的会话中不再显示结束会话
-		{
-			_overSession->show(); 
-		}
-		else
-		{
-			_overSession->hide();
-		}
-		
+		_send->show();		
+		_overSession->show();		
 		if (showRecordButton()) {
 			_record->show();
 		}
@@ -6803,23 +6794,18 @@ void HistoryWidget::onOverSession()
 			rpcDone(&HistoryWidget::sendOverSessionDone));
 		_sendOverSessionRequests.insert(_history, requestId);
 		_confirmBox->closeBox();
-		}), LayerOption::KeepOther);
-
+	}), LayerOption::KeepOther);
 }
 
 void HistoryWidget::sendOverSessionDone(const MTPBool& result, mtpRequestId req)
 {
-	//App::main()->dialogsList()->del(_history);
 	App::main()->removeDialog(_history);
-	showHistory(0, 0);
+	controller()->showBackFromStack();	
 	for (auto i = _sendOverSessionRequests.begin(), e = _sendOverSessionRequests.end(); i != e; ++i) {
 		if (i.value() == req) {
 			_sendOverSessionRequests.erase(i);
 			break;
 		}
-	}
-	if (Adaptive::ThreeColumn()) {
-		this->controller()->closeThirdSection();
 	}
 }
 

@@ -506,8 +506,6 @@ void Application::startMtp() {
 			App::main()->getDifference();
 		}
 	});
-	connect(_mtproto.get(), SIGNAL(unReplyNum(qint32)), _window.get(), SIGNAL(unReplyNum(qint32)));
-
 	if (!_private->mtpKeysToDestroy.empty()) {
 		destroyMtpKeys(base::take(_private->mtpKeysToDestroy));
 	}
@@ -772,13 +770,6 @@ void Application::authSessionCreate(const MTPUser &user) {
 		crl::on_main(_authSession.get(), [=] { logOut(); });
 		return true;
 	}));
-	_mtproto->setUserGroupChangedHandler(::rpcDone([](int32 state) {
-			if (const auto main = App::main()) {
-				DEBUG_LOG(("UserGroup: start loadDialogs! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
-				main->setDialogGetFull(false);
-				main->loadDialogs();
-			}
-		}));
 	authSessionChanged().notify(true);
 }
 

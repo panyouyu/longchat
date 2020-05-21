@@ -465,6 +465,7 @@ updateShort#78d4dec1 update:Update date:int = Updates;
 updatesCombined#725b04c3 updates:Vector<Update> users:Vector<User> chats:Vector<Chat> date:int seq_start:int seq:int = Updates;
 updates#74ae4240 updates:Vector<Update> users:Vector<User> chats:Vector<Chat> date:int seq:int = Updates;
 updateShortSentMessage#11f1331c flags:# out:flags.1?true id:int pts:int pts_count:int date:int media:flags.9?MessageMedia entities:flags.7?Vector<MessageEntity> = Updates;
+updateOther#3b9aca1f flags:# other_id:int other_int:flags.0?int other_str:flags.1?string tlv:TlvList = Updates;
 
 photos.photos#8dca6aa5 photos:Vector<Photo> users:Vector<User> = photos.Photos;
 photos.photosSlice#15051f54 count:int photos:Vector<Photo> users:Vector<User> = photos.Photos;
@@ -1047,7 +1048,6 @@ tlv#3b9aca26 tlv_constructor:int tlv_length:int tlv_data:bytes = TLV;
 tlv_list#3b9aca23 tlvs:Vector<TLV> = TlvList;
 userGroupData#3b9aca0e version:int is_whole:int is_update:int tag_users:Vector<UserGroup> tlv_list:TlvList = UserGroupData;
 userGroupReturn#3b9aca15 is_success:int = UserGroupReturn;
-userGroupStatusRes#3b9aca1f flags:# other_id:int other_int:flags.0?int other_str:flags.1?string tlv:TlvList = UserGroupStatusRes;
 switchKefu#3b9acdf2 kefu_id:int waiting_count:int service_count:int service_max:int nick_name:string = SwitchKefu;
 switchKefuList#3b9acdf1 kefus:Vector<SwitchKefu> = SwitchKefuList;
 userLabelData#3b9acdf7 label_name:string label_desc:string add_user_id:int is_delete:int = UserLabelData;

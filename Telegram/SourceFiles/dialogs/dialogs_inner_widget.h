@@ -131,7 +131,6 @@ signals:
 	void cancelSearchInChat();
 	void completeHashtag(QString tag);
 	void refreshHashtags();
-	void queueCountChanged(int count);
 	void contactStatusChanged();
 	void kfSessionTimeOut(int64 peerId);
 

@@ -369,7 +369,6 @@ public slots:
 	void tryToReceive();
 	void checkRequestsByTimer();
 	void onConnectionStateChange(qint32 newState);
-	void onGroupStateChange(qint32 state);
 	void onResetDone();
 
 	void sendAnything(qint64 msCanWait = 0);

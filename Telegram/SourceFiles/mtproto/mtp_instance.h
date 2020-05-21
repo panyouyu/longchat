@@ -155,13 +155,11 @@ public:
 	void queueQuittingConnection(std::unique_ptr<internal::Connection> &&connection);
 
 	void setUpdatesHandler(RPCDoneHandlerPtr onDone);
-	void setUserGroupChangedHandler(RPCDoneHandlerPtr onDone);
 	void setGlobalFailHandler(RPCFailHandlerPtr onFail);
 	void setStateChangedHandler(Fn<void(ShiftedDcId shiftedDcId, int32 state)> handler);
 	void setSessionResetHandler(Fn<void(ShiftedDcId shiftedDcId)> handler);
 	void clearGlobalHandlers();
 
-	void onGroupStateChange(int32 state);
 	void onStateChange(ShiftedDcId shiftedDcId, int32 state);
 	void onSessionReset(ShiftedDcId shiftedDcId);
 
@@ -197,7 +195,6 @@ signals:
 		QString host,
 		QStringList ips,
 		qint64 expireAt);
-	void unReplyNum(qint32);
 
 private slots:
 	void onKeyDestroyed(qint32 shiftedDcId);

@@ -1032,16 +1032,6 @@ void MainWidget::loadGroupDialogs()
 	_dialogs->loadGroupDialogs();
 }
 
-void MainWidget::loadDialogs()
-{
-	return _dialogs->loadDialogs();
-}
-
-void MainWidget::setDialogGetFull(bool full)
-{
-	_dialogs->setDialogGetFull(full);
-}
-
 base::Observable<int>& MainWidget::signalGroupChanged()
 {
 	return _dialogs->signalGroupChanged();
@@ -1425,10 +1415,6 @@ void MainWidget::onTimeout()
 	if (!_history->history()->inChatList(Dialogs::Mode::All)) {
 		createDialog(Auth().data().historyLoaded((PeerId)_peerId));
 	}	
-}
-
-void MainWidget::updateUnReplyNum(qint32 num) {
-	_dialogs->updateUnReplyState(num);
 }
 
 bool MainWidget::isIdle() const {
@@ -3962,6 +3948,23 @@ void MainWidget::feedUpdates(const MTPUpdates &updates, uint64 randomId) {
 		MTP_LOG(0, ("getDifference { good - updatesTooLong received }%1").arg(cTestMode() ? " TESTMODE" : ""));
 		return getDifference();
 	} break;
+
+	case mtpc_updateOther: {
+		const auto& data = updates.c_updateOther();
+		const auto& otherId = data.vother_id.v;
+		if (otherId == 1) {
+			qDebug("groupStateChanged");
+		}
+		else if (otherId == 5 && data.has_other_int()) {
+			// 未回复数
+			_dialogs->updateUnReplyState(data.vother_int.v);
+		}
+		else if (otherId == 5 && data.has_other_int()) {
+			// 排队人数
+			_dialogs->onQueueCountChanged(data.vother_int.v);
+		}
+	} break;
+
 	}
 	session().data().sendHistoryChangeNotifications();
 }
