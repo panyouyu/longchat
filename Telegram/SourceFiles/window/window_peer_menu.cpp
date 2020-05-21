@@ -351,6 +351,13 @@ void Filler::addUserActions(not_null<UserData*> user) {
 				[=] { PeerMenuExportChat(user); });
 		}
 	}
+	if (AuthSession::Exists()) {
+		_addAction(lang(lng_profile_close_conversation), [=] {
+			App::main()->showBackFromStack(Window::SectionShow());
+			App::main()->removeDialog(Dialogs::Key(Auth().data().history(user->id))); 
+		});
+	}
+	
 	_addAction(
 		lang(lng_profile_delete_conversation),
 		DeleteAndLeaveHandler(user));
