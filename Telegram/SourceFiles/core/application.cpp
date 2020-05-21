@@ -774,7 +774,6 @@ void Application::authSessionCreate(const MTPUser &user) {
 	}));
 	_mtproto->setUserGroupChangedHandler(::rpcDone([](int32 state) {
 			if (const auto main = App::main()) {
-				//main->loadGroupDialogs();
 				DEBUG_LOG(("UserGroup: start loadDialogs! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
 				main->setDialogGetFull(false);
 				main->loadDialogs();

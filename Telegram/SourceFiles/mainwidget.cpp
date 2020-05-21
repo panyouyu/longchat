@@ -1029,8 +1029,7 @@ QVector<Contact::ContactInfo*>& MainWidget::getGroupInfo4Search()
 
 void MainWidget::loadGroupDialogs()
 {
-	//_dialogs->loadGroupDialogs();
-	return _dialogs->loadDialogs(); 
+	_dialogs->loadGroupDialogs();
 }
 
 void MainWidget::loadDialogs()

@@ -127,7 +127,6 @@ public slots:
 
 	void onChooseByDrag();
 	void onQueueCountChanged(int count);
-	void onContactStatus();
 	void onKfSessionTimeOut(int64 peerId);
 
 	void updateUnReplyState(int unReplyNum);

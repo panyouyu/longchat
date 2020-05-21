@@ -11,6 +11,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "lang/lang_keys.h"
 #include "contact/filterwidget.h"
 #include "mainwidget.h"
+#include "auth_session.h"
+#include "data/data_session.h"
 #include "dialogs/dialogs_indexed_list.h"
 #include "history/history.h"
 #include "data/data_user.h"
@@ -23,7 +25,6 @@ namespace Contact {
 		updateGroupInfoData();
 		init();
 	}
-
 	
 	ContactBox::~ContactBox()
 	{
@@ -49,6 +50,9 @@ namespace Contact {
 
 		_vLayout->addWidget(_contactTree);
 
+		if (AuthSession::Exists() && Auth().data().contactsLoaded().value()) {
+			App::main()->loadGroupDialogs();
+		}
 	}
 
 	void ContactBox::slotChat(int64 peerId)
@@ -106,7 +110,6 @@ namespace Contact {
 		_contactTree->setSearchKey(searchText);
 	}
 
-
 	void ContactBox::slotAddGroup()
 	{
 		auto addBox = Ui::show(Box<GroupBox>(), LayerOption::KeepOther);
@@ -128,8 +131,6 @@ namespace Contact {
 	{
 		_controller->showPeerInfo(pCI->peerId);
 	}
-
-
 
 	void ContactBox::onCloseWait()
 	{
@@ -172,8 +173,6 @@ namespace Contact {
 	{
 		qDebug() << textFactory();
 	}
-
-
 
 	void ContactBox::userGroupDelDone(const  MTPUserGroupReturn& result)
 	{

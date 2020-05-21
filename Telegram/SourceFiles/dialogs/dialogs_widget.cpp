@@ -185,7 +185,6 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 	connect(_inner, SIGNAL(refreshHashtags()), this, SLOT(onFilterCursorMoved()));
 	connect(_inner, SIGNAL(cancelSearchInChat()), this, SLOT(onCancelSearchInChat()));
 	connect(_inner, SIGNAL(queueCountChanged(int)), this, SLOT(onQueueCountChanged(int)));
-	connect(_inner, SIGNAL(contactStatusChanged()), this, SLOT(onContactStatus()));
 	connect(_inner, SIGNAL(kfSessionTimeOut(int64)), this, SLOT(onKfSessionTimeOut(int64)));
 	subscribe(_inner->searchFromUserChanged, [this](UserData *user) {
 		setSearchInChat(_searchInChat, user);
@@ -237,7 +236,6 @@ DialogsWidget::DialogsWidget(QWidget *parent, not_null<Window::Controller*> cont
 
 	_searchTimer.setSingleShot(true);
 	connect(&_searchTimer, SIGNAL(timeout()), this, SLOT(onSearchMessages()));
-	//loadGroupDialogs();放这加载太早，联系人还没同步过来
 	_inner->setLoadMoreCallback([this] {
 		using State = DialogsInner::State;
 		const auto state = _inner->state();
@@ -581,7 +579,6 @@ void DialogsWidget::dialogsReceived(
 	}
 	DEBUG_LOG(("UserGroup: loadDialogs finished! therad_id(%1)").arg((uint32)QThread::currentThreadId()));
 	Auth().api().requestContacts();
-	loadGroupDialogs();//用户加载完成后，再加载分组
 }
 
 void DialogsWidget::updateDialogsOffset(
@@ -867,11 +864,6 @@ void DialogsWidget::updateUnReplyState(int unReplyNum) {
 
 void DialogsWidget::updateServiceState() {
 	_serviceState->setText(lng_switchboard_unreply(lt_count, _unreply_num)  + qsl("  /  ") + lng_switchboard_cust_queue_count(lt_count, _queue_num));
-}
-
-void DialogsWidget::onContactStatus()
-{
-	loadGroupDialogs();
 }
 
 void DialogsWidget::onKfSessionTimeOut(int64 peerId)
