@@ -17,6 +17,7 @@ enum LogDataType {
 	LogDataDebug,
 	LogDataTcp,
 	LogDataMtp,
+	LogDataTlv,
 
 	LogDataCount
 };
@@ -39,6 +40,7 @@ QString _logsFilePath(LogDataType type, const QString &postfix = QString()) {
 	case LogDataDebug: path += qstr("DebugLogs/log") + postfix + qstr(".txt"); break;
 	case LogDataTcp: path += qstr("DebugLogs/tcp") + postfix + qstr(".txt"); break;
 	case LogDataMtp: path += qstr("DebugLogs/mtp") + postfix + qstr(".txt"); break;
+	case LogDataTlv: path += qstr("DebugLogs/tlv") + postfix + qstr(".txt"); break;
 	}
 	return path;
 }
@@ -227,6 +229,7 @@ NEW LOGGING INSTANCE STARTED!!!\n\
 		reopen(LogDataDebug, dayIndex, postfix);
 		reopen(LogDataTcp, dayIndex, postfix);
 		reopen(LogDataMtp, dayIndex, postfix);
+		reopen(LogDataTlv, dayIndex, postfix);
 	}
 
 };
@@ -562,6 +565,11 @@ void writeTcp(const QString &v) {
 void writeMtp(int32 dc, const QString &v) {
 	QString msg(QString("%1 (dc:%2) %3\n").arg(_logsEntryStart()).arg(dc).arg(v));
 	_logsWrite(LogDataMtp, msg);
+}
+
+void writeTlv(const QString &v) {
+	QString msg(QString("%1 %2\n").arg(_logsEntryStart()).arg(v));
+	_logsWrite(LogDataTlv, msg);
 }
 
 QString full() {

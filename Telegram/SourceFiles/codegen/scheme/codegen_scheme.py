@@ -85,7 +85,8 @@ countedTypeIdExceptions['kefu.blockUser#3b9acdf6'] = True
 countedTypeIdExceptions['user#2e13f4c3'] = True
 countedTypeIdExceptions['kegu.getUserInfo#e2b66055'] = True
 countedTypeIdExceptions['userLabelData#3b9acdf7'] = True
-
+countedTypeIdExceptions['tlvc.updateUserGroup#3b9aca67'] = True
+countedTypeIdExceptions['tlvc.updateUserGroups#3b9aca68'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';

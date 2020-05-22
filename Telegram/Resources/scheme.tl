@@ -524,6 +524,9 @@ notifyUsers#b4c83b4c = NotifyPeer;
 notifyChats#c007cec3 = NotifyPeer;
 notifyBroadcasts#d612e8ef = NotifyPeer;
 
+tlvc.updateUserGroup#3b9aca67 user_id:int group_id:int = UpdateUserGroup;
+tlvc.updateUserGroups#3b9aca68 adds:Vector<UpdateUserGroup> removes:Vector<UpdateUserGroup> = UpdateUserGroups;
+
 sendMessageTypingAction#16bf744e = SendMessageAction;
 sendMessageCancelAction#fd5ec8f5 = SendMessageAction;
 sendMessageRecordVideoAction#a187d66f = SendMessageAction;

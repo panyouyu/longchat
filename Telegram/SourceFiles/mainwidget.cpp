@@ -97,6 +97,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "quick_reply/quick_reply_selector.h"
 #include "guest/guest_section.h"
 #include "guest/guest_selector.h"
+#include "tlv/tlv_pushother.h"
 #include "styles/style_dialogs.h"
 #include "styles/style_history.h"
 #include "styles/style_boxes.h"
@@ -3954,14 +3955,15 @@ void MainWidget::feedUpdates(const MTPUpdates &updates, uint64 randomId) {
 		const auto& otherId = data.vother_id.v;
 		if (otherId == 1) {
 			qDebug("groupStateChanged");
-		}
-		else if (otherId == 5 && data.has_other_int()) {
+		} else if (otherId == 5 && data.has_other_int()) {
 			// 未回复数
 			_dialogs->updateUnReplyState(data.vother_int.v);
-		}
-		else if (otherId == 5 && data.has_other_int()) {
+		} else if (otherId == 5 && data.has_other_int()) {
 			// 排队人数
 			_dialogs->onQueueCountChanged(data.vother_int.v);
+		} else if (otherId == 7) {
+			const auto& tlv_list = data.vtlv.c_tlv_list();
+			TLV::feedUserGroupUpdates(tlv_list);
 		}
 	} break;
 
