@@ -382,6 +382,8 @@ void TextListWidget::contextMenuEvent(QContextMenuEvent* e)
 		mousePressReleased(_pressButton);
 	}
 
+	if (_actions.empty() && _rows.size() < 2) return;
+
 	_contextMenu = base::make_unique_q<Ui::PopupMenu>(this, st::quickReplyPopupMenu);
 	auto addAction = [this](Action* action) {
 		_contextMenu->addAction(action->text, action->callback, action->icon, action->iconOver);

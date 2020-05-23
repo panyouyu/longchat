@@ -4,6 +4,7 @@
 #include "ui/widgets/labels.h"
 #include "ui/widgets/input_fields.h"
 #include "ui/widgets/dropdown_menu.h"
+#include "ui/text_options.h"
 #include "settings.h"
 #include "lang/lang_keys.h"
 #include "storage/localstorage.h"
@@ -143,19 +144,23 @@ void QuickReplyBox::showDropDownList()
 }
 
 void QuickReplyBox::submit() {
-	if (_filter->empty()) {
+	Text filter = Text(st::defaultTextStyle, _filter->getLastText(), Ui::NameTextOptions());
+	Text input = Text(st::defaultTextStyle, _input->getLastText(), Ui::NameTextOptions());
+
+	QString group = filter.toString();
+	if (group.isEmpty()) {
 		_filter->showError();
 		_filter->setFocus();
 		return;
 	}
-	if (_input->empty() || _input->getLastText() == _content) {
+
+	QString str = input.toString();
+	if (str.isEmpty() || str == _content) {
 		_input->showError();
 		_input->setFocus();
 		return;
 	}
-
-	QString group = _filter->getLastText();
-	QString str = _input->getLastText();
+	
 	auto& ref = cRefQuickReplyStrings();
 	if (ref.contains({ group, {} })) {
 		if (_content.isEmpty()) {
@@ -164,6 +169,11 @@ void QuickReplyBox::submit() {
 			}
 		}
 		else {
+			if (ref[ref.indexOf({ group, {} })].content.contains(str)) {
+				_input->showError();
+				_input->setFocus();
+				return;
+			}
 			if (ref[ref.indexOf({ group, {} })].content.contains(_content)) {
 				ref[ref.indexOf({ group, {} })].content[ref[ref.indexOf({ group, {} })].content.indexOf(_content)] = str;
 			}

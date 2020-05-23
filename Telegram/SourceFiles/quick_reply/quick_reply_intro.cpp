@@ -44,6 +44,7 @@ private:
 	void contentSwap(int index1, int index2);
 	void refreshTitle();
 	void refreshContent(QString title);
+	void updateControlVisable();
 
 	object_ptr<Ui::IconTextButton> _import;
 	object_ptr<Ui::IconTextButton> _export;
@@ -345,10 +346,14 @@ void QuickReplyWidget::resizeEvent(QResizeEvent* e)
 	int managerx = (_scrollTitle->width() - st::quickReplyManager.width) / 2;
 	_manager->moveToLeft(managerx, top);
 	int right = st::quickReplyModify.margin.right();
-	_modify->moveToRight(right, top);
-	right += st::quickReplyModify.width + st::quickReplyModify.margin.left() + st::quickReplyDelete.margin.right();
-	_remove->moveToRight(right, top); 
-	right += st::quickReplyDelete.width + st::quickReplyDelete.margin.left() + st::quickReplyAdd.margin.right();
+	if (!_modify->isHidden()) {
+		_modify->moveToRight(right, top);
+		right += st::quickReplyModify.width + st::quickReplyModify.margin.left() + st::quickReplyDelete.margin.right();
+	}
+	if (!_remove->isHidden()) {
+		_remove->moveToRight(right, top);
+		right += st::quickReplyDelete.width + st::quickReplyDelete.margin.left() + st::quickReplyAdd.margin.right();
+	}
 	_add->moveToRight(right, top);
 }
 
@@ -400,6 +405,7 @@ void QuickReplyWidget::refreshTitle() {
 
 	_title->setCheckedItem(ref.indexOf({ _groupRow, {} }));
 	refreshContent(_groupRow);
+	updateControlVisable();
 }
 void QuickReplyWidget::refreshContent(QString group) {
 	_content->clear();
@@ -409,6 +415,12 @@ void QuickReplyWidget::refreshContent(QString group) {
 		_content->appendRows(ref[ref.indexOf({ group, {} })].content);
 		_content->setCheckedItem(_contentRow);
 	}
+}
+
+void QuickReplyWidget::updateControlVisable() {
+	_modify->setVisible(!_contentRow.isEmpty());
+	_remove->setVisible(!_contentRow.isEmpty());
+	resizeEvent(nullptr);
 }
 
 class IntroWidget : public Ui::RpWidget {
