@@ -1406,6 +1406,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_dlg_contact_group_select" = "选择分组";
 "lng_dlg_contact_select" = "选择联系人";
 "lng_dlg_contact_group_edit" = "编辑群组";
+"lng_dlg_contact_group_name_min" = "分组名不可为空";
+"lng_dlg_contact_group_name_max" = "分组名长度不可大于 {size}";
 "lng_add_contact" = "添加";
 "lng_add_contact_button" = "添加联系人";
 "lng_contacts_header" = "联系人";

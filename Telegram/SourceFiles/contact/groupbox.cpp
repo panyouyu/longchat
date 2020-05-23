@@ -16,9 +16,14 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "data/data_peer_values.h"
 #include "auth_session.h"
 #include "data/data_session.h"
+#include "boxes/confirm_box.h"
 
 
 namespace Contact {
+
+	namespace {
+		constexpr auto kMaxGroupNameLength = 20;
+	}
 
 	GroupBox::GroupBox(QWidget*, ContactInfo* pCI, GroupOperWindowType gowt): _pCI(pCI), _gowt(gowt)
 	{
@@ -41,6 +46,14 @@ namespace Contact {
 
 	void GroupBox::slotSaveClicked()
 	{
+		auto size = _lineGroupName->text().size();
+		if (size == 0) {
+			Ui::show(Box<InformBox>(lang(lng_dlg_contact_group_name_min)), LayerOption::KeepOther);
+			return;
+		} else if (size > kMaxGroupNameLength){
+			Ui::show(Box<InformBox>(lng_dlg_contact_group_name_max(lt_size, QString::number(kMaxGroupNameLength))), LayerOption::KeepOther);
+			return;
+		}
 		QVector<MTPlong> userIdVec;
 		for (int i = 0; i < _vecContactSelected.size(); ++i) {
 			userIdVec.push_back(MTP_long(_vecContactSelected.at(i)->id));
@@ -256,6 +269,7 @@ namespace Contact {
 			{
 				_resultHandler(succeed);
 			}
+			App::main()->loadGroupDialogs();
 			closeBox();
 		}
 	}
