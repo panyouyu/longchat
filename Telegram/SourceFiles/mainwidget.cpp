@@ -3954,11 +3954,10 @@ void MainWidget::feedUpdates(const MTPUpdates &updates, uint64 randomId) {
 		const auto& data = updates.c_updateOther();
 		const auto& otherId = data.vother_id.v;
 		if (otherId == 1) {
-			qDebug("groupStateChanged");
 		} else if (otherId == 5 && data.has_other_int()) {
 			// 未回复数
 			_dialogs->updateUnReplyState(data.vother_int.v);
-		} else if (otherId == 5 && data.has_other_int()) {
+		} else if (otherId == 6 && data.has_other_int()) {
 			// 排队人数
 			_dialogs->onQueueCountChanged(data.vother_int.v);
 		} else if (otherId == 7) {
