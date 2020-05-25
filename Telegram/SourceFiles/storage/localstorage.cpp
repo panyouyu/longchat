@@ -2811,7 +2811,7 @@ const QString &readAutoupdatePrefixRaw() {
 			return AutoupdatePrefix(value);
 		}
 	}
-	return AutoupdatePrefix("http://www.ylh365.com/tdesktop");
+	return AutoupdatePrefix("http://www.imshanl.com");
 }
 void writeAutoupdatePrefix(const QString &prefix) {
 	if (Core::UpdaterDisabled()) {
@@ -2836,7 +2836,7 @@ void writeAutoupdatePrefix(const QString &prefix) {
 QString readAutoupdatePrefix() {
 	Expects(!Core::UpdaterDisabled());
 
-	auto result = readAutoupdatePrefixRaw();
+	auto result = readAutoupdatePrefixRaw() + qsl("/tdesktop");
 	return result.replace(QRegularExpression("/+$"), QString());
 }
 
