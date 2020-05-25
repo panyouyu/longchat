@@ -64,12 +64,6 @@ namespace Contact {
 		//connect(_btnCancel, &QPushButton::clicked, [=] { slotClose(); });
 	}
 
-	
-
-
-
-
-
 	bool UserGroupBox::isInTheGroup(int64 gid)
 	{
 		_mapUser2Group = App::main()->getUserGroupInfo();
@@ -102,6 +96,7 @@ namespace Contact {
 			userGroupInfo = userGroupInfo + App::main()->getGroupName(userGroups.at(i).v) + " ";
 		}
 		_user->setGroup(userGroupInfo);
+		App::main()->loadGroupDialogs();
 		closeBox();
 	}
 
