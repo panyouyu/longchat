@@ -61,6 +61,7 @@ namespace Contact {
 	private:
 		QHBoxLayout* _hGroupNameLayout;
 		QLineEdit* _lineGroupName;
+		QLabel* _errorLabel;
 		QVBoxLayout* _vLeftTreeLayout;
 		FilterWidget* _filterWidget;
 		ContactTreeView* _contactTree;

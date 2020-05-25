@@ -113,7 +113,9 @@ namespace Contact {
 		QVector<MTPlong> userGroups = _contactTree->getCheckedGroup();
 		//MTPint _is_update, const MTPVector<MTPlong>& _tag_id
 		QVector<MTPInputContact> v(1, MTP_inputPhoneContact(MTP_long(_user->id), MTP_string(_user->phone()), MTP_string(_user->firstName), MTP_string(_user->lastName)));
-		_modRequest = MTP::send(MTPcontacts_ImportContacts(MTP_vector<MTPInputContact>(v), MTP_int(1), MTP_vector<MTPlong>(userGroups)), rpcDone(&UserGroupBox::onSaveUserDone), rpcFail(&UserGroupBox::onSaveUserFail));
+		_modRequest = MTP::send(MTPcontacts_ImportContacts(MTP_vector<MTPInputContact>(v), MTP_int(1), MTP_vector<MTPlong>(userGroups)), 
+			rpcDone(&UserGroupBox::onSaveUserDone), 
+			rpcFail(&UserGroupBox::onSaveUserFail));
 	}
 
 

@@ -47,25 +47,28 @@ namespace Contact {
 	void GroupBox::slotSaveClicked()
 	{
 		auto size = _lineGroupName->text().size();
-		if (size == 0) {
-			Ui::show(Box<InformBox>(lang(lng_dlg_contact_group_name_min)), LayerOption::KeepOther);
-			return;
-		} else if (size > kMaxGroupNameLength){
-			Ui::show(Box<InformBox>(lng_dlg_contact_group_name_max(lt_size, QString::number(kMaxGroupNameLength))), LayerOption::KeepOther);
+		if (size == 0 || size > kMaxGroupNameLength) {
 			return;
 		}
+
 		QVector<MTPlong> userIdVec;
 		for (int i = 0; i < _vecContactSelected.size(); ++i) {
 			userIdVec.push_back(MTP_long(_vecContactSelected.at(i)->id));
 		}
 		QString groupName = _lineGroupName->text().trimmed();
-		if (_gowt == GOWT_ADD)
-		{
-			_allUserTagAddRequest = MTP::send(MTPcontacts_AddUserGroups(MTP_string(groupName), MTP_vector<MTPlong>(userIdVec)), rpcDone(&GroupBox::userGroupDone), rpcFail(&GroupBox::userGroupFail));
-		}
-		else {
-			_allUserTagModRequest = MTP::send(MTPcontacts_ModUserGroups(MTP_long(_pCI->id), MTP_string(groupName), MTP_vector<MTPlong>(userIdVec)), rpcDone(&GroupBox::userGroupDone), rpcFail(&GroupBox::userGroupFail));
-		}
+		if (_gowt == GOWT_ADD) {
+			if (_allUserTagAddRequest) {
+				return;
+			}
+			_allUserTagAddRequest = MTP::send(MTPcontacts_AddUserGroups(MTP_string(groupName), MTP_vector<MTPlong>(userIdVec)), 
+				rpcDone(&GroupBox::userGroupDone), 
+				rpcFail(&GroupBox::userGroupFail));
+		} else {
+			if (_allUserTagModRequest) return;
+			_allUserTagModRequest = MTP::send(MTPcontacts_ModUserGroups(MTP_long(_pCI->id), MTP_string(groupName), MTP_vector<MTPlong>(userIdVec)), 
+				rpcDone(&GroupBox::userGroupDone), 
+				rpcFail(&GroupBox::userGroupFail));
+		}		
 	}
 
 	void GroupBox::slotTextFilterChanged()
@@ -91,8 +94,6 @@ namespace Contact {
 		eraseFromVector(_vecContactSelected, pCI);
 		freshTree();
 	}
-
-
 
 	void GroupBox::prepare() {
 		setTitle([] { return lang(lng_dlg_contact_group_edit); });
@@ -122,11 +123,30 @@ namespace Contact {
 		//_hGroupNameLayout->setSpacing(spacing);
 		_hGroupNameLayout->setObjectName(QStringLiteral("_hGroupNameLayout"));
 
-
 		_lineGroupName = new QLineEdit(this);
 		_lineGroupName->setObjectName(QStringLiteral("_lineGroupName"));
 		_lineGroupName->setPlaceholderText(lang(lng_dlg_contact_group_name_input));
 		_hGroupNameLayout->addWidget(_lineGroupName);
+
+		_errorLabel = new QLabel(lang(lng_dlg_contact_group_name_min), this);
+		_errorLabel->setAlignment(style::al_left);
+		QPalette p;
+		p.setColor(QPalette::WindowText, Qt::red);
+		_errorLabel->setPalette(p);
+		connect(_lineGroupName, &QLineEdit::textChanged, [this](const QString& text) {
+			auto size = _lineGroupName->text().size();
+			if (size == 0) {
+				_errorLabel->setText(lang(lng_dlg_contact_group_name_min));
+				return;
+			} else if (size > kMaxGroupNameLength) {
+				_errorLabel->setText(lng_dlg_contact_group_name_max(lt_size, QString::number(kMaxGroupNameLength)));
+				return;
+			} else {
+				_errorLabel->setText(QString());
+			}
+		});
+		_hGroupNameLayout->addWidget(_errorLabel);
+
 		_vLayout->addLayout(_hGroupNameLayout);
 
 		//ÖÐ¼äÁ½¿ÅÊ÷
@@ -272,6 +292,7 @@ namespace Contact {
 			App::main()->loadGroupDialogs();
 			closeBox();
 		}
+		
 	}
 
 	bool GroupBox::userGroupFail(const RPCError& error)
