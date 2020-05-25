@@ -686,7 +686,7 @@ void ActionsFiller::fillUserActions(not_null<UserData*> user) {
 		if (user->isBot()) {
 			addReportAction();
 		}
-		addBlockAction(user);
+		//addBlockAction(user);
 	}
 }
 

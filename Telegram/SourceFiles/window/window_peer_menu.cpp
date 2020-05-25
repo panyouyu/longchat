@@ -365,7 +365,7 @@ void Filler::addUserActions(not_null<UserData*> user) {
 		lang(lng_profile_clear_history),
 		ClearHistoryHandler(user));
 	if (!user->isInaccessible() && user != Auth().user()) {
-		addBlockUser(user);
+		//addBlockUser(user);
 	}
 	addSwitchboardUser(user);	
 }
