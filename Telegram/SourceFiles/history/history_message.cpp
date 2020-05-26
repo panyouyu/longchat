@@ -887,6 +887,10 @@ std::unique_ptr<Data::Media> HistoryMessage::CreateMedia(
 		return nullptr;
 	}, [](const MTPDmessageMediaUnsupported &) -> Result {
 		return nullptr;
+	}, [](const MTPDmessageMediaRedPacket &) -> Result {
+		return nullptr;
+	}, [](const MTPDmessageMediaTransfer &) -> Result {
+		return nullptr;
 	});
 	return nullptr;
 }

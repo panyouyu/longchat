@@ -207,6 +207,21 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		return result;
 	};
 
+	auto prepareRedPacketAction = [this](const MTPDmessageActionRedPacket& action) {
+		auto result = PreparedText{};
+
+		auto send = history()->owner().user(action.vsend_id.v);
+		auto recv = history()->owner().user(action.vrecv_id.v);
+
+		auto send_name = send->isSelf() ? lang(lng_action_yourself) : send->name;
+		auto recv_name = recv->isSelf() ? lang(lng_action_yourself) : recv->name;
+
+		result.links.push_back(recv->createOpenLink());
+		result.links.push_back(recv->createOpenLink());
+		result.text = lng_action_red_envelope(lt_user, textcmdLink(1, recv_name), lt_from, textcmdLink(2, send_name));
+		return result;
+	};
+
 	auto prepareContactSignUp = [this] {
 		auto result = PreparedText{};
 		result.links.push_back(fromLink());
@@ -253,9 +268,11 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		return prepareBotAllowed(data);
 	}, [&](const MTPDmessageActionSecureValuesSent &data) {
 		return prepareSecureValuesSent(data);
+	}, [&](const MTPDmessageActionRedPacket& data) {
+		return prepareRedPacketAction(data);
 	}, [&](const MTPDmessageActionContactSignUp &data) {
 		return prepareContactSignUp();
-	}, [](const MTPDmessageActionPaymentSentMe &) {
+	}, [](const MTPDmessageActionPaymentSentMe&) {
 		LOG(("API Error: messageActionPaymentSentMe received."));
 		return PreparedText{ lang(lng_message_empty) };
 	}, [](const MTPDmessageActionSecureValuesSentMe &) {

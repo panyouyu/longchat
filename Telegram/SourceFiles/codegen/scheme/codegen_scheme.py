@@ -61,6 +61,9 @@ countedTypeIdExceptions['accessPointRule#4679b65f'] = True
 countedTypeIdExceptions['help.configSimple#5a592a6c'] = True
 countedTypeIdExceptions['bots.sendBindUserRequest#3b9acded'] = True
 countedTypeIdExceptions['bots.sendConsultationType#3b9acdeb'] = True
+countedTypeIdExceptions['messageMediaRedPacket#3b9aca2b'] = True
+countedTypeIdExceptions['messageMediaTransfer#3b9aca2c'] = True
+countedTypeIdExceptions['messageActionRedPacket#3b9aca2d'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';

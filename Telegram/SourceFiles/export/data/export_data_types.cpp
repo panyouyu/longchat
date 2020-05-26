@@ -935,7 +935,9 @@ Media ParseMedia(
 		result.ttl = data.vperiod.v;
 	}, [&](const MTPDmessageMediaPoll &data) {
 		result.content = ParsePoll(data);
-	}, [](const MTPDmessageMediaEmpty &data) {});
+	}, [](const MTPDmessageMediaEmpty &data) {
+	}, [](const MTPDmessageMediaRedPacket &) {
+	}, [](const MTPDmessageMediaTransfer &) {});
 	return result;
 }
 
@@ -1079,7 +1081,8 @@ ServiceAction ParseServiceAction(
 		result.content = content;
 	}, [&](const MTPDmessageActionContactSignUp &data) {
 		result.content = ActionContactSignUp();
-	}, [](const MTPDmessageActionEmpty &data) {});
+	}, [](const MTPDmessageActionEmpty &data) {
+	}, [](const MTPDmessageActionRedPacket &) {});
 	return result;
 }
 
