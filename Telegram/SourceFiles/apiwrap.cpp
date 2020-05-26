@@ -2512,75 +2512,75 @@ void ApiWrap::deleteMessages(
 }
 
 void ApiWrap::saveDraftsToCloud() {
-	for (auto i = _draftsSaveRequestIds.begin(), e = _draftsSaveRequestIds.end(); i != e; ++i) {
-		if (i->second) continue; // sent already
+	//for (auto i = _draftsSaveRequestIds.begin(), e = _draftsSaveRequestIds.end(); i != e; ++i) {
+	//	if (i->second) continue; // sent already
 
-		auto history = i->first;
-		auto cloudDraft = history->cloudDraft();
-		auto localDraft = history->localDraft();
-		if (cloudDraft && cloudDraft->saveRequestId) {
-			request(base::take(cloudDraft->saveRequestId)).cancel();
-		}
-		if (!_session->supportMode()) {
-			cloudDraft = history->createCloudDraft(localDraft);
-		} else if (!cloudDraft) {
-			cloudDraft = history->createCloudDraft(nullptr);
-		}
+	//	auto history = i->first;
+	//	auto cloudDraft = history->cloudDraft();
+	//	auto localDraft = history->localDraft();
+	//	if (cloudDraft && cloudDraft->saveRequestId) {
+	//		request(base::take(cloudDraft->saveRequestId)).cancel();
+	//	}
+	//	if (!_session->supportMode()) {
+	//		cloudDraft = history->createCloudDraft(localDraft);
+	//	} else if (!cloudDraft) {
+	//		cloudDraft = history->createCloudDraft(nullptr);
+	//	}
 
-		auto flags = MTPmessages_SaveDraft::Flags(0);
-		auto &textWithTags = cloudDraft->textWithTags;
-		if (cloudDraft->previewCancelled) {
-			flags |= MTPmessages_SaveDraft::Flag::f_no_webpage;
-		}
-		if (cloudDraft->msgId) {
-			flags |= MTPmessages_SaveDraft::Flag::f_reply_to_msg_id;
-		}
-		if (!textWithTags.tags.isEmpty()) {
-			flags |= MTPmessages_SaveDraft::Flag::f_entities;
-		}
-		auto entities = TextUtilities::EntitiesToMTP(
-			ConvertTextTagsToEntities(textWithTags.tags),
-			TextUtilities::ConvertOption::SkipLocal);
+	//	auto flags = MTPmessages_SaveDraft::Flags(0);
+	//	auto &textWithTags = cloudDraft->textWithTags;
+	//	if (cloudDraft->previewCancelled) {
+	//		flags |= MTPmessages_SaveDraft::Flag::f_no_webpage;
+	//	}
+	//	if (cloudDraft->msgId) {
+	//		flags |= MTPmessages_SaveDraft::Flag::f_reply_to_msg_id;
+	//	}
+	//	if (!textWithTags.tags.isEmpty()) {
+	//		flags |= MTPmessages_SaveDraft::Flag::f_entities;
+	//	}
+	//	auto entities = TextUtilities::EntitiesToMTP(
+	//		ConvertTextTagsToEntities(textWithTags.tags),
+	//		TextUtilities::ConvertOption::SkipLocal);
 
-		const auto draftText = textWithTags.text;
-		history->setSentDraftText(draftText);
-		cloudDraft->saveRequestId = request(MTPmessages_SaveDraft(
-			MTP_flags(flags),
-			MTP_int(cloudDraft->msgId),
-			history->peer->input,
-			MTP_string(textWithTags.text),
-			entities
-		)).done([=](const MTPBool &result, mtpRequestId requestId) {
-			history->clearSentDraftText(draftText);
+	//	const auto draftText = textWithTags.text;
+	//	history->setSentDraftText(draftText);
+	//	cloudDraft->saveRequestId = request(MTPmessages_SaveDraft(
+	//		MTP_flags(flags),
+	//		MTP_int(cloudDraft->msgId),
+	//		history->peer->input,
+	//		MTP_string(textWithTags.text),
+	//		entities
+	//	)).done([=](const MTPBool &result, mtpRequestId requestId) {
+	//		history->clearSentDraftText(draftText);
 
-			if (const auto cloudDraft = history->cloudDraft()) {
-				if (cloudDraft->saveRequestId == requestId) {
-					cloudDraft->saveRequestId = 0;
-					history->draftSavedToCloud();
-				}
-			}
-			auto i = _draftsSaveRequestIds.find(history);
-			if (i != _draftsSaveRequestIds.cend() && i->second == requestId) {
-				_draftsSaveRequestIds.erase(history);
-				checkQuitPreventFinished();
-			}
-		}).fail([=](const RPCError &error, mtpRequestId requestId) {
-			history->clearSentDraftText(draftText);
+	//		if (const auto cloudDraft = history->cloudDraft()) {
+	//			if (cloudDraft->saveRequestId == requestId) {
+	//				cloudDraft->saveRequestId = 0;
+	//				history->draftSavedToCloud();
+	//			}
+	//		}
+	//		auto i = _draftsSaveRequestIds.find(history);
+	//		if (i != _draftsSaveRequestIds.cend() && i->second == requestId) {
+	//			_draftsSaveRequestIds.erase(history);
+	//			checkQuitPreventFinished();
+	//		}
+	//	}).fail([=](const RPCError &error, mtpRequestId requestId) {
+	//		history->clearSentDraftText(draftText);
 
-			if (const auto cloudDraft = history->cloudDraft()) {
-				if (cloudDraft->saveRequestId == requestId) {
-					history->clearCloudDraft();
-				}
-			}
-			auto i = _draftsSaveRequestIds.find(history);
-			if (i != _draftsSaveRequestIds.cend() && i->second == requestId) {
-				_draftsSaveRequestIds.erase(history);
-				checkQuitPreventFinished();
-			}
-		}).send();
+	//		if (const auto cloudDraft = history->cloudDraft()) {
+	//			if (cloudDraft->saveRequestId == requestId) {
+	//				history->clearCloudDraft();
+	//			}
+	//		}
+	//		auto i = _draftsSaveRequestIds.find(history);
+	//		if (i != _draftsSaveRequestIds.cend() && i->second == requestId) {
+	//			_draftsSaveRequestIds.erase(history);
+	//			checkQuitPreventFinished();
+	//		}
+	//	}).send();
 
-		i->second = cloudDraft->saveRequestId;
-	}
+	//	i->second = cloudDraft->saveRequestId;
+	//}
 }
 
 bool ApiWrap::isQuitPrevent() {
