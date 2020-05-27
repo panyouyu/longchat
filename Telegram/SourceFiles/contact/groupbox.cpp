@@ -10,6 +10,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "lang/lang_keys.h"
 #include "contact/filterwidget.h"
 #include "mainwidget.h"
+#include "ui/toast/toast.h"
 #include "dialogs/dialogs_indexed_list.h"
 #include "history/history.h"
 #include "data/data_user.h"
@@ -291,8 +292,9 @@ namespace Contact {
 			}
 			App::main()->loadGroupDialogs();
 			closeBox();
-		}
-		
+		} else {
+			Ui::Toast::Show(lang(lng_dlg_contact_group_edit_fail));
+		}	
 	}
 
 	bool GroupBox::userGroupFail(const RPCError& error)
