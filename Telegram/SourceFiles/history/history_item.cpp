@@ -60,10 +60,7 @@ not_null<HistoryItem*> CreateUnsupportedMessage(
 		UserId viaBotId,
 		TimeId date,
 		UserId from) {
-	const auto siteLink = qsl("https://desktop.telegram.org");
-	auto text = TextWithEntities{
-		lng_message_unsupported(lt_link, siteLink)
-	};
+	auto text = TextWithEntities{ lang(lng_message_unsupported)	};
 	TextUtilities::ParseEntities(text, Ui::ItemTextNoMonoOptions().flags);
 	text.entities.push_front(
 		EntityInText(EntityType::Italic, 0, text.text.size()));
