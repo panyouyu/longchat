@@ -128,7 +128,7 @@ QString AlphaSignature;
 
 int main(int argc, char *argv[])
 {
-	QString workDir = "C:\\Users\\levy\\Desktop\\test\\tsetup\\";
+	QString workDir = "D:\\TBuild\\longchat-tdesktop\\out\\Release\\";
 
 	QString remove;
 	int version = 0;
