@@ -2173,7 +2173,8 @@ ConnectionPrivate::HandleResult ConnectionPrivate::handleOneReceived(const mtpPr
 			&& cons != mtpc_updateShortSentMessage
 			&& cons != mtpc_updateShort
 			&& cons != mtpc_updatesCombined
-			&& cons != mtpc_updates) {
+			&& cons != mtpc_updates
+			&& cons != mtpc_updateOther) {
 			// Maybe some new unknown update?
 			LOG(("Message Error: unknown constructor %1").arg(cons));
 		}
