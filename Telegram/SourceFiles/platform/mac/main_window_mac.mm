@@ -576,12 +576,12 @@ void MainWindow::psFirstShow() {
 
 void MainWindow::createGlobalMenu() {
 	auto main = psMainMenu.addMenu(qsl("LongChat"));
-	auto about = main->addAction(lng_mac_menu_about_telegram(lt_telegram, qsl("LongChat")));
-	connect(about, &QAction::triggered, about, [] {
-		if (App::wnd() && App::wnd()->isHidden()) App::wnd()->showFromTray();
-		Ui::show(Box<AboutBox>());
-	});
-	about->setMenuRole(QAction::AboutQtRole);
+	//auto about = main->addAction(lng_mac_menu_about_telegram(lt_telegram, qsl("LongChat")));
+	//connect(about, &QAction::triggered, about, [] {
+	//	if (App::wnd() && App::wnd()->isHidden()) App::wnd()->showFromTray();
+	//	Ui::show(Box<AboutBox>());
+	//});
+	//about->setMenuRole(QAction::AboutQtRole);
 
 	main->addSeparator();
 	QAction *prefs = main->addAction(lang(lng_mac_menu_preferences), App::wnd(), SLOT(showSettings()), QKeySequence(Qt::ControlModifier | Qt::Key_Comma));
