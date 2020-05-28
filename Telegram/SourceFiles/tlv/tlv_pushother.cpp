@@ -1,6 +1,7 @@
 #include "tlv/tlv_pushother.h"
 
 #include "app.h"
+#include "apiwrap.h"
 #include "mainwidget.h"
 #include "auth_session.h"
 #include "logs.h"
@@ -33,7 +34,10 @@ void feedUserGroupUpdates(const MTPDtlv_list& tlv_list) {
 				const auto& adds = d.vadds.v;
 				const auto& removes = d.vremoves.v;
 				for (const auto& add : adds) {
-					const auto& add_group = add.c_tlvc_updateUserGroup();
+					const auto &add_group = add.c_tlvc_updateUserGroup();
+					auto user = Auth().data().user(add_group.vuser_id.v);
+					Auth().api().requestPeerRelatedInfo(user);
+					Auth().api().requestPeerLabels(user);
 				}
 				for (const auto& remove : removes) {
 					const auto& remove_group = remove.c_tlvc_updateUserGroup();

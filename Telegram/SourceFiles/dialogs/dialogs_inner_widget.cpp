@@ -3160,15 +3160,7 @@ QVector<Contact::ContactInfo*>& DialogsInner::getGroupInfo4Search()
 
 bool DialogsInner::existUser(uint64 userId)
 {
-	QMap<uint64, QSet<uint64>>::const_iterator i = _mapUser2Group.find(userId);
-	if (i != _mapUser2Group.end())
-	{
-		return true;
-	}
-	QString noUser = QString("uid: %1 name: %2 not in any group").arg(userId).arg(_mapUserInfo[userId]);
-	LOG((noUser));
-	//qDebug() << noUser;
-	return false;
+	return  _mapUser2Group.find(userId) != _mapUser2Group.end();
 }
 
 Dialogs::IndexedList *DialogsInner::dialogsList() {

@@ -5463,6 +5463,8 @@ void ApiWrap::requestPeerRelatedInfo(not_null<PeerData*> peer) {
 						user->setUrl(std::move(url));
 					}
 					continue;
+				} else if (title == qsl("player_vip_level")) {
+					user->setExtra((*i).toString().toLocal8Bit());
 				}
 				
 				QStringList contentList;
@@ -5478,54 +5480,7 @@ void ApiWrap::requestPeerRelatedInfo(not_null<PeerData*> peer) {
 				title = title.right(title.size() - (title.indexOf('-') + 1));
 				userInfo.append({ title, contentList });
 			}
-			user->setUserInfo(std::move(userInfo));
-
-			/*auto url_key = qsl("player_info_url");
-			auto it = object.constFind(url_key);
-			if (it == object.constEnd()) {
-				DEBUG_LOG(("Error: json of user related info not contains key(%1)").arg(url_key));
-				return;
-			} else if (!(*it).isString()) {
-				DEBUG_LOG(("Error: json of user url not string"));
-				return;
-			} else {
-				user->setUrl((*it).toString());
-			}
-
-			it = object.constFind(qsl("data"));
-			if (it == object.constEnd()) {
-				DEBUG_LOG(("Error: json of user related info not contains data"));
-				return;
-			} else if (!(*it).isObject()) {
-				DEBUG_LOG(("Error: json of user data not an object received"));
-			} else {
-				QList<QPair<QString, QStringList>> userInfo;
-				auto data = (*it).toObject();
-				for (auto i = data.constBegin(), e = data.constEnd(); i != e; ++i) {
-					auto title = i.key();
-					QStringList contentList;
-					if (!(*i).isObject()) {
-						DEBUG_LOG(("Error: json of user related info:"
-							"the value of key(%1) not an object received").arg(i.key()));
-						continue;
-					} else {
-						auto value = (*i).toObject();
-						for (auto j = value.constBegin(), ee = value.constEnd(); j != ee; ++j) {
-							if (!(*j).isString()) {
-								DEBUG_LOG(("Error: json of user related info:"
-									"the value of %1 not an string received").arg(j.key()));
-								continue;
-							} else {
-								auto type = j.key();
-								type = type.right(type.size() - (type.indexOf('_') + 1));
-								contentList.append(type + qsl(": ") + (*j).toString());
-							}
-						}
-					}
-					userInfo.append({ title.right(title.size() - (title.indexOf('_') + 1)), contentList });
-				}
-				user->setUserInfo(userInfo);
-			}*/
+			user->setUserInfo(std::move(userInfo));			
 		}).send();
 	}
 }
