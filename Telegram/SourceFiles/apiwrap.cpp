@@ -5465,6 +5465,7 @@ void ApiWrap::requestPeerRelatedInfo(not_null<PeerData*> peer) {
 					continue;
 				} else if (title == qsl("player_vip_level")) {
 					user->setExtra((*i).toString().toUtf8());
+					continue;
 				}
 				
 				QStringList contentList;
