@@ -5474,11 +5474,13 @@ void ApiWrap::requestPeerRelatedInfo(not_null<PeerData*> peer) {
 						if ((*ii).isString()) {
 							auto key = ii.key();
 							key = key.right(key.size() - (key.indexOf('-') + 1));
+							if ((*ii).toString().isEmpty()) continue;
 							contentList.append(key + qsl(": ") + (*ii).toString());
 						}
 					}
 				}
 				title = title.right(title.size() - (title.indexOf('-') + 1));
+				if (contentList.isEmpty()) continue;
 				userInfo.append({ title, contentList });
 			}
 			user->setUserInfo(std::move(userInfo));			
