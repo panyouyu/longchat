@@ -148,6 +148,9 @@ error#c4b9f9bb code:int text:string = Error;
 
 null#56730bcc = Null;
 
+tlv#3b9aca26 id:int length:int data:string = TLV;
+tlvs#3b9aca23 tlvs:Vector<TLV> = TLVS;
+
 inputPeerEmpty#7f3b18ea = InputPeer;
 inputPeerSelf#7da07ec9 = InputPeer;
 inputPeerChat#179be863 chat_id:int = InputPeer;
@@ -261,8 +264,9 @@ messageMediaGame#fdb19008 game:Game = MessageMedia;
 messageMediaInvoice#84551347 flags:# shipping_address_requested:flags.1?true test:flags.3?true title:string description:string photo:flags.0?WebDocument receipt_msg_id:flags.2?int currency:string total_amount:long start_param:string = MessageMedia;
 messageMediaGeoLive#7c3c2609 geo:GeoPoint period:int = MessageMedia;
 messageMediaPoll#4bd6e798 poll:Poll results:PollResults = MessageMedia;
-messageMediaRedPacket#3b9aca2b id:int remarks:string state:int = MessageMedia;
-messageMediaTransfer#3b9aca2c id:int remarks:string state:int amount:int from_id:int = MessageMedia;
+messageMediaTlv#209acdf0 tlvs:TLVS = MessageMedia;
+messageMediaRedPacket#3b9aca2b id:int remarks:string state:int = TLVMedia;
+messageMediaTransfer#3b9aca2c id:int remarks:string state:int amount:int from_id:int = TLVMedia;
 
 messageActionEmpty#b6aef7b0 = MessageAction;
 messageActionChatCreate#a6638b9a title:string users:Vector<int> = MessageAction;
@@ -287,7 +291,8 @@ messageActionBotAllowed#abe9affe domain:string = MessageAction;
 messageActionSecureValuesSentMe#1b287353 values:Vector<SecureValue> credentials:SecureCredentialsEncrypted = MessageAction;
 messageActionSecureValuesSent#d95c6154 types:Vector<SecureValueType> = MessageAction;
 messageActionContactSignUp#f3f25f76 = MessageAction;
-messageActionRedPacket#3b9aca2d send_id:int recv_id:int id:int state:int = MessageAction;
+messageActionTlv#209acdf6 tlvs:TLVS = MessageAction;
+messageActionRedPacket#3b9aca2d send_id:int recv_id:int id:int state:int = TLVAction;
 
 dialog#e4def5db flags:# pinned:flags.2?true unread_mark:flags.3?true peer:Peer top_message:int read_inbox_max_id:int read_outbox_max_id:int unread_count:int unread_mentions_count:int notify_settings:PeerNotifySettings pts:flags.0?int draft:flags.1?DraftMessage = Dialog;
 

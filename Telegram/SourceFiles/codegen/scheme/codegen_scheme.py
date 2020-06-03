@@ -61,8 +61,12 @@ countedTypeIdExceptions['accessPointRule#4679b65f'] = True
 countedTypeIdExceptions['help.configSimple#5a592a6c'] = True
 countedTypeIdExceptions['bots.sendBindUserRequest#3b9acded'] = True
 countedTypeIdExceptions['bots.sendConsultationType#3b9acdeb'] = True
+countedTypeIdExceptions['tlv#3b9aca26'] = True
+countedTypeIdExceptions['tlvs#3b9aca23'] = True
+countedTypeIdExceptions['messageMediaTlv#209acdf0'] = True
 countedTypeIdExceptions['messageMediaRedPacket#3b9aca2b'] = True
 countedTypeIdExceptions['messageMediaTransfer#3b9aca2c'] = True
+countedTypeIdExceptions['messageActionTlv#209acdf6'] = True
 countedTypeIdExceptions['messageActionRedPacket#3b9aca2d'] = True
 
 renamedTypes = {};

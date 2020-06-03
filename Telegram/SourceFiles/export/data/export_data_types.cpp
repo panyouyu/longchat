@@ -936,8 +936,7 @@ Media ParseMedia(
 	}, [&](const MTPDmessageMediaPoll &data) {
 		result.content = ParsePoll(data);
 	}, [](const MTPDmessageMediaEmpty &data) {
-	}, [](const MTPDmessageMediaRedPacket &) {
-	}, [](const MTPDmessageMediaTransfer &) {});
+	}, [](const MTPDmessageMediaTlv&) {});
 	return result;
 }
 
@@ -1082,7 +1081,7 @@ ServiceAction ParseServiceAction(
 	}, [&](const MTPDmessageActionContactSignUp &data) {
 		result.content = ActionContactSignUp();
 	}, [](const MTPDmessageActionEmpty &data) {
-	}, [](const MTPDmessageActionRedPacket &) {});
+	}, [](const MTPDmessageActionTlv&) {});
 	return result;
 }
 
