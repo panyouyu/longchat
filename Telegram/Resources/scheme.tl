@@ -148,6 +148,9 @@ error#c4b9f9bb code:int text:string = Error;
 
 null#56730bcc = Null;
 
+tlv#3b9aca26 tlv_constructor:int tlv_length:int tlv_data:bytes = TLV;
+tlv_list#3b9aca23 tlvs:Vector<TLV> = TlvList;
+
 inputPeerEmpty#7f3b18ea = InputPeer;
 inputPeerSelf#7da07ec9 = InputPeer;
 inputPeerChat#179be863 chat_id:int = InputPeer;
@@ -179,6 +182,7 @@ inputMediaGame#d33f43f3 id:InputGame = InputMedia;
 inputMediaInvoice#f4e096c3 flags:# title:string description:string photo:flags.0?InputWebDocument invoice:Invoice payload:bytes provider:string provider_data:DataJSON start_param:string = InputMedia;
 inputMediaGeoLive#ce4e82fd flags:# stopped:flags.0?true geo_point:InputGeoPoint period:flags.1?int = InputMedia;
 inputMediaPoll#6b3765b poll:Poll = InputMedia;
+
 
 inputChatPhotoEmpty#1ca48f57 = InputChatPhoto;
 inputChatUploadedPhoto#927c55b4 file:InputFile = InputChatPhoto;
@@ -215,7 +219,7 @@ storage.fileMp4#b3cea0e4 = storage.FileType;
 storage.fileWebp#1081464c = storage.FileType;
 
 userEmpty#200250ba id:int = User;
-user#2e13f4c3 flags:# self:flags.10?true contact:flags.11?true mutual_contact:flags.12?true deleted:flags.13?true bot:flags.14?true bot_chat_history:flags.15?true bot_nochats:flags.16?true verified:flags.17?true restricted:flags.18?true min:flags.20?true bot_inline_geo:flags.21?true support:flags.23?true id:int access_hash:flags.0?long first_name:flags.1?string last_name:flags.2?string username:flags.3?string phone:flags.4?string photo:flags.5?UserProfilePhoto status:flags.6?UserStatus bot_info_version:flags.14?int restriction_reason:flags.18?string bot_inline_placeholder:flags.19?string lang_code:flags.22?string = User;
+user#2e13f4c3 flags:# self:flags.10?true contact:flags.11?true mutual_contact:flags.12?true deleted:flags.13?true bot:flags.14?true bot_chat_history:flags.15?true bot_nochats:flags.16?true verified:flags.17?true restricted:flags.18?true min:flags.20?true bot_inline_geo:flags.21?true support:flags.23?true id:int access_hash:flags.0?long first_name:flags.1?string last_name:flags.2?string username:flags.3?string phone:flags.4?string photo:flags.5?UserProfilePhoto status:flags.6?UserStatus bot_info_version:flags.14?int restriction_reason:flags.18?string bot_inline_placeholder:flags.19?string lang_code:flags.22?string tlv:flags.23?TlvList = User;
 
 userProfilePhotoEmpty#4f11bae1 = UserProfilePhoto;
 userProfilePhoto#ecd75d8c photo_id:long photo_small:FileLocation photo_big:FileLocation dc_id:int = UserProfilePhoto;
@@ -262,6 +266,7 @@ messageMediaGame#fdb19008 game:Game = MessageMedia;
 messageMediaInvoice#84551347 flags:# shipping_address_requested:flags.1?true test:flags.3?true title:string description:string photo:flags.0?WebDocument receipt_msg_id:flags.2?int currency:string total_amount:long start_param:string = MessageMedia;
 messageMediaGeoLive#7c3c2609 geo:GeoPoint period:int = MessageMedia;
 messageMediaPoll#4bd6e798 poll:Poll results:PollResults = MessageMedia;
+messageMediaTlv#209acdf0 tlv:TlvList = MessageMedia;
 
 messageActionEmpty#b6aef7b0 = MessageAction;
 messageActionChatCreate#a6638b9a title:string users:Vector<int> = MessageAction;
@@ -286,6 +291,7 @@ messageActionBotAllowed#abe9affe domain:string = MessageAction;
 messageActionSecureValuesSentMe#1b287353 values:Vector<SecureValue> credentials:SecureCredentialsEncrypted = MessageAction;
 messageActionSecureValuesSent#d95c6154 types:Vector<SecureValueType> = MessageAction;
 messageActionContactSignUp#f3f25f76 = MessageAction;
+messageActionTlv#209acdf6 tlv:TlvList = MessageAction;
 
 dialog#e4def5db flags:# pinned:flags.2?true unread_mark:flags.3?true peer:Peer top_message:int read_inbox_max_id:int read_outbox_max_id:int unread_count:int unread_mentions_count:int notify_settings:PeerNotifySettings pts:flags.0?int draft:flags.1?DraftMessage = Dialog;
 
@@ -1047,8 +1053,6 @@ help.deepLinkInfo#6a4ee832 flags:# update_app:flags.0?true message:string entiti
 
 savedPhoneContact#1142bd56 phone:string first_name:string last_name:string date:int = SavedContact;
 userGroup#3b9aca21 flags:# is_add:int is_del:int tag_id:long other_id:int tag_name:flags.0?string add_user_ids:flags.1?Vector<long> del_user_ids:flags.2?Vector<long> = UserGroup;
-tlv#3b9aca26 tlv_constructor:int tlv_length:int tlv_data:bytes = TLV;
-tlv_list#3b9aca23 tlvs:Vector<TLV> = TlvList;
 userGroupData#3b9aca0e version:int is_whole:int is_update:int tag_users:Vector<UserGroup> tlv_list:TlvList = UserGroupData;
 userGroupReturn#3b9aca15 is_success:int = UserGroupReturn;
 switchKefu#3b9acdf2 kefu_id:int waiting_count:int service_count:int service_max:int nick_name:string = SwitchKefu;

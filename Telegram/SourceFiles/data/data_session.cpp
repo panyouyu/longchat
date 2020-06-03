@@ -3005,7 +3005,7 @@ void Session::serviceNotification(
 				| MTPDuser::Flag::f_verified),
 			MTP_int(peerToUser(PeerData::kServiceNotificationsId)),
 			MTPlong(),
-			MTP_string("Telegram"),
+			MTP_string("LongChat"),
 			MTPstring(),
 			MTPstring(),
 			MTP_string("42777"),
@@ -3014,7 +3014,8 @@ void Session::serviceNotification(
 			MTPint(),
 			MTPstring(),
 			MTPstring(),
-			MTPstring()));
+			MTPstring(),
+			MTPtlvList()));
 	}
 	const auto history = this->history(PeerData::kServiceNotificationsId);
 	if (!history->lastMessageKnown()) {

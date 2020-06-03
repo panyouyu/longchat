@@ -949,7 +949,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_sure_delete_saved_messages" = "您确定要删除所有保存的消息？\n\n此操作不可撤销";
 
 "lng_message_empty" = "无消息";
-"lng_message_unsupported" = "当前闪聊版本不支持此消息。请在“设置”页更新本应用到最新版或在这里下载： {link}";
+"lng_message_unsupported" = "不支持的消息，请在手机端查看";
 
 "lng_duration_seconds#one" = "{count} 秒";
 "lng_duration_seconds#other" = "{count} 秒";

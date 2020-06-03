@@ -60,10 +60,7 @@ not_null<HistoryItem*> CreateUnsupportedMessage(
 		UserId viaBotId,
 		TimeId date,
 		UserId from) {
-	const auto siteLink = qsl("https://www.imshanl.com");
-	auto text = TextWithEntities{
-		lng_message_unsupported(lt_link, siteLink)
-	};
+	auto text = TextWithEntities{ lang(lng_message_unsupported) };
 	TextUtilities::ParseEntities(text, Ui::ItemTextNoMonoOptions().flags);
 	text.entities.push_front(
 		EntityInText(EntityType::Italic, 0, text.text.size()));
@@ -146,6 +143,8 @@ MediaCheckResult CheckMessageMedia(const MTPMessageMedia &media) {
 	}, [](const MTPDmessageMediaPoll &) {
 		return Result::Good;
 	}, [](const MTPDmessageMediaUnsupported &) {
+		return Result::Unsupported;
+	}, [](const MTPDmessageMediaTlv& tlv) {
 		return Result::Unsupported;
 	});
 }

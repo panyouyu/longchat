@@ -214,6 +214,11 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		return result;
 	};
 
+	auto prepareTlvAction = [this](const MTPDmessageActionTlv& action) {
+		auto result = PreparedText{};
+		return result;
+	};
+
 	const auto messageText = action.match([&](
 		const MTPDmessageActionChatAddUser &data) {
 		return prepareChatAddUserText(data);
@@ -253,6 +258,8 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		return prepareBotAllowed(data);
 	}, [&](const MTPDmessageActionSecureValuesSent &data) {
 		return prepareSecureValuesSent(data);
+	}, [&](const MTPDmessageActionTlv& data) {
+		return prepareTlvAction(data);
 	}, [&](const MTPDmessageActionContactSignUp &data) {
 		return prepareContactSignUp();
 	}, [](const MTPDmessageActionPaymentSentMe &) {

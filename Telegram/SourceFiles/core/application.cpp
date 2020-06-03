@@ -533,7 +533,8 @@ void Application::startMtp() {
 			MTPint(), // bot_info_version
 			MTPstring(), // restriction_reason
 			MTPstring(), // bot_inline_placeholder
-			MTPstring())); // lang_code
+			MTPstring(),
+			MTPtlvList())); // lang_code
 		Local::readSelf(
 			base::take(_private->authSessionUserSerialized),
 			base::take(_private->authSessionUserStreamVersion));
