@@ -691,6 +691,10 @@ QString TcpConnection::tag() const {
 	return result;
 }
 
+QString TcpConnection::peerName() const {
+	return _socket.peerAddress().toString();
+}
+
 void TcpConnection::socketError(QAbstractSocket::SocketError e) {
 	if (_status == Status::Finished) return;
 

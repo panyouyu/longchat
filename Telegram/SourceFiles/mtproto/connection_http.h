@@ -35,6 +35,7 @@ public:
 
 	QString transport() const override;
 	QString tag() const override;
+	QString peerName() const override;
 
 	static mtpBuffer handleResponse(QNetworkReply *reply);
 	static qint32 handleError(QNetworkReply *reply); // returnes error code

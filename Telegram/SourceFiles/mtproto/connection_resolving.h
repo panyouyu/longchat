@@ -40,6 +40,7 @@ public:
 
 	QString transport() const override;
 	QString tag() const override;
+	QString peerName() const override;
 
 private:
 	void setChild(ConnectionPointer &&child);

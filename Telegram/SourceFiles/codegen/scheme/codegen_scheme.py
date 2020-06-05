@@ -55,7 +55,8 @@ addChildParentFlags('MTPDchannelForbidden', 'MTPDchannel');
 parentFlagsCheck = {};
 
 countedTypeIdExceptions = {};
-countedTypeIdExceptions['user#2e13f4c3'] = True;
+countedTypeIdExceptions['initConnection#785188b8'] = True
+countedTypeIdExceptions['user#2e13f4c3'] = True
 countedTypeIdExceptions['channel#c88974ac'] = True
 countedTypeIdExceptions['ipPortSecret#37982646'] = True
 countedTypeIdExceptions['accessPointRule#4679b65f'] = True

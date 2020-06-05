@@ -254,5 +254,9 @@ QString ResolvingConnection::tag() const {
 	return _child ? _child->tag() : QString();
 }
 
+QString ResolvingConnection::peerName() const {
+	return _child ? _child->peerName() : QString();
+}
+
 } // namespace internal
 } // namespace MTP
