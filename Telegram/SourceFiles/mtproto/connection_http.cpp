@@ -241,6 +241,10 @@ QString HttpConnection::tag() const {
 	return result;
 }
 
+QString HttpConnection::peerName() const {
+	return _address;
+}
+
 QUrl HttpConnection::url() const {
 	const auto pattern = qthelp::is_ipv6(_address)
 		? qsl("http://[%1]:%2/api")

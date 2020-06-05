@@ -843,15 +843,16 @@ void ConnectionPrivate::tryToSend() {
 			: MTPInputClientProxy();
 		using Flag = MTPInitConnection<SecureRequest>::Flag;
 		initWrapper = MTPInitConnection<SecureRequest>(
-			MTP_flags(mtprotoProxy ? Flag::f_proxy : Flag(0)),
+			MTP_flags(mtprotoProxy ? (Flag::f_proxy | Flag::f_host_ip) : Flag::f_host_ip),
 			MTP_int(ApiId),
 			MTP_string(deviceModel),
 			MTP_string(systemVersion),
 			MTP_string(appVersion),
 			MTP_string(systemLangCode),
 			MTP_string(langPackName),
-			MTP_string(cloudLangCode),
+			MTP_string(cloudLangCode),			
 			clientProxyFields,
+			MTP_string(_connection->peerName()),
 			SecureRequest());
 		initSizeInInts = (initWrapper.innerLength() >> 2) + 2;
 		initSize = initSizeInInts * sizeof(mtpPrime);

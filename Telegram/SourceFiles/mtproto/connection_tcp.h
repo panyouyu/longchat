@@ -38,6 +38,7 @@ public:
 
 	QString transport() const override;
 	QString tag() const override;
+	QString peerName() const override;
 
 	~TcpConnection();
 

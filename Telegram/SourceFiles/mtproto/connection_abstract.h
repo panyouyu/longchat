@@ -91,6 +91,7 @@ public:
 
 	virtual QString transport() const = 0;
 	virtual QString tag() const = 0;
+	virtual QString peerName() const = 0;
 
 	void setSentEncrypted() {
 		_sentEncrypted = true;
