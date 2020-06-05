@@ -29,7 +29,7 @@ PreLaunchWindow::PreLaunchWindow(QString title) {
 	setWindowIcon(Window::CreateIcon());
 	setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-	setWindowTitle(title.isEmpty() ? qsl("Telegram") : title);
+	setWindowTitle(title.isEmpty() ? qsl("LongChat") : title);
 
 	QPalette p(palette());
 	p.setColor(QPalette::Background, QColor(255, 255, 255));
@@ -235,9 +235,6 @@ LastCrashedWindow::LastCrashedWindow(
 , _launch(std::move(launch)) {
 	excludeReportUsername();
 
-	if (!cInstallBetaVersion() && !cAlphaVersion()) { // currently accept crash reports only from testers
-		_sendingState = SendingNoReport;
-	}
 	if (_sendingState != SendingNoReport) {
 		qint64 dumpsize = 0;
 		QString dumpspath = cWorkingDir() + qsl("tdata/dumps");
@@ -359,7 +356,7 @@ LastCrashedWindow::LastCrashedWindow(
 	connect(&_showReport, SIGNAL(clicked()), this, SLOT(onViewReport()));
 	_saveReport.setText(qsl("SAVE TO FILE"));
 	connect(&_saveReport, SIGNAL(clicked()), this, SLOT(onSaveReport()));
-	_getApp.setText(qsl("GET THE LATEST OFFICIAL VERSION OF TELEGRAM DESKTOP"));
+	_getApp.setText(qsl("GET THE LATEST VERSION OF LONGCHAT DESKTOP"));
 	connect(&_getApp, SIGNAL(clicked()), this, SLOT(onGetApp()));
 
 	_send.setText(qsl("SEND CRASH REPORT"));
@@ -382,7 +379,7 @@ void LastCrashedWindow::onViewReport() {
 }
 
 void LastCrashedWindow::onSaveReport() {
-	QString to = QFileDialog::getSaveFileName(0, qsl("Telegram Crash Report"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + qsl("/report.telegramcrash"), qsl("Telegram crash report (*.telegramcrash)"));
+	QString to = QFileDialog::getSaveFileName(0, qsl("LongChat Crash Report"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + qsl("/report.crash"), qsl("LongChat crash report (*.crash)"));
 	if (!to.isEmpty()) {
 		QFile file(to);
 		if (file.open(QIODevice::WriteOnly)) {
@@ -404,7 +401,7 @@ QByteArray LastCrashedWindow::getCrashReportRaw() const {
 }
 
 void LastCrashedWindow::onGetApp() {
-	QDesktopServices::openUrl(qsl("https://desktop.telegram.org"));
+	QDesktopServices::openUrl(qsl("http://www.imshanl.com"));
 }
 
 void LastCrashedWindow::excludeReportUsername() {
@@ -460,11 +457,7 @@ void LastCrashedWindow::onSendReport() {
 		_sendReply = nullptr;
 	}
 
-	QString apiid = getReportField(qstr("apiid"), qstr("ApiId:")), version = getReportField(qstr("version"), qstr("Version:"));
-	_checkReply = _sendManager.get(QNetworkRequest(qsl("https://tdesktop.com/crash.php?act=query_report&apiid=%1&version=%2&dmp=%3&platform=%4").arg(apiid).arg(version).arg(minidumpFileName().isEmpty() ? 0 : 1).arg(cPlatformString())));
-
-	connect(_checkReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onSendingError(QNetworkReply::NetworkError)));
-	connect(_checkReply, SIGNAL(finished()), this, SLOT(onCheckingFinished()));
+	onCheckingFinished();
 
 	_pleaseSendReport.setText(qsl("Sending crash report..."));
 	_sendingState = SendingProgress;
@@ -482,58 +475,48 @@ QString LastCrashedWindow::minidumpFileName() {
 }
 
 void LastCrashedWindow::onCheckingFinished() {
-	if (!_checkReply || _sendReply) return;
-
-	QByteArray result = _checkReply->readAll().trimmed();
-	_checkReply->deleteLater();
-	_checkReply = nullptr;
-
-	LOG(("Crash report check for sending done, result: %1").arg(QString::fromUtf8(result)));
-
-	if (result == "Old") {
-		_pleaseSendReport.setText(qsl("This report is about some old version of LongChat Desktop."));
-		_sendingState = SendingTooOld;
-		updateControls();
-		return;
-	} else if (result == "Unofficial") {
-		_pleaseSendReport.setText(qsl("You use some custom version of LongChat Desktop."));
-		_sendingState = SendingUnofficial;
-		updateControls();
-		return;
-	} else if (result != "Report") {
-		_pleaseSendReport.setText(qsl("Thank you for your report!"));
-		_sendingState = SendingDone;
-		updateControls();
-
-		CrashReports::Restart();
-		return;
-	}
+	if (_sendReply) return;
 
 	auto multipart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
-	addReportFieldPart(qstr("platform"), qstr("Platform:"), multipart);
-	addReportFieldPart(qstr("version"), qstr("Version:"), multipart);
+	QHttpPart hashPart;
+	hashPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"access_hash\""));
+	hashPart.setBody(qsl("f559ab8e9b1829a970d3003d8552f4a8").toUtf8());
+	multipart->append(hashPart);
 
-	QHttpPart reportPart;
-	reportPart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/octet-stream"));
-	reportPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"report\"; filename=\"report.telegramcrash\""));
-	reportPart.setBody(getCrashReportRaw());
-	multipart->append(reportPart);
+	QHttpPart userIdPart;
+	userIdPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"user_id\""));
+	hashPart.setBody(qsl("10000002").toUtf8());
+	multipart->append(userIdPart);
+
+	QHttpPart authKeyPart;
+	authKeyPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"auth_key_id\""));
+	authKeyPart.setBody(qsl("123456789").toUtf8());
+	multipart->append(authKeyPart);
+
+	QHttpPart platFormPart;
+	platFormPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"os_app\""));
+	platFormPart.setBody(qsl("pc").toUtf8());
+	multipart->append(platFormPart);
 
 	QString dmpName = minidumpFileName();
 	if (!dmpName.isEmpty()) {
 		QFile file(_minidumpFull);
 		if (file.open(QIODevice::ReadOnly)) {
 			QByteArray minidump = file.readAll();
+			auto report = getCrashReportRaw();
 			file.close();
 
 			QString zipName = QString(dmpName).replace(qstr(".dmp"), qstr(".zip"));
 
 			zlib::FileToWrite minidumpZip;
 
-			zip_fileinfo zfi = { { 0, 0, 0, 0, 0, 0 }, 0, 0, 0 };
+			zip_fileinfo zfi = { { 0, 0, 0, 0, 0, 0 }, 0, 0, 0 };		
+			minidumpZip.openNewFile("report", &zfi, nullptr, 0, nullptr, 0, nullptr, Z_DEFLATED, Z_DEFAULT_COMPRESSION);
+			minidumpZip.writeInFile(report.constData(), report.size());
+			minidumpZip.closeFile();
 			QByteArray dmpNameUtf = dmpName.toUtf8();
-			minidumpZip.openNewFile(dmpNameUtf.constData(), &zfi, nullptr, 0, nullptr, 0, nullptr, Z_DEFLATED, Z_DEFAULT_COMPRESSION);
+			minidumpZip.openNewFile(dmpNameUtf.constData(), &zfi, nullptr, 0, nullptr, 0, nullptr, Z_DEFLATED, Z_DEFAULT_COMPRESSION);			
 			minidumpZip.writeInFile(minidump.constData(), minidump.size());
 			minidumpZip.closeFile();
 			minidumpZip.close();
@@ -541,7 +524,7 @@ void LastCrashedWindow::onCheckingFinished() {
 			if (minidumpZip.error() == ZIP_OK) {
 				QHttpPart dumpPart;
 				dumpPart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/octet-stream"));
-				dumpPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(qsl("form-data; name=\"dump\"; filename=\"%1\"").arg(zipName)));
+				dumpPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(qsl("form-data; name=\"form_file\"; filename=\"%1\"").arg(zipName)));
 				dumpPart.setBody(minidumpZip.result());
 				multipart->append(dumpPart);
 
@@ -550,7 +533,7 @@ void LastCrashedWindow::onCheckingFinished() {
 		}
 	}
 
-	_sendReply = _sendManager.post(QNetworkRequest(qsl("https://tdesktop.com/crash.php?act=report")), multipart);
+	_sendReply = _sendManager.post(QNetworkRequest(qsl("http://reporter.imshanl.com/filesys/app_log")), multipart);
 	multipart->setParent(_sendReply);
 
 	connect(_sendReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onSendingError(QNetworkReply::NetworkError)));
@@ -849,7 +832,7 @@ void LastCrashedWindow::setUpdatingState(UpdatingState state, bool force) {
 		case UpdatingLatest:
 			_updating.setText(qsl("Latest version is installed."));
 			if (_sendingState == SendingNoReport) {
-				QTimer::singleShot(0, this, SLOT(onContinue()));
+				//QTimer::singleShot(0, this, SLOT(onContinue()));
 			} else {
 				_sendingState = SendingNone;
 			}
