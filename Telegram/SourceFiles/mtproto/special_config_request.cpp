@@ -44,10 +44,6 @@ constexpr auto kUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
 
 const auto &DnsDomains() {
 	static auto result = std::vector<QString>{
-		qsl("google.com"),
-		qsl("www.google.com"),
-		qsl("google.ru"),
-		qsl("www.google.ru"),
 	};
 	return result;
 }
@@ -216,9 +212,6 @@ SpecialConfigRequest::SpecialConfigRequest(
 : _callback(std::move(callback))
 , _phone(phone) {
 	_manager.setProxy(QNetworkProxy::NoProxy);
-	_attempts = {
-		{ Type::App, qsl("software-download.microsoft.com") },
-	};
 	for (const auto &domain : DnsDomains()) {
 		_attempts.push_back({ Type::Dns, domain });
 	}
