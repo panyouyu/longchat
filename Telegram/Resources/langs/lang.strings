@@ -709,6 +709,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 "lng_preview_loading" = "正在获取链接信息...";
 
+"lng_profile_me" = "我";
 "lng_profile_settings_section" = "设置";
 "lng_profile_actions_section" = "更多";
 "lng_profile_bot_settings" = "机器人设置";
@@ -1291,6 +1292,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_choose_file" = "选择文件";
 "lng_choose_files" = "选择多个文件";
 "lng_game_tag" = "游戏";
+"lng_web_page" = "网页";
+"lng_message_record" = "聊天记录";
+"lng_message_record_num" = "{num} 条聊天记录";
+"lng_record_chat_title" = "群聊的聊天记录";
+"lng_record_user_title" = "{originer} 和 {forwarder} 的聊天记录";
 
 "lng_context_view_profile" = "查看个人信息";
 "lng_context_view_group" = "查看群组信息";

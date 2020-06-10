@@ -11,6 +11,7 @@ class HistoryItem;
 class HistoryMedia;
 class LocationCoords;
 struct LocationData;
+class RecordData;
 
 namespace base {
 template <typename Enum>
@@ -78,6 +79,7 @@ public:
 	virtual const Invoice *invoice() const;
 	virtual LocationData *location() const;
 	virtual PollData *poll() const;
+	virtual RecordData* messageRecord() const;
 
 	virtual bool uploading() const;
 	virtual Storage::SharedMediaTypesMask sharedMediaTypes() const;
@@ -403,6 +405,33 @@ public:
 private:
 	not_null<PollData*> _poll;
 
+};
+
+class MediaRecord : public Media {
+public:
+	MediaRecord(not_null<HistoryItem*> parent,
+		const MTPDmessageMediaRecord &data);
+	MediaRecord(not_null<HistoryItem*> parent,
+		not_null<RecordData*> record);
+	~MediaRecord();
+
+	std::unique_ptr<Media> clone(not_null<HistoryItem*> parent) override;
+
+	RecordData* messageRecord() const override;
+
+	QString notificationText() const override;
+	QString pinnedTextSubstring() const override;
+	TextForMimeData clipboardText() const override;
+	QString errorTextForForward(not_null<PeerData*> peer) const override;
+
+	bool updateInlineResultMedia(const MTPMessageMedia& media) override;
+	bool updateSentMedia(const MTPMessageMedia& media) override;
+	std::unique_ptr<HistoryMedia> createView(
+		not_null<HistoryView::Element*> message,
+		not_null<HistoryItem*> realParent) override;
+
+private:
+	not_null<RecordData*> _record;
 };
 
 TextForMimeData WithCaptionClipboardText(

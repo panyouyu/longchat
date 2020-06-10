@@ -144,7 +144,14 @@ MediaCheckResult CheckMessageMedia(const MTPMessageMedia &media) {
 		return Result::Good;
 	}, [](const MTPDmessageMediaUnsupported &) {
 		return Result::Unsupported;
-	}, [](const MTPDmessageMediaTlv& tlv) {
+	}, [](const MTPDmessageMediaTlv &tlv) {
+		auto tlvs = tlv.vtlv.c_tlvs().vtlvs.v;
+		for (auto &tlv : tlvs) {
+			switch (tlv.c_tlv().vid.v) {
+			case mtpc_messageMediaRecord:
+				return Result::Good;
+			}
+		}
 		return Result::Unsupported;
 	});
 }

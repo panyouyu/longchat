@@ -16,14 +16,14 @@ namespace {
 constexpr auto kIntSize = static_cast<int>(sizeof(mtpPrime));
 }
 
-void feedUserGroupUpdates(const MTPDtlv_list& tlv_list) {
-	const auto &vector = tlv_list.vtlvs.v;
+void feedUserGroupUpdates(const MTPDtlvs& tlvs) {
+	const auto &vector = tlvs.vtlvs.v;
 	for (auto &item : vector) {
 		const auto &tlv = item.c_tlv();
-		switch (tlv.vtlv_constructor.v) {
+		switch (tlv.vid.v) {
 		case mtpc_tlvc_updateUserGroups: {
-			auto from = reinterpret_cast<const mtpPrime*>(tlv.vtlv_data.v.constData());			
-			auto end = from + tlv.vtlv_data.v.size() / kIntSize;
+			auto from = reinterpret_cast<const mtpPrime*>(tlv.vdata.v.constData());
+			auto end = from + tlv.vdata.v.size() / kIntSize;
 			auto sfrom = from - 4U;
 			TLV_LOG(("TLV: ") + mtpTextSerialize(sfrom, end));
 			from++;

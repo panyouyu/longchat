@@ -551,6 +551,8 @@ importantTooltipBg: toastBg;
 importantTooltipFg: toastFg;
 importantTooltipFgLink: mediaviewTextLinkFg;
 
+messageRecordMediaLine: #f0f0f0;
+
 quickReplyFrame: #b9c3d4;
 
 quickReplyTitleTextBg: #ffffff;

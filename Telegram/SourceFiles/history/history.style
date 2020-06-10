@@ -644,3 +644,13 @@ historyAudioInDownload: icon {{ "history_audio_download", historyFileInIconFg }}
 historyAudioInDownloadSelected: icon {{ "history_audio_download", historyFileInIconFgSelected }};
 historyAudioOutDownload: icon {{ "history_audio_download", historyFileOutIconFg }};
 historyAudioOutDownloadSelected: icon {{ "history_audio_download", historyFileOutIconFgSelected }};
+
+historyRecordMaxWidth: 221px;
+historyRecordContentFont: font(semibold 12px);
+historyRecordContentColor: windowSubTextFg;
+historyRecordTailFont: font(semibold 11px);
+historyRecordTitle: margins(11px, 8px, 18px, 6px);
+historyRecordContent: margins(11px, 0px, 18px, 8px);
+historyRecordPadding: 1px;
+historyRecordTail: margins(11px, 2px, 30px, 5px);
+historyRecordLine: 1px;

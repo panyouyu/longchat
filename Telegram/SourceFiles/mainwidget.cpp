@@ -3955,8 +3955,8 @@ void MainWidget::feedUpdates(const MTPUpdates &updates, uint64 randomId) {
 			// ÅÅ¶ÓÈËÊý
 			_dialogs->onQueueCountChanged(data.vother_int.v);
 		} else if (otherId == 7) {
-			const auto& tlv_list = data.vtlv.c_tlv_list();
-			TLV::feedUserGroupUpdates(tlv_list);
+			const auto &tlvs = data.vtlv.c_tlvs();
+			TLV::feedUserGroupUpdates(tlvs);
 		}
 	} break;
 

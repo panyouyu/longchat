@@ -4,6 +4,6 @@
 
 namespace TLV {
 
-void feedUserGroupUpdates(const MTPDtlv_list &tlv_list);
+void feedUserGroupUpdates(const MTPDtlvs &tlvs);
 
 } // namespace TLV

@@ -23,6 +23,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/media/history_media_call.h"
 #include "history/media/history_media_web_page.h"
 #include "history/media/history_media_poll.h"
+#include "history/media/history_media_record.h"
 #include "ui/image/image.h"
 #include "ui/image/image_source.h"
 #include "ui/text_options.h"
@@ -35,6 +36,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "data/data_game.h"
 #include "data/data_web_page.h"
 #include "data/data_poll.h"
+#include "data/data_record.h"
+#include "data/data_user.h"
 #include "data/data_channel.h"
 #include "lang/lang_keys.h"
 #include "layout.h"
@@ -172,6 +175,10 @@ LocationData *Media::location() const {
 }
 
 PollData *Media::poll() const {
+	return nullptr;
+}
+
+RecordData* Media::messageRecord() const {
 	return nullptr;
 }
 
@@ -1303,6 +1310,58 @@ std::unique_ptr<HistoryMedia> MediaPoll::createView(
 		not_null<HistoryView::Element*> message,
 		not_null<HistoryItem*> realParent) {
 	return std::make_unique<HistoryPoll>(message, _poll);
+}
+
+MediaRecord::MediaRecord(not_null<HistoryItem*> parent, const MTPDmessageMediaRecord& data)
+	: Media(parent)
+	, _record(new RecordData(parent, data)) {
+}
+
+MediaRecord::MediaRecord(not_null<HistoryItem*> parent, not_null<RecordData*> record)
+	: Media(parent) 
+	, _record(record) {
+}
+
+MediaRecord::~MediaRecord() {
+	delete _record;
+}
+
+std::unique_ptr<Media> MediaRecord::clone(not_null<HistoryItem*> parent) {
+	return std::make_unique<MediaRecord>(parent, _record);
+}
+
+RecordData* MediaRecord::messageRecord() const {
+	return _record;
+}
+
+QString MediaRecord::notificationText() const {
+	return lang(lng_message_record);
+}
+
+QString MediaRecord::pinnedTextSubstring() const {
+	return QString();
+}
+
+TextForMimeData MediaRecord::clipboardText() const {
+	return _record->clipboardText();
+}
+
+QString MediaRecord::errorTextForForward(not_null<PeerData*> peer) const {
+	return QString();
+}
+
+bool MediaRecord::updateInlineResultMedia(const MTPMessageMedia& media) {
+	return false;
+}
+
+bool MediaRecord::updateSentMedia(const MTPMessageMedia& media) {
+	return false;
+}
+
+std::unique_ptr<HistoryMedia> MediaRecord::createView(
+	not_null<HistoryView::Element*> message, 
+	not_null<HistoryItem*> realParent) {
+	return std::make_unique<HistoryRecord>(message, _record);
 }
 
 } // namespace Data

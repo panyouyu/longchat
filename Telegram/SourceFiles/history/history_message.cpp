@@ -887,7 +887,22 @@ std::unique_ptr<Data::Media> HistoryMessage::CreateMedia(
 		return nullptr;
 	}, [](const MTPDmessageMediaUnsupported &) -> Result {
 		return nullptr;
-	}, [](const MTPDmessageMediaTlv&) -> Result {
+	}, [&](const MTPDmessageMediaTlv &media) -> Result {
+		auto tlvs = media.vtlv.c_tlvs().vtlvs.v;
+		for (auto &tlv : tlvs) {
+			switch (tlv.c_tlv().vid.v) {
+			case mtpc_messageMediaRecord: 
+				auto from = reinterpret_cast<const mtpPrime*>(tlv.c_tlv().vdata.v.constData());
+				auto end = from + tlv.c_tlv().vdata.v.size() / sizeof(mtpPrime);
+				auto sfrom = from - 4U;
+				TLV_LOG(("TLV: ") + mtpTextSerialize(sfrom, end));
+				from++;
+				MTPmessageMediaTLV record;
+				record.read(from, end, mtpc_messageMediaRecord);
+				return std::make_unique<Data::MediaRecord>(item,
+					record.c_messageMediaRecord());
+			}
+		}
 		return nullptr;
 	});
 	return nullptr;

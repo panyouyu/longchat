@@ -1563,7 +1563,8 @@ void DialogsInner::removeDialog(Dialogs::Key key) {
 		Local::removeSavedPeer(history->peer);
 	}
 	if (_contacts->contains(key)) {
-		if (!_contactsNoDialogs->contains(key)) {
+		if (!_contactsNoDialogs->contains(key) && 
+			key.history()->peer->id != PeerData::kRecordDialogId) {
 			_contactsNoDialogs->addByName(key);
 		}
 	}

@@ -226,6 +226,8 @@
 <(src_loc)/data/data_poll.h
 <(src_loc)/data/data_pts_waiter.cpp
 <(src_loc)/data/data_pts_waiter.h
+<(src_loc)/data/data_record.cpp
+<(src_loc)/data/data_record.h
 <(src_loc)/data/data_search_controller.cpp
 <(src_loc)/data/data_search_controller.h
 <(src_loc)/data/data_session.cpp
@@ -312,6 +314,8 @@
 <(src_loc)/history/media/history_media_photo.cpp
 <(src_loc)/history/media/history_media_poll.h
 <(src_loc)/history/media/history_media_poll.cpp
+<(src_loc)/history/media/history_media_record.h
+<(src_loc)/history/media/history_media_record.cpp
 <(src_loc)/history/media/history_media_sticker.h
 <(src_loc)/history/media/history_media_sticker.cpp
 <(src_loc)/history/media/history_media_video.h

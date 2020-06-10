@@ -3015,7 +3015,7 @@ void Session::serviceNotification(
 			MTPstring(),
 			MTPstring(),
 			MTPstring(),
-			MTPtlvList()));
+			MTPTLVS()));
 	}
 	const auto history = this->history(PeerData::kServiceNotificationsId);
 	if (!history->lastMessageKnown()) {

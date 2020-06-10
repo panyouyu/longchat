@@ -148,8 +148,8 @@ error#c4b9f9bb code:int text:string = Error;
 
 null#56730bcc = Null;
 
-tlv#3b9aca26 tlv_constructor:int tlv_length:int tlv_data:bytes = TLV;
-tlv_list#3b9aca23 tlvs:Vector<TLV> = TlvList;
+tlv#3b9aca26 id:int length:int data:string = TLV;
+tlvs#3b9aca23 tlvs:Vector<TLV> = TLVS;
 
 inputPeerEmpty#7f3b18ea = InputPeer;
 inputPeerSelf#7da07ec9 = InputPeer;
@@ -162,7 +162,6 @@ inputUserSelf#f7c1b13f = InputUser;
 inputUser#d8292816 user_id:int access_hash:long = InputUser;
 
 inputPhoneContact#f392b7f4 client_id:long phone:string first_name:string last_name:string = InputContact;
-
 
 inputFile#f52ff27f id:long parts:int name:string md5_checksum:string = InputFile;
 inputFileBig#fa4f0bb5 id:long parts:int name:string = InputFile;
@@ -219,7 +218,7 @@ storage.fileMp4#b3cea0e4 = storage.FileType;
 storage.fileWebp#1081464c = storage.FileType;
 
 userEmpty#200250ba id:int = User;
-user#2e13f4c3 flags:# self:flags.10?true contact:flags.11?true mutual_contact:flags.12?true deleted:flags.13?true bot:flags.14?true bot_chat_history:flags.15?true bot_nochats:flags.16?true verified:flags.17?true restricted:flags.18?true min:flags.20?true bot_inline_geo:flags.21?true support:flags.23?true id:int access_hash:flags.0?long first_name:flags.1?string last_name:flags.2?string username:flags.3?string phone:flags.4?string photo:flags.5?UserProfilePhoto status:flags.6?UserStatus bot_info_version:flags.14?int restriction_reason:flags.18?string bot_inline_placeholder:flags.19?string lang_code:flags.22?string tlv:flags.23?TlvList = User;
+user#2e13f4c3 flags:# self:flags.10?true contact:flags.11?true mutual_contact:flags.12?true deleted:flags.13?true bot:flags.14?true bot_chat_history:flags.15?true bot_nochats:flags.16?true verified:flags.17?true restricted:flags.18?true min:flags.20?true bot_inline_geo:flags.21?true support:flags.23?true id:int access_hash:flags.0?long first_name:flags.1?string last_name:flags.2?string username:flags.3?string phone:flags.4?string photo:flags.5?UserProfilePhoto status:flags.6?UserStatus bot_info_version:flags.14?int restriction_reason:flags.18?string bot_inline_placeholder:flags.19?string lang_code:flags.22?string tlv:flags.23?TLVS = User;
 
 userProfilePhotoEmpty#4f11bae1 = UserProfilePhoto;
 userProfilePhoto#ecd75d8c photo_id:long photo_small:FileLocation photo_big:FileLocation dc_id:int = UserProfilePhoto;
@@ -266,7 +265,8 @@ messageMediaGame#fdb19008 game:Game = MessageMedia;
 messageMediaInvoice#84551347 flags:# shipping_address_requested:flags.1?true test:flags.3?true title:string description:string photo:flags.0?WebDocument receipt_msg_id:flags.2?int currency:string total_amount:long start_param:string = MessageMedia;
 messageMediaGeoLive#7c3c2609 geo:GeoPoint period:int = MessageMedia;
 messageMediaPoll#4bd6e798 poll:Poll results:PollResults = MessageMedia;
-messageMediaTlv#209acdf0 tlv:TlvList = MessageMedia;
+messageMediaTlv#209acdf0 tlv:TLVS = MessageMedia;
+messageMediaRecord#3b9aca30 flags:# user:flags.0?true forwarder_id:int originer_id:int msg_id:Vector<int> messages:messages.Messages = MessageMediaTLV;
 
 messageActionEmpty#b6aef7b0 = MessageAction;
 messageActionChatCreate#a6638b9a title:string users:Vector<int> = MessageAction;
@@ -291,7 +291,7 @@ messageActionBotAllowed#abe9affe domain:string = MessageAction;
 messageActionSecureValuesSentMe#1b287353 values:Vector<SecureValue> credentials:SecureCredentialsEncrypted = MessageAction;
 messageActionSecureValuesSent#d95c6154 types:Vector<SecureValueType> = MessageAction;
 messageActionContactSignUp#f3f25f76 = MessageAction;
-messageActionTlv#209acdf6 tlv:TlvList = MessageAction;
+messageActionTlv#209acdf6 tlv:TLVS = MessageAction;
 
 dialog#e4def5db flags:# pinned:flags.2?true unread_mark:flags.3?true peer:Peer top_message:int read_inbox_max_id:int read_outbox_max_id:int unread_count:int unread_mentions_count:int notify_settings:PeerNotifySettings pts:flags.0?int draft:flags.1?DraftMessage = Dialog;
 
@@ -471,7 +471,7 @@ updateShort#78d4dec1 update:Update date:int = Updates;
 updatesCombined#725b04c3 updates:Vector<Update> users:Vector<User> chats:Vector<Chat> date:int seq_start:int seq:int = Updates;
 updates#74ae4240 updates:Vector<Update> users:Vector<User> chats:Vector<Chat> date:int seq:int = Updates;
 updateShortSentMessage#11f1331c flags:# out:flags.1?true id:int pts:int pts_count:int date:int media:flags.9?MessageMedia entities:flags.7?Vector<MessageEntity> = Updates;
-updateOther#3b9aca1f flags:# other_id:int other_int:flags.0?int other_str:flags.1?string tlv:TlvList = Updates;
+updateOther#3b9aca1f flags:# other_id:int other_int:flags.0?int other_str:flags.1?string tlv:TLVS = Updates;
 
 photos.photos#8dca6aa5 photos:Vector<Photo> users:Vector<User> = photos.Photos;
 photos.photosSlice#15051f54 count:int photos:Vector<Photo> users:Vector<User> = photos.Photos;
@@ -1053,7 +1053,7 @@ help.deepLinkInfo#6a4ee832 flags:# update_app:flags.0?true message:string entiti
 
 savedPhoneContact#1142bd56 phone:string first_name:string last_name:string date:int = SavedContact;
 userGroup#3b9aca21 flags:# is_add:int is_del:int tag_id:long other_id:int tag_name:flags.0?string add_user_ids:flags.1?Vector<long> del_user_ids:flags.2?Vector<long> = UserGroup;
-userGroupData#3b9aca0e version:int is_whole:int is_update:int tag_users:Vector<UserGroup> tlv_list:TlvList = UserGroupData;
+userGroupData#3b9aca0e version:int is_whole:int is_update:int tag_users:Vector<UserGroup> tlv_list:TLVS = UserGroupData;
 userGroupReturn#3b9aca15 is_success:int = UserGroupReturn;
 switchKefu#3b9acdf2 kefu_id:int waiting_count:int service_count:int service_max:int nick_name:string = SwitchKefu;
 switchKefuList#3b9acdf1 kefus:Vector<SwitchKefu> = SwitchKefuList;
@@ -1272,6 +1272,7 @@ kefu.modifyUserLabel#3b9acdf3 user_id:int label:string label_desc:string is_dele
 kefu.blockUser#3b9acdf6 user_id:int = Bool;
 
 messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
+messages.getRecordMessages#4222fa75 from_id:int access_hash:long id:Vector<InputMessage> = messages.Messages;
 messages.getDialogs#b098aee6 flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:int = messages.Dialogs;
 messages.getKfDialogs#3b9aca24 flags:int tag_id:long = messages.Dialogs;
 messages.getHistory#dcbb8260 peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:int = messages.Messages;
@@ -1283,7 +1284,7 @@ messages.receivedMessages#5a954c0 max_id:int = Vector<ReceivedNotifyMessage>;
 messages.setTyping#a3825e50 peer:InputPeer action:SendMessageAction = Bool;
 messages.sendMessage#fa88427a flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true peer:InputPeer reply_to_msg_id:flags.0?int message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> = Updates;
 messages.sendMedia#b8d1262b flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true peer:InputPeer reply_to_msg_id:flags.0?int media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> = Updates;
-messages.forwardMessages#708e0195 flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true grouped:flags.9?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer = Updates;
+messages.forwardMessages#708e0195 flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true grouped:flags.9?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer as_one:flags.10?true = Updates;
 messages.reportSpam#cf1592db peer:InputPeer = Bool;
 messages.hideReportSpam#a8f1709b peer:InputPeer = Bool;
 messages.getPeerSettings#3672e09c peer:InputPeer = PeerSettings;

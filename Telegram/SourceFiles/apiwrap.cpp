@@ -4333,10 +4333,13 @@ void ApiWrap::forwardMessages(
 		flags |= MTPDmessage::Flag::f_from_id;
 	} else if (peer->asChannel()->addsSignature()) {
 		flags |= MTPDmessage::Flag::f_post_author;
-	}
+	}	
 	if (silentPost) {
 		sendFlags |= MTPmessages_ForwardMessages::Flag::f_silent;
 	}
+	//if (count > 1) {
+	//	sendFlags |= MTPmessages_ForwardMessages::Flag::f_as_one;
+	//}
 
 	auto forwardFrom = items.front()->history()->peer;
 	auto currentGroupId = items.front()->groupId();
