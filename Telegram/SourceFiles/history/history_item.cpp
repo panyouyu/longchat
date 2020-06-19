@@ -144,7 +144,7 @@ MediaCheckResult CheckMessageMedia(const MTPMessageMedia &media) {
 		return Result::Good;
 	}, [](const MTPDmessageMediaUnsupported &) {
 		return Result::Unsupported;
-	}, [](const MTPDmessageMediaTlv &tlv) {
+	}, [](const MTPDmessageMediaTlv &) {
 		return Result::Unsupported;
 	});
 }
