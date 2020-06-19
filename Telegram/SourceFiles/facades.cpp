@@ -441,7 +441,7 @@ struct Data {
 	bool TryIPv6 = (cPlatform() == dbipWindows) ? false : true;
 	std::vector<ProxyData> ProxiesList;
 	ProxyData SelectedProxy;
-	ProxyData::Settings ProxySettings = ProxyData::Settings::System;
+	ProxyData::Settings ProxySettings = ProxyData::Settings::Disabled;
 	bool UseProxyForCalls = false;
 	base::Observable<void> ConnectionTypeChanged;
 
