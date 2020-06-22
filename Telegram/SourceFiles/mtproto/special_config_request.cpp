@@ -25,6 +25,7 @@ struct DnsEntry {
 };
 
 constexpr auto kSendNextTimeout = crl::time(1000);
+constexpr auto kNextCDNRequest = 15 * 60 * crl::time(1000);
 constexpr auto kMinTimeToLive = 10 * crl::time(1000);
 constexpr auto kMaxTimeToLive = 300 * crl::time(1000);
 
@@ -85,6 +86,42 @@ QString GenerateRandomPadding() {
 	for (auto &ch : result) {
 		ch = kValid[rand_value<uchar>() % (sizeof(kValid) - 1)];
 	}
+	return result;
+}
+
+int convert_ip(QByteArray &&ip, bool* flag) {
+	int result = 0;
+
+	auto removeFrom = std::remove_if(ip.begin(), ip.end(), [](char ch) {
+		auto isGoodCh = (ch == '.') || (ch <= '9' && ch >= '0');
+		return !isGoodCh;
+		});
+	if (removeFrom != ip.end()) {
+		ip.remove(removeFrom - ip.begin(), ip.end() - removeFrom);
+	}
+
+	auto list = ip.split('.');
+	auto ok = [&]()->bool {
+		if (list.size() != 4) {
+			return false;
+		}
+		else {
+			bool flag = 0;
+			int offset;
+			for (int i = 0; i < 4; ++i) {
+				offset = list.at(i).toInt(&flag);
+				if (!flag || offset < 0 || offset > UCHAR_MAX)
+					return false;
+				result = (result << 8) | (offset & 0xff);
+			}
+			return true;
+		}
+	}();
+
+	if (flag) {
+		*flag = ok;
+	}
+
 	return result;
 }
 
@@ -212,12 +249,23 @@ SpecialConfigRequest::SpecialConfigRequest(
 : _callback(std::move(callback))
 , _phone(phone) {
 	_manager.setProxy(QNetworkProxy::NoProxy);
-	for (const auto &domain : DnsDomains()) {
+	reStart();
+	_timer.setInterval(kNextCDNRequest);	
+	connect(&_timer, &QTimer::timeout, [=] { reStart(); });
+	_timer.start();
+}
+
+void SpecialConfigRequest::reStart() {
+	_attempts.clear();
+	_attempts = {
+		{ Type::App, qsl("192.168.124.240") },
+	};
+	for (const auto& domain : DnsDomains()) {
 		_attempts.push_back({ Type::Dns, domain });
 	}
 	std::random_device rd;
 	ranges::shuffle(_attempts, std::mt19937(rd()));
-	//sendNextRequest();
+	sendNextRequest();
 }
 
 void SpecialConfigRequest::sendNextRequest() {
@@ -236,15 +284,13 @@ void SpecialConfigRequest::sendNextRequest() {
 void SpecialConfigRequest::performRequest(const Attempt &attempt) {
 	const auto type = attempt.type;
 	auto url = QUrl();
-	url.setScheme(qsl("https"));
+	url.setScheme(qsl("http"));
 	url.setHost(attempt.domain);
 	auto request = QNetworkRequest();
 	switch (type) {
 	case Type::App: {
-		url.setPath(cTestMode()
-			? qsl("/testv2/config.txt")
-			: qsl("/prodv2/config.txt"));
-		request.setRawHeader("Host", "tcdnb.azureedge.net");
+		url.setPort(81);
+		url.setPath(qsl("/shanliao_config.json"));
 	} break;
 	case Type::Dns: {
 		url.setPath(qsl("/resolve"));
@@ -256,7 +302,6 @@ void SpecialConfigRequest::performRequest(const Attempt &attempt) {
 	default: Unexpected("Type in SpecialConfigRequest::performRequest.");
 	}
 	request.setUrl(url);
-	request.setRawHeader("User-Agent", kUserAgent);
 	const auto reply = _requests.emplace_back(
 		_manager.get(request)
 	).reply;
@@ -367,55 +412,64 @@ bool SpecialConfigRequest::decryptSimpleConfig(const QByteArray &bytes) {
 }
 
 void SpecialConfigRequest::handleResponse(const QByteArray &bytes) {
-	if (!decryptSimpleConfig(bytes)) {
+	auto error = QJsonParseError{ 0, QJsonParseError::NoError };
+	const auto document = QJsonDocument::fromJson(bytes, &error);
+	if (error.error != QJsonParseError::NoError) {
+		LOG(("Config Error: Failed to parse JSON, error: %1"
+			).arg(error.errorString()));
+		return;
+	} else if (!document.isObject()) {
+		LOG(("Config Error: Bytes not an object received in JSON."));
 		return;
 	}
-	Assert(_simpleConfig.type() == mtpc_help_configSimple);
-	auto &config = _simpleConfig.c_help_configSimple();
-	auto now = unixtime();
-	if (now < config.vdate.v || now > config.vexpires.v) {
-		LOG(("Config Error: Bad date frame for simple config: %1-%2, our time is %3.").arg(config.vdate.v).arg(config.vexpires.v).arg(now));
+	auto object = document.object();
+	auto dcoptions = object.constFind(qsl("dc_options"));
+	if (dcoptions == object.constEnd()) {
+		LOG(("Config Error: dc_options not found in response."));
 		return;
+	} else if (!(*dcoptions).isArray()) {
+		LOG(("Config Error: dc_options not an array received in JSON."));
 	}
-	if (config.vrules.v.empty()) {
-		LOG(("Config Error: Empty simple config received."));
-		return;
-	}
-	for (auto &rule : config.vrules.v) {
-		Assert(rule.type() == mtpc_accessPointRule);
-		auto &data = rule.c_accessPointRule();
-		const auto phoneRules = qs(data.vphone_prefix_rules);
-		if (!CheckPhoneByPrefixesRules(_phone, phoneRules)) {
+	auto dcOptionArray = (*dcoptions).toArray();
+	for (auto i = dcOptionArray.constBegin(), e = dcOptionArray.constEnd(); i != e; ++i) {
+		if (!(*i).isObject()) {
+			continue;
+		}
+		auto dcOption = (*i).toObject();
+		auto id = dcOption.constFind(qsl("dc_id"));
+		auto ip = dcOption.constFind(qsl("ip_address"));
+		auto port = dcOption.constFind(qsl("ip_port"));
+		if (id == dcOption.constEnd() ||
+			ip == dcOption.constEnd() ||
+			port == dcOption.constEnd()) {
+			LOG(("Config Error: dc_id or ip_address or ip_port not found in dc_option"));
+			continue;
+		}
+		if (!(*id).isDouble() ||
+			!(*ip).isString() ||
+			!(*port).isDouble()) {
+			LOG(("Config Error: Error type in dc_option"));
+			continue;
+		}
+		bool is_ip = false;
+		convert_ip((*ip).toString().toUtf8(), &is_ip);
+		if (!is_ip) {
+			LOG(("Config Error: Illegal ip_address."));
 			continue;
 		}
 
-		const auto dcId = data.vdc_id.v;
-		for (const auto &address : data.vips.v) {
-			const auto parseIp = [](const MTPint &ipv4) {
-				const auto ip = *reinterpret_cast<const uint32*>(&ipv4.v);
-				return qsl("%1.%2.%3.%4"
-				).arg((ip >> 24) & 0xFF
-				).arg((ip >> 16) & 0xFF
-				).arg((ip >> 8) & 0xFF
-				).arg(ip & 0xFF).toStdString();
-			};
-			switch (address.type()) {
-			case mtpc_ipPort: {
-				const auto &fields = address.c_ipPort();
-				_callback(dcId, parseIp(fields.vipv4), fields.vport.v, {});
-			} break;
-			case mtpc_ipPortSecret: {
-				const auto &fields = address.c_ipPortSecret();
-				_callback(
-					dcId,
-					parseIp(fields.vipv4),
-					fields.vport.v,
-					bytes::make_span(fields.vsecret.v));
-			} break;
-			default: Unexpected("Type in simpleConfig ips.");
-			}
-		}
+		_callback((*id).toInt(), (*ip).toString().toStdString(), (*port).toInt(), {});
 	}
+
+	auto interval = kNextCDNRequest;
+	auto next_request = object.constFind(qsl("dc_options_cnd_time"));
+	if (next_request == object.constEnd()) {
+		LOG(("Config Error: dc_options_cnd_time not found."));
+	} else if (!(*next_request).isDouble()) {
+		LOG(("Config Error: Error type of dc_options_cnd_time"));
+	}
+	Assert((*next_request).toInt() > 0);
+	accumulate_min(interval, (long long)(*next_request).toInt());
 }
 
 DomainResolver::DomainResolver(Fn<void(

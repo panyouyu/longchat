@@ -43,6 +43,7 @@ private:
 		QString domain;
 	};
 
+	void reStart();
 	void sendNextRequest();
 	void performRequest(const Attempt &attempt);
 	void requestFinished(Type type, not_null<QNetworkReply*> reply);
@@ -61,7 +62,7 @@ private:
 	QNetworkAccessManager _manager;
 	std::vector<Attempt> _attempts;
 	std::vector<ServiceWebRequest> _requests;
-
+	QTimer _timer;
 };
 
 class DomainResolver : public QObject {
