@@ -26,13 +26,14 @@
       'Debug': {
         'xcode_settings': {
           'GCC_OPTIMIZATION_LEVEL': '0',
+		  'OTHER_CODE_SIGN_FLAGS':'--deep',
         },
       },
       'Release': {
         'xcode_settings': {
-          'DEBUG_INFORMATION_FORMAT': 'dwarf-with-dsym',
           'LLVM_LTO': 'YES',
           'GCC_OPTIMIZATION_LEVEL': 'fast',
+		  'OTHER_CODE_SIGN_FLAGS':'--deep',
         },
       },
     },
