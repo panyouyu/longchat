@@ -216,7 +216,11 @@ void AddContactBox::prepare() {
 	connect(_last, &Ui::InputField::submitted, [=] { submit(); });
 	connect(_phone, &Ui::PhoneInput::submitted, [=] { submit(); });
 
-	setDimensions(st::boxWideWidth, st::contactPadding.top() + _first->height() + st::contactSkip + _last->height() + st::contactPhoneSkip + _phone->height() + st::contactPadding.bottom() + st::boxPadding.bottom());
+	auto height = st::contactPadding.top() + _first->height() + st::contactSkip + _last->height() + st::contactPadding.bottom() + st::boxPadding.bottom();
+	if (_phone->isEnabled()) {
+		height += st::contactPhoneSkip + _phone->height();
+	}
+	setDimensions(st::boxWideWidth, height);
 }
 
 void AddContactBox::setInnerFocus() {
