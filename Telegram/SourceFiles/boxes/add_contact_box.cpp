@@ -183,7 +183,6 @@ private:
 
 AddContactBox::AddContactBox(QWidget*, QString fname, QString lname, QString phone)
 : _first(this, st::defaultInputField, langFactory(lng_signup_firstname), fname)
-, _last(this, st::defaultInputField, langFactory(lng_signup_lastname), lname)
 , _phone(this, st::defaultInputField, langFactory(lng_contact_phone), phone)
 , _invertOrder(langFirstNameGoesSecond()) {
 	if (!phone.isEmpty()) {
@@ -194,34 +193,33 @@ AddContactBox::AddContactBox(QWidget*, QString fname, QString lname, QString pho
 AddContactBox::AddContactBox(QWidget*, UserData *user)
 : _user(user)
 , _first(this, st::defaultInputField, langFactory(lng_signup_firstname), user->firstName)
-, _last(this, st::defaultInputField, langFactory(lng_signup_lastname), user->lastName)
 , _phone(this, st::defaultInputField, langFactory(lng_contact_phone), user->phone())
 , _invertOrder(langFirstNameGoesSecond()) {
 	_phone->setDisabled(true);
 }
 
 void AddContactBox::prepare() {
-	if (_invertOrder) {
-		setTabOrder(_last, _first);
-	}
 	if (_user) {
 		setTitle(langFactory(lng_edit_contact_title));
 	} else {
-		auto readyToAdd = !_phone->getLastText().isEmpty() && (!_first->getLastText().isEmpty() || !_last->getLastText().isEmpty());
+		auto readyToAdd = !_phone->getLastText().isEmpty() && (!_first->getLastText().isEmpty());
 		setTitle(langFactory(readyToAdd ? lng_confirm_contact_data : lng_enter_contact_data));
 	}
 	updateButtons();
 
 	connect(_first, &Ui::InputField::submitted, [=] { submit(); });
-	connect(_last, &Ui::InputField::submitted, [=] { submit(); });
 	connect(_phone, &Ui::PhoneInput::submitted, [=] { submit(); });
 
-	setDimensions(st::boxWideWidth, st::contactPadding.top() + _first->height() + st::contactSkip + _last->height() + st::contactPhoneSkip + _phone->height() + st::contactPadding.bottom() + st::boxPadding.bottom());
+	auto height = st::contactPadding.top() + _first->height() + st::contactPadding.bottom() + st::boxPadding.bottom();
+	if (_phone->isEnabled()) {
+		height += st::contactPhoneSkip + _phone->height();
+	}
+	setDimensions(st::boxWideWidth, height);
 }
 
 void AddContactBox::setInnerFocus() {
-	if ((_first->getLastText().isEmpty() && _last->getLastText().isEmpty()) || !_phone->isEnabled()) {
-		(_invertOrder ? _last : _first)->setFocusFast();
+	if ((_first->getLastText().isEmpty()) || !_phone->isEnabled()) {
+		_first->setFocusFast();
 		_phone->finishAnimating();
 	} else {
 		_phone->setFocusFast();
@@ -255,23 +253,18 @@ void AddContactBox::resizeEvent(QResizeEvent *e) {
 	BoxContent::resizeEvent(e);
 
 	_first->resize(width() - st::boxPadding.left() - st::contactPadding.left() - st::boxPadding.right(), _first->height());
-	_last->resize(_first->width(), _last->height());
-	_phone->resize(_first->width(), _last->height());
+	_phone->resize(_first->width(), _first->height());
 	if (_invertOrder) {
-		_last->moveToLeft(st::boxPadding.left() + st::contactPadding.left(), st::contactPadding.top());
-		_first->moveToLeft(st::boxPadding.left() + st::contactPadding.left(), _last->y() + _last->height() + st::contactSkip);
+		_first->moveToLeft(st::boxPadding.left() + st::contactPadding.left(), st::contactPadding.top());
 		_phone->moveToLeft(st::boxPadding.left() + st::contactPadding.left(), _first->y() + _first->height() + st::contactPhoneSkip);
 	} else {
 		_first->moveToLeft(st::boxPadding.left() + st::contactPadding.left(), st::contactPadding.top());
-		_last->moveToLeft(st::boxPadding.left() + st::contactPadding.left(), _first->y() + _first->height() + st::contactSkip);
-		_phone->moveToLeft(st::boxPadding.left() + st::contactPadding.left(), _last->y() + _last->height() + st::contactPhoneSkip);
+		_phone->moveToLeft(st::boxPadding.left() + st::contactPadding.left(), _first->y() + _first->height() + st::contactPhoneSkip);
 	}
 }
 
 void AddContactBox::submit() {
 	if (_first->hasFocus()) {
-		_last->setFocus();
-	} else if (_last->hasFocus()) {
 		if (_phone->isEnabled()) {
 			_phone->setFocus();
 		} else {
@@ -286,35 +279,25 @@ void AddContactBox::save() {
 	if (_addRequest) return;
 
 	auto firstName = TextUtilities::PrepareForSending(_first->getLastText());
-	auto lastName = TextUtilities::PrepareForSending(_last->getLastText());
 	auto phone = _phone->getLastText().trimmed();
-	if (firstName.isEmpty() && lastName.isEmpty()) {
-		if (_invertOrder) {
-			_last->setFocus();
-			_last->showError();
-		} else {
-			_first->setFocus();
-			_first->showError();
-		}
+	if (firstName.isEmpty()) {
+		_first->setFocus();
+		_first->showError();		
 		return;
 	} else if (!_user && !IsValidPhone(phone)) {
 		_phone->setFocus();
 		_phone->showError();
 		return;
 	}
-	if (firstName.isEmpty()) {
-		firstName = lastName;
-		lastName = QString();
-	}
 	_sentName = firstName;
 	QVector<MTPlong> userGroups;
 	if (_user) {
 		_contactId = rand_value<uint64>();
-		QVector<MTPInputContact> v(1, MTP_inputPhoneContact(MTP_long(_contactId), MTP_string(_user->phone()), MTP_string(firstName), MTP_string(lastName)));
+		QVector<MTPInputContact> v(1, MTP_inputPhoneContact(MTP_long(_contactId), MTP_string(_user->phone()), MTP_string(firstName), MTP_string(QString())));
 		_addRequest = MTP::send(MTPcontacts_ImportContacts(MTP_vector<MTPInputContact>(v), MTP_int(0), MTP_vector<MTPlong>(userGroups)), rpcDone(&AddContactBox::onSaveUserDone), rpcFail(&AddContactBox::onSaveUserFail));
 	} else {
 		_contactId = rand_value<uint64>();
-		QVector<MTPInputContact> v(1, MTP_inputPhoneContact(MTP_long(_contactId), MTP_string(phone), MTP_string(firstName), MTP_string(lastName)));
+		QVector<MTPInputContact> v(1, MTP_inputPhoneContact(MTP_long(_contactId), MTP_string(phone), MTP_string(firstName), MTP_string(QString())));
 		_addRequest = MTP::send(MTPcontacts_ImportContacts(MTP_vector<MTPInputContact>(v), MTP_int(0), MTP_vector<MTPlong>(userGroups)), rpcDone(&AddContactBox::onImportDone));
 	}
 }
@@ -325,9 +308,8 @@ bool AddContactBox::onSaveUserFail(const RPCError &error) {
 	_addRequest = 0;
 	const auto &err = error.type();
 	const auto firstName = _first->getLastText().trimmed();
-	const auto lastName = _last->getLastText().trimmed();
 	if (err == "CHAT_TITLE_NOT_MODIFIED") {
-		_user->setName(firstName, lastName, _user->nameOrPhone, _user->username);
+		_user->setName(firstName, QString(), _user->nameOrPhone, _user->username);
 		closeBox();
 		return true;
 	} else if (err == "NO_CHAT_TITLE") {
@@ -382,7 +364,6 @@ void AddContactBox::retry() {
 	_retrying = false;
 	updateButtons();
 	_first->setText(QString());
-	_last->setText(QString());
 	_phone->clearText();
 	_phone->setDisabled(false);
 	_first->setFocus();

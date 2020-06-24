@@ -69,7 +69,6 @@ private:
 	UserData *_user = nullptr;
 
 	object_ptr<Ui::InputField> _first;
-	object_ptr<Ui::InputField> _last;
 	object_ptr<Ui::PhoneInput> _phone;
 
 	bool _retrying = false;
