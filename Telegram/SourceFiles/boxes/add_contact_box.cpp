@@ -1045,7 +1045,6 @@ bool SetupChannelBox::onFirstCheckFail(const RPCError &error) {
 EditNameBox::EditNameBox(QWidget*, not_null<UserData*> user)
 : _user(user)
 , _first(this, st::defaultInputField, langFactory(lng_signup_firstname), _user->firstName)
-, _last(this, st::defaultInputField, langFactory(lng_signup_lastname), _user->lastName)
 , _invertOrder(langFirstNameGoesSecond()) {
 }
 
@@ -1053,37 +1052,26 @@ void EditNameBox::prepare() {
 	auto newHeight = st::contactPadding.top() + _first->height();
 
 	setTitle(langFactory(lng_edit_self_title));
-	newHeight += st::contactSkip + _last->height();
 
 	newHeight += st::boxPadding.bottom() + st::contactPadding.bottom();
 	setDimensions(st::boxWideWidth, newHeight);
 
 	addButton(langFactory(lng_settings_save), [=] { save(); });
 	addButton(langFactory(lng_cancel), [=] { closeBox(); });
-	if (_invertOrder) {
-		setTabOrder(_last, _first);
-	}
 	_first->setMaxLength(kMaxGroupChannelTitle);
-	_last->setMaxLength(kMaxGroupChannelTitle);
 
 	connect(_first, &Ui::InputField::submitted, [=] { submit(); });
-	connect(_last, &Ui::InputField::submitted, [=] { submit(); });
 }
 
 void EditNameBox::setInnerFocus() {
-	(_invertOrder ? _last : _first)->setFocusFast();
+	_first->setFocusFast();
 }
 
 void EditNameBox::submit() {
 	if (_first->hasFocus()) {
-		_last->setFocus();
-	} else if (_last->hasFocus()) {
 		if (_first->getLastText().trimmed().isEmpty()) {
 			_first->setFocus();
 			_first->showError();
-		} else if (_last->getLastText().trimmed().isEmpty()) {
-			_last->setFocus();
-			_last->showError();
 		} else {
 			save();
 		}
@@ -1094,13 +1082,10 @@ void EditNameBox::resizeEvent(QResizeEvent *e) {
 	BoxContent::resizeEvent(e);
 
 	_first->resize(width() - st::boxPadding.left() - st::newGroupInfoPadding.left() - st::boxPadding.right(), _first->height());
-	_last->resize(_first->size());
 	if (_invertOrder) {
-		_last->moveToLeft(st::boxPadding.left() + st::newGroupInfoPadding.left(), st::contactPadding.top());
-		_first->moveToLeft(st::boxPadding.left() + st::newGroupInfoPadding.left(), _last->y() + _last->height() + st::contactSkip);
+		_first->moveToLeft(st::boxPadding.left() + st::newGroupInfoPadding.left(), st::contactPadding.top());
 	} else {
 		_first->moveToLeft(st::boxPadding.left() + st::newGroupInfoPadding.left(), st::contactPadding.top());
-		_last->moveToLeft(st::boxPadding.left() + st::newGroupInfoPadding.left(), _first->y() + _first->height() + st::contactSkip);
 	}
 }
 
@@ -1108,20 +1093,10 @@ void EditNameBox::save() {
 	if (_requestId) return;
 
 	auto first = TextUtilities::PrepareForSending(_first->getLastText());
-	auto last = TextUtilities::PrepareForSending(_last->getLastText());
-	if (first.isEmpty() && last.isEmpty()) {
-		if (_invertOrder) {
-			_last->setFocus();
-			_last->showError();
-		} else {
-			_first->setFocus();
-			_first->showError();
-		}
-		return;
-	}
 	if (first.isEmpty()) {
-		first = last;
-		last = QString();
+		_first->setFocus();
+		_first->showError();		
+		return;
 	}
 	_sentName = first;
 	auto flags = MTPaccount_UpdateProfile::Flag::f_first_name
@@ -1130,7 +1105,7 @@ void EditNameBox::save() {
 		MTPaccount_UpdateProfile(
 			MTP_flags(flags),
 			MTP_string(first),
-			MTP_string(last),
+			MTP_string(QString()),
 			MTPstring()),
 		rpcDone(&EditNameBox::saveSelfDone),
 		rpcFail(&EditNameBox::saveSelfFail));
@@ -1146,9 +1121,8 @@ bool EditNameBox::saveSelfFail(const RPCError &error) {
 
 	auto err = error.type();
 	auto first = TextUtilities::SingleLine(_first->getLastText().trimmed());
-	auto last = TextUtilities::SingleLine(_last->getLastText().trimmed());
 	if (err == "NAME_NOT_MODIFIED") {
-		_user->setName(first, last, QString(), TextUtilities::SingleLine(_user->username));
+		_user->setName(first, QString(), QString(), TextUtilities::SingleLine(_user->username));
 		closeBox();
 		return true;
 	} else if (err == "FIRSTNAME_INVALID") {
@@ -1156,8 +1130,6 @@ bool EditNameBox::saveSelfFail(const RPCError &error) {
 		_first->showError();
 		return true;
 	} else if (err == "LASTNAME_INVALID") {
-		_last->setFocus();
-		_last->showError();
 		return true;
 	}
 	_first->setFocus();

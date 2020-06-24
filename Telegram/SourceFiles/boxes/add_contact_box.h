@@ -193,7 +193,6 @@ private:
 	not_null<UserData*> _user;
 
 	object_ptr<Ui::InputField> _first;
-	object_ptr<Ui::InputField> _last;
 
 	bool _invertOrder = false;
 
