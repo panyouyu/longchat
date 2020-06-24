@@ -195,7 +195,7 @@ AddContactBox::AddContactBox(QWidget*, UserData *user)
 : _user(user)
 , _first(this, st::defaultInputField, langFactory(lng_signup_firstname), user->firstName)
 , _last(this, st::defaultInputField, langFactory(lng_signup_lastname), user->lastName)
-, _phone(this, st::defaultInputField, langFactory(lng_contact_phone), user->phone())
+, _phone(this, st::defaultInputField, langFactory(lng_contact_phone), App::formatPhone(user->phone()))
 , _invertOrder(langFirstNameGoesSecond()) {
 	_phone->setDisabled(true);
 }

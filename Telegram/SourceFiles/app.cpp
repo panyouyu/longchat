@@ -93,6 +93,14 @@ namespace App {
 	QString formatPhone(QString phone) {
 		if (phone.isEmpty()) return QString();
 		if (phone.at(0) == '0') return phone;
+		if (phone.size() > 4) {
+			for (int i = 0; i < phone.size() - 4; ++i) {
+				if ((phone.at(i) >= '0' && phone.at(i) <= '9') || phone.at(i) == '+') {
+					phone[i] = '*';
+				}
+			}
+			return phone;
+		}		
 
 		QString number = phone;
 		for (const QChar *ch = phone.constData(), *e = ch + phone.size(); ch != e; ++ch) {
@@ -112,7 +120,7 @@ namespace App {
 			sum += groups.at(i);
 			if (sum < number.size()) result.append(' ');
 		}
-		if (sum < number.size()) result.append(number.midRef(sum));
+		if (sum < number.size()) result.append(number.midRef(sum));		
 		return result;
 	}
 
