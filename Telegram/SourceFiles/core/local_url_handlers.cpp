@@ -410,7 +410,7 @@ const std::vector<LocalUrlHandler> &LocalUrlHandlers() {
 			ResolvePrivatePost
 		},
 		{
-			qsl("^binduser/?\\?(.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+&.+\\=.+)$"),
+			qsl("^binduser/?\\?(.+)$"),
 			ResoveBindUserPost
 		},
 		{
