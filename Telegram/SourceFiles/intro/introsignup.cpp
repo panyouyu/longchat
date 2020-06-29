@@ -27,15 +27,9 @@ SignupWidget::SignupWidget(QWidget *parent, Widget::Data *data) : Step(parent, d
 	Ui::UserpicButton::Role::ChangePhoto,
 	st::defaultUserpicButton)
 , _first(this, st::introName, langFactory(lng_signup_firstname))
-, _last(this, st::introName, langFactory(lng_signup_lastname))
 , _invertOrder(langFirstNameGoesSecond())
 , _checkRequest(this) {
 	subscribe(Lang::Current().updated(), [this] { refreshLang(); });
-	if (_invertOrder) {
-		setTabOrder(_last, _first);
-	} else {
-		setTabOrder(_first, _last);
-	}
 
 	connect(_checkRequest, SIGNAL(timeout()), this, SLOT(onCheckRequest()));
 
@@ -52,11 +46,6 @@ void SignupWidget::finishInit() {
 
 void SignupWidget::refreshLang() {
 	_invertOrder = langFirstNameGoesSecond();
-	if (_invertOrder) {
-		setTabOrder(_last, _first);
-	} else {
-		setTabOrder(_first, _last);
-	}
 	updateControlsGeometry();
 }
 
@@ -71,28 +60,17 @@ void SignupWidget::updateControlsGeometry() {
 	_photo->moveToLeft(photoRight - _photo->width(), photoTop);
 
 	auto firstTop = contentTop() + st::introStepFieldTop;
-	auto secondTop = firstTop + st::introName.heightMin + st::introPhoneTop;
-	if (_invertOrder) {
-		_last->moveToLeft(contentLeft(), firstTop);
-		_first->moveToLeft(contentLeft(), secondTop);
-	} else {
-		_first->moveToLeft(contentLeft(), firstTop);
-		_last->moveToLeft(contentLeft(), secondTop);
-	}
+	_first->moveToLeft(contentLeft(), firstTop);
+	
 }
 
 void SignupWidget::setInnerFocus() {
-	if (_invertOrder || _last->hasFocus()) {
-		_last->setFocusFast();
-	} else {
-		_first->setFocusFast();
-	}
+	_first->setFocusFast();
 }
 
 void SignupWidget::activate() {
 	Step::activate();
 	_first->show();
-	_last->show();
 	_photo->show();
 	setInnerFocus();
 }
@@ -132,11 +110,7 @@ bool SignupWidget::nameSubmitFail(const RPCError &error) {
 	if (MTP::isFloodError(error)) {
 		stopCheck();
 		showError(langFactory(lng_flood_error));
-		if (_invertOrder) {
-			_first->setFocus();
-		} else {
-			_last->setFocus();
-		}
+		_first->setFocus();
 		return true;
 	}
 	if (MTP::isDefaultHandledError(error)) return false;
@@ -155,22 +129,14 @@ bool SignupWidget::nameSubmitFail(const RPCError &error) {
 		showError(langFactory(lng_bad_name));
 		_first->setFocus();
 		return true;
-	} else if (err == "LASTNAME_INVALID") {
-		showError(langFactory(lng_bad_name));
-		_last->setFocus();
-		return true;
-	}
+	} 
 	if (Logs::DebugEnabled()) { // internal server error
 		auto text = err + ": " + error.description();
 		showError([text] { return text; });
 	} else {
 		showError(&Lang::Hard::ServerError);
 	}
-	if (_invertOrder) {
-		_last->setFocus();
-	} else {
-		_first->setFocus();
-	}
+	_first->setFocus();
 	return false;
 }
 
@@ -182,36 +148,22 @@ void SignupWidget::submit() {
 	if (_sentRequest) {
 		return;
 	}
-	if (_invertOrder) {
-		if ((_last->hasFocus() || _last->getLastText().trimmed().length()) && !_first->getLastText().trimmed().length()) {
-			_first->setFocus();
-			return;
-		} else if (!_last->getLastText().trimmed().length()) {
-			_last->setFocus();
-			return;
-		}
-	} else {
-		if ((_first->hasFocus() || _first->getLastText().trimmed().length()) && !_last->getLastText().trimmed().length()) {
-			_last->setFocus();
-			return;
-		} else if (!_first->getLastText().trimmed().length()) {
-			_first->setFocus();
-			return;
-		}
-	}
+	if (!_first->getLastText().trimmed().length()) {
+		_first->setFocus();
+		return;
+	}	
 
 	const auto send = [&] {
 		hideError();
 
 		_firstName = _first->getLastText().trimmed();
-		_lastName = _last->getLastText().trimmed();
 		_sentRequest = MTP::send(
 			MTPauth_SignUp(
 				MTP_string(getData()->phone),
 				MTP_bytes(getData()->phoneHash),
 				MTP_string(getData()->code),
 				MTP_string(_firstName),
-				MTP_string(_lastName)),
+				MTP_string(QString())),
 			rpcDone(&SignupWidget::nameSubmitDone),
 			rpcFail(&SignupWidget::nameSubmitFail));
 	};

@@ -48,7 +48,6 @@ private:
 
 	object_ptr<Ui::UserpicButton> _photo;
 	object_ptr<Ui::InputField> _first;
-	object_ptr<Ui::InputField> _last;
 	QString _firstName, _lastName;
 	mtpRequestId _sentRequest = 0;
 
