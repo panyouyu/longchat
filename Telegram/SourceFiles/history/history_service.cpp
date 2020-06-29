@@ -207,7 +207,7 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		return result;
 	};
 
-	auto prepareTlvAction = [this](const MTPDmessageActionTlv& action) {
+	auto prepareTlvAction = [](const MTPDmessageActionTlv& action) {
 		auto result = PreparedText{};
 		return result;
 	};
