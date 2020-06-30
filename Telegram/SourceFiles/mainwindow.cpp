@@ -592,7 +592,7 @@ void MainWindow::onShowNewGroup() {
 
 	if (AuthSession::Exists()) {
 		Ui::show(
-			Box<GroupInfoBox>(CreatingGroupGroup, false),
+			Box<GroupInfoBox>(CreatingGroupChannel, false),
 			LayerOption::KeepOther);
 	}
 }

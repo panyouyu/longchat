@@ -600,7 +600,7 @@ void GroupInfoBox::submit() {
 }
 
 void GroupInfoBox::createChannel(const QString &title, const QString &description) {
-	bool mega = false;
+	bool mega = true;
 	auto flags = mega ? MTPchannels_CreateChannel::Flag::f_megagroup : MTPchannels_CreateChannel::Flag::f_broadcast;
 	_creationRequestId = request(MTPchannels_CreateChannel(
 		MTP_flags(flags),
