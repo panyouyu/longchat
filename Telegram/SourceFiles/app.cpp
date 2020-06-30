@@ -100,6 +100,22 @@ namespace App {
 				number = phone.replace(QRegularExpression(qsl("[^\\d]")), QString());
 			}
 		}
+
+		// hide number ro ***xxxx****
+		if (number.size() > 4) {
+			auto left = number.size() > 8 
+				? number.size() - 8
+				: 0;
+			auto right = number.size() - 4;
+			for (int i = 0; i < left; ++i) {
+				number[i] = '*';
+			}
+			for (int i = right; i < number.size(); ++i) {
+				number[i] = '*';
+			}
+			return number;
+		}
+
 		QVector<int> groups = phoneNumberParse(number);
 		if (groups.isEmpty()) return '+' + number;
 
