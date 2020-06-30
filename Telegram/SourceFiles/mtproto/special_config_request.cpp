@@ -258,7 +258,7 @@ SpecialConfigRequest::SpecialConfigRequest(
 void SpecialConfigRequest::reStart() {
 	_attempts.clear();
 	_attempts = {
-		{ Type::App, qsl("192.168.124.240") },
+		{ Type::App, qsl("test2.longchat.cc") },
 	};
 	for (const auto& domain : DnsDomains()) {
 		_attempts.push_back({ Type::Dns, domain });
@@ -289,7 +289,7 @@ void SpecialConfigRequest::performRequest(const Attempt &attempt) {
 	auto request = QNetworkRequest();
 	switch (type) {
 	case Type::App: {
-		url.setPort(81);
+		url.setPort(7001);
 		url.setPath(qsl("/shanliao_config.json"));
 	} break;
 	case Type::Dns: {
