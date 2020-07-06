@@ -2111,6 +2111,7 @@ ConnectionPrivate::HandleResult ConnectionPrivate::handleOneReceived(const mtpPr
 		// Notify main process about new session - need to get difference.
 		QWriteLocker locker(sessionData->haveReceivedMutex());
 		sessionData->haveReceivedUpdates().push_back(SerializedMessage(update));
+		DEBUG_LOG(("new_session_created : %1").arg(_connection->peerName()));
 	} return HandleResult::Success;
 
 	case mtpc_ping: {
