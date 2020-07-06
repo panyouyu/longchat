@@ -4300,7 +4300,7 @@ void ApiWrap::forwardMessages(
 		const SendOptions &options,
 		FnMut<void()> &&successCallback) {
 	Expects(!items.empty());
-
+	return;
 	struct SharedCallback {
 		int requestsLeft = 0;
 		FnMut<void()> callback;
