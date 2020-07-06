@@ -545,7 +545,7 @@ void writeDebug(const char *file, int32 line, const QString &v) {
 		file = found + 1;
 	}
 
-	QString msg(QString("%1 %2 (%3 : %4)\n").arg(_logsEntryStart()).arg(v).arg(file).arg(line));
+	QString msg(QString("%1 [%2] %3 (%4 : %5) \n").arg(_logsEntryStart()).arg(quintptr(QThread::currentThreadId())).arg(v).arg(file).arg(line));
 	_logsWrite(LogDataDebug, msg);
 
 #ifdef Q_OS_WIN
