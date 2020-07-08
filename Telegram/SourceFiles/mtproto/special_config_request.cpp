@@ -25,7 +25,6 @@ struct DnsEntry {
 };
 
 constexpr auto kSendNextTimeout = crl::time(1000);
-constexpr auto kNextCDNRequest = 15 * 60 * crl::time(1000);
 constexpr auto kMinTimeToLive = 10 * crl::time(1000);
 constexpr auto kMaxTimeToLive = 300 * crl::time(1000);
 
@@ -86,42 +85,6 @@ QString GenerateRandomPadding() {
 	for (auto &ch : result) {
 		ch = kValid[rand_value<uchar>() % (sizeof(kValid) - 1)];
 	}
-	return result;
-}
-
-int convert_ip(QByteArray &&ip, bool* flag) {
-	int result = 0;
-
-	auto removeFrom = std::remove_if(ip.begin(), ip.end(), [](char ch) {
-		auto isGoodCh = (ch == '.') || (ch <= '9' && ch >= '0');
-		return !isGoodCh;
-		});
-	if (removeFrom != ip.end()) {
-		ip.remove(removeFrom - ip.begin(), ip.end() - removeFrom);
-	}
-
-	auto list = ip.split('.');
-	auto ok = [&]()->bool {
-		if (list.size() != 4) {
-			return false;
-		}
-		else {
-			bool flag = 0;
-			int offset;
-			for (int i = 0; i < 4; ++i) {
-				offset = list.at(i).toInt(&flag);
-				if (!flag || offset < 0 || offset > UCHAR_MAX)
-					return false;
-				result = (result << 8) | (offset & 0xff);
-			}
-			return true;
-		}
-	}();
-
-	if (flag) {
-		*flag = ok;
-	}
-
 	return result;
 }
 
@@ -249,16 +212,8 @@ SpecialConfigRequest::SpecialConfigRequest(
 : _callback(std::move(callback))
 , _phone(phone) {
 	_manager.setProxy(QNetworkProxy::NoProxy);
-	reStart();
-	_timer.setInterval(kNextCDNRequest);	
-	connect(&_timer, &QTimer::timeout, [=] { reStart(); });
-	_timer.start();
-}
-
-void SpecialConfigRequest::reStart() {
-	_attempts.clear();
 	_attempts = {
-		{ Type::App, qsl("test2.longchat.cc") },
+	{ Type::App, qsl("test2.longchat.cc") },
 	};
 	for (const auto& domain : DnsDomains()) {
 		_attempts.push_back({ Type::Dns, domain });
@@ -445,31 +400,9 @@ void SpecialConfigRequest::handleResponse(const QByteArray &bytes) {
 			LOG(("Config Error: dc_id or ip_address or ip_port not found in dc_option"));
 			continue;
 		}
-		if (!(*id).isDouble() ||
-			!(*ip).isString() ||
-			!(*port).isDouble()) {
-			LOG(("Config Error: Error type in dc_option"));
-			continue;
-		}
-		bool is_ip = false;
-		convert_ip((*ip).toString().toUtf8(), &is_ip);
-		if (!is_ip) {
-			LOG(("Config Error: Illegal ip_address."));
-			continue;
-		}
 
-		_callback((*id).toInt(), (*ip).toString().toStdString(), (*port).toInt(), {});
+		_callback(id->toInt(), ip->toString().toStdString(), port->toInt(), {});
 	}
-
-	auto interval = kNextCDNRequest;
-	auto next_request = object.constFind(qsl("dc_options_cnd_time"));
-	if (next_request == object.constEnd()) {
-		LOG(("Config Error: dc_options_cnd_time not found."));
-	} else if (!(*next_request).isDouble()) {
-		LOG(("Config Error: Error type of dc_options_cnd_time"));
-	}
-	Assert((*next_request).toInt() > 0);
-	accumulate_min(interval, (long long)(*next_request).toInt());
 }
 
 DomainResolver::DomainResolver(Fn<void(

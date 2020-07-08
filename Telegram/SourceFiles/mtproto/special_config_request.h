@@ -43,7 +43,6 @@ private:
 		QString domain;
 	};
 
-	void reStart();
 	void sendNextRequest();
 	void performRequest(const Attempt &attempt);
 	void requestFinished(Type type, not_null<QNetworkReply*> reply);
