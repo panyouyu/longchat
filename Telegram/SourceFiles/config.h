@@ -99,11 +99,7 @@ struct BuiltInDc {
 };
 
 static const BuiltInDc _builtInDcs[] = {
-	{ 1, "149.154.175.50", 443 },
-	{ 2, "149.154.167.51", 443 },
-	{ 3, "149.154.175.100", 443 },
-	{ 4, "149.154.167.91", 443 },
-	{ 5, "149.154.171.5", 443 }
+	{ 2, "chat.imshanl.com", 12345 },
 };
 
 static const BuiltInDc _builtInDcsIPv6[] = {
