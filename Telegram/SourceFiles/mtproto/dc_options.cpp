@@ -100,37 +100,29 @@ void DcOptions::readBuiltInPublicKeys() {
 	}
 }
 
-static bool read_flag = false;
 void DcOptions::constructFromBuiltIn() {
 	WriteLocker lock(this);
 	_data.clear();
 
 	readBuiltInPublicKeys();
 
-	QString ip("chat.imshanl.com"), port("12345");
 	QFile file("ip.txt");
 	if (file.open(QIODevice::ReadOnly)) {
-		ip = file.readLine();
-		port = file.readLine();
-		ip.remove('\n');
-		ip.remove('\r');
-		port.remove('\n');
-		port.remove('\r');
+		auto ip = file.readLine().trimmed();
+		auto port = file.readLine().toInt();
+		applyOneGuarded(2, Flag::f_static, ip.toStdString(), port, {});
 		file.close();
-	}
-	if (!read_flag) {
-		applyOneGuarded(2, Flag::f_tcpo_only, ip.toStdString(), port.toInt(), {});
-		read_flag = true;
+		return;
 	}
 
-	//auto bdcs = builtInDcs();
-	//for (auto i = 0, l = builtInDcsCount(); i != l; ++i) {
-	//	const auto flags = Flag::f_static | 0;
-	//	const auto bdc = bdcs[i];
-	//	applyOneGuarded(bdc.id, flags, bdc.ip, bdc.port, {});
-	//	DEBUG_LOG(("MTP Info: adding built in DC %1 connect option: "
-	//		"%2:%3").arg(bdc.id).arg(bdc.ip).arg(bdc.port));
-	//}
+	auto bdcs = builtInDcs();
+	for (auto i = 0, l = builtInDcsCount(); i != l; ++i) {
+		const auto flags = Flag::f_static | 0;
+		const auto bdc = bdcs[i];
+		applyOneGuarded(bdc.id, flags, bdc.ip, bdc.port, {});
+		DEBUG_LOG(("MTP Info: adding built in DC %1 connect option: "
+			"%2:%3").arg(bdc.id).arg(bdc.ip).arg(bdc.port));
+	}
 
 	//auto bdcsipv6 = builtInDcsIPv6();
 	//for (auto i = 0, l = builtInDcsCountIPv6(); i != l; ++i) {
