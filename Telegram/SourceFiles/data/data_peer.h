@@ -109,7 +109,7 @@ public:
 	virtual ~PeerData();
 
 	static constexpr auto kServiceNotificationsId = peerFromUser(777000);
-	static constexpr auto kRecordDialogId = peerFromChat(666000);
+	static constexpr auto kRecordDialogId = peerFromChannel(666000);
 
 	[[nodiscard]] Data::Session &owner() const;
 	[[nodiscard]] AuthSession &session() const;

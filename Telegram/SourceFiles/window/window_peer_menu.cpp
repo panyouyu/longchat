@@ -432,13 +432,13 @@ void Filler::addChannelActions(not_null<ChannelData*> channel) {
 		//		lang(lng_polls_create),
 		//		[=] { PeerMenuCreatePoll(channel); });
 		//}
-		if (channel->canExportChatHistory()) {
-			_addAction(
-				lang(isGroup
-					? lng_profile_export_chat
-					: lng_profile_export_channel),
-				[=] { PeerMenuExportChat(channel); });
-		}
+		//if (channel->canExportChatHistory()) {
+		//	_addAction(
+		//		lang(isGroup
+		//			? lng_profile_export_chat
+		//			: lng_profile_export_channel),
+		//		[=] { PeerMenuExportChat(channel); });
+		//}
 	}
 	if (channel->amIn()) {
 		if (isGroup && !channel->isPublic()) {
@@ -451,22 +451,22 @@ void Filler::addChannelActions(not_null<ChannelData*> channel) {
 			: lng_profile_leave_channel);
 		_addAction(text, DeleteAndLeaveHandler(channel));
 	} else {
-		auto text = lang(isGroup
-			? lng_profile_join_group
-			: lng_profile_join_channel);
-		_addAction(
-			text,
-			[channel] { Auth().api().joinChannel(channel); });
+		//auto text = lang(isGroup
+		//	? lng_profile_join_group
+		//	: lng_profile_join_channel);
+		//_addAction(
+		//	text,
+		//	[channel] { Auth().api().joinChannel(channel); });
 	}
-	if (_source != PeerMenuSource::ChatsList) {
-		auto needReport = !channel->amCreator()
-			&& (!isGroup || channel->isPublic());
-		if (needReport) {
-			_addAction(lang(lng_profile_report), [channel] {
-				Ui::show(Box<ReportBox>(channel));
-			});
-		}
-	}
+	//if (_source != PeerMenuSource::ChatsList) {
+	//	auto needReport = !channel->amCreator()
+	//		&& (!isGroup || channel->isPublic());
+	//	if (needReport) {
+	//		_addAction(lang(lng_profile_report), [channel] {
+	//			Ui::show(Box<ReportBox>(channel));
+	//		});
+	//	}
+	//}
 }
 
 void Filler::fill() {

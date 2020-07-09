@@ -1398,7 +1398,7 @@ bool Message::displayFastShare() const {
 	if (!IsServerMsgId(item->id)) {
 		return false;
 	} else if (peer->isChannel()) {
-		return !peer->isMegagroup();
+		return !peer->isMegagroup() && peer->id != PeerData::kRecordDialogId;
 	} else if (const auto user = peer->asUser()) {
 		if (const auto forwarded = item->Get<HistoryMessageForwarded>()) {
 			return !peer->isSelf()

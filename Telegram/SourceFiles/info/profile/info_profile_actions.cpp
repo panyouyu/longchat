@@ -361,9 +361,9 @@ void DetailsFiller::setupMainButtons() {
 		});
 	} else if (auto channel = _peer->asChannel()) {
 		if (!channel->isMegagroup()) {
-			wrapButtons([=] {
+			/*wrapButtons([=] {
 				return fillChannelButtons(channel);
-			});
+			});*/
 		}
 	}
 }
@@ -457,7 +457,7 @@ object_ptr<Ui::RpWidget> DetailsFiller::fill() {
 	add(object_ptr<BoxContentDivider>(_wrap));
 	add(CreateSkipWidget(_wrap));
 	add(setupInfo());
-	if (!_peer->isSelf()) {
+	if (!_peer->isSelf() && _peer->id != PeerData::kRecordDialogId) {
 		add(setupMuteToggle());
 	}
 	setupMainButtons();
@@ -694,11 +694,11 @@ void ActionsFiller::fillChannelActions(
 		not_null<ChannelData*> channel) {
 	using namespace rpl::mappers;
 
-	addJoinChannelAction(channel);
-	addLeaveChannelAction(channel);
-	if (!channel->amCreator()) {
-		addReportAction();
-	}
+	//addJoinChannelAction(channel);
+	//addLeaveChannelAction(channel);
+	//if (!channel->amCreator()) {
+	//	addReportAction();
+	//}
 }
 
 object_ptr<Ui::RpWidget> ActionsFiller::fill() {

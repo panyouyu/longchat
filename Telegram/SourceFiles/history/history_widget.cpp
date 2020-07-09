@@ -3574,7 +3574,7 @@ bool HistoryWidget::isBlocked() const {
 }
 
 bool HistoryWidget::isJoinChannel() const {
-	return _peer && _peer->isChannel() && !_peer->asChannel()->amIn();
+	return _peer && _peer->isChannel() && !_peer->asChannel()->amIn() && 0;
 }
 
 bool HistoryWidget::isMuteUnmute() const {

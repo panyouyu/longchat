@@ -102,7 +102,7 @@ RecordData::RecordData(not_null<HistoryItem*> item, const MTPDmessageMediaRecord
 						MTP_flags(flags),
 						MTP_int(msg_id),
 						MTP_int(from),
-						MTP_peerChat(MTP_int(peerToChat(PeerData::kRecordDialogId))),
+						MTP_peerChannel(MTP_int(peerToChannel(PeerData::kRecordDialogId))),
 						MTPMessageFwdHeader(),
 						MTPint(),
 						MTPint(),
@@ -145,9 +145,12 @@ void RecordClickHandler::onClickImpl() const {
 	if (_record->msgs().size() == 0) return;
 
 	auto& session = Auth().data();
-	session.processChat(MTP_chatForbidden(
-		MTP_int(peerToChat(PeerData::kRecordDialogId)),
-		MTP_string(_record->title().toString())));
+	session.processChat(MTP_channelForbidden(
+		MTP_flags(0),
+		MTP_int(peerToChannel(PeerData::kRecordDialogId)),
+		MTP_long(0),
+		MTP_string(_record->title().toString()),
+		MTP_int(unixtime())));
 
 	auto history = session.history(PeerData::kRecordDialogId);
 	if (!history->isEmpty()) {

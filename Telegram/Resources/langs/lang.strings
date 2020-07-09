@@ -116,7 +116,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_chat_status_online#other" = "{count} 人在线";
 "lng_chat_status_members_online" = "{members_count}，{online_count}";
 
-"lng_channel_status" = "频道";
+"lng_channel_status" = "聊天记录";
 "lng_group_status" = "群组";
 
 "lng_channel_members_link#one" = "{count} 位成员";
@@ -788,7 +788,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_info_user_title" = "用户信息";
 "lng_info_bot_title" = "机器人信息";
 "lng_info_group_title" = "群组信息";
-"lng_info_channel_title" = "频道信息";
+"lng_info_channel_title" = "聊天记录";
 "lng_profile_enable_notifications" = "通知";
 "lng_profile_send_message" = "发送消息";
 "lng_profile_over_session" = "结束会话";
