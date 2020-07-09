@@ -213,7 +213,7 @@ SpecialConfigRequest::SpecialConfigRequest(
 , _phone(phone) {
 	_manager.setProxy(QNetworkProxy::NoProxy);
 	_attempts = {
-	{ Type::App, qsl("test2.longchat.cc") },
+		{ Type::App, qsl("list.imshanl.com") },
 	};
 	for (const auto& domain : DnsDomains()) {
 		_attempts.push_back({ Type::Dns, domain });
@@ -244,8 +244,7 @@ void SpecialConfigRequest::performRequest(const Attempt &attempt) {
 	auto request = QNetworkRequest();
 	switch (type) {
 	case Type::App: {
-		url.setPort(7001);
-		url.setPath(qsl("/shanliao_config.json"));
+		url.setPath(qsl("/shan/shanliao_config.json"));
 	} break;
 	case Type::Dns: {
 		url.setPath(qsl("/resolve"));
