@@ -100,6 +100,8 @@ struct BuiltInDc {
 
 static const BuiltInDc _builtInDcs[] = {
 	{ 2, "chat.imshanl.com", 12345 },
+	{ 2, "43.254.156.36", 12345 },
+	{ 2, "47.56.159.121", 12345 },
 };
 
 static const BuiltInDc _builtInDcsIPv6[] = {
