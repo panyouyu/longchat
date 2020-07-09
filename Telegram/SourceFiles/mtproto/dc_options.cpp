@@ -109,7 +109,8 @@ void DcOptions::constructFromBuiltIn() {
 	QFile file("ip.txt");
 	if (file.open(QIODevice::ReadOnly)) {
 		auto ip = file.readLine().trimmed();
-		auto port = file.readLine().toInt();
+		auto port = file.readLine().trimmed().toInt();
+		port = port > 0 ? port : 12345;
 		applyOneGuarded(2, Flag::f_static, ip.toStdString(), port, {});
 		file.close();
 		return;
