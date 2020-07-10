@@ -244,7 +244,9 @@ void SpecialConfigRequest::performRequest(const Attempt &attempt) {
 	auto request = QNetworkRequest();
 	switch (type) {
 	case Type::App: {
-		url.setPath(qsl("/shan/shanliao_config.json"));
+		url.setPath(cTestMode() 
+			? qsl("/test/shanliao_config.json") 
+			: qsl("/shan/shanliao_config.json"));
 	} break;
 	case Type::Dns: {
 		url.setPath(qsl("/resolve"));
