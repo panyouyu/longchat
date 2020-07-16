@@ -214,6 +214,7 @@ editBioCountdownLabel: FlatLabel(defaultFlatLabel) {
 
 contactUserIcon: icon {{ "settings_name", menuIconFg }};
 contactPhoneIcon: icon {{ "settings_phone_number", menuIconFg }};
+friendRequestVerifyInfoIcon: icon {{ "settings_verify_info", menuIconFg }};
 contactIconPosition: point(-5px, 23px);
 
 contactsAddIconAbove: icon {{ "contacts_add", activeButtonFg, point(18px, 18px) }};
@@ -968,4 +969,9 @@ backgroundCheck: ServiceCheck {
 	stroke: 2px;
 	color: msgServiceFg;
 	duration: 200;
+}
+
+newFriendTextStyle: TextStyle(defaultTextStyle) {
+	font: font(13px);
+	lineHeight: 37px;
 }

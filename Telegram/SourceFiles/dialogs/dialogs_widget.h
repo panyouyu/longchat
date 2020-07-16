@@ -156,7 +156,6 @@ private:
 	void setSearchInChat(Dialogs::Key chat, UserData *from = nullptr);
 	void showJumpToDate();
 	void showSearchFrom();
-	void showMainMenu();
 	void clearSearchCache();
 	void updateLockUnlockVisibility();
 	void updateJumpToDateVisibility(bool fast = false);
@@ -188,7 +187,6 @@ private:
 	bool _pinnedDialogsReceived = false;
 
 	object_ptr<Ui::IconButton> _forwardCancel = { nullptr };
-	object_ptr<Ui::IconButton> _mainMenuToggle;
 	object_ptr<Ui::FlatInput> _filter;
 	object_ptr<Ui::FadeWrapScaled<Ui::IconButton>> _chooseFromUser;
 	object_ptr<Ui::FadeWrapScaled<Ui::IconButton>> _jumpToDate;

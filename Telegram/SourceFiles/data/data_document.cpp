@@ -1330,7 +1330,7 @@ bool DocumentData::isAnimation() const {
 
 bool DocumentData::isGifv() const {
 	return (type == AnimatedDocument)
-		&& hasMimeType(qstr("video/mp4"));
+		&& hasMimeType(qstr("image/gif"));
 }
 
 bool DocumentData::isTheme() const {

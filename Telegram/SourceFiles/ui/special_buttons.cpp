@@ -8,6 +8,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/special_buttons.h"
 
 #include "styles/style_boxes.h"
+#include "styles/style_window.h"
 #include "styles/style_history.h"
 #include "dialogs/dialogs_layout.h"
 #include "ui/effects/ripple_animation.h"
@@ -853,14 +854,14 @@ void UserpicButton::prepareUserpicPixmap() {
 		PainterHighQualityEnabler hq(p);
 		p.setBrush(color);
 		p.setPen(Qt::NoPen);
-		p.drawEllipse(0, 0, size, size);
+		p.drawRoundedRect(0, 0, size, size, st::buttonRadius, st::buttonRadius);
 	};
 	_userpicHasImage = _peer
 		? (_peer->currentUserpic() || _role != Role::ChangePhoto)
 		: false;
 	_userpic = CreateSquarePixmap(size, [&](Painter &p) {
 		if (_userpicHasImage) {
-			_peer->paintUserpic(p, 0, 0, _st.photoSize);
+			_peer->paintUserpicRounded(p, 0, 0, _st.photoSize);
 		} else {
 			paintButton(p, _st.changeButton.textBg);
 		}
@@ -1064,6 +1065,105 @@ void ScreenShotButton::showOptions()
 			_screenShotOptions->hide();
 		}
 	});
+}
+
+MainMenuButton::MainMenuButton(QWidget * parent, const style::MainMenuButton &st)
+: RippleButton(parent, st.ripple)
+, _st(st) {
+}
+
+void MainMenuButton::setChecked(bool checked) {
+	if (_checked != checked) {
+		_checked = checked;
+		update();
+	}
+}
+
+int MainMenuButton::resizeGetHeight(int newWidth) {
+	return _st.margin.top() + _st.iconSize.height() + _st.margin.bottom();
+}
+
+void MainMenuButton::paintEvent(QPaintEvent * e) {
+	Painter p(this);
+	auto over = isOver() || isDown() || isChecked();
+	p.fillRect(rect(), over ? _st.bgOver : _st.bg);
+	
+	paintRipple(p, 0, 0);
+	
+	auto icon_x = (width() - _st.iconSize.width()) >> 1;
+	auto icon_y = _st.margin.top();
+	
+	auto icon = _checked ? _st.iconChecked : over ? _st.iconOver : _st.icon;
+	icon.paint(p, icon_x, icon_y, width());	
+}
+
+QPoint MainMenuButton::iconTopRight() const {
+	return { width() - ((width() - _st.iconSize.width()) >> 1), _st.margin.top() };
+}
+
+MainMenuMsgButton::MainMenuMsgButton(QWidget * parent, const style::MainMenuButton & st, bool checked)
+: MainMenuButton(parent, st) {
+	setChecked(checked);
+}
+
+void MainMenuMsgButton::updateUnReadCount(int size, int count, style::color bg, style::color fg) {
+	_unreadCount = count;
+	QString cnt = (count < 1000) ? QString("%1").arg(count) : QString("..%1").arg(count % 100, 2, 10, QChar('0'));
+	QImage result(size, size, QImage::Format_ARGB32);
+	int32 cntSize = cnt.size();
+	result.fill(Qt::transparent);
+	{
+		QPainter p(&result);
+		p.setBrush(bg);
+		p.setPen(Qt::NoPen);
+		p.setRenderHint(QPainter::Antialiasing);
+		int32 fontSize;
+		if (size == 16) {
+			fontSize = (cntSize < 2) ? 11 : ((cntSize < 3) ? 11 : 8);
+		} else if (size == 20) {
+			fontSize = (cntSize < 2) ? 14 : ((cntSize < 3) ? 13 : 10);
+		} else if (size == 24) {
+			fontSize = (cntSize < 2) ? 17 : ((cntSize < 3) ? 16 : 12);
+		} else {
+			fontSize = (cntSize < 2) ? 22 : ((cntSize < 3) ? 20 : 16);
+		}
+		style::font f = { fontSize, 0, 0 };
+		int32 w = f->width(cnt), d, r;
+		if (size == 16) {
+			d = (cntSize < 2) ? 5 : ((cntSize < 3) ? 2 : 1);
+			r = (cntSize < 2) ? 8 : ((cntSize < 3) ? 7 : 3);
+		} else if (size == 20) {
+			d = (cntSize < 2) ? 6 : ((cntSize < 3) ? 2 : 1);
+			r = (cntSize < 2) ? 10 : ((cntSize < 3) ? 9 : 5);
+		} else if (size == 24) {
+			d = (cntSize < 2) ? 7 : ((cntSize < 3) ? 3 : 1);
+			r = (cntSize < 2) ? 12 : ((cntSize < 3) ? 11 : 6);
+		} else {
+			d = (cntSize < 2) ? 9 : ((cntSize < 3) ? 4 : 2);
+			r = (cntSize < 2) ? 16 : ((cntSize < 3) ? 14 : 8);
+		}
+		p.drawRoundedRect(QRect(size - w - d * 2, size - f->height, w + d * 2, f->height), r, r);
+		p.setFont(f);
+
+		p.setPen(fg);
+
+		p.drawText(size - w - d, size - f->height + f->ascent, cnt);
+	}
+	_image = result;
+	update();
+}
+
+void MainMenuMsgButton::paintEvent(QPaintEvent * e) {
+	MainMenuButton::paintEvent(e);
+	if (_image.isNull()) return;
+	
+	int x = iconTopRight().x() - (_image.width() >> 1);
+	int y = iconTopRight().y() - (_image.height() >> 1);
+	
+	Painter p(this);
+	if (_unreadCount) {
+		p.drawImage(QPoint(x, y), _image);
+	}	
 }
 
 } // namespace Ui

@@ -7,14 +7,12 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #pragma once
 
-#include "base/timer.h"
 #include "ui/rp_widget.h"
 
 namespace Ui {
-class IconButton;
-class FlatLabel;
-class Menu;
 class UserpicButton;
+class MainMenuButton;
+class MainMenuMsgButton;
 } // namespace Ui
 
 namespace Window {
@@ -35,23 +33,14 @@ protected:
 
 private:
 	void updateControlsGeometry();
-	void updatePhone();
-	void initResetScaleButton();
-	void refreshMenu();
 
-	class ResetScaleButton;
 	not_null<Controller*> _controller;
-	object_ptr<Ui::UserpicButton> _userpicButton = { nullptr };
-	object_ptr<Ui::IconButton> _cloudButton = { nullptr };
-	object_ptr<ResetScaleButton> _resetScaleButton = { nullptr };
-	object_ptr<Ui::Menu> _menu;
-	object_ptr<Ui::FlatLabel> _telegram;
-	object_ptr<Ui::FlatLabel> _version;
-	std::shared_ptr<QPointer<QAction>> _nightThemeAction;
-	base::Timer _nightThemeSwitch;
-
-	QString _phoneText;
-
+	object_ptr<Ui::UserpicButton> _userpicButton = { nullptr };	
+	object_ptr<Ui::MainMenuMsgButton> _mseeage;
+	object_ptr<Ui::MainMenuMsgButton> _contact;
+	object_ptr<Ui::MainMenuButton> _netdisc;
+	object_ptr<Ui::MainMenuButton> _newChat;
+	object_ptr<Ui::MainMenuButton> _setting;
 };
 
 } // namespace Window

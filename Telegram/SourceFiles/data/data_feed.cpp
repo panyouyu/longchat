@@ -184,7 +184,7 @@ void Feed::paintUserpic(
 	const auto delta = size - small;
 	auto index = 0;
 	for (const auto channel : _channels) {
-		channel->peer->paintUserpic(p, x, y, small);
+		channel->peer->paintUserpicRounded(p, x, y, small);
 		switch (++index) {
 		case 1:
 		case 3: x += delta; break;

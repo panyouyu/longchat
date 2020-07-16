@@ -107,10 +107,15 @@ public:
 
 	not_null<UserData*> processUser(const MTPUser &data);
 	not_null<PeerData*> processChat(const MTPChat &data);
+	not_null<UserData*> processFriendRequest(const MTPFriendRequest &data);
 
 	// Returns last user, if there were any.
 	UserData *processUsers(const MTPVector<MTPUser> &data);
 	PeerData *processChats(const MTPVector<MTPChat> &data);
+	UserData * processFriendRequests(const MTPVector<MTPFriendRequest> &data);
+	std::list<not_null<UserData*>> &friendRequests() {
+		return _friendRequests;
+	}
 
 	void applyMaximumChatVersions(const MTPVector<MTPChat> &data);
 
@@ -210,6 +215,8 @@ public:
 	[[nodiscard]] rpl::producer<> stickersUpdated() const;
 	void notifySavedGifsUpdated();
 	[[nodiscard]] rpl::producer<> savedGifsUpdated() const;
+	void notifyFriendRequestChanged();
+	[[nodiscard]] rpl::producer<int> friendRequestChanged() const;
 
 	bool stickersUpdateNeeded(crl::time now) const {
 		return stickersUpdateNeeded(_lastStickersUpdate, now);
@@ -712,6 +719,7 @@ private:
 
 	rpl::event_stream<> _stickersUpdated;
 	rpl::event_stream<> _savedGifsUpdated;
+	rpl::event_stream<int> _friendsRequestChanged;
 	crl::time _lastStickersUpdate = 0;
 	crl::time _lastRecentStickersUpdate = 0;
 	crl::time _lastFavedStickersUpdate = 0;
@@ -807,7 +815,7 @@ private:
 
 	std::unordered_map<PeerId, std::unique_ptr<PeerData>> _peers;
 	std::unordered_map<PeerId, std::unique_ptr<History>> _histories;
-
+	std::list<not_null<UserData*>> _friendRequests;
 	MessageIdsList _mimeForwardIds;
 
 	using CredentialsWithGeneration = std::pair<

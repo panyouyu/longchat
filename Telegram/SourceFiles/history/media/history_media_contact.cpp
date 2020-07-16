@@ -166,15 +166,15 @@ void HistoryContact::draw(Painter &p, const QRect &r, TextSelection selection, c
 
 		QRect rthumb(rtlrect(st::msgFileThumbPadding.left(), st::msgFileThumbPadding.top() - topMinus, st::msgFileThumbSize, st::msgFileThumbSize, paintw));
 		if (_contact) {
-			_contact->paintUserpic(p, rthumb.x(), rthumb.y(), st::msgFileThumbSize);
+			_contact->paintUserpicRounded(p, rthumb.x(), rthumb.y(), st::msgFileThumbSize);
 		} else {
-			_photoEmpty->paint(p, st::msgFileThumbPadding.left(), st::msgFileThumbPadding.top() - topMinus, paintw, st::msgFileThumbSize);
+			_photoEmpty->paintRounded(p, st::msgFileThumbPadding.left(), st::msgFileThumbPadding.top() - topMinus, paintw, st::msgFileThumbSize);
 		}
 		if (selected) {
 			PainterHighQualityEnabler hq(p);
 			p.setBrush(p.textPalette().selectOverlay);
 			p.setPen(Qt::NoPen);
-			p.drawEllipse(rthumb);
+			p.drawRoundedRect(rthumb, st::buttonRadius, st::buttonRadius);
 		}
 
 		bool over = ClickHandler::showAsActive(_linkl);
@@ -187,7 +187,7 @@ void HistoryContact::draw(Painter &p, const QRect &r, TextSelection selection, c
 		nameright = st::msgFilePadding.left();
 		statustop = st::msgFileStatusTop - topMinus;
 
-		_photoEmpty->paint(p, st::msgFilePadding.left(), st::msgFilePadding.top() - topMinus, paintw, st::msgFileSize);
+		_photoEmpty->paintRounded(p, st::msgFilePadding.left(), st::msgFilePadding.top() - topMinus, paintw, st::msgFileSize);
 	}
 	auto namewidth = paintw - nameleft - nameright;
 

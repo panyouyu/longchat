@@ -625,6 +625,183 @@ not_null<PeerData*> Session::processChat(const MTPChat &data) {
 	return result;
 }
 
+not_null<UserData*> Session::processFriendRequest(const MTPFriendRequest& data) {
+	const auto result = user(data.match([](const auto& data) {
+		return data.vid.v;
+	}));
+	auto minimal = false;
+	const MTPUserStatus* status = nullptr;
+	const MTPUserStatus emptyStatus = MTP_userStatusEmpty();
+
+	Notify::PeerUpdate update;
+	using UpdateFlag = Notify::PeerUpdate::Flag;
+
+	data.match([&](const MTPDfriendRequest &data) {
+		minimal = data.is_min();
+
+		const auto canShareThisContact = result->canShareThisContactFast();
+		if (minimal) {
+			const auto mask = 0
+				//| MTPDuser_ClientFlag::f_inaccessible
+				| MTPDuser::Flag::f_deleted;
+			auto flag = MTPDuser::Flag(uint(data.vflags.v));
+			result->setFlags((result->flags() & ~mask) | (flag & mask));
+		} else {
+			MTPDuser::Flags flag = 0;
+			flag |= MTPDuser::Flag(uint(data.vflags.v));
+			result->setFlags(flag);
+			if (data.is_self()) {
+				result->input = MTP_inputPeerSelf();
+				result->inputUser = MTP_inputUserSelf();
+			}
+			else if (!data.has_access_hash()) {
+				result->input = MTP_inputPeerUser(data.vid, MTP_long(result->accessHash()));
+				result->inputUser = MTP_inputUser(data.vid, MTP_long(result->accessHash()));
+			} else {
+				result->input = MTP_inputPeerUser(data.vid, data.vaccess_hash);
+				result->inputUser = MTP_inputUser(data.vid, data.vaccess_hash);
+			}
+			result->setUnavailableReason(data.is_restricted()
+				? ExtractUnavailableReason(qs(data.vrestriction_reason))
+				: QString());
+		}
+		if (data.is_deleted()) {
+			if (!result->phone().isEmpty()) {
+				result->setPhone(QString());
+				update.flags |= UpdateFlag::UserPhoneChanged;
+			}
+			result->setName(lang(lng_deleted), QString(), QString(), QString());
+			result->setPhoto(MTP_userProfilePhotoEmpty());
+			status = &emptyStatus;
+		} else {
+			// apply first_name and last_name from minimal user only if we don't have
+			// local values for first name and last name already, otherwise skip
+			bool noLocalName = result->firstName.isEmpty() && result->lastName.isEmpty();
+			QString fname = (!minimal || noLocalName) ? (data.has_first_name() ? TextUtilities::SingleLine(qs(data.vfirst_name)) : QString()) : result->firstName;
+			QString lname = (!minimal || noLocalName) ? (data.has_last_name() ? TextUtilities::SingleLine(qs(data.vlast_name)) : QString()) : result->lastName;
+
+			QString phone = minimal ? result->phone() : (data.has_phone() ? qs(data.vphone) : QString());
+			QString uname = minimal ? result->username : (data.has_username() ? TextUtilities::SingleLine(qs(data.vusername)) : QString());
+
+			const auto phoneChanged = (result->phone() != phone);
+			if (phoneChanged) {
+				result->setPhone(phone);
+				update.flags |= UpdateFlag::UserPhoneChanged;
+			}
+			const auto nameChanged = (result->firstName != fname)
+				|| (result->lastName != lname);
+
+			auto showPhone = !result->isServiceUser()
+				&& !data.is_support()
+				&& !data.is_self()
+				&& !data.is_contact()
+				&& !data.is_mutual_contact();
+			auto showPhoneChanged = !result->isServiceUser()
+				&& !data.is_self()
+				&& ((showPhone
+					&& result->contactStatus() == UserData::ContactStatus::Contact)
+					|| (!showPhone
+						&& result->contactStatus() == UserData::ContactStatus::CanAdd));
+			if (minimal) {
+				showPhoneChanged = false;
+				showPhone = !result->isServiceUser()
+					&& (result->id != _session->userPeerId())
+					&& (result->contactStatus() == UserData::ContactStatus::CanAdd);
+			}
+
+			// see also Local::readPeer
+
+			const auto pname = (showPhoneChanged || phoneChanged || nameChanged)
+				? ((showPhone && !phone.isEmpty())
+					? App::formatPhone(phone)
+					: QString())
+				: result->nameOrPhone;
+
+			if (!minimal && data.is_self() && uname != result->username) {
+				CrashReports::SetAnnotation("Username", uname);
+			}
+			result->setName(fname, lname, pname, uname);
+			if (data.has_photo()) {
+				result->setPhoto(data.vphoto);
+			} else {
+				result->setPhoto(MTP_userProfilePhotoEmpty());
+			}
+			if (data.has_access_hash()) {
+				result->setAccessHash(data.vaccess_hash.v);
+			}
+			status = data.has_status() ? &data.vstatus : &emptyStatus;
+		}
+		if (!minimal) {
+			if (data.has_bot_info_version()) {
+				result->setBotInfoVersion(data.vbot_info_version.v);
+				result->botInfo->readsAllHistory = data.is_bot_chat_history();
+				if (result->botInfo->cantJoinGroups != data.is_bot_nochats()) {
+					result->botInfo->cantJoinGroups = data.is_bot_nochats();
+					update.flags |= UpdateFlag::BotCanAddToGroups;
+				}
+				result->botInfo->inlinePlaceholder = data.has_bot_inline_placeholder() ? '_' + qs(data.vbot_inline_placeholder) : QString();
+			} else {
+				result->setBotInfoVersion(-1);
+			}
+			result->setContactStatus((data.is_contact() || data.is_mutual_contact())
+				? UserData::ContactStatus::Contact
+				: result->phone().isEmpty()
+				? UserData::ContactStatus::PhoneUnknown
+				: UserData::ContactStatus::CanAdd);
+		}
+
+		if (canShareThisContact != result->canShareThisContactFast()) {
+			update.flags |= UpdateFlag::UserCanShareContact;
+		}
+		if (data.has_verify_info()) {
+			result->setVerifyInfo(data.vverify_info.v);
+		}
+		if (data.has_state()) {
+			auto status = data.vstate.v;
+			if (status > int32(UserData::VerifyStatus::Invalid) ||
+				status < int32(UserData::VerifyStatus::UnDeal)) {
+				Unexpected("unexpected state value in friendRequest");
+			}
+			result->setVerifyStatus(UserData::VerifyStatus(status));
+		}
+		_friendRequests.push_back(result);
+	});
+
+	if (minimal) {
+		if (result->loadedStatus == PeerData::NotLoaded) {
+			result->loadedStatus = PeerData::MinimalLoaded;
+		}
+	} else if (result->loadedStatus != PeerData::FullLoaded
+		&& (!result->isSelf() || !result->phone().isEmpty())) {
+		result->loadedStatus = PeerData::FullLoaded;
+	}
+
+	if (status && !minimal) {
+		const auto oldOnlineTill = result->onlineTill;
+		const auto newOnlineTill = ApiWrap::OnlineTillFromStatus(
+			*status,
+			oldOnlineTill);
+		if (oldOnlineTill != newOnlineTill) {
+			result->onlineTill = newOnlineTill;
+			update.flags |= UpdateFlag::UserOnlineChanged;
+		}
+	}
+
+	if (result->contactStatus() == UserData::ContactStatus::PhoneUnknown
+		&& !result->phone().isEmpty()
+		&& !result->isSelf()) {
+		result->setContactStatus(UserData::ContactStatus::CanAdd);
+	}
+	if (App::main()) {
+		if (update.flags) {
+			update.peer = result;
+			Notify::peerUpdatedDelayed(update);
+		}
+	}	
+
+	return result;
+}
+
 UserData *Session::processUsers(const MTPVector<MTPUser> &data) {
 	auto result = (UserData*)nullptr;
 	for (const auto &user : data.v) {
@@ -638,6 +815,14 @@ PeerData *Session::processChats(const MTPVector<MTPChat> &data) {
 	for (const auto &chat : data.v) {
 		result = processChat(chat);
 	}
+	return result;
+}
+
+UserData* Session::processFriendRequests(const MTPVector<MTPFriendRequest>& data) {
+	auto result = (UserData*)nullptr;
+	for (const auto & friendRequest : data.v) {
+		result = processFriendRequest(friendRequest);
+	}	
 	return result;
 }
 
@@ -1230,6 +1415,18 @@ void Session::notifySavedGifsUpdated() {
 
 rpl::producer<> Session::savedGifsUpdated() const {
 	return _savedGifsUpdated.events();
+}
+
+void Session::notifyFriendRequestChanged() {
+	auto size = 0;
+	for (const auto &user : _friendRequests) {
+		size += user->verifyStatus() == UserData::VerifyStatus::UnDeal;
+	}
+	_friendsRequestChanged.fire_copy(size);
+}
+
+[[nodiscard]] rpl::producer<int> Session::friendRequestChanged() const {
+	return _friendsRequestChanged.events();
 }
 
 void Session::userIsContactUpdated(not_null<UserData*> user) {
@@ -2703,7 +2900,7 @@ QString Session::findContactPhone(not_null<UserData*> contact) const {
 	const auto result = contact->phone();
 	return result.isEmpty()
 		? findContactPhone(contact->bareId())
-		: App::formatPhone(result);
+		: result;
 }
 
 QString Session::findContactPhone(UserId contactId) const {

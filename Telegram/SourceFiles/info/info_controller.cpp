@@ -128,7 +128,7 @@ Controller::Controller(
 	: nullptr)
 , _section(memento->section()) {
 	updateSearchControllers(memento);
-	setupMigrationViewer();
+	//setupMigrationViewer();
 }
 
 void Controller::setupMigrationViewer() {

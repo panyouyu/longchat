@@ -18,6 +18,7 @@ namespace Window {
 class Controller;
 class TitleWidget;
 struct TermsLock;
+class MainMenu;
 
 QImage LoadLogo();
 QImage LoadLogoNoMargin();
@@ -59,6 +60,9 @@ public:
 	QString titleText() const {
 		return _titleText;
 	}
+
+	bool mainMenuVisible() const;
+	void setMainMenuVisible(bool visible);
 
 	void reActivateWindow();
 
@@ -165,6 +169,7 @@ private:
 
 	std::unique_ptr<Window::Controller> _controller;
 	object_ptr<TitleWidget> _title = { nullptr };
+	object_ptr<Window::MainMenu> _mainMenu = { nullptr };
 	object_ptr<TWidget> _body;
 	object_ptr<TWidget> _rightColumn = { nullptr };
 	QPointer<BoxContent> _termsBox;

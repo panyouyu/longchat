@@ -664,7 +664,7 @@ void MainWindow::psSetupTrayIcon() {
 	if (!trayIcon) {
 		trayIcon = new QSystemTrayIcon(this);
 
-		auto icon = QIcon(App::pixmapFromImageInPlace(Core::App().logoNoMargin()));
+		auto icon = QIcon(App::pixmapFromImageInPlace(Core::App().logo()));
 
 		trayIcon->setIcon(icon);
 		connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(showFromTray()));

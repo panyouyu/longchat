@@ -10,6 +10,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "storage/localstorage.h"
 #include "platform/platform_window_title.h"
 #include "history/history.h"
+#include "window/window_main_menu.h"
 #include "window/themes/window_theme.h"
 #include "window/window_controller.h"
 #include "window/window_lock_widgets.h"
@@ -119,11 +120,19 @@ MainWindow::MainWindow()
 	subscribe(Global::RefWorkMode(), [=](DBIWorkMode mode) {
 		workmodeUpdated(mode);
 	});
+	auto createMenu = [this] {
+		if (_controller && !_mainMenu) {
+			_mainMenu.create(this, _controller.get());
+			updateControlsGeometry();
+		}
+	};
 	subscribe(Core::App().authSessionChanged(), [=] {
 		checkAuthSession();
+		createMenu();
 		updateWindowIcon();
 	});
 	checkAuthSession();
+	createMenu();
 
 	Core::App().termsLockValue(
 	) | rpl::start_with_next([=] {
@@ -343,7 +352,11 @@ HitTestResult MainWindow::hitTest(const QPoint &p) const {
 }
 
 void MainWindow::initSize() {
-	setMinimumWidth(st::windowMinWidth);
+	auto menu_width = st::mainMenuWidth;
+#ifdef Q_OS_MAC
+	menu_width += 8;
+#endif // Q_OS_MAC
+	setMinimumWidth(menu_width + st::windowMinWidth);
 	setMinimumHeight((_title ? _title->height() : 0) + st::windowMinHeight);
 
 	auto position = cWindowPos();
@@ -439,16 +452,26 @@ void MainWindow::leaveEventHook(QEvent *e) {
 
 void MainWindow::updateControlsGeometry() {
 	auto bodyTop = 0;
+	auto bodyLeft = 0;
 	auto bodyWidth = width();
+	if (_mainMenu && !_mainMenu->isHidden()) {
+		auto menu_width = st::mainMenuWidth;
+#ifdef Q_OS_MAC
+		menu_width += 8;
+#endif // Q_OS_MAC
+		_mainMenu->setGeometry(0, 0, menu_width, height());
+		bodyLeft += menu_width;
+		bodyWidth -= bodyLeft;
+	}
 	if (_title && !_title->isHidden()) {
-		_title->setGeometry(0, bodyTop, width(), _title->height());
+		_title->setGeometry(bodyLeft, bodyTop, bodyWidth, _title->height());
 		bodyTop += _title->height();
 	}
 	if (_rightColumn) {
 		bodyWidth -= _rightColumn->width();
-		_rightColumn->setGeometry(bodyWidth, bodyTop, width() - bodyWidth, height() - bodyTop);
+		_rightColumn->setGeometry(bodyLeft + bodyWidth, bodyTop, width() - bodyWidth - bodyLeft, height() - bodyTop);
 	}
-	_body->setGeometry(0, bodyTop, bodyWidth, height() - bodyTop);
+	_body->setGeometry(bodyLeft, bodyTop, bodyWidth, height() - bodyTop);
 }
 
 void MainWindow::updateUnreadCounter() {
@@ -527,6 +550,17 @@ bool MainWindow::minimizeToTray() {
 	return true;
 }
 
+bool MainWindow::mainMenuVisible() const {
+	return _mainMenu && !_mainMenu->isHidden();
+}
+
+void MainWindow::setMainMenuVisible(bool visible) {
+	if (_mainMenu && (_mainMenu->isHidden() == visible)) {
+		_mainMenu->setVisible(visible);
+		updateControlsGeometry();
+	}
+}
+
 void MainWindow::reActivateWindow() {
 #if defined Q_OS_LINUX32 || defined Q_OS_LINUX64
 	const auto reActivate = [=] {
@@ -557,8 +591,12 @@ void MainWindow::showRightColumn(object_ptr<TWidget> widget) {
 	} else if (App::wnd()) {
 		App::wnd()->setInnerFocus();
 	}
+	auto menu_width = st::mainMenuWidth;
+#ifdef Q_OS_MAC
+	menu_width += 8;
+#endif // Q_OS_MAC
 	auto nowRightWidth = _rightColumn ? _rightColumn->width() : 0;
-	setMinimumWidth(st::windowMinWidth + nowRightWidth);
+	setMinimumWidth(menu_width + st::windowMinWidth + nowRightWidth);
 	if (!isMaximized()) {
 		tryToExtendWidthBy(wasWidth + nowRightWidth - wasRightWidth - width());
 	} else {

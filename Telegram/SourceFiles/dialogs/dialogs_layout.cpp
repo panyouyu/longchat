@@ -216,14 +216,13 @@ void paintRow(
 			fullWidth,
 			st::dialogsPhotoSize);
 	} else if (from) {
-		from->paintUserpicLeft(
+		from->paintUserpicRounded(
 			p,
 			st::dialogsPadding.x(),
 			st::dialogsPadding.y(),
-			fullWidth,
 			st::dialogsPhotoSize);
 	} else if (hiddenSenderInfo) {
-		hiddenSenderInfo->userpic.paint(
+		hiddenSenderInfo->userpic.paintRounded(
 			p,
 			st::dialogsPadding.x(),
 			st::dialogsPadding.y(),

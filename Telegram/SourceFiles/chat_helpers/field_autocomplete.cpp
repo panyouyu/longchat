@@ -201,15 +201,15 @@ void FieldAutocomplete::updateFiltered(bool resetScroll) {
 					ordered.insertMulti(byOnline(user), user);
 				}
 			}
-			for (const auto user : _chat->lastAuthors) {
-				if (user->isInaccessible()) continue;
-				if (!listAllSuggestions && filterNotPassedByName(user)) continue;
-				if (indexOfInFirstN(mrows, user, recentInlineBots) >= 0) continue;
-				mrows.push_back(user);
-				if (!ordered.isEmpty()) {
-					ordered.remove(byOnline(user), user);
-				}
-			}
+			//for (const auto user : _chat->lastAuthors) {
+			//	if (user->isInaccessible()) continue;
+			//	if (!listAllSuggestions && filterNotPassedByName(user)) continue;
+			//	if (indexOfInFirstN(mrows, user, recentInlineBots) >= 0) continue;
+			//	mrows.push_back(user);
+			//	if (!ordered.isEmpty()) {
+			//		ordered.remove(byOnline(user), user);
+			//	}
+			//}
 			if (!ordered.isEmpty()) {
 				for (auto i = ordered.cend(), b = ordered.cbegin(); i != b;) {
 					--i;

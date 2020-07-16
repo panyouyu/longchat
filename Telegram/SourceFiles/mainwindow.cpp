@@ -40,7 +40,6 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "window/themes/window_theme.h"
 #include "window/themes/window_theme_warning.h"
 #include "window/window_lock_widgets.h"
-#include "window/window_main_menu.h"
 #include "window/window_controller.h"
 
 namespace {
@@ -168,6 +167,7 @@ void MainWindow::setupPasscodeLock() {
 	auto animated = (_main || _intro);
 	auto bg = animated ? grabInner() : QPixmap();
 	_passcodeLock.create(bodyWidget());
+	setMainMenuVisible(false);
 	updateControlsGeometry();
 
 	Core::App().hideMediaView();
@@ -188,6 +188,7 @@ void MainWindow::setupPasscodeLock() {
 void MainWindow::clearPasscodeLock() {
 	if (!_passcodeLock) return;
 
+	setMainMenuVisible(true);
 	auto bg = grabInner();
 
 	_passcodeLock.destroy();
@@ -209,6 +210,7 @@ void MainWindow::clearPasscodeLock() {
 void MainWindow::setupIntro() {
 	Ui::hideSettingsAndLayer(anim::type::instant);
 
+	setMainMenuVisible(false);
 	auto animated = (_main || _passcodeLock);
 	auto bg = animated ? grabInner() : QPixmap();
 
@@ -228,6 +230,7 @@ void MainWindow::setupIntro() {
 void MainWindow::setupMain() {
 	Expects(AuthSession::Exists());
 
+	setMainMenuVisible(true);
 	auto animated = (_intro || _passcodeLock);
 	auto bg = animated ? grabInner() : QPixmap();
 
@@ -284,15 +287,6 @@ bool MainWindow::showSectionInExistingLayer(
 		return _layer->showSectionInternal(memento, params);
 	}
 	return false;
-}
-
-void MainWindow::showMainMenu() {
-	if (_passcodeLock) return;
-
-	if (isHidden()) showFromTray();
-
-	ensureLayerCreated();
-	_layer->showMainMenu(controller(), anim::type::normal);
 }
 
 void MainWindow::ensureLayerCreated() {
@@ -902,7 +896,7 @@ QImage MainWindow::iconWithCounter(int size, int count, style::color bg, style::
 		if (size != 16 && size != 32) size = 64;
 	}
 
-	QImage img(smallIcon ? ((size == 16) ? iconbig16 : (size == 32 ? iconbig32 : iconbig64)) : ((size == 16) ? icon16 : (size == 32 ? icon32 : icon64)));
+	QImage img(smallIcon ? ((size == 16) ? icon16 : (size == 32 ? icon32 : icon64)) : ((size == 16) ? icon16 : (size == 32 ? icon32 : icon64)));
 	if (AuthSession::Exists() && Auth().supportMode()) {
 		Window::ConvertIconToBlack(img);
 	}

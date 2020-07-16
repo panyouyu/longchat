@@ -8,8 +8,6 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_language_name" = "简体中文";
 "lng_switch_to_this" = "使用简体中文继续";
 
-"lng_menu_contacts" = "联系人";
-"lng_menu_calls" = "通话";
 "lng_menu_settings" = "设置";
 "lng_menu_about" = "关于";
 "lng_menu_update" = "更新";
@@ -278,6 +276,23 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_settings_choose_username" = "设定用户名";
 "lng_settings_empty_bio" = "无";
 
+"lng_add_contact_send_success" = "好友申请已发送";
+"lng_add_contact_send_fail" = "好友申请发送失败";
+"lng_friend_request_new" = "新的好友";
+"lng_friend_request" = "好友申请";
+"lng_friend_request_empty" = "没有好友申请";
+"lng_friend_request_verify_info" = "验证信息";
+"lng_friend_request_add_contact" = "添加好友";
+"lng_friend_request_info" = "备注: {info}";
+"lng_friend_request_accepted" = "已接受";
+"lng_friend_request_refused" = "已拒绝";
+"lng_friend_request_invalid" = "已失效";
+"lng_friend_request_accept" = "接受";
+"lng_friend_request_verify_refuse" = "确认要拒绝 {name} 的好友添加吗？";
+"lng_friend_request_refuse" = "拒绝";
+"lng_friend_request_accept_fail" = "同意添加好友失败";
+"lng_friend_request_refuse_fail" = "拒绝添加好友失败";
+
 "lng_settings_section_notify" = "通知";
 "lng_settings_notify_title" = "聊天记录的通知";
 "lng_settings_desktop_notify" = "启用通知";
@@ -452,7 +467,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_local_storage_limit_months#one" = "{count} 月";
 "lng_local_storage_limit_months#other" = "{count} 月	";
 "lng_local_storage_limit_never" = "从不";
-"lng_local_storage_summary" = "总结";
+"lng_local_storage_summary" = "总大小";
 "lng_local_storage_clear_some" = "清除";
 "lng_local_storage_clear" = "清除所有";
 "lng_local_storage_clearing" = "正在清除...";
@@ -919,7 +934,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_sure_delete_channel" = "您确定要删除此群组？所有成员会被移除，所有消息会被清空。";
 "lng_sure_leave_group" = "您确定要离开此群组吗？";
 "lng_sure_delete_group" = "您确定要删除该群组？所有成员会被移除，所有消息会被清空。";
-"lng_sure_delete_saved_messages" = "您确定要删除所有保存的消息？\n\n此操作不可撤销";
+"lng_sure_delete_saved_messages" = "您确定要删除所有网盘内容？\n\n此操作不可撤销";
 
 "lng_message_empty" = "无消息";
 "lng_message_unsupported" = "不支持的消息，请在手机端查看";
@@ -1194,7 +1209,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_restart_button" = "重启";
 "lng_channel_mute" = "静音";
 "lng_channel_unmute" = "取消静音";
-"lng_saved_messages" = "保存的消息";
+"lng_saved_messages" = "我的网盘";
 "lng_saved_short" = "保存";
 "lng_saved_forward_here" = "转发信息到这里以便快速访问";
 

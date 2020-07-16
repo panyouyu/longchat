@@ -529,6 +529,19 @@ InfoProfileButton {
 	ripple: RippleAnimation;
 }
 
+MainMenuButton {
+	iconSize: size;
+	icon: icon;
+	iconOver: icon;
+	iconChecked: icon;
+	bg: color;
+	bgOver: color;
+	font: font;
+	interval: pixels;
+	margin: margins;
+	ripple: RippleAnimation;
+}
+
 InfoProfileCountButton {
 	button: InfoProfileButton;
 	icon: icon;
@@ -547,6 +560,17 @@ PassportScanRow {
 	borderFg: color;
 	remove: IconButton;
 	restore: RoundButton;
+}
+
+TextAction {
+	textFg: color;
+	textBg: color;
+	font: font;
+	width: pixels;
+	height: pixels;
+	padding: margins;
+
+	ripple: RippleAnimation;
 }
 
 defaultLabelSimple: LabelSimple {
@@ -1045,6 +1069,28 @@ defaultFeedUserpicButton: FeedUserpicButton {
 	innerSize: 76px;
 	innerPosition: point(-1px, -1px);
 	innerPart: defaultUserpicButton;
+}
+
+defaultMainMenuButton: MainMenuButton {
+	iconSize: size(28px, 28px);
+	bg: leftMenuBg;
+	bgOver: leftMenuBgOver;
+	margin: margins(-1px, 15px, -1px, 15px);
+	ripple: RippleAnimation(defaultRippleAnimation) {
+		color: leftMenuBgRipple;
+	}
+}
+
+defaultTextAction: TextAction {	
+	textFg: activeButtonFg;
+	textBg: activeButtonBg;
+	font: font(13px);
+	width: -34px;
+	height: 20px;
+	padding: margins(7px, 4px, 7px, 4px);
+	ripple: RippleAnimation(defaultRippleAnimation) {
+		color: activeButtonBgRipple;
+	}
 }
 
 historyToDownBelow: icon {

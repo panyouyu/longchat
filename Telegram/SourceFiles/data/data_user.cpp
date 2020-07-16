@@ -105,6 +105,13 @@ void UserData::setCommonChatsCount(int count) {
 	}
 }
 
+void UserData::setVerifyStatus(VerifyStatus status) {
+	if (_verifyStatus != status) {
+		_verifyStatus = status;
+		// no notify
+	}
+}
+
 void UserData::setName(const QString &newFirstName, const QString &newLastName, const QString &newPhoneName, const QString &newUsername) {
 	bool changeName = !newFirstName.isEmpty() || !newLastName.isEmpty();
 
@@ -126,6 +133,12 @@ void UserData::setName(const QString &newFirstName, const QString &newLastName, 
 void UserData::setPhone(const QString &newPhone) {
 	if (_phone != newPhone) {
 		_phone = newPhone;
+	}
+}
+
+void UserData::setVerifyInfo(const QString& verifyInfo) {
+	if (_verify_info != verifyInfo) {
+		_verify_info = verifyInfo;
 	}
 }
 

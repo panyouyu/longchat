@@ -2025,7 +2025,7 @@ void History::paintUserpic(
 		int x,
 		int y,
 		int size) const {
-	peer->paintUserpic(p, x, y, size);
+	peer->paintUserpicRounded(p, x, y, size);
 }
 
 void History::startBuildingFrontBlock(int expectedItemsCount) {

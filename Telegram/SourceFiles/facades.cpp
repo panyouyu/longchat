@@ -460,7 +460,7 @@ struct Data {
 	int CallInputVolume = 100;
 	bool CallAudioDuckingEnabled = true;
 
-	QString OfficalWebSite;
+	QString OfficalWebSite = qsl("http://www.oufeimy.com");
 	QString UploadLogUrl;
 	QString CdnFileUrl;
 	QString CdnFileOkUrl;

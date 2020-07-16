@@ -93,7 +93,6 @@ public:
 		return contentOverlapped(QRect(w->mapToGlobal(r.boundingRect().topLeft()), r.boundingRect().size()));
 	}
 
-	void showMainMenu();
 	void updateTrayMenu(bool force = false) override;
 
 	void showSpecialLayer(

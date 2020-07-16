@@ -40,7 +40,7 @@ auto PaintUserpicCallback(
 		};
 	}
 	return [=](Painter &p, int x, int y, int outerWidth, int size) {
-		peer->paintUserpicLeft(p, x, y, outerWidth, size);
+		peer->paintUserpicRounded(p, x, y, size);
 	};
 }
 
@@ -479,7 +479,7 @@ void PeerListRow::paintUserpic(
 	} else if (_isSavedMessagesChat) {
 		Ui::EmptyUserpic::PaintSavedMessages(p, x, y, outerWidth, st.photoSize);
 	} else {
-		peer()->paintUserpicLeft(p, x, y, outerWidth, st.photoSize);
+		peer()->paintUserpicRounded(p, x, y, st.photoSize);
 	}
 }
 
@@ -1132,7 +1132,11 @@ crl::time PeerListContent::paintRow(Painter &p, crl::time ms, RowIndex index) {
 	}
 	auto nameCheckedRatio = row->disabled() ? 0. : row->checkedRatio();
 	p.setPen(anim::pen(st::contactsNameFg, st::contactsNameCheckedFg, nameCheckedRatio));
-	name.drawLeftElided(p, namex, _st.item.namePosition.y(), namew, width());
+	if (!row->isSpecialRow()) {
+		name.drawLeftElided(p, namex, _st.item.namePosition.y(), namew, width());
+	} else {
+		row->paintSpecialRow(p, _st.item, namex, _st.item.namePosition.y(), namew, width());
+	}
 
 	if (!actionSize.isEmpty()) {
 		auto actionLeft = width()
@@ -1170,7 +1174,9 @@ crl::time PeerListContent::paintRow(Painter &p, crl::time ms, RowIndex index) {
 			p.drawTextLeft(_st.item.statusPosition.x() + highlightedWidth, _st.item.statusPosition.y(), width(), grayedPart);
 		}
 	} else {
-		row->paintStatusText(p, _st.item, _st.item.statusPosition.x(), _st.item.statusPosition.y(), statusw, width(), selected);
+		if (!row->isSpecialRow()) {
+			row->paintStatusText(p, _st.item, _st.item.statusPosition.x(), _st.item.statusPosition.y(), statusw, width(), selected);
+		}
 	}
 	return (refreshStatusAt - ms);
 }

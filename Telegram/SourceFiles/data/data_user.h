@@ -72,6 +72,7 @@ public:
 		const QString &newUsername);
 
 	void setPhone(const QString &newPhone);
+	void setVerifyInfo(const QString &verifyInfo);
 	void setBotInfoVersion(int version);
 	void setBotInfo(const MTPBotInfo &info);
 
@@ -162,6 +163,9 @@ public:
 	const QString &phone() const {
 		return _phone;
 	}
+	const QString &verifyInfo() const {
+		return _verify_info;
+	}
 	QString nameOrPhone;
 	Text phoneText;
 	TimeId onlineTill = 0;
@@ -211,15 +215,33 @@ public:
 	}
 	void setCommonChatsCount(int count);
 
+	enum class VerifyStatus : char {
+		UnDeal,
+		Accepted,
+		Refused,
+		Invalid
+	};
+	VerifyStatus verifyStatus() const {
+		return _verifyStatus;
+	}
+	bool hasVerifyStatus() const {
+		constexpr auto hasVerifyStatus = 0
+			| MTPDfriendRequest::Flag::f_state;
+		return fullFlags() & hasVerifyStatus;
+	}
+	void setVerifyStatus(VerifyStatus status);
+
 private:
 	Flags _flags;
 	FullFlags _fullFlags;
 
 	QString _unavailableReason;
 	QString _phone;
+	QString _verify_info;
 	ContactStatus _contactStatus = ContactStatus::PhoneUnknown;
 	BlockStatus _blockStatus = BlockStatus::Unknown;
 	CallsStatus _callsStatus = CallsStatus::Unknown;
+	VerifyStatus _verifyStatus = VerifyStatus::Accepted;
 	int _commonChatsCount = 0;
 
 	uint64 _accessHash = 0;

@@ -8,8 +8,12 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/peer_list_controllers.h"
 
 #include "boxes/confirm_box.h"
+#include "boxes/handle_friend_request_box.h"
 #include "observer_peer.h"
 #include "ui/widgets/checkbox.h"
+#include "ui/image/image.h"
+#include "ui/text_options.h"
+#include "ui/effects/ripple_animation.h"
 #include "auth_session.h"
 #include "data/data_session.h"
 #include "data/data_channel.h"
@@ -22,8 +26,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "dialogs/dialogs_indexed_list.h"
 #include "styles/style_boxes.h"
 #include "styles/style_profile.h"
+#include "styles/style_window.h"
+#include "styles/style_widgets.h"
 
 namespace {
+constexpr auto kUserpicSize = 160;
 
 void ShareBotGame(not_null<UserData*> bot, not_null<PeerData*> chat) {
 	const auto history = chat->owner().historyLoaded(chat);
@@ -306,6 +313,112 @@ bool ChatsListBoxController::appendRow(not_null<History*> history) {
 	return false;
 }
 
+class ContactsBoxController::NewFriendRow : public PeerListRow {
+public:
+	NewFriendRow(not_null<ContactsBoxController*> controller) 
+		: PeerListRow(Auth().user())
+	, _controller(controller) {
+		setCustomStatus(QString());
+		auto image = QImage(qsl(":/gui/art/new_friend.png")).scaledToWidth(
+			kUserpicSize,
+			Qt::SmoothTransformation);
+		_pic = Images::Create(std::move(image), "PNG");
+		_name.setText(st::newFriendTextStyle, lang(lng_friend_request_new), Ui::NameTextOptions());
+		for(const auto &item : Auth().data().friendRequests()) {
+			_unreadCount += (item->verifyStatus() == UserData::VerifyStatus::UnDeal);
+		}
+		Auth().data().friendRequestChanged(
+		) | rpl::start_with_next([=](auto count) {
+			_unreadCount = count;
+			_controller->delegate()->peerListUpdateRow(this);
+		}, _lifetime);
+	}
+	void paintUserpic(
+		Painter& p,
+		const style::PeerListItem& st,
+		int x,
+		int y,
+		int outerWidth) {
+		auto size = st.photoSize;
+		p.drawPixmap(x, y, _pic->pixRounded(Data::FileOriginPeerPhoto(Auth().userPeerId()), size, size, ImageRoundRadius::Small));
+	}
+	bool isSpecialRow() const {
+		return true;
+	}
+	void paintSpecialRow(
+		Painter& p,
+		const style::PeerListItem& st,
+		int x,
+		int y,
+		int width,
+		int outerWidth) {
+		auto namew = width;
+		if (_unreadCount > 0) {
+			QString cnt = (_unreadCount < 1000) ? QString("%1").arg(_unreadCount) : QString("..%1").arg(_unreadCount % 100, 2, 10, QChar('0'));
+			QImage result(size, size, QImage::Format_ARGB32);
+			int32 cntSize = cnt.size();
+			result.fill(Qt::transparent);
+			{
+				QPainter p(&result);
+				p.setBrush(bg);
+				p.setPen(Qt::NoPen);
+				p.setRenderHint(QPainter::Antialiasing);
+				int32 fontSize;
+				if (size == 16) {
+					fontSize = (cntSize < 2) ? 11 : ((cntSize < 3) ? 11 : 8);
+				} else if (size == 20) {
+					fontSize = (cntSize < 2) ? 14 : ((cntSize < 3) ? 13 : 10);
+				} else if (size == 24) {
+					fontSize = (cntSize < 2) ? 17 : ((cntSize < 3) ? 16 : 12);
+				} else {
+					fontSize = (cntSize < 2) ? 22 : ((cntSize < 3) ? 20 : 16);
+				}
+				style::font f = { fontSize, 0, 0 };
+				int32 w = f->width(cnt), d, r;
+				if (size == 16) {
+					d = (cntSize < 2) ? 5 : ((cntSize < 3) ? 2 : 1);
+					r = (cntSize < 2) ? 8 : ((cntSize < 3) ? 7 : 3);
+				} else if (size == 20) {
+					d = (cntSize < 2) ? 6 : ((cntSize < 3) ? 2 : 1);
+					r = (cntSize < 2) ? 10 : ((cntSize < 3) ? 9 : 5);
+				} else if (size == 24) {
+					d = (cntSize < 2) ? 7 : ((cntSize < 3) ? 3 : 1);
+					r = (cntSize < 2) ? 12 : ((cntSize < 3) ? 11 : 6);
+				} else {
+					d = (cntSize < 2) ? 9 : ((cntSize < 3) ? 4 : 2);
+					r = (cntSize < 2) ? 16 : ((cntSize < 3) ? 14 : 8);
+				}
+				p.drawRoundedRect(QRect(size - w - d * 2, size - f->height, w + d * 2, f->height), r, r);
+				p.setFont(f);
+
+				p.setPen(fg);
+
+				p.drawText(size - w - d, size - f->height + f->ascent, cnt);
+			}
+			if (_unreadCount) {
+				int unread_x = x + width - result.width() - st::mainMenuUnReadCountPadding;
+				int unread_y = y + 10;
+				p.drawImage(unread_x, unread_y, result);
+				namew = unread_x - x;
+			}			
+		}
+
+
+		
+		p.setPen(st::contactsNameFg);
+		_name.drawLeftElided(p, x, y, namew, outerWidth);
+	}
+private:
+	not_null<ContactsBoxController*> _controller;
+	ImagePtr _pic;
+	Text _name;
+	int _unreadCount = 0;
+	const int size = 20;
+	const style::color& bg = st::trayCounterBg;
+	const style::color& fg = st::trayCounterFg;
+	rpl::lifetime _lifetime;
+};
+
 ContactsBoxController::ContactsBoxController(
 	std::unique_ptr<PeerListSearchController> searchController)
 : PeerListController(std::move(searchController)) {
@@ -340,6 +453,7 @@ void ContactsBoxController::rebuildRows() {
 		}
 		return count;
 	};
+	appendRow(Auth().user());
 	appendList(App::main()->contactsList());
 	checkForEmptyRows();
 	delegate()->peerListRefreshRows();
@@ -364,7 +478,14 @@ std::unique_ptr<PeerListRow> ContactsBoxController::createSearchRow(
 }
 
 void ContactsBoxController::rowClicked(not_null<PeerListRow*> row) {
-	Ui::showPeerHistory(row->peer(), ShowAtUnreadMsgId);
+	if (row->peer()->isSelf()) {
+		Ui::show(Box<PeerListBox>(std::make_unique<FriendRequestBoxController>(), [](not_null<PeerListBox*> box) {
+			box->addButton(langFactory(lng_close), [box] { box->closeBox(); });
+		}), LayerOption::KeepOther);
+	} else {
+		Ui::showPeerHistory(row->peer(), ShowAtUnreadMsgId);
+	}
+	
 }
 
 bool ContactsBoxController::appendRow(not_null<UserData*> user) {
@@ -380,6 +501,9 @@ bool ContactsBoxController::appendRow(not_null<UserData*> user) {
 }
 
 std::unique_ptr<PeerListRow> ContactsBoxController::createRow(not_null<UserData*> user) {
+	if (user->isSelf()) {
+		return std::make_unique<NewFriendRow>(this);
+	}
 	return std::make_unique<PeerListRow>(user);
 }
 
@@ -517,4 +641,212 @@ void ChooseRecipientBoxController::rowClicked(not_null<PeerListRow*> row) {
 auto ChooseRecipientBoxController::createRow(
 		not_null<History*> history) -> std::unique_ptr<Row> {
 	return std::make_unique<Row>(history);
+}
+
+class FriendRequestBoxController::Row : public PeerListRow {
+public:
+	Row(not_null<UserData*> user, const style::TextAction &st = st::defaultTextAction)
+		: PeerListRow(user)
+	, _st(st)
+	, _user(user) {
+		reFreshStatus();
+		_text = lang(lng_friend_request_accept);
+		_textWidth = _st.font->width(_text);
+	}
+	void reFreshStatus() {
+		auto customStatus = [=] {
+			_status = _user->verifyStatus();
+			switch (_status) {
+			case UserData::VerifyStatus::UnDeal:
+				return _user->verifyInfo().isEmpty()
+					? QString()
+					: lng_friend_request_info(lt_info, _user->verifyInfo());
+			case UserData::VerifyStatus::Accepted:
+				return lang(lng_friend_request_accepted);
+			case UserData::VerifyStatus::Refused:
+				return lang(lng_friend_request_refused);
+			case UserData::VerifyStatus::Invalid:
+				return lang(lng_friend_request_invalid);
+			}
+			return QString();
+		}();
+		setCustomStatus(customStatus);
+	}
+	QSize actionSize() const override {
+		return _status == UserData::VerifyStatus::UnDeal
+		? QSize(_textWidth + _st.padding.left() + _st.padding.right(), 
+			_st.height + _st.padding.top() + _st.padding.bottom())
+		: QSize();
+	}
+	QMargins actionMargins() const override {
+		auto top = (st::defaultPeerListItem.height - actionSize().height()) >> 1;
+		auto bottom = top;
+		return QMargins(
+			0,
+			top,
+			st::defaultPeerListItem.photoPosition.x(),
+			bottom);
+	}
+	void addActionRipple(QPoint point, Fn<void()> updateCallback) override;
+	void stopLastActionRipple() override;
+	void paintAction(
+		Painter& p,
+		int x,
+		int y,
+		int outerWidth,
+		bool selected,
+		bool actionSelected) override;
+private:
+	const style::TextAction& _st;
+	not_null<UserData*> _user;
+	QString _text;
+	int _textWidth;
+	UserData::VerifyStatus _status;
+	std::unique_ptr<Ui::RippleAnimation> _actionRipple;
+};
+
+void FriendRequestBoxController::Row::addActionRipple(QPoint point, Fn<void()> updateCallback) {
+	if (!_actionRipple) {
+		auto mask = Ui::RippleAnimation::rectMask(actionSize());
+		_actionRipple = std::make_unique<Ui::RippleAnimation>(_st.ripple, std::move(mask), std::move(updateCallback));
+	}
+	_actionRipple->add(point);
+}
+
+void FriendRequestBoxController::Row::paintAction(
+	Painter& p,
+	int x,
+	int y,
+	int outerWidth,
+	bool selected,
+	bool actionSelected) {
+	auto size = actionSize();
+	auto fill = QRect(x, y, size.width(), size.height());
+	App::roundRect(p, fill, _st.textBg, ImageRoundRadius::Small);
+	if (_actionRipple) {
+		_actionRipple->paint(p, x, y, outerWidth);
+		if (_actionRipple->empty()) {
+			_actionRipple.reset();
+		}
+	}	
+	p.setFont(_st.font);
+	p.setPen(_st.textFg);
+	p.drawTextLeft(x + _st.padding.left(), y + _st.padding.top(), outerWidth, _text, _textWidth);
+
+}
+
+void FriendRequestBoxController::Row::stopLastActionRipple() {
+	if (_actionRipple) {
+		_actionRipple->lastStop();
+	}
+}
+
+FriendRequestBoxController::FriendRequestBoxController(
+	std::unique_ptr<PeerListSearchController> searchController)
+: PeerListController(std::move(searchController)) {
+}
+
+void FriendRequestBoxController::prepare() {
+	prepareViewHook();
+
+	rebuildRows();
+
+	auto &sessionData = Auth().data();
+	sessionData.friendRequestChanged(
+	) | rpl::start_with_next([=](auto count) {
+		if (count) {
+			rebuildRows();
+		}
+	}, lifetime());
+}
+
+std::unique_ptr<PeerListRow> FriendRequestBoxController::createSearchRow(
+	not_null<PeerData*> peer) {
+	if (const auto user = peer->asUser()) {
+		return createRow(user);
+	}
+	return nullptr;
+}
+
+void FriendRequestBoxController::rowClicked(not_null<PeerListRow*> row) {
+	if (auto user = row->peer()->asUser()) {
+		auto status = user->verifyStatus();
+		if (status == UserData::VerifyStatus::Accepted) {
+			Ui::showPeerHistory(user, ShowAtUnreadMsgId);
+		} else if (status == UserData::VerifyStatus::UnDeal) {
+			Ui::show(Box<HandleFriendRequestBox>(user), LayerOption::KeepOther);
+		}		
+	}
+}
+
+void FriendRequestBoxController::rowActionClicked(not_null<PeerListRow*> row) {
+	rowClicked(row);
+}
+
+void FriendRequestBoxController::prepareViewHook() {
+	setSearchNoResultsText(lang(lng_blocked_list_not_found));
+	delegate()->peerListSetSearchMode(PeerListSearchMode::Enabled);
+	delegate()->peerListSetTitle(langFactory(lng_friend_request));
+	if (!_lifetime) {
+		Auth().data().friendRequestChanged(
+		) | rpl::start_with_next([=](auto) {
+			rebuildRows();
+		}, _lifetime);
+	}	
+}
+
+void FriendRequestBoxController::updateRowHook(not_null<PeerListRow*> row) {
+	static_cast<Row*>(row.get())->reFreshStatus();
+}
+
+std::unique_ptr<PeerListRow> FriendRequestBoxController::createRow(not_null<UserData*> user) {
+	return std::make_unique<Row>(user);
+}
+
+void FriendRequestBoxController::rebuildRows() {
+	auto appendList = [this](auto friendRequests) {
+		auto count = 0;
+		for (auto i = friendRequests.cbegin(), e = friendRequests.cend(); i != e; ++i) {
+			if (appendRow(*i)) {
+				++count;
+			}
+		}
+		return count;
+	};
+	auto &friendRequests = Auth().data().friendRequests();
+	auto filter = [&friendRequests](UserData::VerifyStatus verifyStatus) {
+		std::list<not_null<UserData*>> result;
+		for (const auto& user : friendRequests) {
+			if (user->verifyStatus() == verifyStatus) {
+				result.push_back(user);
+			}
+		}
+		return result;
+	};
+	appendList(filter(UserData::VerifyStatus::UnDeal));
+	appendList(filter(UserData::VerifyStatus::Accepted));
+	appendList(filter(UserData::VerifyStatus::Refused));
+	appendList(filter(UserData::VerifyStatus::Invalid));
+	checkForEmptyRows();
+	delegate()->peerListRefreshRows();
+}
+
+void FriendRequestBoxController::checkForEmptyRows() {
+	if (delegate()->peerListFullRowsCount()) {
+		setDescriptionText(QString());
+	} else {
+		setDescriptionText(lang(lng_friend_request_empty));
+	}
+}
+
+bool FriendRequestBoxController::appendRow(not_null<UserData*> user) {
+	if (auto row = delegate()->peerListFindRow(user->id)) {
+		updateRowHook(row);
+		return false;
+	}
+	if (auto row = createRow(user)) {
+		delegate()->peerListAppendRow(std::move(row));
+		return true;
+	}
+	return false;
 }

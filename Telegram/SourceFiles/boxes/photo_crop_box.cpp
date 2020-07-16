@@ -213,7 +213,7 @@ void PhotoCropBox::paintEvent(QPaintEvent *e) {
 
 		p.setPen(Qt::NoPen);
 		p.setBrush(Qt::black);
-		p.drawEllipse(_cropx, _cropy, _cropw, _cropw);
+		p.drawRoundedRect(_cropx, _cropy, _cropw, _cropw, st::buttonRadius, st::buttonRadius);
 	}
 	style::colorizeImage(_mask, st::photoCropFadeBg->c, &_fade);
 	p.drawImage(0, 0, _fade);

@@ -87,29 +87,44 @@ notifySendReply: IconButton {
 titleUnreadCounterTop: 6px;
 titleUnreadCounterRight: 35px;
 
-mainMenuWidth: 274px;
+mainMenuWidth: 60px;
 mainMenuCoverHeight: 134px;
-mainMenuUserpicLeft: 24px;
+mainMenuUserpicLeft: 10px;
 mainMenuUserpicTop: 20px;
+mainMenuUserpcoBottom: 20px;
 mainMenuUserpic: UserpicButton(defaultUserpicButton) {
-	size: size(48px, 48px);
-	photoSize: 48px;
+	size: size(40px, 40px);
+	photoSize: 40px;
 }
-mainMenuCloudButton: IconButton {
-	width: 64px;
-	height: 64px;
+mainMenuUnReadCountPadding: 5px;
+mainMenuUnReadCountHeight: 19px;
 
-	icon: icon {
-//		{ "menu_cloud", mainMenuCloudFg },
-	};
-	iconPosition: point(22px, 22px);
+mainMenuMessageButton: MainMenuButton(defaultMainMenuButton) {
+	icon: icon {{"main_menu_message", leftMenuIconFg}};
+	iconOver: icon {{"main_menu_message", leftMenuIconFgOver}};
+	iconChecked: icon {{"main_menu_message_over", leftMenuIconFgChecked}};
 }
-mainMenuCloudSize: 32px;
-mainMenuResetScaleFont: font(20px semibold);
-mainMenuResetScaleLeft: 36px;
-mainMenuResetScaleRight: 12px;
-mainMenuResetScaleTop: 2px;
-mainMenuResetScaleIconLeft: 5px;
+mainMenuContactButton: MainMenuButton(defaultMainMenuButton) {
+	icon: icon {{"main_menu_contact", leftMenuIconFg}};
+	iconOver: icon {{"main_menu_contact", leftMenuIconFgOver}};
+	iconChecked: icon {{"main_menu_contact", leftMenuIconFgChecked}};
+}
+mainMenuNewChatButton: MainMenuButton(defaultMainMenuButton) {
+	icon: icon {{"main_menu_new_chat", leftMenuIconFg}};
+	iconOver: icon {{"main_menu_new_chat", leftMenuIconFgOver}};
+	iconChecked: icon {{"main_menu_new_chat", leftMenuIconFgChecked}};
+}
+mainMenuNetDiscButton: MainMenuButton(defaultMainMenuButton) {
+	icon: icon {{"main_menu_netdisc", leftMenuIconFg}};
+	iconOver: icon {{"main_menu_netdisc", leftMenuIconFgOver}};
+	iconChecked: icon {{"main_menu_netdisc_checked", leftMenuIconFgChecked}};
+}
+mainMenuSettingButton: MainMenuButton(defaultMainMenuButton) {
+	icon: icon {{"main_menu_setting", leftMenuIconFg}};
+	iconOver: icon {{"main_menu_setting", leftMenuIconFgOver}};
+	iconChecked: icon {{"main_menu_setting", leftMenuIconFgChecked}};
+}
+
 mainMenuCoverTextLeft: 30px;
 mainMenuCoverNameTop: 84px;
 mainMenuCoverStatusTop: 102px;

@@ -158,13 +158,35 @@ public:
 		UpdateCallback updateCallback);
 	void stopLastRipple();
 	void paintRipple(Painter &p, int x, int y, int outerWidth);
-	void paintUserpic(
+	virtual void paintUserpic(
 		Painter &p,
 		const style::PeerListItem &st,
 		int x,
 		int y,
 		int outerWidth);
 	float64 checkedRatio();
+	/******************************
+	 normal row
+	-------------------------------
+	| /// username pic ///////////|
+	| pic                   action|
+	| /// status//////////////////|
+	-------------------------------
+	 special row
+	-------------------------------	
+	| pic | self-paint////////////|
+	-------------------------------
+	******************************/
+	virtual bool isSpecialRow() const {
+		return false;
+	}
+	virtual void paintSpecialRow(
+		Painter &p,
+		const style::PeerListItem &st,
+		int x,
+		int y,
+		int width,
+		int outerWidth ) {}
 
 	void setNameFirstLetters(const base::flat_set<QChar> &firstLetters) {
 		_nameFirstLetters = firstLetters;
@@ -213,7 +235,6 @@ private:
 	bool _initialized : 1;
 	bool _isSearchResult : 1;
 	bool _isSavedMessagesChat : 1;
-
 };
 
 enum class PeerListSearchMode {

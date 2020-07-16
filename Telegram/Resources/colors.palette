@@ -59,11 +59,20 @@ outlineButtonBgRipple: lightButtonBgRipple; // default left outlined button ripp
 menuBg: windowBg; // default popup menu background
 menuBgOver: windowBgOver; // default popup menu item background with mouse over
 menuBgRipple: windowBgRipple; // default popup menu item ripple effect
-menuIconFg: #a8a8a8; // default popup menu item icon (like main menu)
+menuIconFg: #828282; // default popup menu item icon (like main menu)
 menuIconFgOver: #999999; // default popup menu item icon with mouse over
 menuSubmenuArrowFg: #373737; // default popup menu submenu arrow icon (like in message field context menu in case of RTL system language)
 menuFgDisabled: #cccccc; // default popup menu item disabled text (like unavailable items in message field context menu)
 menuSeparatorFg: #f1f1f1; // default popup menu separator (like in message field context menu)
+
+leftMenuBg: #252525; // left main menu background
+leftMenuBgOver: #252525; // left main menu item background with mouse over
+leftMenuBgRipple: #3e3d3d; // left main menu item ripple effect
+leftMenuIconFg: #808080; // left main menu item icon (like main menu)
+leftMenuIconFgOver: #ffffff; // left main menu item icon with mouse over
+leftMenuIconFgChecked: #42b226; // left main menu icon with checked
+leftMenuUnReadBg: #ff551c;	// left main menu unread count background
+leftMenuUnReadFg: #ffffff;  //left main menu unread count num color
 
 scrollBarBg: #00000053; // default scroll bar current rectangle, the bar itself (like in chats list)
 scrollBarBgOver: #0000007a; // default scroll bar current rectangle with mouse over it

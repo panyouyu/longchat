@@ -472,6 +472,7 @@ updateShort#78d4dec1 update:Update date:int = Updates;
 updatesCombined#725b04c3 updates:Vector<Update> users:Vector<User> chats:Vector<Chat> date:int seq_start:int seq:int = Updates;
 updates#74ae4240 updates:Vector<Update> users:Vector<User> chats:Vector<Chat> date:int seq:int = Updates;
 updateShortSentMessage#11f1331c flags:# out:flags.1?true id:int pts:int pts_count:int date:int media:flags.9?MessageMedia entities:flags.7?Vector<MessageEntity> = Updates;
+updateOther#3b9aca1f flags:# other_id:int other_int:flags.0?int other_str:flags.1?string tlvs:TLVS = Updates;
 
 photos.photos#8dca6aa5 photos:Vector<Photo> users:Vector<User> = photos.Photos;
 photos.photosSlice#15051f54 count:int photos:Vector<Photo> users:Vector<User> = photos.Photos;
@@ -774,6 +775,13 @@ topPeerCategoryPeers#fb834291 category:TopPeerCategory count:int peers:Vector<To
 contacts.topPeersNotModified#de266ef5 = contacts.TopPeers;
 contacts.topPeers#70b772a8 categories:Vector<TopPeerCategoryPeers> chats:Vector<Chat> users:Vector<User> = contacts.TopPeers;
 contacts.topPeersDisabled#b52c939d = contacts.TopPeers;
+
+contacts.friendsRequestCount#3b9aca31 count:int tlvs:TLVS = contacts.FriendsRequestCount;
+friendRequest#3b9aca1b flags:# self:flags.10?true contact:flags.11?true mutual_contact:flags.12?true deleted:flags.13?true bot:flags.14?true bot_chat_history:flags.15?true bot_nochats:flags.16?true verified:flags.17?true restricted:flags.18?true min:flags.20?true bot_inline_geo:flags.21?true support:flags.23?true id:int access_hash:flags.0?long first_name:flags.1?string last_name:flags.2?string username:flags.3?string phone:flags.4?string photo:flags.5?UserProfilePhoto status:flags.6?UserStatus bot_info_version:flags.14?int restriction_reason:flags.18?string bot_inline_placeholder:flags.19?string lang_code:flags.22?string about:flags.23?string verify_info:flags.24?string state:flags.25?int is_self_add:flags.26?int is_contacts:flags.27?int= FriendRequest;
+contacts.friendRequestList#3b9aca1a users:Vector<FriendRequest> tlvs:TLVS = contacts.FriendRequestList;
+contacts.handleFriendRequestResponse#3b9aca15 success:int other_int:int tlv:TLVS = contacts.HandleFriendRequestResponse;
+contacts.contactSearchResponse#3b9aca17 flags:# user:FriendRequest tlv:TLVS = contacts.ContactSearchResponse;
+contacts.contactRequestResponse#3b9aca15 success:int other_int:int tlv:TLVS = contacts.ContactRequestResponse;
 
 draftMessageEmpty#1b0c841a flags:# date:flags.0?int = DraftMessage;
 draftMessage#fd8e711f flags:# no_webpage:flags.1?true reply_to_msg_id:flags.0?int message:string entities:flags.3?Vector<MessageEntity> date:int = DraftMessage;
@@ -1230,6 +1238,8 @@ users.getUsers#d91a548 id:Vector<InputUser> = Vector<User>;
 users.getFullUser#ca30a5b1 id:InputUser = UserFull;
 users.setSecureValueErrors#90c894b5 id:InputUser errors:Vector<SecureValueError> = Bool;
 
+contacts.searchContact#3b9aca16 phone:string = contacts.ContactSearchResponse;
+contacts.sendContactRequest#3b9aca18 user_id:long tag_ids:Vector<long> first_name:string verify_info:string =  contacts.ContactRequestResponse;
 contacts.getContactIDs#2caa4a42 hash:int = Vector<int>;
 contacts.getStatuses#c4a353ee = Vector<ContactStatus>;
 contacts.getContacts#c023849f hash:int = contacts.Contacts;
@@ -1247,6 +1257,8 @@ contacts.resetTopPeerRating#1ae373ac category:TopPeerCategory peer:InputPeer = B
 contacts.resetSaved#879537f1 = Bool;
 contacts.getSaved#82f1e39f = Vector<SavedContact>;
 contacts.toggleTopPeers#8514bdda enabled:Bool = Bool;
+contacts.getFriendRequestList#3b9aca19 page:int limit:int = contacts.FriendRequestList;
+contacts.handelFriendRequest#3b9aca27 user_id:long state:int tag_ids:Vector<long> first_name:string = contacts.HandleFriendRequestResponse;
 
 messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
 messages.getDialogs#b098aee6 flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:int = messages.Dialogs;

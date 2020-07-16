@@ -133,6 +133,7 @@ protected:
 	}
 
 private:
+	class NewFriendRow;
 	void rebuildRows();
 	void checkForEmptyRows();
 	bool appendRow(not_null<UserData*> user);
@@ -148,7 +149,7 @@ public:
 	AddBotToGroupBoxController(not_null<UserData*> bot);
 
 	void rowClicked(not_null<PeerListRow*> row) override;
-
+	
 protected:
 	std::unique_ptr<Row> createRow(not_null<History*> history) override;
 	void prepareViewHook() override;
@@ -191,4 +192,31 @@ protected:
 private:
 	FnMut<void(not_null<PeerData*>)> _callback;
 
+};
+
+class FriendRequestBoxController
+	: public PeerListController
+	, private MTP::Sender {
+public:
+	FriendRequestBoxController(
+		std::unique_ptr<PeerListSearchController> searchController
+		= std::make_unique<PeerListGlobalSearchController>());
+	void prepare() override final;
+
+	std::unique_ptr<PeerListRow> createSearchRow(not_null<PeerData*> peer) override final;
+	void rowClicked(not_null<PeerListRow*> row) override;
+	void rowActionClicked(not_null<PeerListRow*> row) override;
+protected:
+	virtual void prepareViewHook();
+	virtual std::unique_ptr<PeerListRow> createRow(
+		not_null<UserData*> user);
+	
+	virtual void updateRowHook(not_null<PeerListRow*> row);
+
+private:
+	class Row;
+	void rebuildRows();
+	void checkForEmptyRows();
+	bool appendRow(not_null<UserData*> user);
+	rpl::lifetime _lifetime;
 };

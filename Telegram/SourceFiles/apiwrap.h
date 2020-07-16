@@ -79,6 +79,7 @@ public:
 	QString exportDirectMessageLink(not_null<HistoryItem*> item);
 
 	void requestContacts();
+	void requestFriendRequestList(int page = 1);
 	void requestDialogEntry(not_null<Data::Feed*> feed);
 	//void requestFeedDialogsEntries(not_null<Data::Feed*> feed);
 	void requestDialogEntry(
@@ -702,6 +703,7 @@ private:
 
 	mtpRequestId _contactsRequestId = 0;
 	mtpRequestId _contactsStatusesRequestId = 0;
+	mtpRequestId _friendRequestListId = 0;
 	base::flat_set<not_null<Data::Feed*>> _dialogFeedRequests;
 	base::flat_map<
 		not_null<History*>,

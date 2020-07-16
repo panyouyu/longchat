@@ -688,14 +688,13 @@ void HistoryInner::paintEvent(QPaintEvent *e) {
 				if (userpicTop + st::msgPhotoSize > clip.top()) {
 					const auto message = view->data()->toHistoryMessage();
 					if (const auto from = message->displayFrom()) {
-						from->paintUserpicLeft(
+						from->paintUserpicRounded(
 							p,
 							st::historyPhotoLeft,
 							userpicTop,
-							width(),
 							st::msgPhotoSize);
 					} else if (const auto info = message->hiddenForwardedInfo()) {
-						info->userpic.paint(
+						info->userpic.paintRounded(
 							p,
 							st::historyPhotoLeft,
 							userpicTop,

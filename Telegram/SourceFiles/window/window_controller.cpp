@@ -267,6 +267,10 @@ bool Controller::forceWideDialogs() const {
 Controller::ColumnLayout Controller::computeColumnLayout() const {
 	auto layout = Adaptive::WindowLayout::OneColumn;
 
+	auto menu_width = st::mainMenuWidth;
+#ifdef Q_OS_MAC
+	menu_width += 8;
+#endif // Q_OS_MAC
 	auto bodyWidth = window()->bodyWidget()->width();
 	auto dialogsWidth = 0, chatWidth = 0, thirdWidth = 0;
 
@@ -317,7 +321,7 @@ Controller::ColumnLayout Controller::computeColumnLayout() const {
 int Controller::countDialogsWidthFromRatio(int bodyWidth) const {
 	auto result = qRound(bodyWidth * session().settings().dialogsWidthRatio());
 	accumulate_max(result, st::columnMinimalWidthLeft);
-//	accumulate_min(result, st::columnMaximalWidthLeft);
+	accumulate_min(result, st::columnMaximalWidthLeft);
 	return result;
 }
 

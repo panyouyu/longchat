@@ -116,6 +116,17 @@ constexpr auto kSendViewsTimeout = crl::time(1000);
 // Cache background scaled image after 3s.
 constexpr auto kCacheBackgroundTimeout = 3000;
 
+// updateOther
+enum class Other_ID : uint32 {
+	GroupStatePush = 1,
+	FriendsRequestCount = 2,
+	AgreeAddFriend = 3,
+	NotifyLogOut = 4,
+	UnReplyPlayersNum = 5,
+	QueuePlayersNum = 6,
+	GroupStateIncrement = 7,
+};
+
 enum class DataIsLoadedResult {
 	NotLoaded = 0,
 	FromNotLoaded = 1,
@@ -3840,6 +3851,13 @@ void MainWidget::feedUpdates(const MTPUpdates &updates, uint64 randomId) {
 	case mtpc_updatesTooLong: {
 		MTP_LOG(0, ("getDifference { good - updatesTooLong received }%1").arg(cTestMode() ? " TESTMODE" : ""));
 		return getDifference();
+	} break;
+	
+	case mtpc_updateOther: {
+		auto& d = updates.c_updateOther();
+		if (d.vother_id.v == int32(Other_ID::FriendsRequestCount)) {
+			Auth().api().requestFriendRequestList();
+		}
 	} break;
 	}
 	session().data().sendHistoryChangeNotifications();

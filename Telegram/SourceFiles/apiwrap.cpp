@@ -684,6 +684,31 @@ void ApiWrap::requestContacts() {
 	}).send();
 }
 
+void ApiWrap::requestFriendRequestList(int page) {	
+	if (_friendRequestListId) return;
+	Ensures(page > 0);
+	constexpr auto kPageLimit = 12;
+
+	if (page == 1) {
+		_session->data().friendRequests().clear();
+	}
+	_friendRequestListId = request(MTPcontacts_GetFriendRequestList(
+		MTP_int(page),
+		MTP_int(kPageLimit)
+	)).done([=](const MTPcontacts_FriendRequestList &result) {
+		_friendRequestListId = 0;
+		const auto &friendRequests = result.c_contacts_friendRequestList().vusers;
+		_session->data().processFriendRequests(friendRequests);
+		if (friendRequests.v.size() == kPageLimit) {
+			requestFriendRequestList(page + 1);
+		} else {
+			_session->data().notifyFriendRequestChanged();
+		}
+	}).fail([=](const RPCError &error) {
+		_friendRequestListId = 0;
+	}).send();
+}
+
 void ApiWrap::requestDialogEntry(not_null<Data::Feed*> feed) {
 	if (_dialogFeedRequests.contains(feed)) {
 		return;

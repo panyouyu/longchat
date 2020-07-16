@@ -234,7 +234,9 @@ LastCrashedWindow::LastCrashedWindow(
 	: std::make_unique<UpdaterData>(this))
 , _launch(std::move(launch)) {
 	excludeReportUsername();
-
+	//if (!cInstallBetaVersion() && !cAlphaVersion()) { // currently accept crash reports only from testers
+	//	_sendingState = SendingNoReport;
+	//}
 	if (_sendingState != SendingNoReport) {
 		qint64 dumpsize = 0;
 		QString dumpspath = cWorkingDir() + qsl("tdata/dumps");

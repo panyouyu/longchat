@@ -66,16 +66,24 @@ private:
 	void onSaveUserDone(const MTPcontacts_ImportedContacts &res);
 	bool onSaveUserFail(const RPCError &e);
 
+	void onSearchDone(const MTPcontacts_ContactSearchResponse &res);
+	bool onSearchFail(const RPCError &error);
+
+	void onAddDone(const MTPcontacts_ContactRequestResponse &res);
+
 	UserData *_user = nullptr;
+	QString _realPhone;
 
 	object_ptr<Ui::InputField> _first;
-	object_ptr<Ui::PhoneInput> _phone;
+	object_ptr<Ui::InputField> _phone;
+	object_ptr<Ui::InputField> _verify;
 
 	bool _retrying = false;
 	bool _invertOrder = false;
 
 	uint64 _contactId = 0;
 
+	mtpRequestId _searchRequest = 0;
 	mtpRequestId _addRequest = 0;
 	QString _sentName;
 

@@ -340,7 +340,7 @@ QString OnlineTextFull(not_null<UserData*> user, TimeId now) {
 		const auto onlineTime = onlineFull.time().toString(cTimeFormat());
 		return lng_status_lastseen_yesterday(lt_time, onlineTime);
 	}
-	const auto date = onlineFull.date().toString(qsl("dd.MM.yy"));
+	const auto date = onlineFull.date().toString(qsl("yy.MM.dd"));
 	const auto time = onlineFull.time().toString(cTimeFormat());
 	return lng_status_lastseen_date_time(lt_date, date, lt_time, time);
 }

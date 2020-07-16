@@ -646,7 +646,7 @@ void SetupAutoDownload(not_null<Ui::VerticalLayout*> container) {
 	};
 	add(lng_media_auto_in_private, Source::User);
 	add(lng_media_auto_in_groups, Source::Group);
-	add(lng_media_auto_in_channels, Source::Channel);
+	//add(lng_media_auto_in_channels, Source::Channel);
 
 	AddSkip(container, st::settingsCheckboxesSkip);
 }
