@@ -46,6 +46,8 @@ RecordData::RecordData(not_null<HistoryItem*> item, const MTPDmessageMediaRecord
 					}, [&](const MTPDmessageMediaDocument& media)->QString {
 						return media.vdocument.match([&](const MTPDdocument& document)->QString {
 							return from + document.vmime_type.v;
+							}, [&](const MTPDdocumentUrl &document) {
+								return from + document.vmime_type.v;
 							}, [&](const MTPDdocumentEmpty&)->QString {
 								return from;
 							});
@@ -63,6 +65,8 @@ RecordData::RecordData(not_null<HistoryItem*> item, const MTPDmessageMediaRecord
 						return from + lang(lng_maps_point);
 					}, [&](const MTPDmessageMediaPoll&)->QString {
 						return from + lang(lng_polls_anonymous);
+					}, [&](const MTPDmessageMediaRecord&)->QString {
+						return from + lang(lng_message_record);
 					}, [&](const MTPDmessageMediaTlv& media)->QString {
 						auto& tlvs = media.vtlv.c_tlvs().vtlvs.v;
 						for (auto& tlv : tlvs) {

@@ -832,6 +832,10 @@ std::unique_ptr<Data::Media> HistoryMessage::CreateMedia(
 			return std::make_unique<Data::MediaPhoto>(
 				item,
 				item->history()->owner().processPhoto(photo));
+		}, [&](const MTPDphotoUrl &photo) -> Result {
+			return std::make_unique<Data::MediaPhoto>(
+				item, 
+				item->history()->owner().processPhoto(photo));
 		}, [](const MTPDphotoEmpty &) -> Result {
 			return nullptr;
 		});
@@ -852,6 +856,10 @@ std::unique_ptr<Data::Media> HistoryMessage::CreateMedia(
 			return std::make_unique<Data::MediaFile>(
 				item,
 				item->history()->owner().processDocument(document));
+		}, [&](const MTPDdocumentUrl& document) -> Result {
+			return std::make_unique<Data::MediaFile>(
+				item,
+				item->history()->owner().documentFromUrl(document));
 		}, [](const MTPDdocumentEmpty &) -> Result {
 			return nullptr;
 		});
@@ -887,25 +895,26 @@ std::unique_ptr<Data::Media> HistoryMessage::CreateMedia(
 		return nullptr;
 	}, [](const MTPDmessageMediaUnsupported &) -> Result {
 		return nullptr;
+	}, [&](const MTPDmessageMediaRecord &media) -> Result {
+		return std::make_unique<Data::MediaRecord>(item, media);
 	}, [&](const MTPDmessageMediaTlv &media) -> Result {
-		auto tlvs = media.vtlv.c_tlvs().vtlvs.v;
-		for (auto &tlv : tlvs) {
-			switch (tlv.c_tlv().vid.v) {
-			case mtpc_messageMediaRecord: 
+		auto &tlvs = media.vtlv.c_tlvs().vtlvs.v;
+		for (const auto& tlv : tlvs) {
+			try {
 				auto from = reinterpret_cast<const mtpPrime*>(tlv.c_tlv().vdata.v.constData());
 				auto end = from + tlv.c_tlv().vdata.v.size() / sizeof(mtpPrime);
 				auto sfrom = from - 4U;
 				TLV_LOG(("TLV: ") + mtpTextSerialize(sfrom, end));
 				from++;
-				MTPmessageMediaTLV record;
-				record.read(from, end, mtpc_messageMediaRecord);
-				return std::make_unique<Data::MediaRecord>(item,
-					record.c_messageMediaRecord());
+				MTPmessageMedia mediaTlv;
+				mediaTlv.read(from, end, tlv.c_tlv().vid.v);
+				return CreateMedia(item, mediaTlv);
+			} catch(...) {
+				return nullptr;
 			}
 		}
 		return nullptr;
 	});
-	return nullptr;
 }
 
 void HistoryMessage::replaceBuyWithReceiptInMarkup() {

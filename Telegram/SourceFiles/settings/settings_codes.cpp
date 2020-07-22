@@ -158,6 +158,21 @@ auto GenerateCodes() {
 			Ui::show(Box<InformBox>("All sound overrides were reset."));
 		}
 	});
+	codes.emplace(qsl("changeuploader"), [] {
+		if (!AuthSession::Exists())
+			return;
+		
+		auto text = Global::RefWebFileEnabled()
+			? qsl("The current Uploader type is webUploader.\n\n"
+				"Do you want to switch to mtpUploader Type?")
+			: qsl("The current Uploader type is mtpUploader.\n\n"
+				"Do you want to switch to webUploader Type?");
+		Ui::show(Box<ConfirmBox>(text, [] {
+			Global::SetWebFileEnabled(!Global::RefWebFileEnabled());
+			Global::RefWebFileEnabledChanged().notify();
+			Ui::hideLayer();
+		}));
+	});
 	return codes;
 }
 

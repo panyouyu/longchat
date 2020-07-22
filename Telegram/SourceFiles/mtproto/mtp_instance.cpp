@@ -785,6 +785,10 @@ void Instance::Private::configLoadDone(const MTPConfig &result) {
 	//	Global::SetPhoneCallsEnabled(data.is_phonecalls_enabled());
 	//	Global::RefPhoneCallsEnabledChanged().notify();
 	//}
+	if (Global::WebFileEnabled() != data.is_web_file_enabled()) {
+		Global::SetWebFileEnabled(data.is_web_file_enabled());
+		Global::RefWebFileEnabledChanged().notify();
+	}
 	Global::SetBlockedMode(data.is_blocked_mode());
 	Global::SetCaptionLengthMax(data.vcaption_length_max.v);
 
@@ -819,7 +823,7 @@ void Instance::Private::configLoadDone(const MTPConfig &result) {
 				Global::SetUploadLogUrl(qs(config.vupload_log_url));
 				Global::SetCdnFileUrl(qs(config.vcdn_file_url));
 				Global::SetCdnFileOkUrl(qs(config.vcdn_file_ok_url));
-				});
+			});
 		}
 		catch (Exception&) {
 		}

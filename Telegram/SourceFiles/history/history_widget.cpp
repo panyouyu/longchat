@@ -4221,8 +4221,8 @@ void HistoryWidget::uploadFile(
 	Auth().api().sendFile(fileContent, type, options);
 }
 
-void HistoryWidget::subscribeToUploader() {
-	if (_uploaderSubscriptions) {
+void HistoryWidget::subscribeToMtpUploader() {
+	if (_mtpUploaderSubscriptions) {
 		return;
 	}
 	using namespace Storage;
@@ -4231,21 +4231,21 @@ void HistoryWidget::subscribeToUploader() {
 		data.edit
 		? photoEdited(data.fullId, data.silent, data.file)
 		: photoUploaded(data.fullId, data.silent, data.file);
-	}, _uploaderSubscriptions);
+	}, _mtpUploaderSubscriptions);
 	Auth().uploader().photoProgress(
 	) | rpl::start_with_next([=](const FullMsgId &fullId) {
 		photoProgress(fullId);
-	}, _uploaderSubscriptions);
+	}, _mtpUploaderSubscriptions);
 	Auth().uploader().photoFailed(
 	) | rpl::start_with_next([=](const FullMsgId &fullId) {
 		photoFailed(fullId);
-	}, _uploaderSubscriptions);
+	}, _mtpUploaderSubscriptions);
 	Auth().uploader().documentReady(
 	) | rpl::start_with_next([=](const UploadedDocument &data) {
 		data.edit
 		? documentEdited(data.fullId, data.silent, data.file)
 		: documentUploaded(data.fullId, data.silent, data.file);
-	}, _uploaderSubscriptions);
+	}, _mtpUploaderSubscriptions);
 	Auth().uploader().thumbDocumentReady(
 	) | rpl::start_with_next([=](const UploadedThumbDocument &data) {
 		thumbDocumentUploaded(
@@ -4254,15 +4254,59 @@ void HistoryWidget::subscribeToUploader() {
 			data.file,
 			data.thumb,
 			data.edit);
-	}, _uploaderSubscriptions);
+	}, _mtpUploaderSubscriptions);
 	Auth().uploader().documentProgress(
 	) | rpl::start_with_next([=](const FullMsgId &fullId) {
 		documentProgress(fullId);
-	}, _uploaderSubscriptions);
+	}, _mtpUploaderSubscriptions);
 	Auth().uploader().documentFailed(
 	) | rpl::start_with_next([=](const FullMsgId &fullId) {
 		documentFailed(fullId);
-	}, _uploaderSubscriptions);
+	}, _mtpUploaderSubscriptions);
+}
+
+void HistoryWidget::subscribeToWebUploader() {
+	if (_webUploaderSubscriptions) {
+		return;
+	}
+	using namespace Storage;
+	Auth().uploader().photoReady(
+	) | rpl::start_with_next([=](const UploadedPhoto& data) {
+		data.edit
+			? photoEdited(data.fullId, data.silent, data.file)
+			: photoUploaded(data.fullId, data.silent, data.file);
+		}, _webUploaderSubscriptions);
+	Auth().uploader().photoProgress(
+	) | rpl::start_with_next([=](const FullMsgId& fullId) {
+		photoProgress(fullId);
+		}, _webUploaderSubscriptions);
+	Auth().uploader().photoFailed(
+	) | rpl::start_with_next([=](const FullMsgId& fullId) {
+		photoFailed(fullId);
+		}, _webUploaderSubscriptions);
+	Auth().uploader().documentReady(
+	) | rpl::start_with_next([=](const UploadedDocument& data) {
+		data.edit
+			? documentEdited(data.fullId, data.silent, data.file)
+			: documentUploaded(data.fullId, data.silent, data.file);
+		}, _webUploaderSubscriptions);
+	Auth().uploader().thumbDocumentReady(
+	) | rpl::start_with_next([=](const UploadedThumbDocument& data) {
+		thumbDocumentUploaded(
+			data.fullId,
+			data.silent,
+			data.file,
+			data.thumb,
+			data.edit);
+		}, _webUploaderSubscriptions);
+	Auth().uploader().documentProgress(
+	) | rpl::start_with_next([=](const FullMsgId& fullId) {
+		documentProgress(fullId);
+		}, _webUploaderSubscriptions);
+	Auth().uploader().documentFailed(
+	) | rpl::start_with_next([=](const FullMsgId& fullId) {
+		documentFailed(fullId);
+		}, _webUploaderSubscriptions);
 }
 
 void HistoryWidget::sendFileConfirmed(
@@ -4285,7 +4329,9 @@ void HistoryWidget::sendFileConfirmed(
 
 		it->msgId = newId;
 	}
-	subscribeToUploader();
+	Global::RefWebFileEnabled()
+		? subscribeToWebUploader()
+		: subscribeToMtpUploader();
 	file->edit = isEditing;
 	Auth().uploader().upload(newId, file);
 

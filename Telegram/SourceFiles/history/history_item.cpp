@@ -110,6 +110,8 @@ MediaCheckResult CheckMessageMedia(const MTPMessageMedia &media) {
 		}
 		return data.vphoto.match([](const MTPDphoto &) {
 			return Result::Good;
+		}, [&](const MTPDphotoUrl &){
+			return Result::Good;
 		}, [](const MTPDphotoEmpty &) {
 			return Result::Empty;
 		});
@@ -121,7 +123,9 @@ MediaCheckResult CheckMessageMedia(const MTPMessageMedia &media) {
 		}
 		return data.vdocument.match([](const MTPDdocument &) {
 			return Result::Good;
-		}, [](const MTPDdocumentEmpty &) {
+		}, [](const MTPDdocumentUrl &){
+			return Result::Good;
+		},[](const MTPDdocumentEmpty &) {
 			return Result::Empty;
 		});
 	}, [](const MTPDmessageMediaWebPage &data) {
@@ -144,11 +148,17 @@ MediaCheckResult CheckMessageMedia(const MTPMessageMedia &media) {
 		return Result::Good;
 	}, [](const MTPDmessageMediaUnsupported &) {
 		return Result::Unsupported;
+	}, [](const MTPDmessageMediaRecord &){
+		return Result::Good;
 	}, [](const MTPDmessageMediaTlv &tlv) {
 		auto tlvs = tlv.vtlv.c_tlvs().vtlvs.v;
 		for (auto &tlv : tlvs) {
 			switch (tlv.c_tlv().vid.v) {
 			case mtpc_messageMediaRecord:
+				return Result::Good;
+			case mtpc_messageMediaDocument:
+				return Result::Good;
+			case mtpc_messageMediaPhoto:
 				return Result::Good;
 			}
 		}

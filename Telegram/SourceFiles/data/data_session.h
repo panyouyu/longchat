@@ -340,6 +340,7 @@ public:
 	[[nodiscard]] not_null<PhotoData*> photo(PhotoId id);
 	not_null<PhotoData*> processPhoto(const MTPPhoto &data);
 	not_null<PhotoData*> processPhoto(const MTPDphoto &data);
+	not_null<PhotoData*> processPhoto(const MTPDphotoUrl &data);
 	not_null<PhotoData*> processPhoto(
 		const MTPPhoto &data,
 		const PreparedPhotoThumbs &thumbs);
@@ -386,6 +387,8 @@ public:
 	[[nodiscard]] DocumentData *documentFromWeb(
 		const MTPWebDocument &data,
 		ImagePtr thumb);
+	[[nodiscard]] not_null<DocumentData*> documentFromUrl(
+		const MTPDdocumentUrl &data);
 
 	[[nodiscard]] not_null<WebPageData*> webpage(WebPageId id);
 	not_null<WebPageData*> processWebpage(const MTPWebPage &data);
@@ -579,6 +582,9 @@ private:
 		const MTPDphoto &data);
 	void photoApplyFields(
 		not_null<PhotoData*> photo,
+		const MTPDphotoUrl& data);
+	void photoApplyFields(
+		not_null<PhotoData*> photo,
 		const uint64 &access,
 		const QByteArray &fileReference,
 		TimeId date,
@@ -595,6 +601,9 @@ private:
 	void documentApplyFields(
 		not_null<DocumentData*> document,
 		const MTPDdocument &data);
+	void documentApplyFields(
+		not_null<DocumentData*> document,
+		const MTPDdocumentUrl &data);
 	void documentApplyFields(
 		not_null<DocumentData*> document,
 		const uint64 &access,

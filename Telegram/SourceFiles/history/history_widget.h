@@ -452,7 +452,8 @@ private:
 		MsgId replyTo,
 		std::shared_ptr<SendingAlbum> album = nullptr);
 
-	void subscribeToUploader();
+	void subscribeToMtpUploader();
+	void subscribeToWebUploader();
 
 	void photoUploaded(
 		const FullMsgId &msgId,
@@ -792,7 +793,8 @@ private:
 	int _recordingSamples = 0;
 	int _recordCancelWidth;
 
-	rpl::lifetime _uploaderSubscriptions;
+	rpl::lifetime _mtpUploaderSubscriptions;
+	rpl::lifetime _webUploaderSubscriptions;
 
 	// This can animate for a very long time (like in music playing),
 	// so it should be a Basic, not a Simple animation.

@@ -165,6 +165,7 @@ inputPhoneContact#f392b7f4 client_id:long phone:string first_name:string last_na
 
 inputFile#f52ff27f id:long parts:int name:string md5_checksum:string = InputFile;
 inputFileBig#fa4f0bb5 id:long parts:int name:string = InputFile;
+inputFileUrl#3b9acaca flags:# id:long url:string name:string size:int width:int height:int = InputFile;
 
 inputMediaEmpty#9664f57f = InputMedia;
 inputMediaUploadedPhoto#1e287d04 flags:# file:InputFile stickers:flags.0?Vector<InputDocument> ttl_seconds:flags.1?int = InputMedia;
@@ -266,7 +267,7 @@ messageMediaInvoice#84551347 flags:# shipping_address_requested:flags.1?true tes
 messageMediaGeoLive#7c3c2609 geo:GeoPoint period:int = MessageMedia;
 messageMediaPoll#4bd6e798 poll:Poll results:PollResults = MessageMedia;
 messageMediaTlv#209acdf0 tlv:TLVS = MessageMedia;
-messageMediaRecord#3b9aca30 flags:# user:flags.0?true forwarder_id:int originer_id:int msg_id:Vector<int> messages:messages.Messages = MessageMediaTLV;
+messageMediaRecord#3b9aca30 flags:# user:flags.0?true forwarder_id:int originer_id:int msg_id:Vector<int> messages:messages.Messages = MessageMedia;
 
 messageActionEmpty#b6aef7b0 = MessageAction;
 messageActionChatCreate#a6638b9a title:string users:Vector<int> = MessageAction;
@@ -291,17 +292,19 @@ messageActionBotAllowed#abe9affe domain:string = MessageAction;
 messageActionSecureValuesSentMe#1b287353 values:Vector<SecureValue> credentials:SecureCredentialsEncrypted = MessageAction;
 messageActionSecureValuesSent#d95c6154 types:Vector<SecureValueType> = MessageAction;
 messageActionContactSignUp#f3f25f76 = MessageAction;
-messageActionTlv#209acdf6 tlv:TLVS = MessageAction;
+messageActionTlv#209acdf6 tlvs:TLVS = MessageAction;
 
 dialog#e4def5db flags:# pinned:flags.2?true unread_mark:flags.3?true peer:Peer top_message:int read_inbox_max_id:int read_outbox_max_id:int unread_count:int unread_mentions_count:int notify_settings:PeerNotifySettings pts:flags.0?int draft:flags.1?DraftMessage = Dialog;
 
 photoEmpty#2331b22d id:long = Photo;
 photo#d07504a5 flags:# has_stickers:flags.0?true id:long access_hash:long file_reference:bytes date:int sizes:Vector<PhotoSize> dc_id:int = Photo;
+photoUrl#3b9acacd flags:# id:long access_hash:long date:int url:string size:int width:int height:int = Photo;
 
 photoSizeEmpty#e17e23c type:string = PhotoSize;
 photoSize#77bfb61b type:string location:FileLocation w:int h:int size:int = PhotoSize;
 photoCachedSize#e9a734fa type:string location:FileLocation w:int h:int bytes:bytes = PhotoSize;
 photoStrippedSize#e0b0bc2e type:string bytes:bytes = PhotoSize;
+photoSizeAll#77bfb61c type:string location:FileLocation w:int h:int size:int = PhotoSize;
 
 geoPointEmpty#1117dd5f = GeoPoint;
 geoPoint#296f104 long:double lat:double access_hash:long = GeoPoint;
@@ -483,7 +486,7 @@ upload.fileCdnRedirect#f18cda44 dc_id:int file_token:bytes encryption_key:bytes 
 
 dcOption#18b7a10d flags:# ipv6:flags.0?true media_only:flags.1?true tcpo_only:flags.2?true cdn:flags.3?true static:flags.4?true id:int ip_address:string port:int secret:flags.10?bytes = DcOption;
 
-config#e6ca25f6 flags:# phonecalls_enabled:flags.1?true default_p2p_contacts:flags.3?true preload_featured_stickers:flags.4?true ignore_phone_entities:flags.5?true revoke_pm_inbox:flags.6?true blocked_mode:flags.8?true pfs_enabled:flags.13?true date:int expires:int test_mode:Bool this_dc:int dc_options:Vector<DcOption> dc_txt_domain_name:string chat_size_max:int megagroup_size_max:int forwarded_count_max:int online_update_period_ms:int offline_blur_timeout_ms:int offline_idle_timeout_ms:int online_cloud_timeout_ms:int notify_cloud_delay_ms:int notify_default_delay_ms:int push_chat_period_ms:int push_chat_limit:int saved_gifs_limit:int edit_time_limit:int revoke_time_limit:int revoke_pm_time_limit:int rating_e_decay:int stickers_recent_limit:int stickers_faved_limit:int channels_read_media_period:int tmp_sessions:flags.0?int pinned_dialogs_count_max:int call_receive_timeout_ms:int call_ring_timeout_ms:int call_connect_timeout_ms:int call_packet_timeout_ms:int me_url_prefix:string autoupdate_url_prefix:flags.7?string gif_search_username:flags.9?string venue_search_username:flags.10?string img_search_username:flags.11?string static_maps_provider:flags.12?string caption_length_max:int message_length_max:int webfile_dc_id:int suggested_lang_code:flags.2?string lang_pack_version:flags.2?int base_lang_pack_version:flags.2?int tlv:flags.14?TLVS = Config;
+config#e6ca25f6 flags:# phonecalls_enabled:flags.1?true default_p2p_contacts:flags.3?true preload_featured_stickers:flags.4?true ignore_phone_entities:flags.5?true revoke_pm_inbox:flags.6?true blocked_mode:flags.8?true web_file_enabled:flags.13?true date:int expires:int test_mode:Bool this_dc:int dc_options:Vector<DcOption> dc_txt_domain_name:string chat_size_max:int megagroup_size_max:int forwarded_count_max:int online_update_period_ms:int offline_blur_timeout_ms:int offline_idle_timeout_ms:int online_cloud_timeout_ms:int notify_cloud_delay_ms:int notify_default_delay_ms:int push_chat_period_ms:int push_chat_limit:int saved_gifs_limit:int edit_time_limit:int revoke_time_limit:int revoke_pm_time_limit:int rating_e_decay:int stickers_recent_limit:int stickers_faved_limit:int channels_read_media_period:int tmp_sessions:flags.0?int pinned_dialogs_count_max:int call_receive_timeout_ms:int call_ring_timeout_ms:int call_connect_timeout_ms:int call_packet_timeout_ms:int me_url_prefix:string autoupdate_url_prefix:flags.7?string gif_search_username:flags.9?string venue_search_username:flags.10?string img_search_username:flags.11?string static_maps_provider:flags.12?string caption_length_max:int message_length_max:int webfile_dc_id:int suggested_lang_code:flags.2?string lang_pack_version:flags.2?int base_lang_pack_version:flags.2?int tlv:flags.14?TLVS = Config;
 configUrl#3b9acad6 flags:# www_url:string update_url:string custom_service_url:string upload_file_url:string upload_nfile_url:string upload_log_url:string cdn_file_url:string cdn_file_ok_url:string = ConfigUrl;
 
 nearestDc#8e1a1775 country:string this_dc:int nearest_dc:int = NearestDc;
@@ -523,6 +526,7 @@ inputDocument#1abfb575 id:long access_hash:long file_reference:bytes = InputDocu
 
 documentEmpty#36f8c871 id:long = Document;
 document#9ba29cc1 flags:# id:long access_hash:long file_reference:bytes date:int mime_type:string size:int thumbs:flags.0?Vector<PhotoSize> dc_id:int attributes:Vector<DocumentAttribute> = Document;
+documentUrl#3b9acacb flags:# id:long access_hash:long url:string date:int mime_type:string size:int thumb:PhotoSize attributes:Vector<DocumentAttribute> = Document;
 
 help.support#17c6b5f6 phone_number:string user:User = help.Support;
 
@@ -1153,6 +1157,8 @@ emojiURL#a575739d url:string = EmojiURL;
 emojiLanguage#b3fb5361 lang_code:string = EmojiLanguage;
 
 fileLocationToBeDeprecated#bc7fc6cd volume_id:long local_id:int = FileLocation;
+fileLocationUrl#3b9acacc flags:# dc_id:int volume_id:long local_id:int secret:int url:string = FileLocation;
+fileLocationAll#77bfb61d dc_id:int volume_id:long local_id:int secret:long url:string = FileLocation;
 
 ---functions---
 

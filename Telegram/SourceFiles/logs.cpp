@@ -571,7 +571,6 @@ void writeTlv(const QString &v) {
 	QString msg(QString("%1 %2\n").arg(_logsEntryStart()).arg(v));
 	_logsWrite(LogDataTlv, msg);
 }
-
 QString full() {
 	if (LogsData) {
 		return LogsData->full();

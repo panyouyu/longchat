@@ -276,6 +276,15 @@ ImagePtr CreateFromPhotoSize(
 			: ImagePtr();
 	}, [&](const MTPDphotoSizeEmpty &) {
 		return ImagePtr();
+	}, [&](const MTPDphotoSizeAll &data) {
+		QString url = data.vlocation.match([&](const MTPDfileLocationUrl& data) {
+				return qs(data.vurl);
+			}, [&](const MTPDfileLocationAll& data) {
+				return qs(data.vurl);
+			}, [&](const auto&) {
+				return QString();
+			});
+		return Images::Create(url, data.vw.v, data.vh.v);
 	});
 }
 
@@ -326,14 +335,38 @@ ImagePtr Create(const MTPDdocument &document, const MTPPhotoSize &size) {
 	return CreateFromPhotoSize(create, size);
 }
 
-QSize getImageSize(const QVector<MTPDocumentAttribute> &attributes) {
-	for (const auto &attribute : attributes) {
+ImagePtr Create(const MTPDdocumentUrl&, const MTPPhotoSize& size) {
+	const auto create = [](
+		const auto&,
+		const auto&) {
+			return StorageFileLocation();
+	};
+	return CreateFromPhotoSize(create, size);
+}
+
+QSize getImageSize(const QVector<MTPDocumentAttribute>& attributes) {
+	for (const auto& attribute : attributes) {
 		if (attribute.type() == mtpc_documentAttributeImageSize) {
-			auto &size = attribute.c_documentAttributeImageSize();
+			auto& size = attribute.c_documentAttributeImageSize();
 			return QSize(size.vw.v, size.vh.v);
 		}
 	}
 	return QSize();
+}
+
+ImagePtr Create(const MTPDdocumentUrl &document) {
+	const auto size = getImageSize(document.vattributes.v);
+	if (size.isEmpty()) {
+		return ImagePtr();
+	}
+	auto filesize = 0;
+	return Create(
+		WebFileLocation(
+			document.vurl.v,
+			document.vaccess_hash.v),
+		size.width(),
+		size.height(),
+		filesize);
 }
 
 ImagePtr Create(const MTPDwebDocument &document) {

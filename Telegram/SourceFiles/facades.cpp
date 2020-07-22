@@ -402,9 +402,11 @@ struct Data {
 		? qsl("testapv2.stel.com")
 		: qsl("apv2.stel.com");
 	bool PhoneCallsEnabled = false;
+	bool WebFileEnabled = false;
 	bool BlockedMode = false;
 	int32 CaptionLengthMax = 1024;
 	base::Observable<void> PhoneCallsEnabledChanged;
+	base::Observable<void> WebFileEnabledChanged;
 
 	HiddenPinnedMessagesMap HiddenPinnedMessages;
 
@@ -539,9 +541,11 @@ DefineVar(Global, int32, CallPacketTimeoutMs);
 DefineVar(Global, int32, WebFileDcId);
 DefineVar(Global, QString, TxtDomainString);
 DefineVar(Global, bool, PhoneCallsEnabled);
+DefineVar(Global, bool, WebFileEnabled);
 DefineVar(Global, bool, BlockedMode);
 DefineVar(Global, int32, CaptionLengthMax);
 DefineRefVar(Global, base::Observable<void>, PhoneCallsEnabledChanged);
+DefineRefVar(Global, base::Observable<void>, WebFileEnabledChanged);
 
 DefineVar(Global, HiddenPinnedMessagesMap, HiddenPinnedMessages);
 

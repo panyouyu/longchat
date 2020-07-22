@@ -92,9 +92,9 @@ inline MemoryBuffer mb(const void *ptr, uint32 size) {
 	}\
 }
 //usage MTP_LOG(dc, ("log: %1 %2").arg(1).arg(2))
-
 #define TLV_LOG(msg) {\
 	if (Logs::DebugEnabled() || !Logs::started()) {\
 		Logs::writeTlv(QString msg);\
 	}\
 }
+//usage TLV_LOG(dc, ("log: %1 %2").arg(1).arg(2))
