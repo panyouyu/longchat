@@ -285,7 +285,9 @@ public:
 		return *_downloader;
 	}
 	Storage::Uploader &uploader() {
-		return *_uploader;
+		return Global::RefWebFileEnabled()
+			? *_web_uploader
+			: *_mtp_uploader;
 	}
 	Storage::Facade &storage() {
 		return *_storage;
@@ -344,7 +346,8 @@ private:
 	const std::unique_ptr<ApiWrap> _api;
 	const std::unique_ptr<Calls::Instance> _calls;
 	const std::unique_ptr<Storage::Downloader> _downloader;
-	const std::unique_ptr<Storage::Uploader> _uploader;
+	const std::unique_ptr<Storage::Uploader> _mtp_uploader;
+	const std::unique_ptr<Storage::Uploader> _web_uploader;
 	const std::unique_ptr<Storage::Facade> _storage;
 	const std::unique_ptr<Window::Notifications::System> _notifications;
 

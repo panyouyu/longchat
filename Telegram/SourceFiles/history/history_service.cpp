@@ -415,6 +415,11 @@ void HistoryService::applyAction(const MTPMessageAction &action) {
 				this,
 				history()->peer,
 				history()->owner().processPhoto(photo));
+		}, [&](const MTPDphotoUrl & photo){
+			_media = std::make_unique<Data::MediaPhoto>(
+				this,
+				history()->peer,
+				history()->owner().processPhoto(photo));
 		}, [](const MTPDphotoEmpty &) {
 		});
 	}, [&](const MTPDmessageActionChatCreate &) {

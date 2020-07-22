@@ -363,6 +363,22 @@ bool MediaPhoto::updateInlineResultMedia(const MTPMessageMedia &media) {
 }
 
 bool MediaPhoto::updateSentMedia(const MTPMessageMedia &media) {
+	if (media.type() == mtpc_messageMediaTlv) {
+		const auto& tlvs = media.c_messageMediaTlv();
+		const auto& tlv = tlvs.vtlvs.c_tlvs().vtlvs.v.first();
+		if (tlv.c_tlv().vid.v != mtpc_messageMediaPhoto) {
+			return false;
+		}
+		auto from = reinterpret_cast<const mtpPrime*>(tlv.c_tlv().vdata.v.constData());
+		auto end = from + tlv.c_tlv().vdata.v.size() / sizeof(mtpPrime);
+		auto sfrom = from - 4U;
+		TLV_LOG(("TLV: ") + mtpTextSerialize(sfrom, end));
+		from++;
+
+		MTPmessageMedia media;
+		media.read(from, end, mtpc_messageMediaPhoto);
+		return updateSentMedia(media);
+	}
 	if (media.type() != mtpc_messageMediaPhoto) {
 		return false;
 	}
@@ -443,6 +459,8 @@ bool MediaPhoto::updateSentMedia(const MTPMessageMedia &media) {
 			return SizeData();
 		}, [](const MTPDphotoStrippedSize &data) {
 			// No need to save stripped images to local cache.
+			return SizeData();
+		}, [](const MTPDphotoSizeAll &) {
 			return SizeData();
 		});
 		const auto letter = size.type.v.isEmpty() ? char(0) : size.type.v[0];
@@ -704,6 +722,22 @@ QString MediaFile::errorTextForForward(not_null<PeerData*> peer) const {
 }
 
 bool MediaFile::updateInlineResultMedia(const MTPMessageMedia &media) {
+	if (media.type() == mtpc_messageMediaTlv) {
+		const auto& tlvs = media.c_messageMediaTlv();
+		const auto& tlv = tlvs.vtlvs.c_tlvs().vtlvs.v.first();
+		if (tlv.c_tlv().vid.v != mtpc_messageMediaDocument) {
+			return false;
+		}
+		auto from = reinterpret_cast<const mtpPrime*>(tlv.c_tlv().vdata.v.constData());
+		auto end = from + tlv.c_tlv().vdata.v.size() / sizeof(mtpPrime);
+		auto sfrom = from - 4U;
+		TLV_LOG(("TLV: ") + mtpTextSerialize(sfrom, end));
+		from++;
+
+		MTPmessageMedia document;
+		document.read(from, end, mtpc_messageMediaDocument);
+		return updateInlineResultMedia(document);
+	}
 	if (media.type() != mtpc_messageMediaDocument) {
 		return false;
 	}
@@ -725,6 +759,23 @@ bool MediaFile::updateInlineResultMedia(const MTPMessageMedia &media) {
 }
 
 bool MediaFile::updateSentMedia(const MTPMessageMedia &media) {
+	if (media.type() == mtpc_messageMediaTlv) {
+		const auto &tlvs = media.c_messageMediaTlv();
+		const auto &tlv = tlvs.vtlvs.c_tlvs().vtlvs.v.first();
+		if (tlv.c_tlv().vid.v != mtpc_messageMediaDocument) {
+			return false;
+		}
+		auto from = reinterpret_cast<const mtpPrime*>(tlv.c_tlv().vdata.v.constData());
+		auto end = from + tlv.c_tlv().vdata.v.size() / sizeof(mtpPrime);			
+		auto sfrom = from - 4U;
+		TLV_LOG(("TLV: ") + mtpTextSerialize(sfrom, end));
+		from++;
+
+		MTPmessageMedia document;
+		document.read(from, end, mtpc_messageMediaDocument);
+		return updateSentMedia(document);		
+	}
+
 	if (media.type() != mtpc_messageMediaDocument) {
 		return false;
 	}

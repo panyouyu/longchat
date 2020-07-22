@@ -420,6 +420,10 @@ void GenerateItems(
 			auto photo = Auth().data().processPhoto(data);
 			auto text = (channel->isMegagroup() ? lng_admin_log_changed_photo_group : lng_admin_log_changed_photo_channel)(lt_from, fromLinkText);
 			addSimpleServiceMessage(text, photo);
+		}, [&](const MTPDphotoUrl &data){
+			auto photo = Auth().data().processPhoto(data);
+			auto text = (channel->isMegagroup() ? lng_admin_log_changed_photo_group : lng_admin_log_changed_photo_channel)(lt_from, fromLinkText);
+			addSimpleServiceMessage(text, photo);
 		}, [&](const MTPDphotoEmpty &data) {
 			auto text = (channel->isMegagroup() ? lng_admin_log_removed_photo_group : lng_admin_log_removed_photo_channel)(lt_from, fromLinkText);
 			addSimpleServiceMessage(text);

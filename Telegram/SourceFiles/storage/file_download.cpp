@@ -1305,6 +1305,10 @@ public:
 		QByteArray rangeHeaderValue = "bytes=" + QByteArray::number(_already) + "-";
 		req.setRawHeader("Range", rangeHeaderValue);
 		_reply = manager.get(req);
+		DEBUG_LOG(("[%1] webFileLoader: get form %2, rangeHeaderValue: %3.")
+			.arg(qintptr(_reply))
+			.arg(_url.toString())
+			.arg(QString(rangeHeaderValue)));
 		return _reply;
 	}
 
@@ -1411,12 +1415,6 @@ bool WebLoadManager::handleReplyResult(webFileLoaderPrivate *loader, WebReplyPro
 		return false;
 	}
 
-	if (result == WebReplyProcessProgress) {
-		if (loader->size() > Storage::kMaxFileInMemory) {
-			LOG(("API Error: too large file is loaded to cache: %1").arg(loader->size()));
-			result = WebReplyProcessError;
-		}
-	}
 	if (result == WebReplyProcessError) {
 		if (it != _loaderPointers.cend()) {
 			emit error(it.key());
@@ -1456,6 +1454,10 @@ void WebLoadManager::onFailed(QNetworkReply *reply) {
 
 void WebLoadManager::onProgress(qint64 already, qint64 size) {
 	const auto reply = qobject_cast<QNetworkReply*>(QObject::sender());
+	DEBUG_LOG(("[%1] webLoadManager: downProcess(%2 / %3)")
+		.arg(qintptr(reply))
+		.arg(already)
+		.arg(size));
 	if (!reply) return;
 
 	const auto j = _replies.find(reply);

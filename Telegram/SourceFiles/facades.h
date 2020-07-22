@@ -257,9 +257,11 @@ DeclareVar(int32, CallPacketTimeoutMs);
 DeclareVar(int32, WebFileDcId);
 DeclareVar(QString, TxtDomainString);
 DeclareVar(bool, PhoneCallsEnabled);
+DeclareVar(bool, WebFileEnabled);
 DeclareVar(bool, BlockedMode);
 DeclareVar(int32, CaptionLengthMax);
 DeclareRefVar(base::Observable<void>, PhoneCallsEnabledChanged);
+DeclareRefVar(base::Observable<void>, WebFileEnabledChanged);
 
 typedef QMap<PeerId, MsgId> HiddenPinnedMessagesMap;
 DeclareVar(HiddenPinnedMessagesMap, HiddenPinnedMessages);

@@ -1866,12 +1866,20 @@ not_null<PhotoData*> Session::photo(PhotoId id) {
 not_null<PhotoData*> Session::processPhoto(const MTPPhoto &data) {
 	return data.match([&](const MTPDphoto &data) {
 		return processPhoto(data);
+	}, [&](const MTPDphotoUrl &data) {
+		return processPhoto(data);
 	}, [&](const MTPDphotoEmpty &data) {
 		return photo(data.vid.v);
 	});
 }
 
 not_null<PhotoData*> Session::processPhoto(const MTPDphoto &data) {
+	const auto result = photo(data.vid.v);
+	photoApplyFields(result, data);
+	return result;
+}
+
+not_null<PhotoData*> Data::Session::processPhoto(const MTPDphotoUrl &data) {
 	const auto result = photo(data.vid.v);
 	photoApplyFields(result, data);
 	return result;
@@ -1917,7 +1925,26 @@ not_null<PhotoData*> Session::processPhoto(
 			thumbnailSmall,
 			thumbnail,
 			large);
-	}, [&](const MTPDphotoEmpty &data) {
+	}, [&](const MTPDphotoUrl &data) {		
+		const auto large = Images::Create(data.vurl.v, data.vwidth.v, data.vheight.v);
+		const auto width = large->width();
+		const auto height = large->height();
+		auto thumbsize = shrinkToKeepAspect(width, height, 100, 100);
+		auto thumbnailSmall = Images::Create(thumbsize.width(), thumbsize.height());
+		auto mediumsize = shrinkToKeepAspect(width, height, 320, 320);
+		auto thumbnail = Images::Create(mediumsize.width(), mediumsize.height());
+		return photo(
+			data.vid.v,
+			data.vaccess_hash.v,
+			QByteArray(),
+			data.vdate.v,
+			int32(0),
+			int32(0),
+			ImagePtr(),
+			thumbnailSmall,
+			thumbnail,
+			large);
+	}, [&](const MTPDphotoEmpty& data) {
 		return photo(data.vid.v);
 	});
 }
@@ -2017,6 +2044,8 @@ void Session::photoApplyFields(
 		const MTPPhoto &data) {
 	if (data.type() == mtpc_photo) {
 		photoApplyFields(photo, data.c_photo());
+	} else if (data.type() == mtpc_photoUrl) {
+		photoApplyFields(photo, data.c_photoUrl());
 	}
 }
 
@@ -2064,6 +2093,29 @@ void Session::photoApplyFields(
 	}
 }
 
+void Data::Session::photoApplyFields(
+	not_null<PhotoData*> photo, 
+	const MTPDphotoUrl& data) {
+	const auto large = Images::Create(data.vurl.v, data.vwidth.v, data.vheight.v);
+	const auto width = large->width();
+	const auto height = large->height();
+	auto thumbsize = shrinkToKeepAspect(width, height, 100, 100);
+	auto thumbnailSmall = Images::Create(thumbsize.width(), thumbsize.height());
+	auto mediumsize = shrinkToKeepAspect(width, height, 320, 320);
+	auto thumbnail = Images::Create(mediumsize.width(), mediumsize.height());
+	photoApplyFields(
+		photo,
+		data.vaccess_hash.v,
+		QByteArray(),
+		data.vdate.v,
+		int32(0),
+		int32(0),
+		ImagePtr(),
+		thumbnailSmall,
+		thumbnail,
+		large);
+}
+
 void Session::photoApplyFields(
 		not_null<PhotoData*> photo,
 		const uint64 &access,
@@ -2102,7 +2154,8 @@ not_null<DocumentData*> Session::processDocument(const MTPDocument &data) {
 	switch (data.type()) {
 	case mtpc_document:
 		return processDocument(data.c_document());
-
+	case mtpc_documentUrl:
+		return documentFromUrl(data.c_documentUrl());
 	case mtpc_documentEmpty:
 		return document(data.c_documentEmpty().vid.v);
 	}
@@ -2121,9 +2174,9 @@ not_null<DocumentData*> Session::processDocument(
 	switch (data.type()) {
 	case mtpc_documentEmpty:
 		return document(data.c_documentEmpty().vid.v);
-
+		break;
 	case mtpc_document: {
-		const auto &fields = data.c_document();
+		const auto& fields = data.c_document();
 		return document(
 			fields.vid.v,
 			fields.vaccess_hash.v,
@@ -2137,7 +2190,10 @@ not_null<DocumentData*> Session::processDocument(
 			fields.vsize.v,
 			StorageImageLocation());
 	} break;
-	}
+	case mtpc_documentUrl:
+		return documentFromUrl(data.c_documentUrl());
+		break;
+	} 
 	Unexpected("Type in Session::document() with thumb.");
 }
 
@@ -2175,6 +2231,7 @@ void Session::documentConvert(
 	const auto id = [&] {
 		switch (data.type()) {
 		case mtpc_document: return data.c_document().vid.v;
+		case mtpc_documentUrl: return data.c_documentUrl().vid.v;
 		case mtpc_documentEmpty: return data.c_documentEmpty().vid.v;
 		}
 		Unexpected("Type in Session::documentConvert().");
@@ -2224,6 +2281,28 @@ DocumentData *Session::documentFromWeb(
 	Unexpected("Type in Session::documentFromWeb.");
 }
 
+not_null<DocumentData*> Data::Session::documentFromUrl(
+	const MTPDdocumentUrl& data) {
+	auto thumb = Images::Create(data, data.vthumb);
+	const auto result = document(
+		data.vid.v,
+		uint64(0),
+		QByteArray(),
+		data.vdate.v,
+		data.vattributes.v,
+		data.vmime_type.v,
+		ImagePtr(),
+		thumb,
+		MTP::maindc(),
+		data.vsize.v,
+		StorageImageLocation());
+	//result->setWebLocation(WebFileLocation(
+	//	data.vurl.v,
+	//	data.vaccess_hash.v));
+	result->setContentUrl(qs(data.vurl));
+	return result;
+}
+
 DocumentData *Session::documentFromWeb(
 		const MTPDwebDocument &data,
 		ImagePtr thumb) {
@@ -2269,6 +2348,8 @@ void Session::documentApplyFields(
 		const MTPDocument &data) {
 	if (data.type() == mtpc_document) {
 		documentApplyFields(document, data.c_document());
+	} else if (data.type() == mtpc_documentUrl) {
+		documentApplyFields(document, data.c_documentUrl());
 	}
 }
 
@@ -2290,6 +2371,19 @@ void Session::documentApplyFields(
 		data.vdc_id.v,
 		data.vsize.v,
 		thumbnail->location());
+}
+
+void Session::documentApplyFields(
+	not_null<DocumentData*> document,
+	const MTPDdocumentUrl &data) {
+	auto date = data.vdate.v;
+	if (!date)
+		return;
+	document->setattributes(data.vattributes.v);
+	document->date = date;
+	document->setMimeString(qs(data.vmime_type));
+	document->size = data.vsize.v;
+	document->setContentUrl(qs(data.vurl));
 }
 
 void Session::documentApplyFields(

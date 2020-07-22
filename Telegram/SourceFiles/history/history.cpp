@@ -1137,6 +1137,12 @@ void History::applyServiceChanges(
 					peer->loadUserpic();
 				}
 			}
+		}, [&](const MTPDphotoUrl &data){
+			if (const auto chat = peer->asChat()) {
+				chat->setPhoto(MTP_chatPhotoEmpty());
+			} else if (const auto channel = peer->asChannel()) {
+				channel->setPhoto(MTP_chatPhotoEmpty());
+			}
 		}, [&](const MTPDphotoEmpty &data) {
 			if (const auto chat = peer->asChat()) {
 				chat->setPhoto(MTP_chatPhotoEmpty());

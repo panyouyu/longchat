@@ -22,6 +22,10 @@ struct FileReferenceAccumulator {
 			result.data.emplace(
 				PhotoFileLocationId{ data.vid.v },
 				data.vfile_reference.v);
+		}, [&](const MTPDphotoUrl &data){
+			result.data.emplace(
+				PhotoFileLocationId{ data.vid.v },
+				QByteArray());
 		}, [](const MTPDphotoEmpty &data) {
 		});
 	}
@@ -30,7 +34,11 @@ struct FileReferenceAccumulator {
 			result.data.emplace(
 				DocumentFileLocationId{ data.vid.v },
 				data.vfile_reference.v);
-		}, [](const MTPDdocumentEmpty &data) {
+		}, [&](const MTPDdocumentUrl& data) {
+			result.data.emplace(
+				DocumentFileLocationId{ data.vid.v },
+				QByteArray());
+		}, [](const MTPDdocumentEmpty& data) {
 		});
 	}
 	void push(const MTPWallPaper &data) {

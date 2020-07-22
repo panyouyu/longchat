@@ -25,6 +25,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "chat_helpers/tabbed_selector.h"
 #include "boxes/send_files_box.h"
 #include "ui/widgets/input_fields.h"
+#include "ui/toast/toast.h"
 #include "support/support_common.h"
 #include "support/support_helper.h"
 #include "observer_peer.h"
@@ -382,7 +383,8 @@ AuthSession::AuthSession(const MTPUser &user)
 , _api(std::make_unique<ApiWrap>(this))
 , _calls(std::make_unique<Calls::Instance>())
 , _downloader(std::make_unique<Storage::Downloader>())
-, _uploader(std::make_unique<Storage::Uploader>())
+, _mtp_uploader(std::make_unique<Storage::mtpUploader>())
+, _web_uploader(std::make_unique<Storage::webUploader>())
 , _storage(std::make_unique<Storage::Facade>())
 , _notifications(std::make_unique<Window::Notifications::System>(this))
 , _data(std::make_unique<Data::Session>(this))

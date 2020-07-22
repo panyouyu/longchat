@@ -600,6 +600,7 @@ TextState HistoryDocument::textState(QPoint point, StateRequest request) const {
 			painth -= st::msgPadding.bottom();
 		}
 	}
+
 	if (QRect(0, 0, width(), painth).contains(point)
 		&& (!_data->loading() || downloadInCorner())
 		&& !_data->uploading()

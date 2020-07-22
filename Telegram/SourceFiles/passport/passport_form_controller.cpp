@@ -1478,8 +1478,8 @@ bool FormController::canAddScan(
 	return (scansCount < limit);
 }
 
-void FormController::subscribeToUploader() {
-	if (_uploaderSubscriptions) {
+void FormController::subscribeToMtpUploader() {
+	if (_mtpUploaderSubscriptions) {
 		return;
 	}
 
@@ -1488,23 +1488,48 @@ void FormController::subscribeToUploader() {
 	Auth().uploader().secureReady(
 	) | rpl::start_with_next([=](const UploadSecureDone &data) {
 		scanUploadDone(data);
-	}, _uploaderSubscriptions);
+	}, _mtpUploaderSubscriptions);
 
 	Auth().uploader().secureProgress(
 	) | rpl::start_with_next([=](const UploadSecureProgress &data) {
 		scanUploadProgress(data);
-	}, _uploaderSubscriptions);
+	}, _mtpUploaderSubscriptions);
 
 	Auth().uploader().secureFailed(
 	) | rpl::start_with_next([=](const FullMsgId &fullId) {
 		scanUploadFail(fullId);
-	}, _uploaderSubscriptions);
+	}, _mtpUploaderSubscriptions);
+}
+
+void FormController::subscribeToWebUploader() {
+	if (_webUploaderSubscriptions) {
+		return;
+	}
+
+	using namespace Storage;
+
+	Auth().uploader().secureReady(
+	) | rpl::start_with_next([=](const UploadSecureDone& data) {
+		scanUploadDone(data);
+		}, _webUploaderSubscriptions);
+
+	Auth().uploader().secureProgress(
+	) | rpl::start_with_next([=](const UploadSecureProgress& data) {
+		scanUploadProgress(data);
+		}, _webUploaderSubscriptions);
+
+	Auth().uploader().secureFailed(
+	) | rpl::start_with_next([=](const FullMsgId& fullId) {
+		scanUploadFail(fullId);
+		}, _webUploaderSubscriptions);
 }
 
 void FormController::uploadEncryptedFile(
 		EditFile &file,
 		UploadScanData &&data) {
-	subscribeToUploader();
+	Global::RefWebFileEnabled()
+		? subscribeToWebUploader()
+		: subscribeToMtpUploader();
 
 	file.uploadData = std::make_unique<UploadScanData>(std::move(data));
 

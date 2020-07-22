@@ -1,14 +1,6 @@
-/*
-This file is part of Telegram Desktop,
-the official desktop application for the Telegram messaging service.
-
-For license and copyright information please follow this link:
-https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
-*/
 #pragma once
 
-struct FileLoadResult;
-struct SendMediaReady;
+#include "storage/localimageloader.h"
 
 namespace Storage {
 
@@ -49,24 +41,22 @@ struct UploadSecureDone {
 	int partsCount = 0;
 };
 
-class Uploader : public QObject, public RPCSender {
+class Uploader : public QObject {
 	Q_OBJECT
-
 public:
 	Uploader();
-	void uploadMedia(const FullMsgId &msgId, const SendMediaReady &image);
-	void upload(
+	virtual ~Uploader() {};
+	virtual void uploadMedia(
+		const FullMsgId &msgId, 
+		const SendMediaReady &media) = 0;
+	virtual void upload(
 		const FullMsgId &msgId,
-		const std::shared_ptr<FileLoadResult> &file);
-
-	int32 currentOffset(const FullMsgId &msgId) const; // -1 means file not found
-	int32 fullSize(const FullMsgId &msgId) const;
+		const std::shared_ptr<FileLoadResult> &file) = 0;
 
 	void cancel(const FullMsgId &msgId);
 	void pause(const FullMsgId &msgId);
+	void unpause();
 	void confirm(const FullMsgId &msgId);
-
-	void clear();
 
 	rpl::producer<UploadedPhoto> photoReady() const {
 		return _photoReady.events();
@@ -98,33 +88,44 @@ public:
 	rpl::producer<FullMsgId> secureFailed() const {
 		return _secureFailed.events();
 	}
+	
+protected:
+	virtual void sendNext() = 0;
+	virtual void currentFailed() = 0;
+class File {
+public:
+	File(const SendMediaReady& media);
+	File(const std::shared_ptr<FileLoadResult>& file);
+	virtual ~File() {}
 
-	~Uploader();
+	virtual void setDocSize(int32 size) = 0;
+	virtual bool setPartSize(uint32 partSize) = 0;
 
-public slots:
-	void unpause();
-	void sendNext();
-	void stopSessions();
+	std::shared_ptr<FileLoadResult> file;
+	SendMediaReady media;
+	int32 partsCount = 0;
+	mutable int32 fileSentSize = 0;
 
-private:
-	struct File;
+	uint64 id() const;
+	SendMediaType type() const;
+	uint64 thumbId() const;
+	const QString& filename() const;
 
-	void partLoaded(const MTPBool &result, mtpRequestId requestId);
-	bool partFailed(const RPCError &err, mtpRequestId requestId);
+	HashMd5 md5Hash;
 
-	void currentFailed();
-
-	base::flat_map<mtpRequestId, QByteArray> requestsSent;
-	base::flat_map<mtpRequestId, int32> docRequestsSent;
-	base::flat_map<mtpRequestId, int32> dcMap;
-	uint32 sentSize = 0;
-	uint32 sentSizes[MTP::kUploadSessionsCount] = { 0 };
+	std::unique_ptr<QFile> docFile;
+	int32 docSentParts = 0;
+	int32 docSize = 0;
+	int32 docPartSize = 0;
+	int32 docPartsCount = 0;
+};
+class mtpFile;
+class webFile;
 
 	FullMsgId uploadingId;
 	FullMsgId _pausedId;
-	std::map<FullMsgId, File> queue;
-	std::map<FullMsgId, File> uploaded;
-	QTimer nextTimer, stopSessionsTimer;
+	std::map<FullMsgId, std::unique_ptr<File>> queue;
+	QTimer nextTimer;
 
 	rpl::event_stream<UploadedPhoto> _photoReady;
 	rpl::event_stream<UploadedDocument> _documentReady;
@@ -136,7 +137,79 @@ private:
 	rpl::event_stream<FullMsgId> _photoFailed;
 	rpl::event_stream<FullMsgId> _documentFailed;
 	rpl::event_stream<FullMsgId> _secureFailed;
-
 };
 
-} // namespace Storage
+class mtpUploader : public Uploader, public RPCSender {
+public:
+	mtpUploader();
+	~mtpUploader();
+	void uploadMedia(
+		const FullMsgId& msgId,
+		const SendMediaReady& media) override;
+	void upload(
+		const FullMsgId& msgId,
+		const std::shared_ptr<FileLoadResult>& file) override;
+
+protected:
+	void sendNext() override;
+	void currentFailed() override;
+
+private:
+	void clear();
+	void stopSessions();
+	void partLoaded(const MTPBool& result, mtpRequestId requestId);
+	bool partFailed(const RPCError& err, mtpRequestId requestId);
+
+	base::flat_map<mtpRequestId, QByteArray> requestsSent;
+	base::flat_map<mtpRequestId, int32> docRequestsSent;
+	base::flat_map<mtpRequestId, int32> dcMap;
+	uint32 sentSize = 0;
+	uint32 sentSizes[MTP::kUploadSessionsCount] = { 0 };
+	QTimer stopSessionsTimer;
+};
+
+class webUploader : public Uploader {
+public:
+	webUploader();
+	~webUploader();
+	void uploadMedia(
+		const FullMsgId& msgId,
+		const SendMediaReady& media) override;
+	void upload(
+		const FullMsgId& msgId,
+		const std::shared_ptr<FileLoadResult>& file) override;
+
+protected:
+	void sendNext() override;
+	void currentFailed() override;
+
+private:
+	void clear();
+	QString getFileType(Uploader::File& file) const;
+	void addPostFilePart(QString name, QString data, QHttpMultiPart* multipart);
+	void addUserHash(QHttpMultiPart* multipart);
+	QNetworkReply* post(
+		const QByteArray& md5,
+		const QString& file_type,
+		int file_count,
+		int file_count_id,
+		const QByteArray& file_form,
+		const QString& file_name);
+
+	void handleResponse(QNetworkReply* reply);
+	void partLoaded(QNetworkReply* reply);
+
+	QNetworkReply* postVerify(
+		const QByteArray& md5,
+		const QString& file_type,
+		int file_count);
+	void handleVerifyResponse(QNetworkReply* reply);
+	void currentReady(const QString& file_name, const QString& url);
+
+	QNetworkAccessManager _manager;
+
+	base::flat_map<QNetworkReply*, QByteArray> requestsSent;
+	base::flat_map<QNetworkReply*, int32> docRequestsSent;
+	uint32 sentSize = 0;
+};
+} // namesapce Storage

@@ -246,6 +246,9 @@ Photo ParsePhoto(const MTPPhoto &data, const QString &suggestedPath) {
 		result.id = data.vid.v;
 		result.date = data.vdate.v;
 		result.image = ParseMaxImage(data, suggestedPath);
+	}, [&](const MTPDphotoUrl &data) {
+		result.id = data.vid.v;
+		result.date = data.vdate.v;
 	}, [&](const MTPDphotoEmpty &data) {
 		result.id = data.vid.v;
 	});
@@ -411,6 +414,8 @@ Image ParseDocumentThumb(
 		return Image();
 	}, [](const MTPDphotoStrippedSize &) {
 		return Image();
+	}, [&](const MTPDphotoSizeAll &data) {
+		return Image();
 	}, [&](const auto &data) {
 		auto result = Image();
 		result.width = data.vw.v;
@@ -460,7 +465,12 @@ Document ParseDocument(
 		result.thumb = ParseDocumentThumb(
 			data,
 			result.file.suggestedPath);
-	}, [&](const MTPDdocumentEmpty &data) {
+	}, [&](const MTPDdocumentUrl &data) {
+		result.id = data.vid.v;
+		result.date = data.vdate.v;
+		result.mime = ParseString(data.vmime_type);
+		ParseAttributes(result, data.vattributes);
+	},[&](const MTPDdocumentEmpty &data) {
 		result.id = data.vid.v;
 	});
 	return result;

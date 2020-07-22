@@ -832,6 +832,10 @@ std::unique_ptr<Data::Media> HistoryMessage::CreateMedia(
 			return std::make_unique<Data::MediaPhoto>(
 				item,
 				item->history()->owner().processPhoto(photo));
+		}, [&](const MTPDphotoUrl &photo) -> Result {
+			return std::make_unique<Data::MediaPhoto>(
+				item, 
+				item->history()->owner().processPhoto(photo));
 		}, [](const MTPDphotoEmpty &) -> Result {
 			return nullptr;
 		});
@@ -852,6 +856,10 @@ std::unique_ptr<Data::Media> HistoryMessage::CreateMedia(
 			return std::make_unique<Data::MediaFile>(
 				item,
 				item->history()->owner().processDocument(document));
+		}, [&](const MTPDdocumentUrl& document) -> Result {
+			return std::make_unique<Data::MediaFile>(
+				item,
+				item->history()->owner().documentFromUrl(document));
 		}, [](const MTPDdocumentEmpty &) -> Result {
 			return nullptr;
 		});
@@ -887,10 +895,25 @@ std::unique_ptr<Data::Media> HistoryMessage::CreateMedia(
 		return nullptr;
 	}, [](const MTPDmessageMediaUnsupported &) -> Result {
 		return nullptr;
-	}, [](const MTPDmessageMediaTlv&) -> Result {
+	}, [&](const MTPDmessageMediaTlv &media) -> Result {
+		auto &tlvs = media.vtlvs.c_tlvs().vtlvs.v;
+		for (const auto& tlv : tlvs) {
+			try {
+				auto from = reinterpret_cast<const mtpPrime*>(tlv.c_tlv().vdata.v.constData());
+				auto end = from + tlv.c_tlv().vdata.v.size() / sizeof(mtpPrime);
+				auto sfrom = from - 4U;
+				TLV_LOG(("TLV: ") + mtpTextSerialize(sfrom, end));
+				from++;
+
+				MTPmessageMedia mediatlv;
+				mediatlv.read(from, end, tlv.c_tlv().vid.v);
+				return CreateMedia(item, mediatlv);
+			} catch(...) {
+				return nullptr;
+			}			
+		}
 		return nullptr;
 	});
-	return nullptr;
 }
 
 void HistoryMessage::replaceBuyWithReceiptInMarkup() {

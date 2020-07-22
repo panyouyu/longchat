@@ -457,7 +457,8 @@ private:
 		const SavedCredentials &saved,
 		const bytes::vector &secret);
 
-	void subscribeToUploader();
+	void subscribeToMtpUploader();
+	void subscribeToWebUploader();
 	void encryptFile(
 		EditFile &file,
 		QByteArray &&content,
@@ -544,7 +545,8 @@ private:
 	QString _serviceErrorText;
 	base::Timer _shortPollTimer;
 
-	rpl::lifetime _uploaderSubscriptions;
+	rpl::lifetime _mtpUploaderSubscriptions;
+	rpl::lifetime _webUploaderSubscriptions;
 	rpl::lifetime _lifetime;
 
 	std::unique_ptr<ViewController> _view;

@@ -189,6 +189,10 @@ void PeerData::setUserpicPhoto(const MTPPhoto &data) {
 		const auto photo = owner().processPhoto(data);
 		photo->peer = this;
 		return photo->id;
+	},[&](const MTPDphotoUrl &data) {
+		const auto photo = owner().processPhoto(data);
+		photo->peer = this;
+		return photo->id;
 	}, [](const MTPDphotoEmpty &data) {
 		return PhotoId(0);
 	});
@@ -326,7 +330,11 @@ void PeerData::updateUserpic(
 					deprecated.vlocal_id)),
 			size,
 			size);
-	});
+		}, [&] (const MTPDfileLocationUrl &) {
+			return StorageImageLocation();
+		}, [&] (const MTPDfileLocationAll &) {
+			return StorageImageLocation();
+		});
 	setUserpicChecked(photoId, loc, Images::Create(loc));
 }
 

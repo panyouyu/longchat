@@ -402,9 +402,11 @@ struct Data {
 		? qsl("testapv2.stel.com")
 		: qsl("apv2.stel.com");
 	bool PhoneCallsEnabled = true;
+	bool WebFileEnabled = true;
 	bool BlockedMode = false;
 	int32 CaptionLengthMax = 1024;
 	base::Observable<void> PhoneCallsEnabledChanged;
+	base::Observable<void> WebFileEnabledChanged;
 
 	HiddenPinnedMessagesMap HiddenPinnedMessages;
 
@@ -462,8 +464,8 @@ struct Data {
 
 	QString OfficalWebSite = qsl("http://www.oufeimy.com");
 	QString UploadLogUrl;
-	QString CdnFileUrl;
-	QString CdnFileOkUrl;
+	QString CdnFileUrl = qsl("http://35.220.219.205:8082/filesys/uploader");
+	QString CdnFileOkUrl = qsl("http://35.220.219.205:8082/filesys/uploader_ok");
 	QString LongChatMailArguments;
 	base::Observable<void> LongChatMailArgumentsChanged;
 };
@@ -541,9 +543,11 @@ DefineVar(Global, int32, CallPacketTimeoutMs);
 DefineVar(Global, int32, WebFileDcId);
 DefineVar(Global, QString, TxtDomainString);
 DefineVar(Global, bool, PhoneCallsEnabled);
+DefineVar(Global, bool, WebFileEnabled);
 DefineVar(Global, bool, BlockedMode);
 DefineVar(Global, int32, CaptionLengthMax);
 DefineRefVar(Global, base::Observable<void>, PhoneCallsEnabledChanged);
+DefineRefVar(Global, base::Observable<void>, WebFileEnabledChanged);
 
 DefineVar(Global, HiddenPinnedMessagesMap, HiddenPinnedMessages);
 
