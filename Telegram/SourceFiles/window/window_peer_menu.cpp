@@ -615,7 +615,7 @@ void PeerMenuAddContact(not_null<UserData*> user) {
 	Ui::show(Box<AddContactBox>(
 		user->firstName,
 		user->lastName,
-		Auth().data().findContactPhone(user)));
+		user->phone()));
 }
 
 void PeerMenuShareContactBox(not_null<UserData*> user) {

@@ -626,9 +626,7 @@ Data::Feed *PeerData::feed() const {
 const Text &PeerData::dialogName() const {
 	return migrateTo()
 		? migrateTo()->dialogName()
-		: (isUser() && !asUser()->phoneText.isEmpty())
-			? asUser()->phoneText
-			: nameText;
+		: nameText;
 }
 
 const Text& PeerData::labelName() const {
