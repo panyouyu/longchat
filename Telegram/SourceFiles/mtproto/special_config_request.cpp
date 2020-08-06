@@ -213,13 +213,9 @@ SpecialConfigRequest::SpecialConfigRequest(
 , _phone(phone) {
 	_manager.setProxy(QNetworkProxy::NoProxy);
 	_attempts = {
-		{ Type::App, qsl("list.imshanl.com") },
+		qsl("https://storage.cloud.google.com/shangcheng.imshanl.com/shanliao_config.json"),
+		qsl("https://shanliaolist.oss-cn-hongkong.aliyuncs.com/shanliao_config.json"),
 	};
-	for (const auto& domain : DnsDomains()) {
-		_attempts.push_back({ Type::Dns, domain });
-	}
-	std::random_device rd;
-	ranges::shuffle(_attempts, std::mt19937(rd()));
 	sendNextRequest();
 }
 
@@ -236,49 +232,23 @@ void SpecialConfigRequest::sendNextRequest() {
 	performRequest(attempt);
 }
 
-void SpecialConfigRequest::performRequest(const Attempt &attempt) {
-	const auto type = attempt.type;
-	auto url = QUrl();
-	url.setScheme(qsl("http"));
-	url.setHost(attempt.domain);
+void SpecialConfigRequest::performRequest(const QString &attempt) {
 	auto request = QNetworkRequest();
-	switch (type) {
-	case Type::App: {
-		url.setPath(cTestMode() 
-			? qsl("/test/shanliao_config.json") 
-			: qsl("/shan/shanliao_config.json"));
-	} break;
-	case Type::Dns: {
-		url.setPath(qsl("/resolve"));
-		url.setQuery(qsl("name=%1&type=ANY&random_padding=%2"
-		).arg(Global::TxtDomainString()
-		).arg(GenerateRandomPadding()));
-		request.setRawHeader("Host", "dns.google.com");
-	} break;
-	default: Unexpected("Type in SpecialConfigRequest::performRequest.");
-	}
+	auto url = QUrl(attempt);
 	request.setUrl(url);
+	DEBUG_LOG(("CDN: start get from %1").arg(attempt));
 	const auto reply = _requests.emplace_back(
 		_manager.get(request)
 	).reply;
 	connect(reply, &QNetworkReply::finished, this, [=] {
-		requestFinished(type, reply);
+		requestFinished(reply);
 	});
 }
 
 void SpecialConfigRequest::requestFinished(
-		Type type,
 		not_null<QNetworkReply*> reply) {
 	const auto result = finalizeRequest(reply);
-	switch (type) {
-	case Type::App: handleResponse(result); break;
-	case Type::Dns: {
-		constexpr auto kTypeRestriction = 16; // TXT
-		handleResponse(ConcatenateDnsTxtFields(
-			ParseDnsResponse(result, kTypeRestriction)));
-	} break;
-	default: Unexpected("Type in SpecialConfigRequest::requestFinished.");
-	}
+	handleResponse(result);
 }
 
 QByteArray SpecialConfigRequest::finalizeRequest(
