@@ -34,18 +34,9 @@ public:
 		const QString &phone);
 
 private:
-	enum class Type {
-		App,
-		Dns,
-	};
-	struct Attempt {
-		Type type;
-		QString domain;
-	};
-
 	void sendNextRequest();
-	void performRequest(const Attempt &attempt);
-	void requestFinished(Type type, not_null<QNetworkReply*> reply);
+	void performRequest(const QString &attempt);
+	void requestFinished(not_null<QNetworkReply*> reply);
 	QByteArray finalizeRequest(not_null<QNetworkReply*> reply);
 	void handleResponse(const QByteArray &bytes);
 	bool decryptSimpleConfig(const QByteArray &bytes);
@@ -59,7 +50,7 @@ private:
 	MTPhelp_ConfigSimple _simpleConfig;
 
 	QNetworkAccessManager _manager;
-	std::vector<Attempt> _attempts;
+	std::vector<QString> _attempts;
 	std::vector<ServiceWebRequest> _requests;
 	QTimer _timer;
 };
