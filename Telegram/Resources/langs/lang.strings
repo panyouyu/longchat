@@ -1071,7 +1071,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_media_auto_in_private" = "私密对话";
 "lng_media_auto_in_groups" = "群组";
 "lng_media_auto_in_channels" = "群组";
-"lng_media_auto_title" = "自动瞎子啊";
+"lng_media_auto_title" = "自动下载";
 "lng_media_photo_title" = "图片";
 "lng_media_video_title" = "媒体文件";
 "lng_media_audio_title" = "语音信息";
