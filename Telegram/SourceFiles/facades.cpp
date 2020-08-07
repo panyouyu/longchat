@@ -459,9 +459,12 @@ struct Data {
 	int CallOutputVolume = 100;
 	int CallInputVolume = 100;
 	bool CallAudioDuckingEnabled = true;
+
 	bool RemberUserName = false;
-	QString KefuUserName = qsl("");
-};
+	QString KefuUserName = qsl("");	QString OfficalWebSite;
+	QString UploadLogUrl;
+	QString CdnFileUrl;
+	QString CdnFileOkUrl;};
 
 } // namespace internal
 } // namespace Global
@@ -595,8 +598,10 @@ DefineVar(Global, int, CallInputVolume);
 DefineVar(Global, bool, CallAudioDuckingEnabled);
 DefineVar(Global, bool, RemberUserName);
 DefineVar(Global, QString, KefuUserName);
-
-
+DefineVar(Global, QString, OfficalWebSite);
+DefineVar(Global, QString, UploadLogUrl);
+DefineVar(Global, QString, CdnFileUrl);
+DefineVar(Global, QString, CdnFileOkUrl);
 rpl::producer<bool> ReplaceEmojiValue() {
 	return rpl::single(
 		Global::ReplaceEmoji()

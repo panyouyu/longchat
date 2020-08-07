@@ -307,6 +307,11 @@ DeclareVar(bool, CallAudioDuckingEnabled);
 DeclareVar(bool, RemberUserName);
 DeclareVar(QString, KefuUserName);
 
+DeclareVar(QString, OfficalWebSite);
+DeclareVar(QString, UploadLogUrl);
+DeclareVar(QString, CdnFileUrl);
+DeclareVar(QString, CdnFileOkUrl);
+
 rpl::producer<bool> ReplaceEmojiValue();
 
 } // namespace Global

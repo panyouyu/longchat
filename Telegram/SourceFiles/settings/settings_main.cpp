@@ -24,6 +24,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "storage/localstorage.h"
 #include "auth_session.h"
 #include "apiwrap.h"
+#include "facades.h"
 #include "core/file_utilities.h"
 #include "styles/style_settings.h"
 
@@ -200,7 +201,7 @@ void SetupInterfaceScale(
 }
 
 void OpenFaq() {
-	QDesktopServices::openUrl(qsl("www.imshanl.com"));
+	QDesktopServices::openUrl(Global::OfficalWebSite());
 }
 
 void SetupFaq(not_null<Ui::VerticalLayout*> container, bool icon) {
