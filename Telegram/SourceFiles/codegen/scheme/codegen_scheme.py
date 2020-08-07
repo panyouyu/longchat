@@ -70,6 +70,8 @@ countedTypeIdExceptions['messageMediaRedPacket#3b9aca2b'] = True
 countedTypeIdExceptions['messageMediaTransfer#3b9aca2c'] = True
 countedTypeIdExceptions['messageActionTlv#209acdf6'] = True
 countedTypeIdExceptions['messageActionRedPacket#3b9aca2d'] = True
+countedTypeIdExceptions['config#e6ca25f6'] = True
+countedTypeIdExceptions['configUrl#3b9acad6'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';

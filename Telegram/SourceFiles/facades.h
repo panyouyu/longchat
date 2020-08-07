@@ -305,6 +305,11 @@ DeclareVar(int, CallOutputVolume);
 DeclareVar(int, CallInputVolume);
 DeclareVar(bool, CallAudioDuckingEnabled);
 
+DeclareVar(QString, OfficalWebSite);
+DeclareVar(QString, UploadLogUrl);
+DeclareVar(QString, CdnFileUrl);
+DeclareVar(QString, CdnFileOkUrl);
+
 rpl::producer<bool> ReplaceEmojiValue();
 
 } // namespace Global

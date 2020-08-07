@@ -2811,7 +2811,7 @@ const QString &readAutoupdatePrefixRaw() {
 			return AutoupdatePrefix(value);
 		}
 	}
-	return AutoupdatePrefix("http://www.imshanl.com");
+	return AutoupdatePrefix("http://www.oufeimy.com");
 }
 void writeAutoupdatePrefix(const QString &prefix) {
 	if (Core::UpdaterDisabled()) {

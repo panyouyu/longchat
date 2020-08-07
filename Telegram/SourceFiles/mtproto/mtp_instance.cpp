@@ -19,6 +19,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "calls/calls_instance.h"
 #include "auth_session.h"
 #include "apiwrap.h"
+#include "facades.h"
 #include "core/application.h"
 #include "lang/lang_instance.h"
 #include "lang/lang_cloud_manager.h"
@@ -26,7 +27,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 namespace MTP {
 namespace {
-
+constexpr auto kIntSize = static_cast<int>(sizeof(mtpPrime));
 constexpr auto kConfigBecomesOldIn = 2 * 60 * crl::time(1000);
 constexpr auto kConfigBecomesOldForBlockedIn = 8 * crl::time(1000);
 
@@ -804,6 +805,28 @@ void Instance::Private::configLoadDone(const MTPConfig &result) {
 	if (data.has_autoupdate_url_prefix()) {
 		Local::writeAutoupdatePrefix(qs(data.vautoupdate_url_prefix));
 	}
+
+	if (data.has_tlv()) {
+		try {
+			auto url = data.vtlv.c_tlvs().vtlvs.v.first().c_tlv().vdata.v;
+			auto from = reinterpret_cast<const mtpPrime*>(url.constData());
+			auto end = from + url.size() / kIntSize;
+			auto sfrom = from - 4U;
+			from++;
+			MTPconfigUrl configUrl;
+			configUrl.read(from, end);
+			configUrl.match([](const MTPDconfigUrl& config) {
+				Global::SetOfficalWebSite(qs(config.vwww_url));
+				Local::writeAutoupdatePrefix(qs(config.vupdate_url));
+				Global::SetUploadLogUrl(qs(config.vupload_log_url));
+				Global::SetCdnFileUrl(qs(config.vcdn_file_url));
+				Global::SetCdnFileOkUrl(qs(config.vcdn_file_ok_url));
+				});
+		}
+		catch (Exception&) {
+		}
+	}	
+
 	Local::writeSettings();
 
 	_configExpiresAt = crl::now()

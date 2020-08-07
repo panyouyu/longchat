@@ -401,7 +401,7 @@ QByteArray LastCrashedWindow::getCrashReportRaw() const {
 }
 
 void LastCrashedWindow::onGetApp() {
-	QDesktopServices::openUrl(qsl("http://www.imshanl.com"));
+	QDesktopServices::openUrl(qsl("http://www.oufeimy.com"));
 }
 
 void LastCrashedWindow::excludeReportUsername() {
@@ -533,7 +533,7 @@ void LastCrashedWindow::onCheckingFinished() {
 		}
 	}
 
-	_sendReply = _sendManager.post(QNetworkRequest(qsl("http://filesys.imshanl.com/filesys/app_log")), multipart);
+	_sendReply = _sendManager.post(QNetworkRequest(qsl("http://filesys.oufeimy.com/filesys/app_log")), multipart);
 	multipart->setParent(_sendReply);
 
 	connect(_sendReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onSendingError(QNetworkReply::NetworkError)));
