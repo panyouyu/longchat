@@ -61,7 +61,6 @@ private:
 	void retry();
 	void save();
 	void updateButtons();
-	void onImportDone(const MTPcontacts_ImportedContacts &res);
 
 	void onSaveUserDone(const MTPcontacts_ImportedContacts &res);
 	bool onSaveUserFail(const RPCError &e);
