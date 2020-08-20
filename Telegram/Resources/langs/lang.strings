@@ -276,8 +276,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_settings_choose_username" = "设定用户名";
 "lng_settings_empty_bio" = "无";
 
-"lng_add_contact_send_success" = "好友申请已发送";
-"lng_add_contact_send_fail" = "好友申请发送失败";
+"lng_friend_request_search_user" = "用户搜索";
+"lng_friend_request_search_placeholder" = "用户名或手机";
+"lng_friend_request_search" = "搜索";
+"lng_friend_request_send_success" = "好友申请已发送";
+"lng_friend_request_send_fail" = "好友申请发送失败";
 "lng_friend_request_new" = "新的好友";
 "lng_friend_request" = "好友申请";
 "lng_friend_request_empty" = "没有好友申请";
@@ -1219,6 +1222,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_dialogs_text_media_wrapped" = "{media},";
 "lng_dialogs_show_all_chats" = "显示所有对话";
 "lng_dialogs_hide_muted_chats" = "隐藏已静音对话";
+"lng_dialogs_temporary_conversation" = "-临时会话";
 
 "lng_open_this_link" = "打开此链接？";
 "lng_open_link" = "打开";

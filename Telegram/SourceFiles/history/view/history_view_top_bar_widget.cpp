@@ -20,6 +20,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "auth_session.h"
 #include "lang/lang_keys.h"
 #include "core/shortcuts.h"
+#include "ui/text_options.h"
 #include "ui/special_buttons.h"
 #include "ui/unread_badge.h"
 #include "ui/widgets/buttons.h"
@@ -333,7 +334,14 @@ void TopBarWidget::paintTopBar(Painter &p) {
 			width(),
 			text);
 	} else if (const auto history = _activeChat.history()) {
-		history->peer->dialogName().drawElided(p, nameleft, nametop, namewidth);
+		auto dialogName = history->peer->dialogName().toString();
+		if (auto user = history->peer->asUser()) {
+			if (!user->isContact())
+				dialogName += lang(lng_dialogs_temporary_conversation);
+		}
+		Text name;
+		name.setText(st::msgNameStyle, dialogName, Ui::NameTextOptions());
+		name.drawElided(p, nameleft, nametop, namewidth);
 
 		p.setFont(st::dialogsTextFont);
 		if (paintConnectingState(p, nameleft, statustop, width())) {

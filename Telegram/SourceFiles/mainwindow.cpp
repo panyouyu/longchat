@@ -577,7 +577,7 @@ void MainWindow::onShowAddContact() {
 	if (isHidden()) showFromTray();
 
 	if (AuthSession::Exists()) {
-		Ui::show(Box<AddContactBox>(), LayerOption::KeepOther);
+		Ui::show(Box<SearchUserBox>(), LayerOption::KeepOther);
 	}
 }
 

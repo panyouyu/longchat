@@ -71,10 +71,9 @@ private:
 	void onAddDone(const MTPcontacts_ContactRequestResponse &res);
 
 	UserData *_user = nullptr;
-	QString _realPhone;
+	QString _phone;
 
 	object_ptr<Ui::InputField> _first;
-	object_ptr<Ui::InputField> _phone;
 	object_ptr<Ui::InputField> _verify;
 
 	bool _retrying = false;
@@ -226,4 +225,26 @@ private:
 	int _innerTop = 0;
 	Fn<void()> _revokeCallback;
 
+};
+
+class SearchUserBox : public BoxContent, public RPCSender {
+public:
+	SearchUserBox(QWidget*, QString nameorphone = QString());
+
+protected:
+	void prepare() override;
+
+	void paintEvent(QPaintEvent* e) override;
+	void resizeEvent(QResizeEvent* e) override;
+
+	void setInnerFocus() override;
+
+private:
+	void submit();
+	void onSearchDone(const MTPcontacts_ContactSearchResponse& res);
+	bool onSearchFail(const RPCError& error);
+
+	object_ptr<Ui::InputField> _search;
+
+	mtpRequestId _searchRequest = 0;
 };

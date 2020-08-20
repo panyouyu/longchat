@@ -160,8 +160,8 @@ rpl::producer<bool> CanAddContactValue(not_null<UserData*> user) {
 	using namespace rpl::mappers;
 	return rpl::combine(
 		IsContactValue(user),
-		CanShareContactValue(user),
-		!_1 && _2);
+		//CanShareContactValue(user),
+		!_1 /*&& _2*/);
 }
 
 rpl::producer<bool> AmInChannelValue(not_null<ChannelData*> channel) {
