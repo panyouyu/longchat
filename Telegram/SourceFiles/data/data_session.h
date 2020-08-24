@@ -215,8 +215,24 @@ public:
 	[[nodiscard]] rpl::producer<> stickersUpdated() const;
 	void notifySavedGifsUpdated();
 	[[nodiscard]] rpl::producer<> savedGifsUpdated() const;
+
+	int friendRequestCount() const {
+		return _friendsRequestChanged.current();
+	}
 	void notifyFriendRequestChanged();
-	[[nodiscard]] rpl::producer<int> friendRequestChanged() const;
+	[[nodiscard]] rpl::producer<int> friendRequestValue() const {
+		return _friendsRequestChanged.value();
+	}
+
+	int groupUnReadCount() const {
+		return _groupUnReadCount.current();
+	}
+	void setGroupUnReadCount(int count) {
+		_groupUnReadCount = count;
+	}
+	[[nodiscard]] rpl::producer<int> groupUnReadCountValue() const {
+		return _groupUnReadCount.value();
+	}
 
 	bool stickersUpdateNeeded(crl::time now) const {
 		return stickersUpdateNeeded(_lastStickersUpdate, now);
@@ -719,7 +735,8 @@ private:
 
 	rpl::event_stream<> _stickersUpdated;
 	rpl::event_stream<> _savedGifsUpdated;
-	rpl::event_stream<int> _friendsRequestChanged;
+	rpl::variable<int> _friendsRequestChanged = 0;
+	rpl::variable<int> _groupUnReadCount = 0;
 	crl::time _lastStickersUpdate = 0;
 	crl::time _lastRecentStickersUpdate = 0;
 	crl::time _lastFavedStickersUpdate = 0;

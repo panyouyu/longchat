@@ -136,7 +136,7 @@ int AddParticipantsBoxController::fullCount() const {
 
 std::unique_ptr<PeerListRow> AddParticipantsBoxController::createRow(
 		not_null<UserData*> user) {
-	if (user->isSelf()) {
+	if (user->isSelf() || user->isServiceUser()) {
 		return nullptr;
 	}
 	auto result = std::make_unique<PeerListRow>(user);

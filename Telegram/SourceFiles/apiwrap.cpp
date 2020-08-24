@@ -709,6 +709,20 @@ void ApiWrap::requestFriendRequestList(int page) {
 	}).send();
 }
 
+void ApiWrap::requestGroupNotifyCount() {
+	if (_groupNotifyCountId) return;
+
+	const auto flag = MTPchannels_GetGroupNotifyCount::Flags(0);
+	_groupNotifyCountId = request(MTPchannels_GetGroupNotifyCount(
+		MTP_flags(flag)
+	)).done([=](const MTPChannelGroupNotifyCount &count) {
+		_groupNotifyCountId = 0;
+		Auth().data().setGroupUnReadCount(count.c_channelGroupNotifyCount().vunread_count.v);
+	}).fail([=](const RPCError &) {
+		_groupNotifyCountId = 0;
+	}).send();
+}
+
 void ApiWrap::requestDialogEntry(not_null<Data::Feed*> feed) {
 	if (_dialogFeedRequests.contains(feed)) {
 		return;

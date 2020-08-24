@@ -1422,11 +1422,7 @@ void Session::notifyFriendRequestChanged() {
 	for (const auto &user : _friendRequests) {
 		size += user->verifyStatus() == UserData::VerifyStatus::UnDeal;
 	}
-	_friendsRequestChanged.fire_copy(size);
-}
-
-[[nodiscard]] rpl::producer<int> Session::friendRequestChanged() const {
-	return _friendsRequestChanged.events();
+	_friendsRequestChanged = size;
 }
 
 void Session::userIsContactUpdated(not_null<UserData*> user) {

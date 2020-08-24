@@ -53,6 +53,7 @@
     <file alias="art/logo_256_no_margin.png">../art/logo_256_no_margin.png</file>
     <file alias="art/sunrise.jpg">../art/sunrise.jpg</file>
 	<file alias="art/new_friend.png">../art/new_friend.png</file>
+	<file alias="art/group_chat.png">../art/group_chat.png</file>
 	<file alias="art/saved_message.png">../art/saved_message.png</file>	
     <file alias="day-blue.tdesktop-theme">../day-blue.tdesktop-theme</file>
     <file alias="night.tdesktop-theme">../night.tdesktop-theme</file>

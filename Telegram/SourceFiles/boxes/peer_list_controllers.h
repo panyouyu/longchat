@@ -133,7 +133,10 @@ protected:
 	}
 
 private:
+	static constexpr auto NewFriendRowId = peerFromUser(1000);
+	static constexpr auto GroupChatRowId = peerFromUser(2000);
 	class NewFriendRow;
+	class GroupChatRow;
 	void rebuildRows();
 	void checkForEmptyRows();
 	bool appendRow(not_null<UserData*> user);

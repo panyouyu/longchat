@@ -114,6 +114,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_chat_status_online#other" = "{count} 人在线";
 "lng_chat_status_members_online" = "{members_count}，{online_count}";
 
+"lng_chat_group_chat" = "群聊";
+"lng_chat_group_notification" = "群通知";
+
 "lng_channel_status" = "群组";
 "lng_group_status" = "群组";
 

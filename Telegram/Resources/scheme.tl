@@ -968,6 +968,9 @@ channels.adminLogResults#ed8af74d events:Vector<ChannelAdminLogEvent> chats:Vect
 
 channelAdminLogEventsFilter#ea107ae4 flags:# join:flags.0?true leave:flags.1?true invite:flags.2?true ban:flags.3?true unban:flags.4?true kick:flags.5?true unkick:flags.6?true promote:flags.7?true demote:flags.8?true info:flags.9?true settings:flags.10?true pinned:flags.11?true edit:flags.12?true delete:flags.13?true = ChannelAdminLogEventsFilter;
 
+channelSavedGroups#3c3c74e5 groups:Vector<Chat> = ChannelSavedGroups;
+channelGroupNotifyCount#3c3c74e9 unread_count:int = ChannelGroupNotifyCount;
+
 popularContact#5ce14175 client_id:long importers:int = PopularContact;
 
 messages.favedStickersNotModified#9e8fa6d3 = messages.FavedStickers;
@@ -1439,6 +1442,9 @@ channels.readMessageContents#eab5dc38 channel:InputChannel id:Vector<int> = Bool
 channels.deleteHistory#af369d42 channel:InputChannel max_id:int = Bool;
 channels.togglePreHistoryHidden#eabbb94c channel:InputChannel enabled:Bool = Updates;
 channels.getLeftChannels#8341ecc0 offset:int = messages.Chats;
+
+channels.getSavedGroups#3c3c74aa flags:# = ChannelSavedGroups;
+channels.getGroupNotifyCount#3c3c74af flags:# = ChannelGroupNotifyCount;
 
 bots.sendBindUserRequest#3b9acded params:string data:DataJSON = contacts.ImportedContacts;
 bots.sendConsultationType#3b9acdeb bot_id:int consult_id:int = Bool;
