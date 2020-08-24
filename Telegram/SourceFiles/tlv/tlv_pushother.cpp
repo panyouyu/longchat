@@ -33,12 +33,12 @@ void feedUserGroupUpdates(const MTPDtlvs& tlvs) {
 				const auto& d = groups.c_tlvc_updateUserGroups();
 				const auto& adds = d.vadds.v;
 				const auto& removes = d.vremoves.v;
-				for (const auto& add : adds) {
+				/*for (const auto& add : adds) {
 					const auto &add_group = add.c_tlvc_updateUserGroup();
 					auto user = Auth().data().user(add_group.vuser_id.v);
 					Auth().api().requestPeerRelatedInfo(user);
 					Auth().api().requestPeerLabels(user);
-				}
+				}*/
 				for (const auto& remove : removes) {
 					const auto& remove_group = remove.c_tlvc_updateUserGroup();
 					auto user_id = remove_group.vuser_id.v;

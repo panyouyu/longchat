@@ -1798,6 +1798,12 @@ void MainWidget::ui_showPeerHistory(
 					kWaitForChannelGetDifference);
 			}
 			_viewsIncremented.remove(nowActivePeer);
+			if (nowActivePeer->isUser() && !nowActivePeer->isSelf()) {
+				if (AuthSession::Exists()) {
+					Auth().api().requestPeerRelatedInfo(nowActivePeer);
+					Auth().api().requestPeerLabels(nowActivePeer);
+				}
+			}
 		}
 		if (Adaptive::OneColumn() && !_dialogs->isHidden()) {
 			_dialogs->hide();
