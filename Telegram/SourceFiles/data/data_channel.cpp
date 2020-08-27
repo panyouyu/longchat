@@ -519,6 +519,12 @@ void ChannelData::setDefaultRestrictions(const MTPChatBannedRights &rights) {
 	Notify::peerUpdatedDelayed(this, UpdateFlag::RightsChanged);
 }
 
+bool ChannelData::canShowParticipantProfile() const {
+	return amCreator() || isGroupAdmin(Auth().user())
+		? true
+		: !(defaultRestrictions() & MTPDchatBannedRights::Flag::f_show_profile);
+}
+
 auto ChannelData::applyUpdateVersion(int version) -> UpdateStatus {
 	if (_version > version) {
 		return UpdateStatus::TooOld;

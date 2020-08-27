@@ -207,15 +207,19 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		return result;
 	};
 
-	auto prepareTlvAction = [](const MTPDmessageActionTlv& action) {
-		auto result = PreparedText{};
-		return result;
-	};
-
 	auto prepareContactSignUp = [this] {
 		auto result = PreparedText{};
 		result.links.push_back(fromLink());
 		result.text = lng_action_user_registered(lt_from, fromLinkText());
+		return result;
+	};
+
+	auto prepareChangeRights = [this](const MTPDmessageActionChangeRights& data) {
+		auto result = PreparedText{};
+		auto user = history()->owner().user(data.vuser_id.v);
+		result.links.push_back(fromLink());
+		result.text = lng_action_change_rights(lt_user, fromLinkText());
+
 		return result;
 	};
 
@@ -259,7 +263,25 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 	}, [&](const MTPDmessageActionSecureValuesSent &data) {
 		return prepareSecureValuesSent(data);
 	}, [&](const MTPDmessageActionTlv& data) {
-		return prepareTlvAction(data);
+		try {
+			auto tlvs = data.vtlvs.c_tlvs().vtlvs.v;
+			for (const auto& tlv : tlvs) {
+				auto type = tlv.c_tlv().vid.v;
+				auto from = reinterpret_cast<const mtpPrime*>(tlv.c_tlv().vdata.v.constData());
+				auto end = from + tlv.c_tlv().vdata.v.size() / sizeof(mtpPrime);
+				from++;
+
+				MTPmessageActionTLV action;
+				action.read(from, end, type);
+				return action.match(
+					[&]( const MTPDmessageActionChangeRights& data) {
+					return prepareChangeRights(data); 
+				});
+			}
+			return PreparedText{ lang(lng_message_empty) };
+		} catch (...) {
+			return PreparedText{ lang(lng_message_empty) };
+		}
 	}, [&](const MTPDmessageActionContactSignUp &data) {
 		return prepareContactSignUp();
 	}, [](const MTPDmessageActionPaymentSentMe&) {
@@ -268,7 +290,7 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 	}, [](const MTPDmessageActionSecureValuesSentMe &) {
 		LOG(("API Error: messageActionSecureValuesSentMe received."));
 		return PreparedText{ lang(lng_message_empty) };
-	}, [](const MTPDmessageActionEmpty &) {
+	},[](const MTPDmessageActionEmpty &) {
 		return PreparedText{ lang(lng_message_empty) };
 	});
 

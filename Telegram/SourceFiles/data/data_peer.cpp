@@ -682,6 +682,9 @@ std::vector<ChatRestrictions> ListOfRestrictions() {
 		Flag::f_invite_users,
 		Flag::f_pin_messages,
 		Flag::f_change_info,
+		Flag::f_add_group_confirm,
+		Flag::f_show_profile,
+		Flag::f_screenshot_notification,
 	};
 }
 

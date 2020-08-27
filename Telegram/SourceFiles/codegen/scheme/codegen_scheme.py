@@ -87,6 +87,8 @@ countedTypeIdExceptions['channelSavedGroups#3c3c74e5'] = True
 countedTypeIdExceptions['channels.getSavedGroups#3c3c74aa'] = True
 countedTypeIdExceptions['channelGroupNotifyCount#3c3c74e9'] = True
 countedTypeIdExceptions['channels.getGroupNotifyCount#3c3c74af'] = True
+countedTypeIdExceptions['chatBannedRights#9f120418'] = True
+countedTypeIdExceptions['messageActionChangeRights#23bf09e5'] = True
 
 
 

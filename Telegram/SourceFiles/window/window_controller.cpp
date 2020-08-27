@@ -27,6 +27,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "mainwindow.h"
 #include "auth_session.h"
 #include "apiwrap.h"
+#include "ui/toast/toast.h"
+#include "lang/lang_keys.h"
 #include "support/support_helper.h"
 #include "styles/style_window.h"
 #include "styles/style_dialogs.h"
@@ -66,6 +68,14 @@ void Navigation::showPeerInfo(
 	//	_session->settings().setThirdSectionInfoEnabled(true);
 	//	_session->saveSettingsDelayed();
 	//}
+	if (auto peer = App::wnd()->controller()->activeChatCurrent().peer()) {
+		if (auto channel = peer->asChannel()) {
+			if (!channel->canShowParticipantProfile() && Auth().userPeerId() != peerId) {
+				Ui::Toast::Show(lang(lng_restricted_show_profile));
+				return;
+			}
+		}
+	}
 	showSection(Info::Memento(peerId), params);
 }
 

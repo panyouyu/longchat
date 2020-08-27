@@ -89,6 +89,9 @@ std::vector<std::pair<ChatRestrictions, LangKey>> RestrictionLabels() {
 		lng_rights_chat_add_members,
 		lng_rights_group_pin,
 		lng_rights_group_info,
+		lng_rights_add_group_confirm,
+		lng_rights_private_communicate,
+		lng_rights_screenshot_notification,
 	};
 
 	std::vector<std::pair<ChatRestrictions, LangKey>> vector;
@@ -178,7 +181,10 @@ ChatRestrictions NegateRestrictions(ChatRestrictions value) {
 		| Flag::f_send_media
 		| Flag::f_send_messages
 		| Flag::f_send_polls
-		| Flag::f_send_stickers);
+		| Flag::f_send_stickers
+		| Flag::f_show_profile
+		| Flag::f_add_group_confirm
+		| Flag::f_screenshot_notification);
 }
 
 auto Dependencies(ChatAdminRights)

@@ -1007,7 +1007,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_action_secure_proof_of_address" = "地址证明";
 "lng_action_secure_phone" = "手机号码";
 "lng_action_secure_email" = "邮箱地址";
-"lng_action_red_envelope" = "{user}领取了{from}的红包";
+"lng_action_change_rights" = "{user} 修改了群权限";
 "lng_action_yourself" = "你";
 
 "lng_ttl_photo_received" = "{from} 发送给您一张自毁照片，请在您的移动设备上查看。";
@@ -1196,6 +1196,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_cant_invite_privacy" = "抱歉，根据该用户的隐私设置，您不能将其添加到群组。";
 "lng_cant_invite_privacy_channel" = "抱歉，根据该用户的隐私设置，您不能将其添加到群组。";
 "lng_cant_invite_bot_to_channel" = "对不起，机器人只能作为管理员添加到通道中。";
+"lng_cant_invite_verifing" = "邀请正在审核...请等待";
 "lng_cant_do_this" = "抱歉，此操作不可用。";
 "lng_cant_invite_offer_admin" = "机器人只能作为管理员添加。";
 "lng_cant_invite_make_admin" = "让管理员";
@@ -1599,6 +1600,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_rights_chat_send_links" = "显示链接预览";
 "lng_rights_chat_send_polls" = "发送调查";
 "lng_rights_chat_add_members" = "添加成员";
+"lng_rights_add_group_confirm" = "申请确认";
+"lng_rights_private_communicate" = "互加好友和私下聊天";
+"lng_rights_screenshot_notification" = "截屏通知";
 "lng_rights_chat_banned_until_header" = "限制,直到";
 "lng_rights_chat_banned_forever" = "永远";
 "lng_rights_chat_banned_day#one" = "{count}天";
@@ -1614,6 +1618,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_restricted_send_gifs" = "此群组的管理员限制了您在此发送 GIF 的权限";
 "lng_restricted_send_inline" = "此群组的管理员限制了您在此发送机器人内容的权限";
 "lng_restricted_send_polls" = "此组的管理员禁止您在此张贴投票。";
+"lng_restricted_show_profile" = "此组的管理员禁止您浏览其他成员信息";
 
 "lng_restricted_send_message_all" = "在这个组中不允许写消息。";
 "lng_restricted_send_media_all" = "不允许在这个组中发布媒体内容。";

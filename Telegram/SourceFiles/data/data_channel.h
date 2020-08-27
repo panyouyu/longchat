@@ -247,6 +247,8 @@ public:
 	}
 	void setDefaultRestrictions(const MTPChatBannedRights &rights);
 
+	bool canShowParticipantProfile() const;
+
 	// Like in ChatData.
 	bool canWrite() const;
 	bool canEditInformation() const;

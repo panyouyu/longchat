@@ -141,6 +141,8 @@ void ShowAddParticipantsError(
 			return PeerFloodErrorText(isGroup
 				? PeerFloodType::InviteGroup
 				: PeerFloodType::InviteChannel);
+		} else if (error == qstr("CHANNEL_JOIN_VERIFYING")) {
+			return lang(lng_cant_invite_verifing);
 		}
 		return lang(lng_failed_add_participant);
 	}();
