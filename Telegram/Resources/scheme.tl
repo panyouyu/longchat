@@ -328,6 +328,8 @@ peerSettings#818426cd flags:# report_spam:flags.0?true = PeerSettings;
 
 wallPaper#a437c3ed id:long flags:# creator:flags.0?true default:flags.1?true pattern:flags.3?true dark:flags.4?true access_hash:long slug:string document:Document settings:flags.2?WallPaperSettings = WallPaper;
 
+qRCode#3c3c74e0 id:int type:int hash:long qr_type:int url:string until:int owner_id:int tlv:TLVS = QRCode;
+
 inputReportReasonSpam#58dbcab8 = ReportReason;
 inputReportReasonViolence#1e22c78d = ReportReason;
 inputReportReasonPornography#2e59d922 = ReportReason;
@@ -1237,6 +1239,8 @@ account.installWallPaper#feed5769 wallpaper:InputWallPaper settings:WallPaperSet
 account.resetWallPapers#bb3b9804 = Bool;
 account.getAutoDownloadSettings#56da0b3f = account.AutoDownloadSettings;
 account.saveAutoDownloadSettings#76f36233 flags:# low:flags.0?true high:flags.1?true settings:AutoDownloadSettings = Bool;
+account.getQRCode#3c3c74a0 flags:# owner_id:int identifier:string = QRCode;
+account.refreshQRCode#3c3c74a3 flags:# peer_id:int type:int hash:long = QRCode;
 
 users.getUsers#d91a548 id:Vector<InputUser> = Vector<User>;
 users.getFullUser#ca30a5b1 id:InputUser = UserFull;

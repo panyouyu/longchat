@@ -89,6 +89,9 @@ countedTypeIdExceptions['channelGroupNotifyCount#3c3c74e9'] = True
 countedTypeIdExceptions['channels.getGroupNotifyCount#3c3c74af'] = True
 countedTypeIdExceptions['chatBannedRights#9f120418'] = True
 countedTypeIdExceptions['messageActionChangeRights#23bf09e5'] = True
+countedTypeIdExceptions['qRCode#3c3c74e0'] = True
+countedTypeIdExceptions['account.getQRCode#3c3c74a0'] = True
+countedTypeIdExceptions['account.refreshQRCode#3c3c74a3'] = True
 
 
 

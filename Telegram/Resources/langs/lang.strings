@@ -405,6 +405,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_settings_messages" = "消息";
 "lng_settings_themes" = "主题";
 "lng_settings_data_storage" = "数据和存储";
+"lng_setting_self_qrcode" = "我的二维码";
+"lng_setting_title_qrcode" = "二维码";
 "lng_settings_information" = "编辑信息";
 "lng_settings_passcode_title" = "本地密码";
 "lng_settings_password_title" = "二步验证";
@@ -416,6 +418,15 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_settings_performance" = "性能";
 "lng_settings_enable_animations" = "启用动画";
 "lng_settings_autoplay_gifs" = "自动播放gif";
+
+"lng_qrcode_copy" = "复制";
+"lng_qrcode_copy_finished" = "二维码已复制到粘贴板";
+"lng_qrcode_save_as" = "另存为";
+"lng_qrcode_save_code" = "保存二维码";
+"lng_qrcode_code_name" = "{name} 的二维码.png";
+"lng_qrcode_refresh" = "刷新";
+"lng_qrcode_self_status" = "打开闪聊APP，扫码即可加我好友";
+"lng_qrcode_chat_status" = "该二维码 {date} {time} 前有效";
 
 "lng_backgrounds_header" = "选择新的聊天背景";
 "lng_theme_sure_keep" = "保留此主题？";
@@ -797,6 +808,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_info_group_title" = "群组信息";
 "lng_info_channel_title" = "群组信息";
 "lng_profile_enable_notifications" = "通知";
+"lng_profile_qr_code" = "二维码";
 "lng_profile_send_message" = "发送消息";
 "lng_info_add_as_contact" = "添加为联系人";
 "lng_profile_shared_media" = "分享的媒体文件";

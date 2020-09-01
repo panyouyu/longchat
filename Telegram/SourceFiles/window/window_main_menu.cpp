@@ -120,14 +120,13 @@ MainMenu::MainMenu(
 		auto& fg = st::trayCounterFg;
 		_mseeage->updateUnReadCount(20, counter, bg, fg);
 	});
-
+	using namespace rpl::mappers;
 	const auto &sessionData = Auth().data();
 	rpl::combine(
 		sessionData.friendRequestValue(),
-		sessionData.groupUnReadCountValue()
-	) | rpl::map([&] {
-		return sessionData.friendRequestCount() + sessionData.groupUnReadCount();
-	}) | rpl::start_with_next([=](auto count) {
+		sessionData.groupUnReadCountValue(),
+		_1 + _2
+	) | rpl::start_with_next([=](auto count) {
 		_contact->updateUnReadCount(20, count, st::trayCounterBg, st::trayCounterFg);
 	}, lifetime());
 	subscribe(Global::RefLongChatMailArgumentsChanged(), [=] {

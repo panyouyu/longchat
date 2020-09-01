@@ -975,3 +975,19 @@ newFriendTextStyle: TextStyle(defaultTextStyle) {
 	font: font(13px);
 	lineHeight: 37px;
 }
+
+qrCodePicTop: 0px;
+qrCodeUserPicSize: 60px;
+qrCodePicNameInterval: 14px;
+qrCodeNameFont: font(15px);
+qrCodeNameStyle: TextStyle(semiboldTextStyle) {
+	font: qrCodeNameFont;
+}
+qrCodeBoxWidth: 300px;
+qrCodeLeft: 20px;
+qrCodePicCodeInterval: -6px;
+qrCodeSize: 50px;
+qrCodeMaxSize: 290px;
+qrCodeCenterSize: 80px;
+qrCodeStatusMargin: margins(0px, 0px, 0px, 0px);
+qrCodeStatusFont: font(13px);

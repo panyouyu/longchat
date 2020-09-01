@@ -13,6 +13,7 @@ namespace {
 
 using ModulesList = QList<internal::ModuleBase*>;
 NeverFreedPointer<ModulesList> styleModules;
+auto PaletteChanges = rpl::event_stream<>();
 
 void startModules() {
 	if (!styleModules) return;
@@ -59,6 +60,14 @@ void stopManager() {
 	internal::stopModules();
 	internal::destroyFonts();
 	internal::destroyIcons();
+}
+
+rpl::producer<> PaletteChanged() {
+	return internal::PaletteChanges.events();
+}
+
+void NotifyPaletteChanged() {
+	internal::PaletteChanges.fire({});
 }
 
 void colorizeImage(const QImage &src, QColor c, QImage *outResult, QRect srcRect, QPoint dstPoint) {

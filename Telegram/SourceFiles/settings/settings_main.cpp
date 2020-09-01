@@ -11,6 +11,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "settings/settings_common.h"
 #include "settings/settings_codes.h"
 #include "settings/settings_chat.h"
+#include "boxes/qrcode_box.h"
 #include "boxes/language_box.h"
 #include "boxes/confirm_box.h"
 #include "boxes/about_box.h"
@@ -30,10 +31,22 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "styles/style_settings.h"
 
 namespace Settings {
+void SetupQRCodeButton(
+	not_null<Ui::VerticalLayout*> container, 
+	bool icon) {
+	const auto button = AddButton(
+		container,
+		lng_setting_self_qrcode,
+		icon ? st::settingsSectionButton : st::settingsButton,
+		icon ? &st::settingIconQRCode : nullptr);
+	button->addClickHandler([] {
+		Ui::show(Box<QRCodeBox>(Auth().user()));
+	});
+}
 
 void SetupLanguageButton(
-		not_null<Ui::VerticalLayout*> container,
-		bool icon) {
+	not_null<Ui::VerticalLayout*> container,
+	bool icon) {
 	const auto button = AddButtonWithLabel(
 		container,
 		lng_settings_language,
@@ -68,6 +81,7 @@ void SetupSections(
 			icon
 		)->addClickHandler([=] { showOther(type); });
 	};
+	SetupQRCodeButton(container);
 	if (Auth().supportMode()) {
 		SetupSupport(container);
 

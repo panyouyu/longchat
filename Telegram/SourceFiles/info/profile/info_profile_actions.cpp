@@ -25,6 +25,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/peer_list_box.h"
 #include "boxes/peer_list_controllers.h"
 #include "boxes/add_contact_box.h"
+#include "boxes/qrcode_box.h"
 #include "boxes/report_box.h"
 #include "lang/lang_keys.h"
 #include "info/info_controller.h"
@@ -112,6 +113,7 @@ public:
 private:
 	object_ptr<Ui::RpWidget> setupInfo();
 	object_ptr<Ui::RpWidget> setupMuteToggle();
+	object_ptr<Ui::RpWidget> setupQRCode();
 	void setupMainButtons();
 	Ui::MultiSlideTracker fillUserButtons(
 		not_null<UserData*> user);
@@ -339,6 +341,22 @@ object_ptr<Ui::RpWidget> DetailsFiller::setupMuteToggle() {
 	return std::move(result);
 }
 
+object_ptr<Ui::RpWidget> DetailsFiller::setupQRCode() {
+	const auto peer = _peer;
+	auto result = object_ptr<Button>(
+		_wrap,
+		Lang::Viewer(lng_profile_qr_code),
+		st::infoNotificationsButton);
+	result->addClickHandler([=] {
+		Ui::show(Box<QRCodeBox>(peer));
+	});
+	object_ptr<FloatingIcon>(
+		result,
+		st::infoIconQRCode,
+		st::infoQRCodeIconPosition);
+	return std::move(result);
+}
+
 void DetailsFiller::setupMainButtons() {
 	auto wrapButtons = [=](auto &&callback) {
 		auto topSkip = _wrap->add(CreateSlideSkipWidget(_wrap));
@@ -448,7 +466,10 @@ object_ptr<Ui::RpWidget> DetailsFiller::fill() {
 	add(CreateSkipWidget(_wrap));
 	add(setupInfo());
 	if (!_peer->isSelf()) {
-		add(setupMuteToggle());
+		add(setupMuteToggle());		
+	}
+	if (_peer->isMegagroup()) {
+		add(setupQRCode());
 	}
 	setupMainButtons();
 	add(CreateSkipWidget(_wrap));

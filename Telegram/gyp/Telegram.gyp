@@ -81,6 +81,7 @@
       'crl.gyp:crl',
       'lib_base.gyp:lib_base',
       'lib_export.gyp:lib_export',
+	  'lib_qr.gyp:lib_qr',
       'lib_storage.gyp:lib_storage',
     ],
 
@@ -110,7 +111,8 @@
       '<(submodules_loc)/GSL/include',
       '<(submodules_loc)/variant/include',
       '<(submodules_loc)/crl/src',
-      '<(submodules_loc)/xxHash',
+	  '<(submodules_loc)/QR/cpp',
+      '<(submodules_loc)/xxHash'
     ],
     'sources': [
       '<@(qrc_files)',

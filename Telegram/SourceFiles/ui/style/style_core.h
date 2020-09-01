@@ -59,6 +59,9 @@ bool setPaletteColor(QLatin1String name, uchar r, uchar g, uchar b, uchar a);
 void startManager();
 void stopManager();
 
+[[nodiscard]] rpl::producer<> PaletteChanged();
+void NotifyPaletteChanged();
+
 // *outResult must be r.width() x r.height(), ARGB32_Premultiplied.
 // QRect(0, 0, src.width(), src.height()) must contain r.
 void colorizeImage(const QImage &src, QColor c, QImage *outResult, QRect srcRect = QRect(), QPoint dstPoint = QPoint(0, 0));

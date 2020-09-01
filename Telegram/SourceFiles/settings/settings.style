@@ -49,6 +49,7 @@ settingsUpdate: InfoProfileButton(infoMainButton, settingsButton) {
 settingsUpdateStatePosition: point(22px, 29px);
 settingsDividerLabelPadding: margins(22px, 10px, 22px, 19px);
 
+settingIconQRCode: icon {{ "settings_qrcode", menuIconFg }};
 settingsIconInformation: icon {{ "settings_information", menuIconFg }};
 settingsIconNotifications: icon {{ "settings_notifications", menuIconFg }};
 settingsIconChat: icon {{ "settings_chat", menuIconFg }};

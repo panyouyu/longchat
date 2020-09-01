@@ -62,6 +62,8 @@
 <(src_loc)/boxes/passcode_box.h
 <(src_loc)/boxes/photo_crop_box.cpp
 <(src_loc)/boxes/photo_crop_box.h
+<(src_loc)/boxes/qrcode_box.cpp
+<(src_loc)/boxes/qrcode_box.h
 <(src_loc)/boxes/rate_call_box.cpp
 <(src_loc)/boxes/rate_call_box.h
 <(src_loc)/boxes/report_box.cpp
@@ -627,6 +629,8 @@
 <(src_loc)/profile/profile_block_widget.h
 <(src_loc)/profile/profile_cover_drop_area.cpp
 <(src_loc)/profile/profile_cover_drop_area.h
+<(src_loc)/qr/qr_generate.cpp
+<(src_loc)/qr/qr_generate.h
 <(src_loc)/settings/settings_advanced.cpp
 <(src_loc)/settings/settings_advanced.h
 <(src_loc)/settings/settings_chat.cpp

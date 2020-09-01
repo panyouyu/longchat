@@ -19,6 +19,9 @@ class VerticalLayout;
 
 namespace Settings {
 
+void SetupQRCodeButton(
+	not_null<Ui::VerticalLayout*> container,
+	bool icon = true);
 void SetupLanguageButton(
 	not_null<Ui::VerticalLayout*> container,
 	bool icon = true);
