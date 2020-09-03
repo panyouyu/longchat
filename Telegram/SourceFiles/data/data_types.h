@@ -307,6 +307,7 @@ using WebPageId = uint64;
 using GameId = uint64;
 using PollId = uint64;
 using WallPaperId = uint64;
+using GroupJoinApplyId = int32;
 constexpr auto CancelledWebPageId = WebPageId(0xFFFFFFFFFFFFFFFFULL);
 
 using PreparedPhotoThumbs = base::flat_map<char, QImage>;

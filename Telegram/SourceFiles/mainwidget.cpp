@@ -125,6 +125,8 @@ enum class Other_ID : uint32 {
 	UnReplyPlayersNum = 5,
 	QueuePlayersNum = 6,
 	GroupStateIncrement = 7,
+	AdminUnReadCount = 10,
+	SavedGroupsChanged = 11,
 };
 
 enum class DataIsLoadedResult {
@@ -3857,6 +3859,10 @@ void MainWidget::feedUpdates(const MTPUpdates &updates, uint64 randomId) {
 		auto& d = updates.c_updateOther();
 		if (d.vother_id.v == int32(Other_ID::FriendsRequestCount)) {
 			Auth().api().requestFriendRequestList();
+		} else if (d.vother_id.v == int32(Other_ID::AdminUnReadCount)) {
+			Auth().data().setGroupUnReadCount(d.vother_int.v);
+		} else if (d.vother_id.v == int32(Other_ID::SavedGroupsChanged)) {
+			Auth().api().requestSavedGroups();
 		}
 	} break;
 	}

@@ -214,6 +214,7 @@ editBioCountdownLabel: FlatLabel(defaultFlatLabel) {
 
 contactUserIcon: icon {{ "settings_name", menuIconFg }};
 contactPhoneIcon: icon {{ "settings_phone_number", menuIconFg }};
+groupJoinChatIcon: icon {{ "settings_chat", menuIconFg }};
 friendRequestVerifyInfoIcon: icon {{ "settings_verify_info", menuIconFg }};
 contactIconPosition: point(-5px, 23px);
 

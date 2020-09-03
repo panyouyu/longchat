@@ -14,11 +14,15 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/image/image.h"
 #include "ui/text_options.h"
 #include "ui/effects/ripple_animation.h"
+#include "ui/toast/toast.h"
 #include "auth_session.h"
 #include "data/data_session.h"
 #include "data/data_channel.h"
 #include "data/data_chat.h"
 #include "data/data_user.h"
+#include "data/data_types.h"
+#include "data/data_group_join_apply.h"
+#include "boxes/handle_group_join_box.h"
 #include "apiwrap.h"
 #include "mainwidget.h"
 #include "lang/lang_keys.h"
@@ -31,6 +35,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 namespace {
 constexpr auto kUserpicSize = 160;
+constexpr auto NewFriendRowId = peerFromUser(1000);
+constexpr auto GroupChatRowId = peerFromUser(2000);
+constexpr auto GroupNotifyRowId = peerFromUser(3000);
 
 void ShareBotGame(not_null<UserData*> bot, not_null<PeerData*> chat) {
 	const auto history = chat->owner().historyLoaded(chat);
@@ -69,6 +76,179 @@ void AddBotToGroup(not_null<UserData*> bot, not_null<PeerData*> chat) {
 	Ui::hideLayer();
 	Ui::showPeerHistory(chat, ShowAtUnreadMsgId);
 }
+
+class SpecialRow : public PeerListRow {
+public:
+	SpecialRow(not_null<PeerData*> peer, QString name)
+		: PeerListRow(peer) {
+		setCustomStatus(QString());
+		_name.setText(st::newFriendTextStyle, name, Ui::NameTextOptions());
+	}
+	virtual ~SpecialRow() = default;
+
+	void paintUserpic(
+		Painter& p,
+		const style::PeerListItem& st,
+		int x,
+		int y,
+		int outerWidth) {
+		auto size = st.photoSize;
+		if (_image)
+			p.drawPixmap(x, y, _image->pixRounded(Data::FileOriginPeerPhoto(Auth().userPeerId()), size, size, ImageRoundRadius::Small));
+	}
+	bool isSpecialRow() const {
+		return true;
+	}
+	void paintSpecialRow(
+		Painter& p,
+		const style::PeerListItem& st,
+		int x,
+		int y,
+		int width,
+		int outerWidth) {
+		auto namew = width;
+		if (_unreadCount > 0) {
+			QString cnt = (_unreadCount < 1000) ? QString("%1").arg(_unreadCount) : QString("..%1").arg(_unreadCount % 100, 2, 10, QChar('0'));
+			QImage result(size, size, QImage::Format_ARGB32);
+			int32 cntSize = cnt.size();
+			result.fill(Qt::transparent);
+			{
+				QPainter p(&result);
+				p.setBrush(bg);
+				p.setPen(Qt::NoPen);
+				p.setRenderHint(QPainter::Antialiasing);
+				int32 fontSize;
+				if (size == 16) {
+					fontSize = (cntSize < 2) ? 11 : ((cntSize < 3) ? 11 : 8);
+				}
+				else if (size == 20) {
+					fontSize = (cntSize < 2) ? 14 : ((cntSize < 3) ? 13 : 10);
+				}
+				else if (size == 24) {
+					fontSize = (cntSize < 2) ? 17 : ((cntSize < 3) ? 16 : 12);
+				}
+				else {
+					fontSize = (cntSize < 2) ? 22 : ((cntSize < 3) ? 20 : 16);
+				}
+				style::font f = { fontSize, 0, 0 };
+				int32 w = f->width(cnt), d, r;
+				if (size == 16) {
+					d = (cntSize < 2) ? 5 : ((cntSize < 3) ? 2 : 1);
+					r = (cntSize < 2) ? 8 : ((cntSize < 3) ? 7 : 3);
+				}
+				else if (size == 20) {
+					d = (cntSize < 2) ? 6 : ((cntSize < 3) ? 2 : 1);
+					r = (cntSize < 2) ? 10 : ((cntSize < 3) ? 9 : 5);
+				}
+				else if (size == 24) {
+					d = (cntSize < 2) ? 7 : ((cntSize < 3) ? 3 : 1);
+					r = (cntSize < 2) ? 12 : ((cntSize < 3) ? 11 : 6);
+				}
+				else {
+					d = (cntSize < 2) ? 9 : ((cntSize < 3) ? 4 : 2);
+					r = (cntSize < 2) ? 16 : ((cntSize < 3) ? 14 : 8);
+				}
+				p.drawRoundedRect(QRect(size - w - d * 2, size - f->height, w + d * 2, f->height), r, r);
+				p.setFont(f);
+				p.setPen(fg);
+				p.drawText(size - w - d, size - f->height + f->ascent, cnt);
+			}
+			if (_unreadCount) {
+				int unread_x = x + width - result.width() - st::mainMenuUnReadCountPadding;
+				int unread_y = y + 10;
+				p.drawImage(unread_x, unread_y, result);
+				namew = unread_x - x;
+			}
+		}
+
+		p.setPen(st::contactsNameFg);
+		_name.drawLeftElided(p, x, y, namew, outerWidth);
+	}
+	void updateUnReadCount(int unreadCount) {
+		if (_unreadCount != unreadCount) {
+			_unreadCount = unreadCount;
+		}
+	}
+	void setImage(QImage& image) {
+		auto img = image.scaledToWidth(
+			kUserpicSize,
+			Qt::SmoothTransformation);
+		_image = Images::Create(std::move(img), "PNG");
+	}
+	rpl::lifetime& lifetime() {
+		return _lifetime;
+	}
+	virtual void click() = 0;
+
+private:
+	ImagePtr _image;
+	Text _name;
+	int _unreadCount = 0;
+	const int size = 20;
+	const style::color& bg = st::trayCounterBg;
+	const style::color& fg = st::trayCounterFg;
+	rpl::lifetime _lifetime;
+};
+
+class NewFriendRow : public SpecialRow {
+public:
+	NewFriendRow(not_null<UserData*> user)
+		: SpecialRow(user, lang(lng_friend_request_new)) {
+		auto image = QImage(":/gui/art/new_friend.png");
+		setImage(image);
+		Auth().data().friendRequestValue(
+		) | rpl::start_with_next([&](auto count) {
+			updateUnReadCount(count);
+		}, lifetime());
+	}
+
+	void click() override {
+		Ui::show(Box<PeerListBox>(std::make_unique<FriendRequestBoxController>(), [](not_null<PeerListBox*> box) {
+			box->addButton(langFactory(lng_close), [box] { box->closeBox(); });
+		}), LayerOption::KeepOther);
+	}
+};
+
+class GroupChatRow : public SpecialRow {
+public:
+	GroupChatRow(not_null<UserData*> user)
+		: SpecialRow(user, lang(lng_chat_group_chat)) {
+		auto image = QImage(":/gui/art/group_chat.png");
+		setImage(image);
+		Auth().data().groupUnReadCountValue(
+		) | rpl::start_with_next([&](auto count) {			
+			updateUnReadCount(count);
+		}, lifetime());
+	}
+
+	void click() override {
+		Ui::show(Box<PeerListBox>(std::make_unique<ChatsBoxController>(), [](not_null<PeerListBox*> box) {
+			box->addButton(langFactory(lng_close), [box] { box->closeBox(); });			
+		}), LayerOption::KeepOther);
+	}
+};
+
+class GroupNotifyRow : public SpecialRow {
+public:
+	GroupNotifyRow(not_null<PeerData*> user)
+		: SpecialRow(user, lang(lng_chat_group_notification)) {
+		auto image = QImage(":/gui/art/group_notify.png");
+		setImage(image);
+		Auth().data().groupUnReadCountValue(
+		) | rpl::start_with_next([&](auto count) {
+			updateUnReadCount(count);
+		}, lifetime());
+	}
+
+	void click() override {
+		Ui::show(Box<PeerListBox>(std::make_unique<ChatsNotifyBoxController>(), [&](not_null<PeerListBox*> box) {
+			box->addButton(langFactory(lng_close), [box] { box->closeBox(); });
+			box->addLeftButton(langFactory(lng_group_join_clean_notify), [] {
+				Auth().api().cleanGroupJoinApplies();
+			});
+		}), LayerOption::KeepOther);
+	}
+};
 
 } // namespace
 
@@ -313,160 +493,6 @@ bool ChatsListBoxController::appendRow(not_null<History*> history) {
 	return false;
 }
 
-class SpecialRow : public PeerListRow {
-public:
-	SpecialRow(not_null<PeerData*> peer, QString name)
-		: PeerListRow(peer) {
-		setCustomStatus(QString());
-		_name.setText(st::newFriendTextStyle, name, Ui::NameTextOptions());
-	}
-	virtual ~SpecialRow() = default;
-
-	void paintUserpic(
-		Painter& p,
-		const style::PeerListItem& st,
-		int x,
-		int y,
-		int outerWidth) {
-		auto size = st.photoSize;
-		if (_image)
-			p.drawPixmap(x, y, _image->pixRounded(Data::FileOriginPeerPhoto(Auth().userPeerId()), size, size, ImageRoundRadius::Small));
-	}
-	bool isSpecialRow() const {
-		return true;
-	}
-	void paintSpecialRow(
-		Painter& p,
-		const style::PeerListItem& st,
-		int x,
-		int y,
-		int width,
-		int outerWidth) {
-		auto namew = width;
-		if (_unreadCount > 0) {
-			QString cnt = (_unreadCount < 1000) ? QString("%1").arg(_unreadCount) : QString("..%1").arg(_unreadCount % 100, 2, 10, QChar('0'));
-			QImage result(size, size, QImage::Format_ARGB32);
-			int32 cntSize = cnt.size();
-			result.fill(Qt::transparent);
-			{
-				QPainter p(&result);
-				p.setBrush(bg);
-				p.setPen(Qt::NoPen);
-				p.setRenderHint(QPainter::Antialiasing);
-				int32 fontSize;
-				if (size == 16) {
-					fontSize = (cntSize < 2) ? 11 : ((cntSize < 3) ? 11 : 8);
-				} else if (size == 20) {
-					fontSize = (cntSize < 2) ? 14 : ((cntSize < 3) ? 13 : 10);
-				} else if (size == 24) {
-					fontSize = (cntSize < 2) ? 17 : ((cntSize < 3) ? 16 : 12);
-				} else {
-					fontSize = (cntSize < 2) ? 22 : ((cntSize < 3) ? 20 : 16);
-				}
-				style::font f = { fontSize, 0, 0 };
-				int32 w = f->width(cnt), d, r;
-				if (size == 16) {
-					d = (cntSize < 2) ? 5 : ((cntSize < 3) ? 2 : 1);
-					r = (cntSize < 2) ? 8 : ((cntSize < 3) ? 7 : 3);
-				} else if (size == 20) {
-					d = (cntSize < 2) ? 6 : ((cntSize < 3) ? 2 : 1);
-					r = (cntSize < 2) ? 10 : ((cntSize < 3) ? 9 : 5);
-				} else if (size == 24) {
-					d = (cntSize < 2) ? 7 : ((cntSize < 3) ? 3 : 1);
-					r = (cntSize < 2) ? 12 : ((cntSize < 3) ? 11 : 6);
-				} else {
-					d = (cntSize < 2) ? 9 : ((cntSize < 3) ? 4 : 2);
-					r = (cntSize < 2) ? 16 : ((cntSize < 3) ? 14 : 8);
-				}
-				p.drawRoundedRect(QRect(size - w - d * 2, size - f->height, w + d * 2, f->height), r, r);
-				p.setFont(f);
-				p.setPen(fg);
-				p.drawText(size - w - d, size - f->height + f->ascent, cnt);
-			}
-			if (_unreadCount) {
-				int unread_x = x + width - result.width() - st::mainMenuUnReadCountPadding;
-				int unread_y = y + 10;
-				p.drawImage(unread_x, unread_y, result);
-				namew = unread_x - x;
-			}
-		}
-
-		p.setPen(st::contactsNameFg);
-		_name.drawLeftElided(p, x, y, namew, outerWidth);
-	}
-	void updateUnReadCount(int unreadCount) {
-		if (_unreadCount != unreadCount) {
-			_unreadCount = unreadCount;
-		}
-	}
-	void setImage(QImage &image) {
-		auto img = image.scaledToWidth(
-			kUserpicSize,
-			Qt::SmoothTransformation);
-		_image = Images::Create(std::move(img), "PNG");
-	}
-	rpl::lifetime &lifetime() {
-		return _lifetime;
-	}
-	virtual void click() = 0;
-		
-private:
-	ImagePtr _image;
-	Text _name;
-	int _unreadCount = 0;
-	const int size = 20;
-	const style::color& bg = st::trayCounterBg;
-	const style::color& fg = st::trayCounterFg;
-	rpl::lifetime _lifetime;
-};
-
-class ContactsBoxController::NewFriendRow : public SpecialRow {
-public:
-	NewFriendRow(not_null<ContactsBoxController*> controller, not_null<UserData*> user) 
-		: SpecialRow(user, lang(lng_friend_request_new))
-		, _controller(controller) {
-			auto image = QImage(":/gui/art/new_friend.png");
-			setImage(image);
-
-			updateUnReadCount(Auth().data().friendRequestCount());
-			Auth().data().friendRequestValue(
-			) | rpl::start_with_next([=](auto count) {
-				updateUnReadCount(count);
-				_controller->delegate()->peerListUpdateRow(this);
-				}, lifetime());
-		}
-
-	void click() override {
-		Ui::show(Box<PeerListBox>(std::make_unique<FriendRequestBoxController>(), [](not_null<PeerListBox*> box) {
-			box->addButton(langFactory(lng_close), [box] { box->closeBox(); });
-		}), LayerOption::KeepOther);
-	}
-private:
-	not_null<ContactsBoxController*> _controller;	
-};
-
-class ContactsBoxController::GroupChatRow : public SpecialRow {
-public:
-	GroupChatRow(not_null<ContactsBoxController*> controller, not_null<UserData*> user)
-		: SpecialRow(user, lang(lng_chat_group_chat))
-		, _controller(controller) {
-		auto image = QImage(":/gui/art/group_chat.png");
-		setImage(image);
-		updateUnReadCount(Auth().data().groupUnReadCount());
-		Auth().data().groupUnReadCountValue(
-		) | rpl::start_with_next([=](auto count) {
-			updateUnReadCount(count);
-			_controller->delegate()->peerListUpdateRow(this);
-			}, lifetime());
-	}
-
-	void click() override {
-		
-	}
-private:
-	not_null<ContactsBoxController*> _controller;	
-};
-
 ContactsBoxController::ContactsBoxController(
 	std::unique_ptr<PeerListSearchController> searchController)
 : PeerListController(std::move(searchController)) {
@@ -502,14 +528,15 @@ void ContactsBoxController::rebuildRows() {
 		return count;
 	};
 	appendRow(Auth().data().user(peerToUser(NewFriendRowId)));
-	//appendRow(Auth().data().user(peerToUser(GroupChatRowId)));
+	appendRow(Auth().data().user(peerToUser(GroupChatRowId)));
 	appendList(App::main()->contactsList());
 	checkForEmptyRows();
 	delegate()->peerListRefreshRows();
 }
 
 void ContactsBoxController::checkForEmptyRows() {
-	if (delegate()->peerListFullRowsCount()) {
+	// always have two row -- NewFriendRow and GroupChatRow
+	if (delegate()->peerListFullRowsCount() > 2) {
 		setDescriptionText(QString());
 	} else {
 		auto &sessionData = Auth().data();
@@ -531,8 +558,7 @@ void ContactsBoxController::rowClicked(not_null<PeerListRow*> row) {
 		static_cast<SpecialRow*>(row.get())->click();
 	} else {
 		Ui::showPeerHistory(row->peer(), ShowAtUnreadMsgId);
-	}
-	
+	}	
 }
 
 bool ContactsBoxController::appendRow(not_null<UserData*> user) {
@@ -549,9 +575,9 @@ bool ContactsBoxController::appendRow(not_null<UserData*> user) {
 
 std::unique_ptr<PeerListRow> ContactsBoxController::createRow(not_null<UserData*> user) {
 	if (user->id == NewFriendRowId) {
-		return std::make_unique<NewFriendRow>(this, user);
+		return std::make_unique<NewFriendRow>(user);
 	} else if (user->id == GroupChatRowId) {
-		return std::make_unique<GroupChatRow>(this, user);
+		return std::make_unique<GroupChatRow>(user);
 	} else {
 		return std::make_unique<PeerListRow>(user);
 	}	
@@ -880,6 +906,254 @@ bool FriendRequestBoxController::appendRow(not_null<UserData*> user) {
 		return false;
 	}
 	if (auto row = createRow(user)) {
+		delegate()->peerListAppendRow(std::move(row));
+		return true;
+	}
+	return false;
+}
+
+ChatsBoxController::ChatsBoxController(
+	std::unique_ptr<PeerListSearchController> searchController)
+	: PeerListController(std::move(searchController)) {
+
+}
+
+void ChatsBoxController::prepare() {
+	setSearchNoResultsText(lang(lng_blocked_list_not_found));
+	delegate()->peerListSetSearchMode(PeerListSearchMode::Enabled);
+	delegate()->peerListSetTitle(langFactory(lng_chats_header));
+
+	Auth().data().savedGroupsChanged(
+	) | rpl::start_with_next([=] {
+		rebuildRows();
+	}, lifetime());
+
+	rebuildRows();
+}
+
+std::unique_ptr<PeerListRow> ChatsBoxController::createSearchRow(
+	not_null<PeerData*> peer) {
+	if (const auto user = peer->asUser()) {
+		return createRow(user);
+	}
+	return nullptr;
+}
+
+void ChatsBoxController::rowClicked(not_null<PeerListRow*> row) {
+	if (row->peer()->isServiceUser()) {
+		static_cast<SpecialRow*>(row.get())->click();
+	} else {
+		Ui::showPeerHistory(row->peer(), ShowAtUnreadMsgId);
+	}
+}
+
+std::unique_ptr<PeerListRow> ChatsBoxController::createRow(not_null<PeerData*> peer) {
+	if (peer->id == GroupNotifyRowId) {
+		auto result = std::make_unique<GroupNotifyRow>(peer);		
+		return result;
+	} else {
+		auto result = std::make_unique<PeerListRow>(peer);
+		if (auto chat = peer->asChat()) {
+			result->setCustomStatus(lng_chat_status_members(lt_count, chat->count));
+		} else if (auto channel = peer->asChannel()) {
+			result->setCustomStatus(lng_chat_status_members(lt_count, channel->membersCount()));
+		}			
+		return result;
+	}
+}
+
+void ChatsBoxController::rebuildRows() {
+	auto appendList = [this](auto chats) {
+		auto count = 0;
+		for (const auto chat : chats) {			
+			if (appendRow(chat)) {
+				++count;
+			}
+		}
+		return count;
+	};
+	appendRow(Auth().data().peer(GroupNotifyRowId));
+	appendList(Auth().data().savedGroups());
+	checkForEmptyRows();
+	delegate()->peerListRefreshRows();
+}
+
+void ChatsBoxController::checkForEmptyRows() {
+	// always have one special row -- GroupNotifyRow
+	if (delegate()->peerListFullRowsCount() > 1) {
+		setDescriptionText(QString());
+	} else {
+		setDescriptionText(lang(lng_chats_no_saved));
+	}
+}
+
+bool ChatsBoxController::appendRow(not_null<PeerData*> peer) {
+	if (auto row = delegate()->peerListFindRow(peer->id)) {
+		return false;
+	}
+	if (auto row = createRow(peer)) {
+		delegate()->peerListAppendRow(std::move(row));
+		return true;
+	}
+	return false;
+}
+
+class ChatsNotifyBoxController::Row : public PeerListRow{
+public:
+	Row(not_null<PeerListController*> controller,
+		not_null<GroupJoinApply*> apply)
+		: PeerListRow(Auth().data().peer(PeerId(apply->id())))
+		, _controller(controller)
+		, _apply(apply) {
+		refreshText();
+	}
+
+	virtual ~Row() = default;
+
+	void paintUserpic(
+		Painter & p,
+		const style::PeerListItem & st,
+		int x,
+		int y,
+		int outerWidth) {
+		auto size = st.photoSize;
+		if (_apply->applicant()->isSelf()) {
+			_apply->applicant()->paintUserpicRounded(p, x, y, size);
+		} else {
+			_apply->group()->paintUserpicRounded(p, x, y, size);
+		}
+	}
+	bool isSpecialRow() const {
+		return true;
+	}
+	void paintSpecialRow(
+		Painter & p,
+		const style::PeerListItem & st,
+		int x,
+		int y,
+		int width,
+		int outerWidth) {
+		auto namew = width;
+
+		p.setPen(st::contactsNameFg);
+		_text.drawLeftElided(p, x, y, namew, outerWidth);
+	}
+
+	void refreshText() {
+		auto status = _apply->status();
+		auto requestStatus = [=] {			
+			if (status == GroupJoinApply::Verifing) {
+				return lang(lng_group_join_apply_is_verifing);
+			} else if (status == GroupJoinApply::Refused) {
+				return lng_group_join_apply_been_refused(lt_name, _apply->verifyUserName());
+			} else if (status == GroupJoinApply::Accepted) {
+				return lng_group_join_apply_been_accepted(lt_name, _apply->verifyUserName());
+			} else if (status == GroupJoinApply::Invalid) {
+				return lang(lng_group_join_invalid);
+			}else {
+				Unexpected("unsupported status in GroupJoinApply");
+			}
+		};
+
+		auto verifyStatus = [=] {
+			if (status == GroupJoinApply::Status::Verifing) {
+				return lng_group_join_apply_verifying(
+					lt_user, _apply->applicant()->name,
+					lt_chat, _apply->group()->name);
+			} else if (status == GroupJoinApply::Status::Refused) {
+				return lng_group_join_apply_refused(
+					lt_name, _apply->verifyUserName(),
+					lt_user, _apply->applicant()->name,
+					lt_chat, _apply->group()->name);
+			} else if (status == GroupJoinApply::Status::Accepted) {
+				return lng_group_join_apply_accepted(
+					lt_name, _apply->verifyUserName(),
+					lt_user, _apply->applicant()->name,
+					lt_chat, _apply->group()->name);
+			} else {
+				Unexpected("unsupported status in GroupJoinApply");
+			}
+		};
+		_text.setText(st::newFriendTextStyle, 
+			_apply->applicant()->isSelf()
+				? requestStatus()
+				: verifyStatus(), 
+			Ui::NameTextOptions());
+	}
+	void click() {
+		if (_apply->applicant()->isSelf() &&
+			_apply->status() == GroupJoinApply::Status::Accepted) {
+			Ui::showPeerHistory(_apply->group(), ShowAtUnreadMsgId);			
+		}
+
+		if (!_apply->applicant()->isSelf() &&
+			_apply->status() == GroupJoinApply::Status::Verifing) {
+			Ui::show(Box<HandleGroupJoin>(_controller, _apply), LayerOption::KeepOther);
+		}
+	}
+	not_null<GroupJoinApply*> apply() const {
+		return _apply;
+	}
+private:
+	not_null<PeerListController*> _controller;
+	not_null<GroupJoinApply*> _apply;
+	Text _text;
+};
+
+ChatsNotifyBoxController::ChatsNotifyBoxController(
+	std::unique_ptr<PeerListSearchController> searchController)
+	: PeerListController(std::move(searchController)) {	
+}
+
+void ChatsNotifyBoxController::prepare() {
+	delegate()->peerListSetSearchMode(PeerListSearchMode::Enabled);
+	delegate()->peerListSetTitle(langFactory(lng_chat_group_notification));
+
+	auto appendList = [=](auto list) {
+		auto count = 0;
+		for (auto id : list) {
+			count += appendRow(Auth().data().groupJoinApply(id));
+		}
+		return count;
+	};
+	Auth().api().groupJoinApplies(
+	) | rpl::start_with_next([=](auto list) {
+		delegate()->peerListRestoreState(delegate()->peerListSaveState());
+		appendList(list);
+		checkForEmptyRows();
+		delegate()->peerListRefreshRows();
+	}, lifetime());
+	Auth().api().requestGroupJoinApplies();
+}
+
+void ChatsNotifyBoxController::rowClicked(not_null<PeerListRow*> row) {
+	static_cast<Row*>(row.get())->click();
+}
+
+void ChatsNotifyBoxController::refreshRow(not_null<GroupJoinApply*> apply) {
+	if (auto row = delegate()->peerListFindRow(apply->id())) {
+		static_cast<Row*>(row)->refreshText();
+		delegate()->peerListUpdateRow(row);
+	}	
+}
+
+std::unique_ptr<PeerListRow> ChatsNotifyBoxController::createRow(not_null<GroupJoinApply*> apply) {
+	return std::make_unique<Row>(this, apply);
+}
+
+void ChatsNotifyBoxController::checkForEmptyRows() {
+	if (delegate()->peerListFullRowsCount()) {
+		setDescriptionText(QString());
+	} else {
+		setDescriptionText(lang(lng_group_join_apply_empty));
+	}
+}
+
+bool ChatsNotifyBoxController::appendRow(not_null<GroupJoinApply*> apply) {
+	if (auto row = delegate()->peerListFindRow(apply->id())) {
+		return false;
+	}
+	if (auto row = createRow(apply)) {
 		delegate()->peerListAppendRow(std::move(row));
 		return true;
 	}

@@ -14,6 +14,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "mtproto/sender.h"
 #include "chat_helpers/stickers.h"
 #include "data/data_messages.h"
+#include "data/data_group_join_apply.h"
 
 class TaskQueue;
 class AuthSession;
@@ -80,7 +81,16 @@ public:
 
 	void requestContacts();
 	void requestFriendRequestList(int page = 1);
-	void requestGroupNotifyCount();
+	void requestSavedGroups();
+	void requestGroupNotifyUnReadCount();
+	auto groupJoinApplyCurrent() const {
+		return _groupJoinApply.current();
+	}
+	rpl::producer<std::list<GroupJoinApplyId>> groupJoinApplies() const {
+		return _groupJoinApply.value();
+	}
+	void requestGroupJoinApplies();
+	void cleanGroupJoinApplies();
 	void requestDialogEntry(not_null<Data::Feed*> feed);
 	//void requestFeedDialogsEntries(not_null<Data::Feed*> feed);
 	void requestDialogEntry(
@@ -706,6 +716,11 @@ private:
 	mtpRequestId _contactsStatusesRequestId = 0;
 	mtpRequestId _friendRequestListId = 0;
 	mtpRequestId _groupNotifyCountId = 0;
+	mtpRequestId _savedGroups = 0;
+	mtpRequestId _groupNotifyUnReadCountId = 0;
+	mtpRequestId _groupAppliesId = 0;
+	mtpRequestId _cleanGroupJoinApplyId = 0;
+	rpl::variable<std::list<GroupJoinApplyId>> _groupJoinApply = {};
 	base::flat_set<not_null<Data::Feed*>> _dialogFeedRequests;
 	base::flat_map<
 		not_null<History*>,

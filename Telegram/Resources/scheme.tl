@@ -329,6 +329,11 @@ peerSettings#818426cd flags:# report_spam:flags.0?true = PeerSettings;
 wallPaper#a437c3ed id:long flags:# creator:flags.0?true default:flags.1?true pattern:flags.3?true dark:flags.4?true access_hash:long slug:string document:Document settings:flags.2?WallPaperSettings = WallPaper;
 
 qRCode#3c3c74e0 id:int type:int hash:long qr_type:int url:string until:int owner_id:int tlv:TLVS = QRCode;
+groupNotifyCount#3c3c74e9 unread_count:int = GroupNotifyCount;
+groupJoinApplyInfo#3c3c74c1 user:User chat:Chat apply_id:int remark:string state:int verify_user:string = GroupJoinApplyInfo;
+groupJoinApplies#3c3c74e4 applies:Vector<GroupJoinApplyInfo> tlvs:TLVS = GroupJoinApplies;
+groupJoinVerifyResponse#3c3c74e8 code:int = GroupJoinVerifyResponse;
+cleanGroupNotifyResponse#3c3c74eb code:int = CleanGroupNotifyResponse;
 
 inputReportReasonSpam#58dbcab8 = ReportReason;
 inputReportReasonViolence#1e22c78d = ReportReason;
@@ -970,8 +975,7 @@ channels.adminLogResults#ed8af74d events:Vector<ChannelAdminLogEvent> chats:Vect
 
 channelAdminLogEventsFilter#ea107ae4 flags:# join:flags.0?true leave:flags.1?true invite:flags.2?true ban:flags.3?true unban:flags.4?true kick:flags.5?true unkick:flags.6?true promote:flags.7?true demote:flags.8?true info:flags.9?true settings:flags.10?true pinned:flags.11?true edit:flags.12?true delete:flags.13?true = ChannelAdminLogEventsFilter;
 
-channelSavedGroups#3c3c74e5 groups:Vector<Chat> = ChannelSavedGroups;
-channelGroupNotifyCount#3c3c74e9 unread_count:int = ChannelGroupNotifyCount;
+savedGroups#3c3c74e5 groups:Vector<Chat> = SavedGroups;
 
 popularContact#5ce14175 client_id:long importers:int = PopularContact;
 
@@ -1241,6 +1245,11 @@ account.getAutoDownloadSettings#56da0b3f = account.AutoDownloadSettings;
 account.saveAutoDownloadSettings#76f36233 flags:# low:flags.0?true high:flags.1?true settings:AutoDownloadSettings = Bool;
 account.getQRCode#3c3c74a0 flags:# owner_id:int identifier:string = QRCode;
 account.refreshQRCode#3c3c74a3 flags:# peer_id:int type:int hash:long = QRCode;
+account.groupJoinVerify#3c3c74ae flags:# apply_id:int verify_result:int = GroupJoinVerifyResponse;
+account.getGroupNotifyCount#3c3c74af flags:# = GroupNotifyCount;
+account.getSavedGroups#3c3c74aa flags:# = SavedGroups;
+account.getGroupJoinApplies#3c3c74a4 flags:# = GroupJoinApplies;
+account.cleanGroupJoinNotify#3c3c74b1 flags:# = CleanGroupNotifyResponse;
 
 users.getUsers#d91a548 id:Vector<InputUser> = Vector<User>;
 users.getFullUser#ca30a5b1 id:InputUser = UserFull;
@@ -1446,9 +1455,6 @@ channels.readMessageContents#eab5dc38 channel:InputChannel id:Vector<int> = Bool
 channels.deleteHistory#af369d42 channel:InputChannel max_id:int = Bool;
 channels.togglePreHistoryHidden#eabbb94c channel:InputChannel enabled:Bool = Updates;
 channels.getLeftChannels#8341ecc0 offset:int = messages.Chats;
-
-channels.getSavedGroups#3c3c74aa flags:# = ChannelSavedGroups;
-channels.getGroupNotifyCount#3c3c74af flags:# = ChannelGroupNotifyCount;
 
 bots.sendBindUserRequest#3b9acded params:string data:DataJSON = contacts.ImportedContacts;
 bots.sendConsultationType#3b9acdeb bot_id:int consult_id:int = Bool;

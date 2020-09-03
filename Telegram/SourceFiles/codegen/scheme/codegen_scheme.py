@@ -79,34 +79,28 @@ countedTypeIdExceptions['contacts.handelFriendRequest#3b9aca27'] = True
 countedTypeIdExceptions['updateOther#3b9aca1f'] = True
 countedTypeIdExceptions['config#e6ca25f6'] = True
 countedTypeIdExceptions['configUrl#3b9acad6'] = True
+countedTypeIdExceptions['configMail#3b9acadb'] = True
 countedTypeIdExceptions['contacts.searchContact#3b9aca16'] = True
 countedTypeIdExceptions['contacts.sendContactRequest#3b9aca18'] = True
 countedTypeIdExceptions['contacts.contactRequestResponse#3b9aca15'] = True
 countedTypeIdExceptions['contacts.contactSearchResponse#3b9aca17'] = True
-countedTypeIdExceptions['channelSavedGroups#3c3c74e5'] = True
-countedTypeIdExceptions['channels.getSavedGroups#3c3c74aa'] = True
-countedTypeIdExceptions['channelGroupNotifyCount#3c3c74e9'] = True
-countedTypeIdExceptions['channels.getGroupNotifyCount#3c3c74af'] = True
+countedTypeIdExceptions['savedGroups#3c3c74e5'] = True
+countedTypeIdExceptions['account.getSavedGroups#3c3c74aa'] = True
 countedTypeIdExceptions['chatBannedRights#9f120418'] = True
 countedTypeIdExceptions['messageActionChangeRights#23bf09e5'] = True
 countedTypeIdExceptions['qRCode#3c3c74e0'] = True
 countedTypeIdExceptions['account.getQRCode#3c3c74a0'] = True
 countedTypeIdExceptions['account.refreshQRCode#3c3c74a3'] = True
+countedTypeIdExceptions['groupNotifyCount#3c3c74e9'] = True
+countedTypeIdExceptions['account.getGroupNotifyCount#3c3c74af'] = True;
+countedTypeIdExceptions['groupJoinApplyInfo#3c3c74c1'] = True
+countedTypeIdExceptions['groupJoinApplies#3c3c74e4'] = True
+countedTypeIdExceptions['account.getGroupJoinApplies#3c3c74a4'] = True
+countedTypeIdExceptions['groupJoinVerifyResponse#3c3c74e8'] = True
+countedTypeIdExceptions['account.groupJoinVerify#3c3c74ae'] = True
+countedTypeIdExceptions['cleanGroupNotifyResponse#3c3c74eb'] = True
+countedTypeIdExceptions['account.cleanGroupJoinNotify#3c3c74b1'] = True
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-countedTypeIdExceptions['configMail#3b9acadb'] = True
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';
 

@@ -169,6 +169,7 @@ void MainMenu::updateControlsGeometry() {
 	_newChat->moveToLeft(left, top);
 	top += _newChat->height();
 
+
 #ifdef Q_OS_WIN
 	if (!_mail->isHidden()) {
 		_mail->resizeToWidth(width());
@@ -176,8 +177,7 @@ void MainMenu::updateControlsGeometry() {
 		top += _mail->height();
 	}
 #endif // Q_OS_WIN
-	
-	_setting->resizeToWidth(width());
+		_setting->resizeToWidth(width());
 	_setting->moveToLeft(left, height() - _setting->height());
 }
 

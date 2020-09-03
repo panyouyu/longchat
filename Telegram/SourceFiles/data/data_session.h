@@ -19,6 +19,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 class Image;
 class HistoryItem;
 class BoxContent;
+class GroupJoinApply;
 struct WebPageCollage;
 enum class WebPageType;
 
@@ -115,6 +116,9 @@ public:
 	UserData * processFriendRequests(const MTPVector<MTPFriendRequest> &data);
 	std::list<not_null<UserData*>> &friendRequests() {
 		return _friendRequests;
+	}
+	std::list<not_null<PeerData*>> &savedGroups() {
+		return _savedGroups;
 	}
 
 	void applyMaximumChatVersions(const MTPVector<MTPChat> &data);
@@ -216,22 +220,26 @@ public:
 	void notifySavedGifsUpdated();
 	[[nodiscard]] rpl::producer<> savedGifsUpdated() const;
 
-	int friendRequestCount() const {
-		return _friendsRequestChanged.current();
-	}
 	void notifyFriendRequestChanged();
 	[[nodiscard]] rpl::producer<int> friendRequestValue() const {
 		return _friendsRequestChanged.value();
 	}
 
+	void setGroupUnReadCount(int count) {
+		if (count >= 0) {
+			_groupUnReadCount = count;
+		}		
+	}
 	int groupUnReadCount() const {
 		return _groupUnReadCount.current();
 	}
-	void setGroupUnReadCount(int count) {
-		_groupUnReadCount = count;
-	}
 	[[nodiscard]] rpl::producer<int> groupUnReadCountValue() const {
 		return _groupUnReadCount.value();
+	}
+
+	void addSavedGroups(std::list<not_null<PeerData*>> groups);
+	[[nodiscard]] rpl::producer<> savedGroupsChanged() const {
+		return _savedGroupsStream.events();
 	}
 
 	bool stickersUpdateNeeded(crl::time now) const {
@@ -450,6 +458,9 @@ public:
 	[[nodiscard]] not_null<PollData*> poll(PollId id);
 	not_null<PollData*> processPoll(const MTPPoll &data);
 	not_null<PollData*> processPoll(const MTPDmessageMediaPoll &data);
+
+	[[nodiscard]] not_null<GroupJoinApply*> groupJoinApply(GroupJoinApplyId id);
+	not_null<GroupJoinApply*> processGroupJionApply(const MTPDgroupJoinApplyInfo &apply);
 
 	[[nodiscard]] not_null<LocationData*> location(
 		const LocationCoords &coords);
@@ -737,6 +748,7 @@ private:
 	rpl::event_stream<> _savedGifsUpdated;
 	rpl::variable<int> _friendsRequestChanged = 0;
 	rpl::variable<int> _groupUnReadCount = 0;
+	rpl::event_stream<> _savedGroupsStream;
 	crl::time _lastStickersUpdate = 0;
 	crl::time _lastRecentStickersUpdate = 0;
 	crl::time _lastFavedStickersUpdate = 0;
@@ -792,6 +804,9 @@ private:
 		GameId,
 		std::unique_ptr<GameData>> _games;
 	std::unordered_map<
+		GroupJoinApplyId,
+		std::unique_ptr<GroupJoinApply>> _groupJoinApplies;
+	std::unordered_map<
 		not_null<const GameData*>,
 		base::flat_set<not_null<ViewElement*>>> _gameViews;
 	std::unordered_map<
@@ -833,6 +848,7 @@ private:
 	std::unordered_map<PeerId, std::unique_ptr<PeerData>> _peers;
 	std::unordered_map<PeerId, std::unique_ptr<History>> _histories;
 	std::list<not_null<UserData*>> _friendRequests;
+	std::list<not_null<PeerData*>> _savedGroups;
 	MessageIdsList _mimeForwardIds;
 
 	using CredentialsWithGeneration = std::pair<

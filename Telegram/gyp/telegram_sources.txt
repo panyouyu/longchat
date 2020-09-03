@@ -48,6 +48,8 @@
 <(src_loc)/boxes/edit_privacy_box.h
 <(src_loc)/boxes/handle_friend_request_box.cpp
 <(src_loc)/boxes/handle_friend_request_box.h
+<(src_loc)/boxes/handle_group_join_box.cpp
+<(src_loc)/boxes/handle_group_join_box.h
 <(src_loc)/boxes/language_box.cpp
 <(src_loc)/boxes/language_box.h
 <(src_loc)/boxes/local_storage_box.cpp
@@ -184,6 +186,7 @@
 <(src_loc)/data/data_file_origin.h
 <(src_loc)/data/data_flags.h
 <(src_loc)/data/data_game.h
+<(src_loc)/data/data_group_join_apply.h
 <(src_loc)/data/data_groups.cpp
 <(src_loc)/data/data_groups.h
 <(src_loc)/data/data_media_types.cpp

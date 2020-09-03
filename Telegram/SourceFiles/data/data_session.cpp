@@ -41,6 +41,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "data/data_web_page.h"
 #include "data/data_game.h"
 #include "data/data_poll.h"
+#include "data/data_group_join_apply.h"
 #include "styles/style_boxes.h" // for st::backgroundSize
 
 namespace Data {
@@ -1425,6 +1426,14 @@ void Session::notifyFriendRequestChanged() {
 	_friendsRequestChanged = size;
 }
 
+void Data::Session::addSavedGroups(std::list<not_null<PeerData*>> groups) {
+	for (auto chat : groups) {
+		_savedGroups.emplace_back(chat);
+	}
+	_savedGroups.erase(std::unique(_savedGroups.begin(), _savedGroups.end()), _savedGroups.end());
+	_savedGroupsStream.fire({});
+}
+
 void Session::userIsContactUpdated(not_null<UserData*> user) {
 	const auto i = _contactViews.find(peerToUser(user->id));
 	if (i != _contactViews.end()) {
@@ -2607,6 +2616,26 @@ not_null<PollData*> Session::processPoll(const MTPDmessageMediaPoll &data) {
 	if (changed) {
 		notifyPollUpdateDelayed(result);
 	}
+	return result;
+}
+
+not_null<GroupJoinApply*> Data::Session::groupJoinApply(GroupJoinApplyId id) {
+	auto i = _groupJoinApplies.find(id);
+	if (i == _groupJoinApplies.cend()) {
+		i = _groupJoinApplies.emplace(id, std::make_unique<GroupJoinApply>(id)).first;
+	}
+	return i->second.get();
+}
+
+not_null<GroupJoinApply*> Data::Session::processGroupJionApply(const MTPDgroupJoinApplyInfo& apply) {
+	auto result = groupJoinApply(apply.vapply_id.v);
+
+	result->setApplicant(processUser(apply.vuser));
+	result->setGroup(processChat(apply.vchat));
+	result->setRemark(qs(apply.vremark));
+	result->setStatus(GroupJoinApply::Status(apply.vstate.v));
+	result->setVerifyUserName(qs(apply.vverify_user));
+
 	return result;
 }
 

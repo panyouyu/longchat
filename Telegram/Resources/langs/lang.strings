@@ -245,6 +245,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_no_chats" = "您的对话将在此处显示";
 "lng_contacts_loading" = "加载中...";
 "lng_contacts_not_found" = "未找到任何联系人";
+"lng_chats_no_saved" = "尚未保存群聊到这里";
 "lng_dlg_search_for_messages" = "搜索消息";
 "lng_update_telegram" = "更新闪聊";
 "lng_dlg_search_in" = "搜索消息 从";
@@ -298,6 +299,25 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_friend_request_refuse" = "拒绝";
 "lng_friend_request_accept_fail" = "同意添加好友失败";
 "lng_friend_request_refuse_fail" = "拒绝添加好友失败";
+
+"lng_group_join_apply_is_verifing" = "审核中";
+"lng_group_join_apply_been_refused" = " {name} 拒绝了您的加群申请";
+"lng_group_join_apply_been_accepted" = " {name} 同意您的加群申请";
+"lng_group_join_apply_verifying" = " {user} 申请加入群 {chat} ";
+"lng_group_join_apply_refused" = " {name} 拒绝了 {user} 添加 {chat} 的申请";
+"lng_group_join_apply_accepted" = " {name} 同意了 {user} 添加 {chat} 的申请";
+"lng_group_join_apply_empty" = "没有通知";
+"lng_group_join_request" = "加群申请";
+"lng_group_join_applicant" = "申请人";
+"lng_group_join_group" = "群组";
+"lng_group_join_remark" = "备注";
+"lng_group_join_agree" = "同意";
+"lng_group_join_refuse" = "拒绝";
+"lng_group_join_verify_refuse" = "确认要拒绝 {name} 的加群申请吗？";
+"lng_group_join_have_verified" = "其他管理员已处理该请求";
+"lng_group_join_invalid" = "该请求已失效";
+"lng_group_join_clean_notify" = "清除群通知";
+"lng_group_join_clean_fail" = "清除失败";
 
 "lng_settings_section_notify" = "通知";
 "lng_settings_notify_title" = "聊天记录的通知";
@@ -1412,6 +1432,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_create_group_invite_link" = "邀请链接";
 "lng_create_group_description" = "简介（可选）";
 
+"lng_chats_header" = "群聊";
+
 "lng_drag_images_here" = "拖拽图片到此处";
 "lng_drag_photos_here" = "拖拽照片到此处";
 "lng_drag_files_here" = "拖拽文件到此处";
@@ -1612,7 +1634,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_rights_chat_send_links" = "显示链接预览";
 "lng_rights_chat_send_polls" = "发送调查";
 "lng_rights_chat_add_members" = "添加成员";
-"lng_rights_add_group_confirm" = "申请确认";
+"lng_rights_add_group_confirm" = "添加成员不需要审核";
 "lng_rights_private_communicate" = "互加好友和私下聊天";
 "lng_rights_screenshot_notification" = "截屏通知";
 "lng_rights_chat_banned_until_header" = "限制,直到";

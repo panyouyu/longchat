@@ -10,7 +10,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "boxes/peer_list_box.h"
 #include "base/flat_set.h"
 #include "base/weak_ptr.h"
+#include "mtproto/rpc_sender.h"
 
+class GroupJoinApply;
 // Not used for now.
 //
 //class MembersAddButton : public Ui::RippleButton {
@@ -133,10 +135,6 @@ protected:
 	}
 
 private:
-	static constexpr auto NewFriendRowId = peerFromUser(1000);
-	static constexpr auto GroupChatRowId = peerFromUser(2000);
-	class NewFriendRow;
-	class GroupChatRow;
 	void rebuildRows();
 	void checkForEmptyRows();
 	bool appendRow(not_null<UserData*> user);
@@ -222,4 +220,45 @@ private:
 	void checkForEmptyRows();
 	bool appendRow(not_null<UserData*> user);
 	rpl::lifetime _lifetime;
+};
+
+class ChatsBoxController
+	: public PeerListController
+	, protected base::Subscriber {
+public:
+	ChatsBoxController(
+		std::unique_ptr<PeerListSearchController> searchController
+		= std::make_unique<PeerListGlobalSearchController>());
+
+	void prepare() override final;
+	std::unique_ptr<PeerListRow> createSearchRow(not_null<PeerData*> peer) override final;
+	void rowClicked(not_null<PeerListRow*> row) override;
+
+protected:
+	virtual std::unique_ptr<PeerListRow> createRow(not_null<PeerData*> peer);
+
+private:
+	void rebuildRows();
+	void checkForEmptyRows();
+	bool appendRow(not_null<PeerData*> peer);
+};
+
+class ChatsNotifyBoxController
+	: public PeerListController
+	, public RPCSender {
+public:
+	ChatsNotifyBoxController(
+		std::unique_ptr<PeerListSearchController> searchController
+		= std::make_unique<PeerListGlobalSearchController>());
+
+	void prepare() override final;
+	void rowClicked(not_null<PeerListRow*> row) override;
+	void refreshRow(not_null<GroupJoinApply*> apply);
+protected:
+	virtual std::unique_ptr<PeerListRow> createRow(not_null<GroupJoinApply*> apply);
+
+private:
+	class Row;
+	void checkForEmptyRows();
+	bool appendRow(not_null<GroupJoinApply*> apply);
 };

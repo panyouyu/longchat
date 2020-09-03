@@ -709,17 +709,87 @@ void ApiWrap::requestFriendRequestList(int page) {
 	}).send();
 }
 
-void ApiWrap::requestGroupNotifyCount() {
-	if (_groupNotifyCountId) return;
+void ApiWrap::requestSavedGroups() {
+	if (_savedGroups) return;
 
-	const auto flag = MTPchannels_GetGroupNotifyCount::Flags(0);
-	_groupNotifyCountId = request(MTPchannels_GetGroupNotifyCount(
-		MTP_flags(flag)
-	)).done([=](const MTPChannelGroupNotifyCount &count) {
+	_savedGroups = request(MTPaccount_GetSavedGroups(
+		MTP_flags(MTPaccount_GetSavedGroups::Flags(0))
+	)).done([=](const MTPSavedGroups &data) {
+		_savedGroups = 0;
+		data.match([=](const MTPDsavedGroups &groups) {
+			std::list<not_null<PeerData*>> chats;
+			for (auto &chat : groups.vgroups.v) {
+				chats.emplace_back(_session->data().processChat(chat));
+			}
+			_session->data().addSavedGroups(chats);
+		});
+	}).fail([=](const RPCError &error){
+		_savedGroups = 0;
+	}).send();
+}
+
+void ApiWrap::requestGroupNotifyUnReadCount() {
+	if (_groupNotifyUnReadCountId) return;
+
+	_groupNotifyUnReadCountId = request(MTPaccount_GetGroupNotifyCount(
+		MTP_flags(MTPaccount_GetGroupNotifyCount::Flags(0)))
+	).done([=](const MTPGroupNotifyCount &data) {
+		_groupNotifyUnReadCountId = 0;
+		data.match([=](const MTPDgroupNotifyCount& count) {
+			_session->data().setGroupUnReadCount(count.vunread_count.v);
+		});
+	}).send();
+}
+
+void ApiWrap::requestGroupJoinApplies() {
+	if (_groupAppliesId) return;
+
+	_groupAppliesId = request(MTPaccount_GetGroupJoinApplies(
+		MTP_flags(MTPaccount_GetGroupJoinApplies::Flags(0)))
+	).done([=](const MTPGroupJoinApplies &data) {
 		_groupNotifyCountId = 0;
-		Auth().data().setGroupUnReadCount(count.c_channelGroupNotifyCount().vunread_count.v);
-	}).fail([=](const RPCError &) {
+		data.match([=](const MTPDgroupJoinApplies& applies) {
+			std::list<GroupJoinApplyId> applyList;
+			for (const auto apply : applies.vapplies.v) {
+				apply.match([&applyList, this](const MTPDgroupJoinApplyInfo& applyInfo) {
+					auto groupJoinApply = _session->data().processGroupJionApply(applyInfo);
+					applyList.push_back(groupJoinApply->id());
+				});
+			}
+			applyList.sort([](auto a, auto b) {
+				auto& sessionData = Auth().data();
+				auto apply_a = sessionData.groupJoinApply(a);
+				auto apply_b = sessionData.groupJoinApply(b);
+				return apply_a->applicant()->isSelf()
+					? apply_b->applicant()->isSelf()
+						? apply_a->status() < apply_b->status()
+						: true
+					: apply_b->applicant()->isSelf()
+						? false
+						: apply_a->status() < apply_b->status();
+			});
+			_groupJoinApply = applyList;
+		});
+	}).fail([=](const RPCError &error) {
 		_groupNotifyCountId = 0;
+	}).send();
+}
+
+void ApiWrap::cleanGroupJoinApplies() {
+	if (_cleanGroupJoinApplyId) return;
+
+	_cleanGroupJoinApplyId = request(MTPaccount_CleanGroupJoinNotify(
+		MTP_flags(MTPaccount_CleanGroupJoinNotify::Flags(0)))
+	).done([=](const MTPCleanGroupNotifyResponse &data) {
+		_cleanGroupJoinApplyId = 0;
+		data.match([=](const MTPDcleanGroupNotifyResponse& response) {
+			auto code = response.vcode.v;
+			if (code == 0) {
+				_groupJoinApply = {};
+			}
+		});
+	}).fail([=](const RPCError &error) {
+		_cleanGroupJoinApplyId = 0;
 	}).send();
 }
 

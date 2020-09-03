@@ -556,7 +556,8 @@ void DialogsWidget::dialogsReceived(
 	}
 	Auth().api().requestContacts();
 	Auth().api().requestFriendRequestList();
-	//Auth().api().requestGroupNotifyCount();
+	Auth().api().requestSavedGroups();
+	Auth().api().requestGroupNotifyUnReadCount();
 }
 
 void DialogsWidget::updateDialogsOffset(
