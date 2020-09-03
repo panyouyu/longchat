@@ -1988,9 +1988,12 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_polls_create_maximum" = "您已经添加了最大选项数。";
 "lng_polls_create_button" = "创建";
 
-// and by panyouyu
+
 "lng_setting_screenshot_tip" = "隐藏当前窗口";
 "lng_save_screenshot_image" = "保存截图";
+
+"lng_mail_is_starting" = "正在启动";
+"lng_mail_is_runging" = "正在运行";
 
 // Wnd specific
 

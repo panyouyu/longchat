@@ -114,6 +114,11 @@ mainMenuNewChatButton: MainMenuButton(defaultMainMenuButton) {
 	iconOver: icon {{"main_menu_new_chat", leftMenuIconFgOver}};
 	iconChecked: icon {{"main_menu_new_chat", leftMenuIconFgChecked}};
 }
+mainMenuMailButton: MainMenuButton(defaultMainMenuButton) {
+	icon: icon {{"main_menu_mail", leftMenuIconFg}};
+	iconOver: icon {{"main_menu_mail", leftMenuIconFgOver}};
+	iconChecked: icon {{"main_menu_mail", leftMenuIconFgChecked}};
+}
 mainMenuNetDiscButton: MainMenuButton(defaultMainMenuButton) {
 	icon: icon {{"main_menu_netdisc", leftMenuIconFg}};
 	iconOver: icon {{"main_menu_netdisc", leftMenuIconFgOver}};

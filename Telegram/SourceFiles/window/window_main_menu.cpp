@@ -14,6 +14,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/widgets/menu.h"
 #include "ui/special_buttons.h"
 #include "ui/empty_userpic.h"
+#include "ui/toast/toast.h"
 #include "mainwindow.h"
 #include "auth_session.h"
 #include "data/data_session.h"
@@ -31,6 +32,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "mainwidget.h"
 #include "core/application.h"
 #include "app.h"
+#include "facades.h"
 #include "styles/style_window.h"
 #include "styles/style_dialogs.h"
 #include "styles/style_settings.h"
@@ -47,7 +49,9 @@ MainMenu::MainMenu(
 , _contact(this, st::mainMenuContactButton, false)
 , _netdisc(this, st::mainMenuNetDiscButton)
 , _newChat(this, st::mainMenuNewChatButton)
-, _setting(this, st::mainMenuSettingButton){
+, _mail(this, st::mainMenuMailButton)
+, _setting(this, st::mainMenuSettingButton)
+, _longChatMail(this) {
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	auto showSelfChat = [] {
 		App::main()->choosePeer(Auth().userPeerId(), ShowAtUnreadMsgId);
@@ -84,6 +88,26 @@ MainMenu::MainMenu(
 		hideSettingAndLayer();
 		App::wnd()->onShowNewGroup();
 	});
+	_mail->setHidden(Global::LongChatMailArguments().isEmpty());
+	_mail->setClickedCallback([=] {
+		if (_longChatMail->state() == QProcess::Starting) {
+			Ui::Toast::Show(lang(lng_mail_is_starting));
+			return;
+		} else if (_longChatMail->state() == QProcess::Running) {
+			Ui::Toast::Show(lang(lng_mail_is_runging));
+			return;
+		}
+
+		auto program = cWorkingDir() + qsl("LongChatMail/LongChatMail.exe");
+		auto arguments = { qsl("-proxyinfo"), Global::LongChatMailArguments() };
+		_longChatMail->start(program, arguments);
+		connect(_longChatMail, &QProcess::started, [] {
+			DEBUG_LOG(("LongChatMail Info: started"));
+		});
+		connect(_longChatMail, &QProcess::errorOccurred, [](auto error) {
+			DEBUG_LOG(("LongChatMail Error: error(%1)").arg(error));
+		});
+	});
 	_setting->setClickedCallback([=] {
 		hideSettingAndLayer();
 		App::wnd()->showSettings();
@@ -100,6 +124,11 @@ MainMenu::MainMenu(
 	) | rpl::start_with_next([=](auto count) {
 		_contact->updateUnReadCount(20, count, st::trayCounterBg, st::trayCounterFg);
 	}, lifetime());
+	subscribe(Global::RefLongChatMailArgumentsChanged(), [=] {
+		_mail->setHidden(Global::LongChatMailArguments().isEmpty());
+		updateControlsGeometry();
+		update();
+	});
 }
 
 void MainMenu::resizeEvent(QResizeEvent *e) {
@@ -134,6 +163,14 @@ void MainMenu::updateControlsGeometry() {
 	_newChat->resizeToWidth(width());
 	_newChat->moveToLeft(left, top);
 	top += _newChat->height();
+
+#ifdef Q_OS_WIN
+	if (!_mail->isHidden()) {
+		_mail->resizeToWidth(width());
+		_mail->moveToLeft(left, top);
+		top += _mail->height();
+	}
+#endif // Q_OS_WIN
 	
 	_setting->resizeToWidth(width());
 	_setting->moveToLeft(left, height() - _setting->height());

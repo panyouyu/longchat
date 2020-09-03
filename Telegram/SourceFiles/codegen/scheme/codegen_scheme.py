@@ -83,6 +83,7 @@ countedTypeIdExceptions['contacts.searchContact#3b9aca16'] = True
 countedTypeIdExceptions['contacts.sendContactRequest#3b9aca18'] = True
 countedTypeIdExceptions['contacts.contactRequestResponse#3b9aca15'] = True
 countedTypeIdExceptions['contacts.contactSearchResponse#3b9aca17'] = True
+countedTypeIdExceptions['configMail#3b9acadb'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';

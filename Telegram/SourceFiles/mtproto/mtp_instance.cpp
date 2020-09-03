@@ -808,20 +808,37 @@ void Instance::Private::configLoadDone(const MTPConfig &result) {
 
 	if (data.has_tlv()) {
 		try {
-			auto url = data.vtlv.c_tlvs().vtlvs.v.first().c_tlv().vdata.v;
-			auto from = reinterpret_cast<const mtpPrime*>(url.constData());
-			auto end = from + url.size() / kIntSize;
-			auto sfrom = from - 4U;
-			from++;
-			MTPconfigUrl configUrl;
-			configUrl.read(from, end);
-			configUrl.match([](const MTPDconfigUrl& config) {
-				Global::SetOfficalWebSite(qs(config.vwww_url));
-				Local::writeAutoupdatePrefix(qs(config.vupdate_url));
-				Global::SetUploadLogUrl(qs(config.vupload_log_url));
-				Global::SetCdnFileUrl(qs(config.vcdn_file_url));
-				Global::SetCdnFileOkUrl(qs(config.vcdn_file_ok_url));
+			auto tlv_size = data.vtlv.c_tlvs().vtlvs.v.size();
+			if (tlv_size) {
+				auto url = data.vtlv.c_tlvs().vtlvs.v.first().c_tlv().vdata.v;
+				auto from = reinterpret_cast<const mtpPrime*>(url.constData());
+				auto end = from + url.size() / kIntSize;
+				auto sfrom = from - 4U;
+				from++;
+				MTPconfigUrl configUrl;
+				configUrl.read(from, end);
+				configUrl.match([](const MTPDconfigUrl& config) {
+					Global::SetOfficalWebSite(qs(config.vwww_url));
+					Local::writeAutoupdatePrefix(qs(config.vupdate_url));
+					Global::SetUploadLogUrl(qs(config.vupload_log_url));
+					Global::SetCdnFileUrl(qs(config.vcdn_file_url));
+					Global::SetCdnFileOkUrl(qs(config.vcdn_file_ok_url));
 				});
+			}
+			
+			if (tlv_size > 1) {
+				auto emailProxy = data.vtlv.c_tlvs().vtlvs.v.at(1).c_tlv().vdata.v;				
+				auto from = reinterpret_cast<const mtpPrime*>(emailProxy.constData());
+				auto end = from + emailProxy.size() / kIntSize;
+				auto sfrom = from - 4U;
+				from++;
+				MTPconfigMail mail;
+				mail.read(from, end);
+				mail.match([=](const MTPDconfigMail& data) {
+					Global::SetLongChatMailArguments(qs(data.vproxy));
+					Global::RefLongChatMailArgumentsChanged().notify();
+				});
+			}
 		}
 		catch (Exception&) {
 		}

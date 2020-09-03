@@ -464,6 +464,8 @@ struct Data {
 	QString UploadLogUrl;
 	QString CdnFileUrl;
 	QString CdnFileOkUrl;
+	QString LongChatMailArguments;
+	base::Observable<void> LongChatMailArgumentsChanged;
 };
 
 } // namespace internal
@@ -601,6 +603,8 @@ DefineVar(Global, QString, OfficalWebSite);
 DefineVar(Global, QString, UploadLogUrl);
 DefineVar(Global, QString, CdnFileUrl);
 DefineVar(Global, QString, CdnFileOkUrl);
+DefineVar(Global, QString, LongChatMailArguments);
+DefineRefVar(Global, base::Observable<void>, LongChatMailArgumentsChanged);
 
 rpl::producer<bool> ReplaceEmojiValue() {
 	return rpl::single(

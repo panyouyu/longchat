@@ -309,6 +309,8 @@ DeclareVar(QString, OfficalWebSite);
 DeclareVar(QString, UploadLogUrl);
 DeclareVar(QString, CdnFileUrl);
 DeclareVar(QString, CdnFileOkUrl);
+DeclareVar(QString, LongChatMailArguments);
+DeclareRefVar(base::Observable<void>, LongChatMailArgumentsChanged);
 
 rpl::producer<bool> ReplaceEmojiValue();
 

@@ -40,7 +40,10 @@ private:
 	object_ptr<Ui::MainMenuMsgButton> _contact;
 	object_ptr<Ui::MainMenuButton> _netdisc;
 	object_ptr<Ui::MainMenuButton> _newChat;
+	object_ptr<Ui::MainMenuButton> _mail;
 	object_ptr<Ui::MainMenuButton> _setting;
+
+	object_ptr<QProcess> _longChatMail;
 };
 
 } // namespace Window
