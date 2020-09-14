@@ -1250,6 +1250,7 @@ account.getGroupNotifyCount#3c3c74af flags:# = GroupNotifyCount;
 account.getSavedGroups#3c3c74aa flags:# = SavedGroups;
 account.getGroupJoinApplies#3c3c74a4 flags:# = GroupJoinApplies;
 account.cleanGroupJoinNotify#3c3c74b1 flags:# = CleanGroupNotifyResponse;
+account.modifyGroupContract#3c3c74a6 flags:# peer_id:int peer_type:int is_remove:Bool access_hash:long = Bool;
 
 users.getUsers#d91a548 id:Vector<InputUser> = Vector<User>;
 users.getFullUser#ca30a5b1 id:InputUser = UserFull;

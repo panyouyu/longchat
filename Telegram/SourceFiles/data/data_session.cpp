@@ -1434,6 +1434,14 @@ void Data::Session::addSavedGroups(std::list<not_null<PeerData*>> groups) {
 	_savedGroupsStream.fire({});
 }
 
+void Data::Session::removeSavedGroups(not_null<PeerData*> group) {
+	auto it = std::find(_savedGroups.cbegin(), _savedGroups.cend(), group);
+	if (it != _savedGroups.cend()) {
+		_savedGroups.erase(it);
+		_savedGroupsStream.fire({});
+	}
+}
+
 void Session::userIsContactUpdated(not_null<UserData*> user) {
 	const auto i = _contactViews.find(peerToUser(user->id));
 	if (i != _contactViews.end()) {

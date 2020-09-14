@@ -414,6 +414,14 @@ void Filler::addChannelActions(not_null<ChannelData*> channel) {
 		//		lang(lng_polls_create),
 		//		[=] { PeerMenuCreatePoll(channel); });
 		//}
+		auto hasSaved = Auth().data().hasSaved(channel);
+		_addAction(
+			lang(hasSaved
+				? lng_context_remove_group
+				: lng_context_add_group),
+			[=] {
+				Auth().api().modifyGroupContract(channel, hasSaved);
+			});
 		if (channel->canExportChatHistory()) {
 			_addAction(
 				lang(isGroup

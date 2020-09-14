@@ -793,6 +793,22 @@ void ApiWrap::cleanGroupJoinApplies() {
 	}).send();
 }
 
+void ApiWrap::modifyGroupContract(not_null<ChannelData*> channel, bool is_remove) {
+	request(MTPaccount_ModifyGroupContract(
+		MTP_flags(MTPaccount_ModifyGroupContract::Flags(0)),
+		MTP_int(channel->id),
+		MTP_int(4),
+		MTP_bool(is_remove),
+		MTP_long(channel->access))
+	).done([=](const MTPBool &result) {
+		if (mtpIsTrue(result)) {
+			is_remove
+				? _session->data().removeSavedGroups(channel)
+				: _session->data().addSavedGroups({ channel });
+		}
+	}).send();
+}
+
 void ApiWrap::requestDialogEntry(not_null<Data::Feed*> feed) {
 	if (_dialogFeedRequests.contains(feed)) {
 		return;

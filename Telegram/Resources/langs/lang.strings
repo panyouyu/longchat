@@ -1326,6 +1326,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_context_view_group" = "查看群组信息";
 "lng_context_view_channel" = "查看群组信息";
 "lng_context_view_feed_info" = "查看提要信息";
+"lng_context_add_group" = "添加到群聊通讯录";
+"lng_context_remove_group" = "移出群聊通讯录";
 "lng_context_pin_to_top" = "置顶";
 "lng_context_unpin_from_top" = "取消置顶";
 "lng_context_mark_unread" = "标记为未读";

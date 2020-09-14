@@ -972,7 +972,8 @@ void ChatsBoxController::rebuildRows() {
 		}
 		return count;
 	};
-	appendRow(Auth().data().peer(GroupNotifyRowId));
+	delegate()->peerListRestoreState(delegate()->peerListSaveState());
+	appendRow(Auth().data().peer(GroupNotifyRowId));	
 	appendList(Auth().data().savedGroups());
 	checkForEmptyRows();
 	delegate()->peerListRefreshRows();

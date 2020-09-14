@@ -114,10 +114,10 @@ public:
 	UserData *processUsers(const MTPVector<MTPUser> &data);
 	PeerData *processChats(const MTPVector<MTPChat> &data);
 	UserData * processFriendRequests(const MTPVector<MTPFriendRequest> &data);
-	std::list<not_null<UserData*>> &friendRequests() {
+	const std::list<not_null<UserData*>> &friendRequests() const {
 		return _friendRequests;
 	}
-	std::list<not_null<PeerData*>> &savedGroups() {
+	const std::list<not_null<PeerData*>> &savedGroups() const {
 		return _savedGroups;
 	}
 
@@ -237,7 +237,11 @@ public:
 		return _groupUnReadCount.value();
 	}
 
+	bool hasSaved(not_null<PeerData*> group) const {
+		return std::find(_savedGroups.cbegin(), _savedGroups.cend(), group) != _savedGroups.cend();
+	}
 	void addSavedGroups(std::list<not_null<PeerData*>> groups);
+	void removeSavedGroups(not_null<PeerData*> group);
 	[[nodiscard]] rpl::producer<> savedGroupsChanged() const {
 		return _savedGroupsStream.events();
 	}

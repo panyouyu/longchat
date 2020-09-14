@@ -100,6 +100,7 @@ countedTypeIdExceptions['groupJoinVerifyResponse#3c3c74e8'] = True
 countedTypeIdExceptions['account.groupJoinVerify#3c3c74ae'] = True
 countedTypeIdExceptions['cleanGroupNotifyResponse#3c3c74eb'] = True
 countedTypeIdExceptions['account.cleanGroupJoinNotify#3c3c74b1'] = True
+countedTypeIdExceptions['account.modifyGroupContract#3c3c74a6'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';
