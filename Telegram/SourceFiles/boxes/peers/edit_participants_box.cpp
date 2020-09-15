@@ -511,26 +511,30 @@ UserData *ParticipantsAdditionalData::applyParticipant(
 	return data.match([&](const MTPDchannelParticipantCreator &data) {
 		if (overrideRole != Role::Profile
 			&& overrideRole != Role::Members
-			&& overrideRole != Role::Admins) {
+			&& overrideRole != Role::Admins
+			&& overrideRole != Role::Transfer) {
 			return logBad();
 		}
 		return applyCreator(data);
 	}, [&](const MTPDchannelParticipantAdmin &data) {
 		if (overrideRole != Role::Profile
 			&& overrideRole != Role::Members
-			&& overrideRole != Role::Admins) {
+			&& overrideRole != Role::Admins
+			&& overrideRole != Role::Transfer) {
 			return logBad();
 		}
 		return applyAdmin(data);
 	}, [&](const MTPDchannelParticipantSelf &data) {
 		if (overrideRole != Role::Profile
-			&& overrideRole != Role::Members) {
+			&& overrideRole != Role::Members
+			&& overrideRole != Role::Transfer) {
 			return logBad();
 		}
 		return applyRegular(data.vuser_id);
 	}, [&](const MTPDchannelParticipant &data) {
 		if (overrideRole != Role::Profile
-			&& overrideRole != Role::Members) {
+			&& overrideRole != Role::Members
+			&& overrideRole != Role::Transfer) {
 			return logBad();
 		}
 		return applyRegular(data.vuser_id);
@@ -538,7 +542,8 @@ UserData *ParticipantsAdditionalData::applyParticipant(
 		if (overrideRole != Role::Profile
 			&& overrideRole != Role::Members
 			&& overrideRole != Role::Restricted
-			&& overrideRole != Role::Kicked) {
+			&& overrideRole != Role::Kicked
+			&& overrideRole != Role::Transfer) {
 			return logBad();
 		}
 		return applyBanned(data);
@@ -824,6 +829,12 @@ void ParticipantsBoxController::Start(
 				return chat
 					? chat->canBanMembers()
 					: channel->canBanMembers();
+			case Role::Transfer: 
+				return chat
+					? chat->canAddMembers()
+					: (channel->canAddMembers()
+						&& (channel->membersCount() < Global::ChatSizeMax()
+							|| channel->isMegagroup()));
 			}
 
 			Unexpected("Role value in ParticipantsBoxController::Start()");
@@ -840,7 +851,12 @@ void ParticipantsBoxController::Start(
 				return langFactory(lng_channel_add_exception);
 			case Role::Kicked:
 				return langFactory(lng_channel_add_removed);
+			case Role::Transfer:
+				return langFactory((chat || channel->isMegagroup())
+					? lng_channel_add_members
+					: lng_channel_add_users);
 			}
+			
 			Unexpected("Role value in ParticipantsBoxController::Start()");
 		}();
 		if (canAddNewItem) {
@@ -1033,6 +1049,7 @@ void ParticipantsBoxController::prepare() {
 		case Role::Members: return lng_profile_participants_section;
 		case Role::Restricted: return lng_exceptions_list_title;
 		case Role::Kicked: return lng_removed_list_title;
+		case Role::Transfer: return lng_channel_transfer_creator;
 		}
 		Unexpected("Role in ParticipantsBoxController::prepare()");
 	}();
@@ -1055,7 +1072,7 @@ void ParticipantsBoxController::prepare() {
 }
 
 void ParticipantsBoxController::prepareChatRows(not_null<ChatData*> chat) {
-	if (_role == Role::Profile || _role == Role::Members) {
+	if (_role == Role::Profile || _role == Role::Members || _role == Role::Transfer) {
 		_onlineSorter = std::make_unique<ParticipantsOnlineSorter>(
 			chat,
 			delegate());
@@ -1092,6 +1109,7 @@ void ParticipantsBoxController::rebuildChatRows(not_null<ChatData*> chat) {
 	case Role::Admins: return rebuildChatAdmins(chat);
 	case Role::Restricted:
 	case Role::Kicked: return chatListReady();
+	case Role::Transfer: return rebuildChatParticipants(chat);
 	}
 	Unexpected("Role in ParticipantsBoxController::rebuildChatRows");
 }
@@ -1210,13 +1228,13 @@ void ParticipantsBoxController::loadMoreRows() {
 	}
 
 	const auto filter = [&] {
-		if (_role == Role::Members || _role == Role::Profile) {
+		if (_role == Role::Members || _role == Role::Profile || _role == Role::Transfer) {
 			return MTP_channelParticipantsRecent();
 		} else if (_role == Role::Admins) {
 			return MTP_channelParticipantsAdmins();
 		} else if (_role == Role::Restricted) {
 			return MTP_channelParticipantsBanned(MTP_string(QString()));
-		}
+		} 
 		return MTP_channelParticipantsKicked(MTP_string(QString()));
 	}();
 
@@ -1237,7 +1255,7 @@ void ParticipantsBoxController::loadMoreRows() {
 		_loadRequestId = 0;
 
 		auto wasRecentRequest = firstLoad
-			&& (_role == Role::Members || _role == Role::Profile);
+			&& (_role == Role::Members || _role == Role::Profile || _role == Role::Transfer);
 		auto parseParticipants = [&](auto &&result, auto &&callback) {
 			if (wasRecentRequest) {
 				channel->session().api().parseRecentChannelParticipants(
@@ -1256,6 +1274,12 @@ void ParticipantsBoxController::loadMoreRows() {
 				const QVector<MTPChannelParticipant> &list) {
 			for (const auto &data : list) {
 				if (const auto user = _additional.applyParticipant(data)) {
+					if (_role == Role::Transfer && user->isSelf()) {
+						if (auto row = delegate()->peerListFindRow(user->id)) {
+							delegate()->peerListRemoveRow(row);
+						}						
+						continue;
+					}						
 					appendRow(user);
 				}
 			}
@@ -1291,7 +1315,7 @@ void ParticipantsBoxController::refreshDescription() {
 }
 
 bool ParticipantsBoxController::feedMegagroupLastParticipants() {
-	if ((_role != Role::Members && _role != Role::Profile)
+	if ((_role != Role::Members && _role != Role::Profile && _role != Role::Transfer)
 		|| delegate()->peerListFullRowsCount() > 0) {
 		return false;
 	}
@@ -1341,6 +1365,19 @@ void ParticipantsBoxController::rowClicked(not_null<PeerListRow*> row) {
 		showAdmin(user);
 	} else if (_role == Role::Restricted || _role == Role::Kicked) {
 		showRestricted(user);
+	} else if (_role == Role::Transfer) {
+		if (const auto channel = _peer->asChannel()) {
+			_confirm = Ui::show(Box<ConfirmBox>(lng_channel_transfer_verify(lt_name, user->name),
+				[=] {
+					channel->session().api().transferGroupCreator(channel, user, [&] {
+						_confirm = nullptr;
+						Ui::hideSettingsAndLayer();
+					});
+				}, [=] {
+					_confirm = nullptr;
+				}),
+			LayerOption::KeepOther);
+		}		
 	} else {
 		_navigation->showPeerInfo(user);
 	}

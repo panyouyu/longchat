@@ -45,6 +45,7 @@ enum class ParticipantsRole {
 	Admins,
 	Restricted,
 	Kicked,
+	Transfer,
 };
 
 class ParticipantsOnlineSorter : private base::Subscriber {
@@ -237,6 +238,7 @@ private:
 	std::unique_ptr<ParticipantsOnlineSorter> _onlineSorter;
 	BoxPointer _editBox;
 	BoxPointer _addBox;
+	BoxPointer _confirm;
 
 };
 

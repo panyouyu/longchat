@@ -223,6 +223,15 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		return result;
 	};
 
+	auto prepareGroupTransfer = [this](const MTPDmessageActionGroupTransfer& data) {
+		auto result = PreparedText{};
+		auto user = history()->owner().user(data.vto_users.v.first().v);
+		result.links.push_back(fromLink());
+		result.links.push_back(user->createOpenLink());
+		result.text = lng_action_transfer_creator(lt_from, fromLinkText(), lt_user, textcmdLink(2, user->name));
+		return result;
+	};
+
 	const auto messageText = action.match([&](
 		const MTPDmessageActionChatAddUser &data) {
 		return prepareChatAddUserText(data);
@@ -274,8 +283,10 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 				MTPmessageActionTLV action;
 				action.read(from, end, type);
 				return action.match(
-					[&]( const MTPDmessageActionChangeRights& data) {
+					[&](const MTPDmessageActionChangeRights& data) {
 					return prepareChangeRights(data); 
+				}, [&](const MTPDmessageActionGroupTransfer& data) {
+					return prepareGroupTransfer(data);
 				});
 			}
 			return PreparedText{ lang(lng_message_empty) };

@@ -114,7 +114,7 @@ public:
 	UserData *processUsers(const MTPVector<MTPUser> &data);
 	PeerData *processChats(const MTPVector<MTPChat> &data);
 	UserData * processFriendRequests(const MTPVector<MTPFriendRequest> &data);
-	const std::list<not_null<UserData*>> &friendRequests() const {
+	std::list<not_null<UserData*>> &friendRequests() {
 		return _friendRequests;
 	}
 	const std::list<not_null<PeerData*>> &savedGroups() const {

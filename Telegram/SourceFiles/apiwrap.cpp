@@ -809,6 +809,21 @@ void ApiWrap::modifyGroupContract(not_null<ChannelData*> channel, bool is_remove
 	}).send();
 }
 
+void ApiWrap::transferGroupCreator(not_null<ChannelData*> channel, not_null<UserData*> to, Fn<void()> callback) {
+	request(MTPaccount_TransferGroupCreator(
+		MTP_flags(MTPaccount_TransferGroupCreator::Flags(0)),
+		MTP_int(channel->id),
+		MTP_int(4),
+		MTP_long(channel->access),
+		MTP_int(to->id))
+	).done([=](const MTPUpdates& updates) {
+		applyUpdates(updates);
+		if (callback) {
+			callback();
+		}
+	}).send();
+}
+
 void ApiWrap::requestDialogEntry(not_null<Data::Feed*> feed) {
 	if (_dialogFeedRequests.contains(feed)) {
 		return;

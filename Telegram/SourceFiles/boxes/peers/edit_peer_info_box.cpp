@@ -630,6 +630,11 @@ void Controller::fillManageSection() {
 			? channel->canViewAdmins()
 			: chat->amIn();
 	}();
+	const auto canTransferCreator = [=] {
+		return isChannel
+			? channel->amCreator()
+			: false;
+	}();
 	const auto canViewMembers = [=] {
 		return isChannel
 			? channel->canViewMembers()
@@ -704,6 +709,19 @@ void Controller::fillManageSection() {
 					ParticipantsBoxController::Role::Admins);
 			},
 			st::infoIconAdministrators);
+	}
+	if (canTransferCreator) {
+		AddButtonWithCount(
+			_controls.buttonsLayout,
+			Lang::Viewer(lng_channel_transfer_creator),
+			rpl::single(QString()),
+			[=] {
+				ParticipantsBoxController::Start(
+					navigation,
+					_peer,
+					ParticipantsBoxController::Role::Transfer);
+			},
+			st::infoIconTransferCreator);
 	}
 	if (canViewMembers) {
 		AddButtonWithCount(

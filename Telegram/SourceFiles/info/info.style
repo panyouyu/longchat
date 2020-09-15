@@ -362,6 +362,8 @@ infoIconMediaGroup: icon {{ "info_common_groups", infoIconFg }};
 infoIconMediaVoice: icon {{ "info_media_voice", infoIconFg }};
 infoIconMediaRound: icon {{ "info_media_round", infoIconFg }};
 infoIconRecentActions: icon {{ "info_recent_actions", infoIconFg, point(-2px, 0px) }};
+infoIconTransferCreator: icon {{ "info_transfer_creator", infoIconFg, point(-2px, 0px) }};
+
 infoIconAdministrators: icon {{ "info_administrators", infoIconFg, point(-2px, -1px) }};
 infoIconBlacklist: icon {{ "info_blacklist", infoIconFg, point(-2px, -2px) }};
 infoIconPermissions: icon {{ "info_permissions", infoIconFg }};

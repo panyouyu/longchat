@@ -292,7 +292,8 @@ messageActionSecureValuesSentMe#1b287353 values:Vector<SecureValue> credentials:
 messageActionSecureValuesSent#d95c6154 types:Vector<SecureValueType> = MessageAction;
 messageActionContactSignUp#f3f25f76 = MessageAction;
 messageActionTlv#209acdf6 tlvs:TLVS = MessageAction;
-messageActionChangeRights#23bf09e5 user_id:int message:string = MessageActionTLV; 
+messageActionChangeRights#23bf09e5 user_id:int message:string = MessageActionTLV;
+messageActionGroupTransfer#23bf09e1 from_user:int to_users:Vector<int> message:string = MessageActionTLV;
 
 dialog#e4def5db flags:# pinned:flags.2?true unread_mark:flags.3?true peer:Peer top_message:int read_inbox_max_id:int read_outbox_max_id:int unread_count:int unread_mentions_count:int notify_settings:PeerNotifySettings pts:flags.0?int draft:flags.1?DraftMessage = Dialog;
 
@@ -1251,6 +1252,7 @@ account.getSavedGroups#3c3c74aa flags:# = SavedGroups;
 account.getGroupJoinApplies#3c3c74a4 flags:# = GroupJoinApplies;
 account.cleanGroupJoinNotify#3c3c74b1 flags:# = CleanGroupNotifyResponse;
 account.modifyGroupContract#3c3c74a6 flags:# peer_id:int peer_type:int is_remove:Bool access_hash:long = Bool;
+account.transferGroupCreator#3c3c74a5 flags:# peer_id:int peer_type:int hash:long to_peer:int = Updates;
 
 users.getUsers#d91a548 id:Vector<InputUser> = Vector<User>;
 users.getFullUser#ca30a5b1 id:InputUser = UserFull;

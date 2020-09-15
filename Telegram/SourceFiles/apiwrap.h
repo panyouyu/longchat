@@ -92,6 +92,7 @@ public:
 	void requestGroupJoinApplies();
 	void cleanGroupJoinApplies();
 	void modifyGroupContract(not_null<ChannelData*> channel, bool is_remove = false);
+	void transferGroupCreator(not_null<ChannelData*> channel, not_null<UserData*> to, Fn<void()> callback);
 	void requestDialogEntry(not_null<Data::Feed*> feed);
 	//void requestFeedDialogsEntries(not_null<Data::Feed*> feed);
 	void requestDialogEntry(

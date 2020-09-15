@@ -993,6 +993,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_action_you_joined" = "您加入了此群组";
 "lng_action_add_you_group" = "{from} 将您添加到此群组";
 "lng_action_kick_user" = "{from} 移除了 {user}";
+"lng_action_transfer_creator" = "{from} 将群主转让给了 {user}";
 "lng_action_user_left" = "{from} 退出了群组";
 "lng_action_user_joined" = "{from} 加入了群组";
 "lng_action_user_joined_by_link" = "{from} 通过邀请链接加入了群组";
@@ -1433,6 +1434,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_create_group_link" = "链接";
 "lng_create_group_invite_link" = "邀请链接";
 "lng_create_group_description" = "简介（可选）";
+"lng_channel_transfer_creator" = "转让群";
+"lng_channel_transfer_verify" = "确认选择 {name} 为新群主，您将自动放弃群主身份";
 
 "lng_chats_header" = "群聊";
 
