@@ -822,7 +822,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_info_username_label" = "用户名";
 "lng_info_bio_label" = "个人简介";
 "lng_info_link_label" = "链接";
-"lng_info_about_label" = "关于";
+"lng_info_about_label" = "公告";
 "lng_info_user_title" = "用户信息";
 "lng_info_bot_title" = "信息";
 "lng_info_group_title" = "群组信息";
@@ -1433,7 +1433,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_try_other_contact" = "尝试其他人";
 "lng_create_group_link" = "链接";
 "lng_create_group_invite_link" = "邀请链接";
-"lng_create_group_description" = "简介（可选）";
+"lng_create_group_description" = "公告（可选）";
 "lng_channel_transfer_creator" = "转让群";
 "lng_channel_transfer_verify" = "确认选择 {name} 为新群主，您将自动放弃群主身份";
 
