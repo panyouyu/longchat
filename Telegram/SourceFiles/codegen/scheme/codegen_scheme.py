@@ -103,6 +103,7 @@ countedTypeIdExceptions['account.cleanGroupJoinNotify#3c3c74b1'] = True
 countedTypeIdExceptions['account.modifyGroupContract#3c3c74a6'] = True
 countedTypeIdExceptions['account.transferGroupCreator#3c3c74a5'] = True
 countedTypeIdExceptions['messageActionGroupTransfer#23bf09e1'] = True
+countedTypeIdExceptions['messageActionGroupKickOut#23bf09e3'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';

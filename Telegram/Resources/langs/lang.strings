@@ -994,6 +994,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_action_add_you_group" = "{from} 将您添加到此群组";
 "lng_action_kick_user" = "{from} 移除了 {user}";
 "lng_action_transfer_creator" = "{from} 将群主转让给了 {user}";
+"lng_action_kick_out" = "{from} 将 {user} 移除了群聊";
 "lng_action_user_left" = "{from} 退出了群组";
 "lng_action_user_joined" = "{from} 加入了群组";
 "lng_action_user_joined_by_link" = "{from} 通过邀请链接加入了群组";
