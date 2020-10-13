@@ -341,6 +341,8 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 					return prepareActionGroupAdminRights(data);
 				}, [&](const MTPDmessageActionScreenShotNotice&) {
 					return prepareActionScreenShotNotice();
+				}, [&](const MTPDmessageActionRedPacket&) {
+					return PreparedText{ lang(lng_message_empty) };
 				});
 			}
 			return PreparedText{ lang(lng_message_empty) };
