@@ -295,6 +295,7 @@ messageActionTlv#209acdf6 tlvs:TLVS = MessageAction;
 messageActionChangeRights#23bf09e5 user_id:int message:string = MessageActionTLV;
 messageActionGroupTransfer#23bf09e1 from_user:int to_users:Vector<int> message:string = MessageActionTLV;
 messageActionGroupKickOut#23bf09e3 user_id:int users:Vector<int> message:string = MessageActionTLV;
+messageActionGroupAdminRights#23bf09e4 user_id:int users:Vector<int> message:string = MessageActionTLV;
 
 dialog#e4def5db flags:# pinned:flags.2?true unread_mark:flags.3?true peer:Peer top_message:int read_inbox_max_id:int read_outbox_max_id:int unread_count:int unread_mentions_count:int notify_settings:PeerNotifySettings pts:flags.0?int draft:flags.1?DraftMessage = Dialog;
 

@@ -241,6 +241,39 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		return result;
 	};
 
+	auto prepareActionGroupAdminRights = [this](const MTPDmessageActionGroupAdminRights& data) {
+		auto result = PreparedText{};
+		auto user = history()->owner().user(data.vusers.v.first().v);
+		result.links.push_back(fromLink());
+		result.links.push_back(user->createOpenLink());
+
+		auto error = QJsonParseError{ 0, QJsonParseError::NoError };
+		auto document = QJsonDocument::fromJson(qba(data.vmessage), &error);
+		if (error.error != QJsonParseError::NoError) {
+			LOG(("ActionGroupAdminRights Json Error."));
+			return PreparedText{};
+		} else if (!document.isObject()) {
+			LOG(("ActionGroupAdminRights Json not an object"));
+			return PreparedText{};
+		}
+		auto object = document.object();
+		auto it = object.constFind(qsl("IsAdd"));
+		if (it == object.constEnd()) {
+			LOG(("ActionGroupAdminRights Json can not find IsAdd."));
+			return PreparedText{};
+		}
+		if (it->type() != QJsonValue::Bool) {
+			LOG(("ActionGroupAdminRights Json IsAdd type is not bool."));
+			return PreparedText{};
+		}
+		auto is_add = it.value().toBool();
+
+		result.text = is_add
+			? lng_action_add_as_admin(lt_from, fromLinkText(), lt_user, textcmdLink(2, user->name))
+			: lng_action_remove_manager(lt_from, fromLinkText(), lt_user, textcmdLink(2, user->name));
+		return result;
+	};
+
 	const auto messageText = action.match([&](
 		const MTPDmessageActionChatAddUser &data) {
 		return prepareChatAddUserText(data);
@@ -297,6 +330,8 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 					return prepareGroupTransfer(data);
 				}, [&](const MTPDmessageActionGroupKickOut &data) {
 					return prepareGroupKickOut(data);
+				}, [&](const MTPDmessageActionGroupAdminRights& data) {
+					return prepareActionGroupAdminRights(data);
 				});
 			}
 			return PreparedText{ lang(lng_message_empty) };
