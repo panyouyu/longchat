@@ -997,6 +997,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_action_kick_out" = "{from} 将 {user} 移除了群聊";
 "lng_action_add_as_admin" = "{from} 将 {user} 添加为管理员";
 "lng_action_remove_manager" = "{from} 将 {user} 移出管理组";
+"lng_action_screen_shot_notice" = "{from} 截取了全屏";
 "lng_action_user_left" = "{from} 退出了群组";
 "lng_action_user_joined" = "{from} 加入了群组";
 "lng_action_user_joined_by_link" = "{from} 通过邀请链接加入了群组";

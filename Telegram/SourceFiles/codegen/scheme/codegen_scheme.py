@@ -105,6 +105,7 @@ countedTypeIdExceptions['account.transferGroupCreator#3c3c74a5'] = True
 countedTypeIdExceptions['messageActionGroupTransfer#23bf09e1'] = True
 countedTypeIdExceptions['messageActionGroupKickOut#23bf09e3'] = True
 countedTypeIdExceptions['messageActionGroupAdminRights#23bf09e4'] = True
+countedTypeIdExceptions['messageActionScreenShotNotice#23bf09e0'] = True
 
 renamedTypes = {};
 renamedTypes['passwordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow'] = 'passwordKdfAlgoModPow';

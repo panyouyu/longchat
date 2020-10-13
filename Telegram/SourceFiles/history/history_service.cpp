@@ -243,7 +243,7 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 
 	auto prepareActionGroupAdminRights = [this](const MTPDmessageActionGroupAdminRights& data) {
 		auto result = PreparedText{};
-		auto user = history()->owner().user(data.vusers.v.first().v);
+		auto user = history()->owner().user(data.vuser_id.v);
 		result.links.push_back(fromLink());
 		result.links.push_back(user->createOpenLink());
 
@@ -271,6 +271,13 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		result.text = is_add
 			? lng_action_add_as_admin(lt_from, fromLinkText(), lt_user, textcmdLink(2, user->name))
 			: lng_action_remove_manager(lt_from, fromLinkText(), lt_user, textcmdLink(2, user->name));
+		return result;
+	};
+
+	auto prepareActionScreenShotNotice = [this] {
+		auto result = PreparedText{};
+		result.links.push_back(fromLink());
+		result.text = lng_action_screen_shot_notice(lt_from, fromLinkText());
 		return result;
 	};
 
@@ -332,6 +339,8 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 					return prepareGroupKickOut(data);
 				}, [&](const MTPDmessageActionGroupAdminRights& data) {
 					return prepareActionGroupAdminRights(data);
+				}, [&](const MTPDmessageActionScreenShotNotice&) {
+					return prepareActionScreenShotNotice();
 				});
 			}
 			return PreparedText{ lang(lng_message_empty) };
