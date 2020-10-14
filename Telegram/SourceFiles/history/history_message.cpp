@@ -913,6 +913,9 @@ void HistoryMessage::applyEdition(const MTPDmessage &message) {
 	//		keyboardTop = _height - h + st::msgBotKbButton.margin - marginBottom();
 	//	}
 	//}
+	if (message.has_media() && message.vmedia.type() == mtpc_messageMediaTlv) {
+		return;
+	}
 
 	if (message.has_edit_date()) {
 		_flags |= MTPDmessage::Flag::f_edit_date;
@@ -933,7 +936,6 @@ void HistoryMessage::applyEdition(const MTPDmessage &message) {
 	}
 	setViewsCount(message.has_views() ? message.vviews.v : -1);
 	setText(textWithEntities);
-
 	finishEdition(keyboardTop);
 }
 
