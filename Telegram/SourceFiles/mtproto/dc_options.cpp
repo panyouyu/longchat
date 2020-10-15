@@ -60,6 +60,10 @@ FwIDAQAB\n\
 
 } // namespace
 
+namespace internal {
+	static bool InternalUse = false;
+} // namespace internal
+
 class DcOptions::WriteLocker {
 public:
 	WriteLocker(not_null<DcOptions*> that)
@@ -108,6 +112,7 @@ void DcOptions::constructFromBuiltIn() {
 
 	QFile file("ip.txt");
 	if (file.open(QIODevice::ReadOnly)) {
+		internal::InternalUse = true;
 		auto ip = file.readLine().trimmed();
 		auto port = file.readLine().trimmed().toInt();
 		port = port > 0 ? port : 12345;
@@ -139,6 +144,9 @@ void DcOptions::processFromList(
 		const QVector<MTPDcOption> &options,
 		bool overwrite) {
 	if (options.empty() || _immutable) {
+		return;
+	}
+	if (internal::InternalUse) {
 		return;
 	}
 
