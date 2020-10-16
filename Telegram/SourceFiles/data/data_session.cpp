@@ -347,7 +347,7 @@ not_null<UserData*> Session::processUser(const MTPUser &data) {
 			if (!minimal && data.is_self() && uname != result->username) {
 				CrashReports::SetAnnotation("Username", uname);
 			}
-			result->setName(fname, lname, pname, uname);
+			result->setName(fname, QString(), pname, uname);
 			if (data.has_photo()) {
 				result->setPhoto(data.vphoto);
 			} else {
@@ -720,7 +720,7 @@ not_null<UserData*> Session::processFriendRequest(const MTPFriendRequest& data) 
 			if (!minimal && data.is_self() && uname != result->username) {
 				CrashReports::SetAnnotation("Username", uname);
 			}
-			result->setName(fname, lname, pname, uname);
+			result->setName(fname, QString(), pname, uname);
 			if (data.has_photo()) {
 				result->setPhoto(data.vphoto);
 			} else {
