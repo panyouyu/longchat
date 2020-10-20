@@ -44,7 +44,6 @@ private:
 	object_ptr<PropertyWidget> _property;
 	object_ptr<Ui::LeftFlatButton> _url;
 	object_ptr<Ui::LeftFlatButton> _block;
-	QPointer<ConfirmBox> _confirmBox;
 };
 
 } // namespace Guest

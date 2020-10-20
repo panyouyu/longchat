@@ -214,6 +214,7 @@ editBioCountdownLabel: FlatLabel(defaultFlatLabel) {
 
 contactUserIcon: icon {{ "settings_name", menuIconFg }};
 contactPhoneIcon: icon {{ "settings_phone_number", menuIconFg }};
+blockUserReason: icon {{ "block_reason", menuIconFg }};
 contactIconPosition: point(-5px, 23px);
 
 contactsAddIconAbove: icon {{ "contacts_add", activeButtonFg, point(18px, 18px) }};
@@ -1040,3 +1041,12 @@ quickReplyRenameGroupMargin: margins(16px, 8px, 16px, 8px);
 
 addLabelMargin: margins(23px, 8px, 23px, 8px);
 addLabelInterval: 7px;
+
+blockUserPadding: margins(49px, 2px, 0px, 12px);
+blockUserReasonSkip: 30px;
+
+blockUserNameField: InputField(defaultInputField) {
+}
+
+blockUserReasonField: InputField(defaultInputField) {
+}

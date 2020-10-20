@@ -6,6 +6,7 @@
 #include "facades.h"
 #include "data/data_user.h"
 #include "window/window_controller.h"
+#include "boxes/block_user_box.h"
 #include "boxes/confirm_box.h"
 #include "boxes/add_label_box.h"
 #include "ui/widgets/buttons.h"
@@ -252,7 +253,6 @@ Selector::Selector(QWidget* parent, not_null<Window::Controller*> controller, Di
 	, _block(this, lang(lng_guest_pull_black_guest), st::blockButton) {
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	_info = _scroll->setOwnedWidget(object_ptr<InfoWidget>(this));	
-	_confirmBox.clear();
 	_property->sizeChanged() | rpl::start_with_next([this] {
 		updateControlsGeometry();
 	}, lifetime());
@@ -298,9 +298,6 @@ Selector::Selector(QWidget* parent, not_null<Window::Controller*> controller, Di
 }
 
 Selector::~Selector() {
-	if (!_confirmBox.isNull()) {
-		_confirmBox->closeBox();
-	}
 }
 
 void Selector::resizeEvent(QResizeEvent* event) {
@@ -349,21 +346,11 @@ void Selector::updateBlock(not_null<UserData*> user) {
 	bool shieldBlack = user->isShieldBlack();
 	auto pull_black = [this] {
 		const auto nowActivePeer = _controller->activeChatCurrent().peer();
-		if (nowActivePeer && nowActivePeer->isUser() && !nowActivePeer->isSelf() && AuthSession::Exists()) {
-			QString text = lng_guest_pull_black_tip(lt_user, textcmdLink(1, App::peerName(nowActivePeer)));;
-			_confirmBox = Ui::show(Box<ConfirmBox>(text, [this, nowActivePeer] {
-				Auth().api().pullBlackUser(nowActivePeer);
-				_confirmBox->closeBox();
-				_confirmBox.clear();
-				}), LayerOption::KeepOther);
+		if (nowActivePeer && nowActivePeer->isUser() && !nowActivePeer->isSelf()) {
+			Ui::show(Box<BlockUserBox>(nowActivePeer->asUser()), LayerOption::KeepOther);
 		}
 	};
-	auto empty = [] { return; };
-	if (shieldBlack) {
-		_block->setClickedCallback(empty);
-	} else {
-		_block->setClickedCallback(pull_black);
-	}
+	_block->setClickedCallback(pull_black);
 	_block->setText(shieldBlack ? lang(lng_guest_pull_blacked_guest) : lang(lng_guest_pull_black_guest));
 }
 

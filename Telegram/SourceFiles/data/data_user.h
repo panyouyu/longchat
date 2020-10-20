@@ -216,6 +216,12 @@ public:
 	}
 
 	void setShieldBlack(bool flag);
+	QString shieldBlackReason() const {
+		return _shieldBlackReason;
+	}
+	void setShieldBlackReason(const QString& reason) {
+		_shieldBlackReason = reason;
+	}
 
 	enum class BlockStatus : char {
 		Unknown,
@@ -225,10 +231,12 @@ public:
 	BlockStatus blockStatus() const {
 		return _blockStatus;
 	}
+	
 	bool isBlocked() const {
 		return (blockStatus() == BlockStatus::Blocked);
 	}
 	void setBlockStatus(BlockStatus blockStatus);
+	
 
 	enum class CallsStatus : char {
 		Unknown,
@@ -257,6 +265,7 @@ private:
 	FullFlags _fullFlags;
 
 	QString _unavailableReason;
+	QString _shieldBlackReason;
 	QString _phone;
 	QList<QPair<QString, QStringList>> _userInfo;
 	QVector<LabelInfo> _labels;

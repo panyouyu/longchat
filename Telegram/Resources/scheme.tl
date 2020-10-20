@@ -1270,7 +1270,7 @@ kefu.switchKefu#3b9acdef kefu_user_id:int player_user_id:int = Bool;
 kegu.getUserInfo#e2b66055 user_id:int bot_id:int = DataJSON;
 kefu.getUserLabels#3b9acdf4 user_id:int = UserLabels;
 kefu.modifyUserLabel#3b9acdf3 user_id:int label:string label_desc:string is_delete:int = Bool;
-kefu.blockUser#3b9acdf6 user_id:int = Bool;
+kefu.blockUser#3b9acdf9 user_id:int reason:string = Bool;
 
 messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
 messages.getRecordMessages#4222fa75 from_id:int access_hash:long id:Vector<InputMessage> = messages.Messages;

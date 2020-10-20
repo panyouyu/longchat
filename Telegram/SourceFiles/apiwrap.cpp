@@ -5529,17 +5529,6 @@ void ApiWrap::removePeerLabel(not_null<PeerData*> peer, const LabelInfo& label) 
 	}
 }
 
-void ApiWrap::pullBlackUser(not_null<PeerData*> peer) {
-	if (!peer->isUser() || peer->isSelf()) return;
-
-	if (UserData* user = peer->asUser()) {
-		request(MTPkefu_BlockUser(MTP_int(user->id))
-		).done([user](const MTPBool& result) {
-			user->setShieldBlack(mtpIsTrue(result));
-		}).send();
-	}
-}
-
 void ApiWrap::reloadPasswordState() {
 	if (_passwordRequestId) {
 		return;

@@ -2077,7 +2077,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_guest_user_info_url" = "显示玩家详细信息";
 "lng_guest_pull_black_guest" = "拉黑用户";
 "lng_guest_pull_blacked_guest" = "已拉黑";
-"lng_guest_pull_black_tip" = "确定要拉黑用户\n{user} 吗?";
+"lng_guest_pull_blacked_reason" = "拉黑原因";
 
 // Wnd specific
 

@@ -387,7 +387,6 @@ public:
 	void requestPeerLabels(not_null<PeerData*> peer);
 	void uploadPeerLabel(not_null<PeerData*> peer, const LabelInfo& label);
 	void removePeerLabel(not_null<PeerData*> peer, const LabelInfo& label);
-	void pullBlackUser(not_null<PeerData*> peer);
 
 	void reloadPasswordState();
 	void clearUnconfirmedPassword();
