@@ -199,6 +199,9 @@ void TopBarWidget::showMenu() {
 	if (!_activeChat || _menu) {
 		return;
 	}
+	if (_activeChat.peer()->id == PeerData::kRecordDialogId) {
+		return;
+	}
 	_menu.create(parentWidget());
 	_menu->setHiddenCallback([weak = make_weak(this), menu = _menu.data()] {
 		menu->deleteLater();
@@ -475,6 +478,8 @@ void TopBarWidget::infoClicked() {
 			_activeChat.peer()->id,
 			Info::Section(Storage::SharedMediaType::Photo)));
 	} else {
+		if (_activeChat.peer()->id == PeerData::kRecordDialogId)
+			return;
 		_controller->showPeerInfo(_activeChat.peer());
 	}
 }
