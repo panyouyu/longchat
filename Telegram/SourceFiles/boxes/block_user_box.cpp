@@ -7,7 +7,7 @@
 #include "styles/style_boxes.h"
 
 namespace {
-	constexpr auto kMaxBlockReasonLegth = 64;
+	constexpr auto kMaxBlockReasonLegth = 32;
 }
 
 BlockUserBox::BlockUserBox(QWidget*, not_null<UserData*> user)
@@ -39,6 +39,11 @@ void BlockUserBox::prepare() {
 	addButton(langFactory(lng_close), [=] { closeBox(); });
 
 	connect(_reason, &Ui::InputField::submitted, [this] { submit(); });
+	connect(_reason, &Ui::InputField::changed, [this] {
+		if (_reason->getLastText().trimmed().size() > kMaxBlockReasonLegth) {
+			_reason->showError();
+		}
+	});
 
 	auto height = st::blockUserPadding.top() + _userName->height() + st::blockUserReasonSkip + _reason->height() + 
 		st::blockUserPadding.bottom() + st::boxPadding.bottom();
