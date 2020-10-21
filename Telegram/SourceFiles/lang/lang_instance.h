@@ -18,7 +18,7 @@ constexpr auto kLegacyCustomLanguage = -1;
 constexpr auto kLegacyDefaultLanguage = 0;
 
 constexpr str_const kLegacyLanguages[] = {
-	"classic-zh-cn",
+	"zh_CN",
 	"en",
 	"it",
 	"es",
