@@ -717,7 +717,6 @@ private:
 	mtpRequestId _contactsRequestId = 0;
 	mtpRequestId _contactsStatusesRequestId = 0;
 	mtpRequestId _friendRequestListId = 0;
-	mtpRequestId _groupNotifyCountId = 0;
 	mtpRequestId _savedGroups = 0;
 	mtpRequestId _groupNotifyUnReadCountId = 0;
 	mtpRequestId _groupAppliesId = 0;

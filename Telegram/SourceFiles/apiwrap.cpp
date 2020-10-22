@@ -747,7 +747,7 @@ void ApiWrap::requestGroupJoinApplies() {
 	_groupAppliesId = request(MTPaccount_GetGroupJoinApplies(
 		MTP_flags(MTPaccount_GetGroupJoinApplies::Flags(0)))
 	).done([=](const MTPGroupJoinApplies &data) {
-		_groupNotifyCountId = 0;
+		_groupAppliesId = 0;
 		data.match([=](const MTPDgroupJoinApplies& applies) {
 			std::list<GroupJoinApplyId> applyList;
 			for (const auto apply : applies.vapplies.v) {
@@ -768,10 +768,11 @@ void ApiWrap::requestGroupJoinApplies() {
 						? false
 						: apply_a->status() < apply_b->status();
 			});
+			_session->data().setGroupUnReadCount(0);
 			_groupJoinApply = applyList;
 		});
 	}).fail([=](const RPCError &error) {
-		_groupNotifyCountId = 0;
+		_groupAppliesId = 0;
 	}).send();
 }
 
