@@ -278,7 +278,7 @@ void QRCodeBox::refresh() {
 	}, [&type, &hash](const MTPDinputPeerUser &user) {
 		type = 2;
 		hash = user.vaccess_hash.v;
-	}, [&type, &hash](const MTPDinputPeerChat &chat) {
+	}, [&type](const MTPDinputPeerChat &chat) {
 		type = 3;
 	}, [&type, &hash](const MTPDinputPeerChannel &channel) {
 		type = 4;
