@@ -40,7 +40,7 @@ void SetupQRCodeButton(
 		icon ? st::settingsSectionButton : st::settingsButton,
 		icon ? &st::settingIconQRCode : nullptr);
 	button->addClickHandler([] {
-		Ui::show(Box<QRCodeBox>(Auth().user()));
+		Ui::show(Box<QRCodeBox>(Auth().user()), LayerOption::KeepOther);
 	});
 }
 

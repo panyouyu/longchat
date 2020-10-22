@@ -219,7 +219,9 @@ void QRCodeBox::keyPressEvent(QKeyEvent* e) {
 	auto m = e->modifiers();
 	if ((m & Qt::CTRL) && (e->key() == Qt::Key_C)) {
 		copy();
+		return;
 	}
+	return BoxContent::keyPressEvent(e);
 }
 
 void QRCodeBox::init() {

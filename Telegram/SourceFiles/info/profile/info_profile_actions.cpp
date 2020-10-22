@@ -348,7 +348,7 @@ object_ptr<Ui::RpWidget> DetailsFiller::setupQRCode() {
 		Lang::Viewer(lng_profile_qr_code),
 		st::infoNotificationsButton);
 	result->addClickHandler([=] {
-		Ui::show(Box<QRCodeBox>(peer));
+		Ui::show(Box<QRCodeBox>(peer), LayerOption::KeepOther);
 	});
 	object_ptr<FloatingIcon>(
 		result,
