@@ -20,6 +20,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "data/data_feed.h"
 #include "data/data_channel.h"
 #include "data/data_chat.h"
+#include "data/data_user.h"
 #include "passport/passport_form_controller.h"
 #include "core/shortcuts.h"
 #include "boxes/calendar_box.h"
@@ -70,9 +71,13 @@ void Navigation::showPeerInfo(
 	//}
 	if (auto peer = App::wnd()->controller()->activeChatCurrent().peer()) {
 		if (auto channel = peer->asChannel()) {
-			if (!channel->canShowParticipantProfile() && Auth().userPeerId() != peerId) {
-				Ui::Toast::Show(lang(lng_restricted_show_profile));
-				return;
+			if (!channel->canShowParticipantProfile()) {
+				if (auto user = session().data().peer(peerId)->asUser()) {
+					if (!user->isSelf() && !user->isContact()) {
+						Ui::Toast::Show(lang(lng_restricted_show_profile));
+						return;
+					}
+				}
 			}
 		}
 	}

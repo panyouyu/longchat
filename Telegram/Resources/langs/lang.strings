@@ -1044,7 +1044,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_action_secure_proof_of_address" = "地址证明";
 "lng_action_secure_phone" = "手机号码";
 "lng_action_secure_email" = "邮箱地址";
-"lng_action_change_rights" = "{user} 修改了群权限";
+"lng_action_mute_on" = "{user} 开启了禁言";
+"lng_action_mute_off" = "{user} 关闭了禁言";
 "lng_action_yourself" = "你";
 
 "lng_ttl_photo_received" = "{from} 发送给您一张自毁照片，请在您的移动设备上查看。";

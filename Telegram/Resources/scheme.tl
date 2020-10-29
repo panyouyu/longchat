@@ -292,7 +292,7 @@ messageActionSecureValuesSentMe#1b287353 values:Vector<SecureValue> credentials:
 messageActionSecureValuesSent#d95c6154 types:Vector<SecureValueType> = MessageAction;
 messageActionContactSignUp#f3f25f76 = MessageAction;
 messageActionTlv#209acdf6 tlvs:TLVS = MessageAction;
-messageActionChangeRights#23bf09e5 user_id:int message:string = MessageActionTLV;
+messageActionChangeRights#23bf09e5 user_id:int chat_id:int message:string = MessageActionTLV;
 messageActionGroupTransfer#23bf09e1 from_user:int to_users:Vector<int> message:string = MessageActionTLV;
 messageActionGroupKickOut#23bf09e3 user_id:int users:Vector<int> message:string = MessageActionTLV;
 messageActionGroupAdminRights#23bf09e4 user_id:int chat_id:int users:Vector<int> message:string = MessageActionTLV;

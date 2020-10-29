@@ -218,7 +218,32 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		auto result = PreparedText{};
 		auto user = history()->owner().user(data.vuser_id.v);
 		result.links.push_back(fromLink());
-		result.text = lng_action_change_rights(lt_user, fromLinkText());
+
+		auto error = QJsonParseError{ 0, QJsonParseError::NoError };
+		auto document = QJsonDocument::fromJson(qba(data.vmessage), &error);
+		if (error.error != QJsonParseError::NoError) {
+			LOG(("ActionChangeRights Json Error."));
+			return PreparedText{};
+		}
+		else if (!document.isObject()) {
+			LOG(("ActionChangeRights Json not an object"));
+			return PreparedText{};
+		}
+		auto object = document.object();
+		auto it = object.constFind(qsl("Rights"));
+		if (it == object.constEnd()) {
+			LOG(("ActionChangeRights Json can not find Rights."));
+			return PreparedText{};
+		}
+		if (it->type() != QJsonValue::Double) {
+			LOG(("ActionChangeRights Json IsAdd type is not int."));
+			return PreparedText{};
+		}
+		auto right = it.value().toInt();
+
+		result.text = right & (1U << 1)
+			? lng_action_mute_on(lt_user, fromLinkText())
+			: lng_action_mute_off(lt_user, fromLinkText());		
 
 		return result;
 	};
@@ -243,7 +268,7 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 
 	auto prepareActionGroupAdminRights = [this](const MTPDmessageActionGroupAdminRights& data) {
 		auto result = PreparedText{};
-		auto user = history()->owner().user(data.vuser_id.v);
+		auto user = history()->owner().user(data.vusers.v.first().v);
 		result.links.push_back(fromLink());
 		result.links.push_back(user->createOpenLink());
 
