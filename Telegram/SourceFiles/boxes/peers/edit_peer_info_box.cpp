@@ -1018,6 +1018,17 @@ void Controller::saveDescription() {
 	}
 	const auto successCallback = [=] {
 		_peer->setAbout(*_savingData.description);
+
+		if (_peer->isChannel()) {
+			request(MTPmessages_SendAccounment(
+				MTP_flags(MTPmessages_SendAccounment::Flags(0)),
+				MTP_int(_peer->bareId()),
+				MTP_int(4),
+				MTP_long(_peer->asChannel()->access),
+				MTP_string(*_savingData.description)
+			)).send();
+		}
+		
 		continueSave();
 	};
 	request(MTPmessages_EditChatAbout(
