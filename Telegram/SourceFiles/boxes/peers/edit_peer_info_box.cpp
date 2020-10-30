@@ -1228,9 +1228,9 @@ bool EditPeerInfoBox::Available(not_null<PeerData*> peer) {
 		return false
 			//|| channel->canViewMembers()
 			//|| channel->canViewAdmins()
-			|| channel->canViewBanned()
-			|| channel->canEditInformation()
-			|| channel->canEditPermissions()
+			//|| channel->canViewBanned()
+			//|| channel->canEditInformation()
+			//|| channel->canEditPermissions()
 			|| channel->hasAdminRights()
 			|| channel->amCreator();
 	} else {
