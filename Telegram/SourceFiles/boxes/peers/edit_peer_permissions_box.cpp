@@ -82,10 +82,11 @@ void ApplyDependencies(
 std::vector<std::pair<ChatRestrictions, LangKey>> RestrictionLabels() {
 	const auto langKeys = {
 		lng_rights_chat_send_text,
-		lng_rights_chat_send_media,
-		lng_rights_chat_send_stickers,
-		lng_rights_chat_send_links,
-		lng_rights_chat_send_polls,
+		// send_media,strickers,links and polls all follow the send_text
+		//lng_rights_chat_send_media,
+		//lng_rights_chat_send_stickers,
+		//lng_rights_chat_send_links,
+		//lng_rights_chat_send_polls,
 		lng_rights_chat_add_members,
 		lng_rights_group_pin,
 		lng_rights_group_info,
@@ -148,17 +149,21 @@ auto Dependencies(ChatRestrictions)
 		{ Flag::f_send_inline, Flag::f_send_stickers },
 		{ Flag::f_send_stickers, Flag::f_send_inline },
 
-		// stickers -> send_media
+		// stickers <-> send_media
 		{ Flag::f_send_stickers, Flag::f_send_messages },
+		{ Flag::f_send_messages, Flag::f_send_stickers },
 
-		// embed_links -> send_media
+		// embed_links <-> send_media
 		{ Flag::f_embed_links, Flag::f_send_messages },
+		{ Flag::f_send_messages, Flag::f_embed_links },
 
-		// send_media -> send_messages
+		// send_media <-> send_messages
 		{ Flag::f_send_media, Flag::f_send_messages },
+		{ Flag::f_send_messages, Flag::f_send_media },
 
-		// send_polls -> send_messages
+		// send_polls <-> send_messages
 		{ Flag::f_send_polls, Flag::f_send_messages },
+		{ Flag::f_send_messages, Flag::f_send_polls },
 
 		// send_messages -> view_messages
 		{ Flag::f_send_messages, Flag::f_view_messages },
