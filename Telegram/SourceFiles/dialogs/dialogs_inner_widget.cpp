@@ -1313,23 +1313,30 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 	int32 is_whole = result.c_userGroupData().vis_whole.v;
 	int32 is_update = result.c_userGroupData().vis_update.v;
 	bool needUpdate = false;
-	if (1 == is_whole)
-	{
+	if (1 == is_whole) {
 		needUpdate = true;
 		_vecGroupOrgInfo.clear();
 		//全量的全部转到本地存储结构中
 		for (const auto& userGroup : result.c_userGroupData().vtag_users.v) {
 			Contact::GroupInfo gi;
 			gi.id = userGroup.c_userGroup().vtag_id.v;
-			gi.otherId = userGroup.c_userGroup().vother_id.v;
-			gi.gName = userGroup.c_userGroup().vtag_name.v;
+			auto other_id = userGroup.c_userGroup().vother_id.v;
+			gi.otherId = other_id;
+			if (other_id == 1) {
+				gi.gName = lang(lng_confirm_group_name1);
+			} else if (other_id == 2) {
+				gi.gName = lang(lng_confirm_group_name2);
+			} else if (other_id == 3) {
+				gi.gName = lang(lng_confirm_group_name3);
+			} else {
+				gi.gName = userGroup.c_userGroup().vtag_name.v;
+			}			
 			for (const auto& userId : userGroup.c_userGroup().vadd_user_ids.v) {
 				gi.userIds.push_back(userId.v);
 			}
 			_vecGroupOrgInfo.push_back(gi);
 		}
-		
-	} else if (1 == is_update)	{
+	} else if (1 == is_update) {
 		needUpdate = true;
 		for (const auto& userGroup : result.c_userGroupData().vtag_users.v) {
 			uint64 groupId  = userGroup.c_userGroup().vtag_id.v;
@@ -1337,26 +1344,20 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 			uint32 is_add = userGroup.c_userGroup().vis_add.v;
 			uint32 is_del = userGroup.c_userGroup().vis_del.v;
 			//处理删除分组
-			if (1 == is_del)
-			{
-				for (QVector<Contact::GroupInfo>::iterator it = _vecGroupOrgInfo.begin(); it != _vecGroupOrgInfo.end(); )
-				{
-					if ((*it).id == groupId)
-					{
+			if (1 == is_del) {
+				for (QVector<Contact::GroupInfo>::iterator it = _vecGroupOrgInfo.begin(); it != _vecGroupOrgInfo.end(); ) {
+					if ((*it).id == groupId) {
 						it = _vecGroupOrgInfo.erase(it);
-					}
-					else
-					{
+					} else {
 						it++; //这里要加
 					}
-					if (it == _vecGroupOrgInfo.end()) //要控制迭代器不能超过整个容器 
-					{
+					if (it == _vecGroupOrgInfo.end()) {
+						//要控制迭代器不能超过整个容器
 						break;
 					}
 				}
-			} 
-			else if (1 == is_add) //处理新增分组
-			{
+			}  else if (1 == is_add) {
+				//处理新增分组
 				Contact::GroupInfo gi;
 				gi.id = userGroup.c_userGroup().vtag_id.v;
 				gi.otherId = userGroup.c_userGroup().vother_id.v;
@@ -1365,12 +1366,10 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 					gi.userIds.push_back(userId.v);
 				}
 				_vecGroupOrgInfo.push_back(gi);
-			}
-			else //处理修改分组
-			{
+			} else {
+				//处理修改分组
 				for (int i = 0; i < _vecGroupOrgInfo.size(); ++i) {
-					if (groupId == _vecGroupOrgInfo[i].id)
-					{
+					if (groupId == _vecGroupOrgInfo[i].id) {
 						if ((flags & 1) != 0) {
 							_vecGroupOrgInfo[i].gName = userGroup.c_userGroup().vtag_name.v;
 						}
@@ -1382,18 +1381,13 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 						if ((flags & 4) != 0) {
 							for (const auto& userId : userGroup.c_userGroup().vdel_user_ids.v) {
 								uint64 uId = userId.v;
-								for (QVector<uint64>::iterator it = _vecGroupOrgInfo[i].userIds.begin(); it != _vecGroupOrgInfo[i].userIds.end();)
-								{
-									if ((*it) == uId)
-									{
+								for (QVector<uint64>::iterator it = _vecGroupOrgInfo[i].userIds.begin(); it != _vecGroupOrgInfo[i].userIds.end();) {
+									if ((*it) == uId) {
 										it = _vecGroupOrgInfo[i].userIds.erase(it);
-									}
-									else
-									{
+									} else {
 										it++;
 									}
-									if (it == _vecGroupOrgInfo[i].userIds.end())
-									{
+									if (it == _vecGroupOrgInfo[i].userIds.end()) {
 										break;
 									}
 								}
@@ -1412,15 +1406,12 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 		for (int i = 0; i < _vecGroupOrgInfo.size(); ++i) {
 			Contact::ContactInfo* info = new Contact::ContactInfo();
 			info->otherId = _vecGroupOrgInfo[i].otherId;
-			if (Contact::GFT_QUEUE == info->otherId)
-			{
+			if (Contact::GFT_QUEUE == info->otherId) {
 				_queueCount = 0;
 				for (int j = 0; j < _vecGroupOrgInfo[i].userIds.size(); ++j) {
 					_queueCount++;
 				}
-			}
-			else
-			{
+			} else {
 				info->id = _vecGroupOrgInfo[i].id;
 				info->firstName = _vecGroupOrgInfo[i].gName;
 				info->isGroup = true;
@@ -1432,7 +1423,6 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 					if (Contact::GFT_SEEKING == info->otherId) {
 						_vecSeeking.push_back(userId);
 					}
-
 				}
 				info->userTotalCount = info->userIds.size();
 				info->showUserCount = QString("(%1)").arg(info->userTotalCount);
@@ -1451,14 +1441,12 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 						auto userId = user->id;
 						_mapUserInfo[userId] = peer->name;
 						//循环所有用户
-						//qDebug() << "u:" << userId << _mapUserInfo[userId];
 						if (existUser(userId)) //当前用户在分组中
 						{
 							//遍历用户下的所有分组，并加入到对应分组中去
 							QSet<uint64>::const_iterator i = _mapUser2Group[userId].constBegin();
 							while (i != _mapUser2Group[userId].constEnd()) {
 								Contact::ContactInfo* ci = new Contact::ContactInfo();
-								//qDebug() << "     gId:" << *i << "gName" << peer->name;
 								genContact(ci, peer->id, *i);
 								_vecContactAndGroupData.push_back(ci);
 								bool find = false;
@@ -1473,7 +1461,6 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 									genContact(ci4s, peer->id, 0);
 									_vecContactAndGroupData4Search.push_back(ci4s);
 								}
-
 								++i;
 							}
 						}
@@ -1481,7 +1468,6 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 				}
 			}
 			_signalGroupChanged.notify(1);
-			//qDebug() << "---clear data ---end";
 			return count;
 		};
 		appendList(_contacts.get());
@@ -1490,7 +1476,6 @@ void DialogsInner::createGroupDialog(const MTPUserGroupData& result)
 
 void DialogsInner::removeGroupDialog()
 {
-	//qDebug() << "---clear data ---start";
 	_mapUserInfo.clear();
 	_mapUser2Group.clear();	
 	qDeleteAll(_vecContactAndGroupData4Search);
@@ -1498,7 +1483,6 @@ void DialogsInner::removeGroupDialog()
 	qDeleteAll(_vecContactAndGroupData);
 	_vecContactAndGroupData.clear();
 	_vecSeeking.clear();
-
 }
 
 void DialogsInner::diffGroup()
@@ -1506,10 +1490,8 @@ void DialogsInner::diffGroup()
 	//先判断找出咨询中不存在的用户，然后把它删除
 	QVector<uint64> vecSeekingNew;
 	//先取出新咨询中的用户
-	for (int i = 0; i < _vecGroupOrgInfo.size(); ++i)
-	{
-		if (Contact::GFT_SEEKING == _vecGroupOrgInfo[i].otherId)
-		{
+	for (int i = 0; i < _vecGroupOrgInfo.size(); ++i) {
+		if (Contact::GFT_SEEKING == _vecGroupOrgInfo[i].otherId) {
 			for (int j = 0; j < _vecGroupOrgInfo[i].userIds.size(); ++j) {
 				vecSeekingNew.push_back(_vecGroupOrgInfo[i].userIds[j]);
 			}
@@ -1517,19 +1499,15 @@ void DialogsInner::diffGroup()
 	}
 	//从现有咨询中的用户中删除不存在的用户
 	bool findDialog = false;
-	for (int i = 0; i < _vecSeeking.size(); ++i)
-	{
+	for (int i = 0; i < _vecSeeking.size(); ++i) {
 		findDialog = false;
-		for (int j = 0; j < vecSeekingNew.size(); ++j)
-		{
-			if (_vecSeeking[i] == vecSeekingNew[j])
-			{
+		for (int j = 0; j < vecSeekingNew.size(); ++j) {
+			if (_vecSeeking[i] == vecSeekingNew[j]) {
 				findDialog = true;
 				break;
 			}
 		}
-		if (findDialog)
-		{
+		if (findDialog) {
 			continue;
 		}
 		//没有查找到移除
