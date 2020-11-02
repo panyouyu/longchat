@@ -1027,9 +1027,9 @@ void History::applyServiceChanges(
 				if (const auto user = owner().userLoaded(userId.v)) {
 					if (!base::contains(mgInfo->lastParticipants, user)) {
 						mgInfo->lastParticipants.push_front(user);
-						Notify::peerUpdatedDelayed(peer, Notify::PeerUpdate::Flag::MembersChanged);
-						_owner->addNewMegagroupParticipant(megagroup, user);
+						Notify::peerUpdatedDelayed(peer, Notify::PeerUpdate::Flag::MembersChanged);						
 					}
+					_owner->addNewMegagroupParticipant(megagroup, user);
 					if (user->botInfo) {
 						peer->asChannel()->mgInfo->bots.insert(user);
 						if (peer->asChannel()->mgInfo->botStatus != 0 && peer->asChannel()->mgInfo->botStatus < 2) {
@@ -1049,9 +1049,9 @@ void History::applyServiceChanges(
 			if (auto user = item->from()->asUser()) {
 				if (!base::contains(mgInfo->lastParticipants, user)) {
 					mgInfo->lastParticipants.push_front(user);
-					Notify::peerUpdatedDelayed(peer, Notify::PeerUpdate::Flag::MembersChanged);
-					_owner->addNewMegagroupParticipant(megagroup, user);
+					Notify::peerUpdatedDelayed(peer, Notify::PeerUpdate::Flag::MembersChanged);					
 				}
+				_owner->addNewMegagroupParticipant(megagroup, user);
 				if (user->botInfo) {
 					mgInfo->bots.insert(user);
 					if (mgInfo->botStatus != 0 && mgInfo->botStatus < 2) {
