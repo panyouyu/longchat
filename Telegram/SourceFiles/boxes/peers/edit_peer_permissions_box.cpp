@@ -149,21 +149,17 @@ auto Dependencies(ChatRestrictions)
 		{ Flag::f_send_inline, Flag::f_send_stickers },
 		{ Flag::f_send_stickers, Flag::f_send_inline },
 
-		// stickers <-> send_media
+		// stickers -> send_media
 		{ Flag::f_send_stickers, Flag::f_send_messages },
-		{ Flag::f_send_messages, Flag::f_send_stickers },
 
-		// embed_links <-> send_media
+		// embed_links -> send_media
 		{ Flag::f_embed_links, Flag::f_send_messages },
-		{ Flag::f_send_messages, Flag::f_embed_links },
 
-		// send_media <-> send_messages
+		// send_media -> send_messages
 		{ Flag::f_send_media, Flag::f_send_messages },
-		{ Flag::f_send_messages, Flag::f_send_media },
 
-		// send_polls <-> send_messages
+		// send_polls -> send_messages
 		{ Flag::f_send_polls, Flag::f_send_messages },
-		{ Flag::f_send_messages, Flag::f_send_polls },
 
 		// send_messages -> view_messages
 		{ Flag::f_send_messages, Flag::f_view_messages },
@@ -173,23 +169,31 @@ auto Dependencies(ChatRestrictions)
 ChatRestrictions NegateRestrictions(ChatRestrictions value) {
 	using Flag = ChatRestriction;
 
-	return (~value) & (Flag(0)
+	auto result = (~value) & (Flag(0)
 		// view_messages is always allowed, so it is never in restrictions.
 		//| Flag::f_view_messages
 		| Flag::f_change_info
 		| Flag::f_embed_links
 		| Flag::f_invite_users
 		| Flag::f_pin_messages
+		| Flag::f_send_messages
+		| Flag::f_show_profile
+		| Flag::f_add_group_confirm
+		| Flag::f_screenshot_notification);
+	auto flag = (Flag(0)
 		| Flag::f_send_games
 		| Flag::f_send_gifs
 		| Flag::f_send_inline
 		| Flag::f_send_media
-		| Flag::f_send_messages
 		| Flag::f_send_polls
-		| Flag::f_send_stickers
-		| Flag::f_show_profile
-		| Flag::f_add_group_confirm
-		| Flag::f_screenshot_notification);
+		| Flag::f_send_stickers);
+	if (result & Flag::f_send_messages) {
+		result |= flag;
+	} else {
+		result &= ~flag;
+	}
+
+	return result;
 }
 
 auto Dependencies(ChatAdminRights)
