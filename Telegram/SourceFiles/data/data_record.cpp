@@ -161,6 +161,7 @@ void RecordClickHandler::onClickImpl() const {
 	}
 	history->addNewerSlice(QVector<MTPMessage>());
 	history->addOlderSlice(_record->msgs());
+	history->addNewerSlice(QVector<MTPMessage>());
 
 	App::wnd()->controller()->showPeerHistory(
 		PeerData::kRecordDialogId,

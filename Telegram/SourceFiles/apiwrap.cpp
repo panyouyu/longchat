@@ -965,6 +965,10 @@ void ApiWrap::requestFullPeer(not_null<PeerData*> peer) {
 		return;
 	}
 
+	if (peer->id == PeerData::kRecordDialogId) {
+		return;
+	}
+
 	const auto requestId = [&] {
 		const auto failHandler = [=](const RPCError &error) {
 			_fullPeerRequests.remove(peer);
@@ -1675,6 +1679,10 @@ void ApiWrap::requestSelfParticipant(not_null<ChannelData*> channel) {
 		return;
 	}
 
+	if (channel->id == PeerData::kRecordDialogId) {
+		return;
+	}
+
 	const auto finalize = [=](UserId inviter, TimeId inviteDate) {
 		channel->inviter = inviter;
 		channel->inviteDate = inviteDate;
@@ -2189,7 +2197,8 @@ void ApiWrap::requestNotifySettings(const MTPInputNotifyPeer &peer) {
 		}
 		Unexpected("Type in ApiRequest::requestNotifySettings.");
 	}();
-	if (_notifySettingRequests.find(key) != end(_notifySettingRequests)) {
+	if (_notifySettingRequests.find(key) != end(_notifySettingRequests)
+		|| key == PeerData::kRecordDialogId) {
 		return;
 	}
 	auto requestId = request(MTPaccount_GetNotifySettings(
