@@ -80,6 +80,7 @@ countedTypeIdExceptions['updateOther#3b9aca1f'] = True
 countedTypeIdExceptions['config#e6ca25f6'] = True
 countedTypeIdExceptions['configUrl#3b9acad6'] = True
 countedTypeIdExceptions['configMail#3b9acadb'] = True
+countedTypeIdExceptions['configJson#3b9acadc'] = True
 countedTypeIdExceptions['contacts.searchContact#3b9aca16'] = True
 countedTypeIdExceptions['contacts.sendContactRequest#3b9aca18'] = True
 countedTypeIdExceptions['contacts.contactRequestResponse#3b9aca15'] = True

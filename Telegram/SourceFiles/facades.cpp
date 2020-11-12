@@ -468,6 +468,7 @@ struct Data {
 	QString CdnFileOkUrl = qsl("http://35.220.219.205:8082/filesys/uploader_ok");
 	QString LongChatMailArguments;
 	base::Observable<void> LongChatMailArgumentsChanged;
+	QString CdnDownLoadPreifx;
 };
 
 } // namespace internal
@@ -609,6 +610,7 @@ DefineVar(Global, QString, CdnFileUrl);
 DefineVar(Global, QString, CdnFileOkUrl);
 DefineVar(Global, QString, LongChatMailArguments);
 DefineRefVar(Global, base::Observable<void>, LongChatMailArgumentsChanged);
+DefineVar(Global, QString, CdnDownLoadPreifx);
 
 rpl::producer<bool> ReplaceEmojiValue() {
 	return rpl::single(

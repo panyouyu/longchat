@@ -811,37 +811,55 @@ void Instance::Private::configLoadDone(const MTPConfig &result) {
 	}
 
 	if (data.has_tlv()) {
-		try {
-			auto tlv_size = data.vtlv.c_tlvs().vtlvs.v.size();
-			if (tlv_size) {
-				auto url = data.vtlv.c_tlvs().vtlvs.v.first().c_tlv().vdata.v;
-				auto from = reinterpret_cast<const mtpPrime*>(url.constData());
-				auto end = from + url.size() / kIntSize;
+		try {			
+			for (auto mtpTlv : data.vtlv.c_tlvs().vtlvs.v) {
+				auto id = mtpTlv.c_tlv().vid.v;
+				auto tlv = mtpTlv.c_tlv().vdata.v;
+				auto from = reinterpret_cast<const mtpPrime*>(tlv.constData());
+				auto end = from + tlv.size() / kIntSize;
 				auto sfrom = from - 4U;
 				from++;
-				MTPconfigUrl configUrl;
-				configUrl.read(from, end);
-				configUrl.match([](const MTPDconfigUrl& config) {
-					Global::SetOfficalWebSite(qs(config.vwww_url));
-					Local::writeAutoupdatePrefix(qs(config.vupdate_url));
-					Global::SetUploadLogUrl(qs(config.vupload_log_url));
-					Global::SetCdnFileUrl(qs(config.vcdn_file_url));
-					Global::SetCdnFileOkUrl(qs(config.vcdn_file_ok_url));
-				});
-			}
-			
-			if (tlv_size > 1) {
-				auto emailProxy = data.vtlv.c_tlvs().vtlvs.v.at(1).c_tlv().vdata.v;				
-				auto from = reinterpret_cast<const mtpPrime*>(emailProxy.constData());
-				auto end = from + emailProxy.size() / kIntSize;
-				auto sfrom = from - 4U;
-				from++;
-				MTPconfigMail mail;
-				mail.read(from, end);
-				mail.match([=](const MTPDconfigMail& data) {
-					Global::SetLongChatMailArguments(qs(data.vproxy));
-					Global::RefLongChatMailArgumentsChanged().notify();
-				});
+				if (id == mtpc_configUrl) {
+					MTPconfigUrl configUrl;
+					configUrl.read(from, end);
+					configUrl.match([](const MTPDconfigUrl& config) {
+						Global::SetOfficalWebSite(qs(config.vwww_url));
+						Local::writeAutoupdatePrefix(qs(config.vupdate_url));
+						Global::SetUploadLogUrl(qs(config.vupload_log_url));
+						Global::SetCdnFileUrl(qs(config.vcdn_file_url));
+						Global::SetCdnFileOkUrl(qs(config.vcdn_file_ok_url));
+					});
+				} else if (id == mtpc_configMail) {
+					MTPconfigMail mail;
+					mail.read(from, end);
+					mail.match([=](const MTPDconfigMail& data) {
+						Global::SetLongChatMailArguments(qs(data.vproxy));
+						Global::RefLongChatMailArgumentsChanged().notify();
+					});
+				} else if (id == mtpc_configJson) {
+					MTPconfigJson configJson;
+					configJson.read(from, end);
+					configJson.match([](const MTPDconfigJson& json) {
+						auto error = QJsonParseError{ 0, QJsonParseError::NoError };
+						const auto document = QJsonDocument::fromJson(qba(json.vjson), &error);
+						if (error.error != QJsonParseError::NoError) {
+							LOG(("config ERROR: configjson not a document!"));
+							return;
+						}
+						auto object = document.object();
+						auto cdn_prefix_key = qsl("cdn_download_url");
+						if (object.constFind(cdn_prefix_key) == object.constEnd()) {
+							Global::SetWebFileEnabled(false);
+							LOG(("config ERROR: configjson not contain key(%1)!").arg(cdn_prefix_key));
+						} else if (!object.value(cdn_prefix_key).isString()) {
+							Global::SetWebFileEnabled(false);
+							LOG(("config ERROR: configjson value(%1) not a string!").arg(cdn_prefix_key));
+						} else {
+							Global::SetCdnDownLoadPreifx(object.value(cdn_prefix_key).toString());
+						}
+					});
+					
+				}
 			}
 		}
 		catch (Exception&) {

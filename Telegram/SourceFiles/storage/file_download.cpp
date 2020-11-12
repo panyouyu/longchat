@@ -1196,7 +1196,7 @@ webFileLoader::webFileLoader(
 	fromCloud,
 	autoLoading,
 	cacheTag)
-, _url(url)
+, _url(Global::CdnDownLoadPreifx() + url)
 , _requestSent(false)
 , _already(0) {
 	_queue = &_webQueue;
