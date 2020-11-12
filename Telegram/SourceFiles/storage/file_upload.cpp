@@ -174,8 +174,10 @@ Uploader::webFile::webFile(const std::shared_ptr<FileLoadResult>& file)
 		|| type() == SendMediaType::WallPaper
 		|| type() == SendMediaType::Audio) {
 		setDocSize(file->filesize);
-	}
-	else {
+		if (type() == SendMediaType::Audio) {
+			md5Hash.feed(file->content, file->content.size());
+		}
+	} else {
 		docSize = docPartSize = docPartsCount = 0;
 	}
 }
@@ -812,7 +814,7 @@ void webUploader::sendNext() {
 		} else {
 			const auto offset = uploadingData.docSentParts
 				* uploadingData.docPartSize;
-			toSend = content.mid(offset, uploadingData.docPartSize);			
+			toSend = content.mid(offset, uploadingData.docPartSize);
 		}
 		if ((toSend.size() > uploadingData.docPartSize)
 			|| ((toSend.size() < uploadingData.docPartSize
@@ -825,13 +827,11 @@ void webUploader::sendNext() {
 			md5 = uploadingData.file
 				? uploadingData.file->filemd5
 				: uploadingData.media.jpeg_md5;			
-		}
-		else if (uploadingData.type() == SendMediaType::File
+		} else if (uploadingData.type() == SendMediaType::File
 			|| uploadingData.type() == SendMediaType::WallPaper
 			|| uploadingData.type() == SendMediaType::Audio) {			
 			hashMd5Hex(uploadingData.md5Hash.result(), md5.data());
-		}
-		else if (uploadingData.type() == SendMediaType::Secure) {
+		} else if (uploadingData.type() == SendMediaType::Secure) {
 			md5 = uploadingData.file->filemd5;
 		}
 		const auto file_type = getFileType(uploadingData);
