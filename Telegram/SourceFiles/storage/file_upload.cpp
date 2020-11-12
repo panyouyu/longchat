@@ -837,7 +837,11 @@ void webUploader::sendNext() {
 		}
 		const auto file_type = getFileType(uploadingData);
 		const auto file_name = uploadingData.filename();
-		auto reply = post(md5, file_type, uploadingData.docPartsCount, uploadingData.docSentParts + 1, toSend, file_name);
+		QByteArray partMd5(32, Qt::Uninitialized);
+		HashMd5 partHashMd5;
+		partHashMd5.feed(toSend.data(), toSend.size());
+		hashMd5Hex(partHashMd5.result(), partMd5.data());
+		auto reply = post(md5, file_type, uploadingData.docPartsCount, uploadingData.docSentParts + 1, toSend, file_name, partMd5);
 		docRequestsSent.emplace(reply, uploadingData.docSentParts);
 		sentSize += uploadingData.docPartSize;
 		uploadingData.docSentParts++;
@@ -853,8 +857,11 @@ void webUploader::sendNext() {
 				? uploadingData.file->filename
 				: uploadingData.file->thumbname)
 			: uploadingData.media.filename;
-
-		auto reply = post(md5, file_type, uploadingData.partsCount, part.key() + 1, part.value(), file_name);
+		QByteArray partMd5(32, Qt::Uninitialized);
+		HashMd5 partHashMd5;
+		partHashMd5.feed(part.value().data(), part.value().size());
+		hashMd5Hex(partHashMd5.result(), partMd5.data());
+		auto reply = post(md5, file_type, uploadingData.partsCount, part.key() + 1, part.value(), file_name, partMd5);
 		requestsSent.emplace(reply, part.value());
 		sentSize += part.value().size();
 
@@ -929,7 +936,8 @@ QNetworkReply* webUploader::post(
 	int file_count, 
 	int file_count_id, 
 	const QByteArray& file_form, 
-	const QString& file_name) {
+	const QString& file_name,
+	const QByteArray &partMd5) {
 	auto multipart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 	
 	addUserHash(multipart);
@@ -937,6 +945,7 @@ QNetworkReply* webUploader::post(
 	addPostFilePart(qsl("file_type"), file_type, multipart);
 	addPostFilePart(qsl("file_count"), QString::number(file_count), multipart);
 	addPostFilePart(qsl("file_count_id"), QString::number(file_count_id), multipart);
+	addPostFilePart(qsl("file_hash"), partMd5, multipart);
 
 	QHttpPart contentPart;
 	contentPart.setHeader(QNetworkRequest::ContentTypeHeader,
@@ -1062,6 +1071,7 @@ QNetworkReply* webUploader::postVerify(
 	addPostFilePart(qsl("file_uuid"), md5, multipart);
 	addPostFilePart(qsl("file_type"), file_type, multipart);
 	addPostFilePart(qsl("file_count"), QString::number(file_count), multipart);
+	addPostFilePart(qsl("file_hash"), md5, multipart);
 	auto reply = _manager.post(
 		QNetworkRequest(qsl("http://35.220.219.205:8082/filesys/uploader_ok")),
 		multipart);
@@ -1117,19 +1127,15 @@ void webUploader::handleVerifyResponse(QNetworkReply *reply) {
 		return currentFailed();
 	}
 	auto data = content.value(data_key).toObject();
-	auto file_name = qsl("file_name"), 
-		file_url_prefix = qsl("file_url_prefix"), 
-		path = qsl("path");
+	auto file_name = qsl("file_name"), path = qsl("path");
 	if (!data.contains(file_name) || !data.value(file_name).isString() ||
-		!data.contains(file_url_prefix) || !data.value(file_url_prefix).isString() ||
-		!data.contains(file_url_prefix) || !data.value(file_url_prefix).isString()) {
+		!data.contains(path) || !data.value(path).isString()) {
 		DEBUG_LOG(("webUploader_verify Error: data in response not corrent."));
 		return currentFailed();
 	}
 	DEBUG_LOG(("[%1] webUploader post_verify succeed.")
 		.arg(qintptr(reply)));
-	currentReady(data.value(file_name).toString(),
-		data.value(file_url_prefix).toString() + data.value(path).toString());
+	currentReady(data.value(file_name).toString(), data.value(path).toString());
 }
 
 void webUploader::currentReady(

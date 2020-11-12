@@ -313,6 +313,7 @@ DeclareVar(QString, OfficalWebSite);
 DeclareVar(QString, UploadLogUrl);
 DeclareVar(QString, CdnFileUrl);
 DeclareVar(QString, CdnFileOkUrl);
+DeclareVar(QString, CdnDownLoadPreifx);
 
 rpl::producer<bool> ReplaceEmojiValue();
 

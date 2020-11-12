@@ -98,6 +98,7 @@ countedTypeIdExceptions['messages.forwardMessages#708e0195'] = True
 countedTypeIdExceptions['messages.getRecordMessages#4222fa75'] = True
 countedTypeIdExceptions['config#e6ca25f6'] = True
 countedTypeIdExceptions['configUrl#3b9acad6'] = True
+countedTypeIdExceptions['configJson#3b9acadc'] = True
 countedTypeIdExceptions['inputFileUrl#3b9acaca'] = True
 countedTypeIdExceptions['documentUrl#3b9acacb'] = True
 countedTypeIdExceptions['photoUrl#3b9acacd'] = True

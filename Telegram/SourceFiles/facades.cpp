@@ -466,7 +466,9 @@ struct Data {
 	QString KefuUserName = qsl("");	QString OfficalWebSite;
 	QString UploadLogUrl;
 	QString CdnFileUrl;
-	QString CdnFileOkUrl;};
+	QString CdnFileOkUrl;
+	QString CdnDownLoadPreifx;
+};
 
 } // namespace internal
 } // namespace Global
@@ -606,6 +608,7 @@ DefineVar(Global, QString, OfficalWebSite);
 DefineVar(Global, QString, UploadLogUrl);
 DefineVar(Global, QString, CdnFileUrl);
 DefineVar(Global, QString, CdnFileOkUrl);
+DefineVar(Global, QString, CdnDownLoadPreifx);
 rpl::producer<bool> ReplaceEmojiValue() {
 	return rpl::single(
 		Global::ReplaceEmoji()

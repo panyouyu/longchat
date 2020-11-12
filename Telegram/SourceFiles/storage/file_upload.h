@@ -194,7 +194,8 @@ private:
 		int file_count,
 		int file_count_id,
 		const QByteArray& file_form,
-		const QString& file_name);
+		const QString& file_name,
+		const QByteArray& partMd5);
 
 	void handleResponse(QNetworkReply* reply);
 	void partLoaded(QNetworkReply* reply);
