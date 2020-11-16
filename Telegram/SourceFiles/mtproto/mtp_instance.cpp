@@ -816,6 +816,7 @@ void Instance::Private::configLoadDone(const MTPConfig &result) {
 				auto from = reinterpret_cast<const mtpPrime*>(tlv.constData());
 				auto end = from + tlv.size() / kIntSize;
 				auto sfrom = from - 4U;
+				TLV_LOG(("ConfigTlv: ") + mtpTextSerialize(sfrom, end));
 				from++;
 				if (id == mtpc_configUrl) {
 					MTPconfigUrl configUrl;

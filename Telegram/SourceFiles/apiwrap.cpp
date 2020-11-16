@@ -5197,6 +5197,66 @@ void ApiWrap::uploadAlbumMedia(
 				data.has_ttl_seconds() ? data.vttl_seconds : MTPint());
 			sendAlbumWithUploaded(item, groupId, media);
 		} break;
+
+		case mtpc_messageMediaTlv: {
+			auto& tlvs = result.c_messageMediaTlv().vtlv.c_tlvs().vtlvs.v;
+			for (const auto& tlv : tlvs) {
+				try {
+					auto from = reinterpret_cast<const mtpPrime*>(tlv.c_tlv().vdata.v.constData());
+					auto end = from + tlv.c_tlv().vdata.v.size() / sizeof(mtpPrime);
+					auto sfrom = from - 4U;
+					TLV_LOG(("TLV Album: ") + mtpTextSerialize(sfrom, end));
+					from++;
+
+					MTPmessageMedia mediatlv;
+					mediatlv.read(from, end, tlv.c_tlv().vid.v);
+
+					mediatlv.match([=](const MTPDmessageMediaPhoto& data) {
+						if (data.vphoto.type() != mtpc_photoUrl) {
+							failed();
+							return;
+						}
+						const auto& photo = data.vphoto.c_photoUrl();
+						const auto flags = MTPDinputMediaPhoto::Flags(0)
+							| (data.has_ttl_seconds()
+								? MTPDinputMediaPhoto::Flag::f_ttl_seconds
+								: MTPDinputMediaPhoto::Flag(0));
+						const auto media = MTP_inputMediaPhoto(
+							MTP_flags(flags),
+							MTP_inputPhotoUrl(
+								photo.vid,
+								photo.vaccess_hash,
+								photo.vurl,
+								photo.vsize,
+								photo.vwidth,
+								photo.vheight),
+							data.has_ttl_seconds() ? data.vttl_seconds : MTPint());
+						sendAlbumWithUploaded(item, groupId, media);
+						}, [=](const MTPDmessageMediaDocument& data) {
+							if (data.vdocument.type() != mtpc_documentUrl) {
+								failed();
+								return;
+							}
+							const auto& document = data.vdocument.c_documentUrl();
+							const auto flags = MTPDinputMediaDocument::Flags(0)
+								| (data.has_ttl_seconds()
+									? MTPDinputMediaDocument::Flag::f_ttl_seconds
+									: MTPDinputMediaDocument::Flag(0));
+							const auto media = MTP_inputMediaDocument(
+								MTP_flags(flags),
+								MTP_inputDocumentUrl(
+									document.vid,
+									document.vaccess_hash,
+									document.vurl,
+									document.vsize),
+								data.has_ttl_seconds() ? data.vttl_seconds : MTPint());
+							sendAlbumWithUploaded(item, groupId, media);
+						}, [](const auto&) {});
+				}
+				catch (...) {
+				}
+			}
+		} break;
 		}
 	}).fail([=](const RPCError &error) {
 		failed();
