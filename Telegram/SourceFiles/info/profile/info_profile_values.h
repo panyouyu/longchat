@@ -50,6 +50,7 @@ rpl::producer<TextWithEntities> AboutValue(not_null<PeerData*> peer);
 rpl::producer<QString> LinkValue(not_null<PeerData*> peer);
 rpl::producer<bool> NotificationsEnabledValue(not_null<PeerData*> peer);
 rpl::producer<bool> IsContactValue(not_null<UserData*> user);
+rpl::producer<bool> IsStrangerValue(not_null<UserData*> user);
 rpl::producer<bool> CanInviteBotToGroupValue(not_null<UserData*> user);
 rpl::producer<bool> CanShareContactValue(not_null<UserData*> user);
 rpl::producer<bool> CanAddContactValue(not_null<UserData*> user);

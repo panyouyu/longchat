@@ -86,6 +86,7 @@ countedTypeIdExceptions['contacts.searchContact#3b9aca16'] = True
 countedTypeIdExceptions['contacts.sendContactRequest#3b9aca18'] = True
 countedTypeIdExceptions['contacts.contactRequestResponse#3b9aca15'] = True
 countedTypeIdExceptions['contacts.contactSearchResponse#3b9aca17'] = True
+countedTypeIdExceptions['contacts.editStrangerName#3b94ca86'] = True
 countedTypeIdExceptions['savedGroups#3c3c74e5'] = True
 countedTypeIdExceptions['account.getSavedGroups#3c3c74aa'] = True
 countedTypeIdExceptions['chatBannedRights#9f120418'] = True

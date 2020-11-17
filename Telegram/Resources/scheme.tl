@@ -1277,6 +1277,7 @@ contacts.getContactIDs#2caa4a42 hash:int = Vector<int>;
 contacts.getStatuses#c4a353ee = Vector<ContactStatus>;
 contacts.getContacts#c023849f hash:int = contacts.Contacts;
 contacts.importContacts#2c800be5 contacts:Vector<InputContact> = contacts.ImportedContacts;
+contacts.editStrangerName#3b94ca86 flags:# peer:InputPeer first_name:string chat_id:int = Bool;
 contacts.deleteContact#8e953744 id:InputUser = contacts.Link;
 contacts.deleteContacts#59ab389e id:Vector<InputUser> = Bool;
 contacts.deleteByPhones#1013fd9e phones:Vector<string> = Bool;

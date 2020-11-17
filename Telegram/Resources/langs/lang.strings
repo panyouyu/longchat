@@ -842,6 +842,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_profile_common_groups_section" = "共同加入的群组";
 "lng_profile_share_contact" = "分享联系人信息";
 "lng_info_edit_contact" = "编辑联系人";
+"lng_info_edit_stranger" = "编辑姓名";
 "lng_info_delete_contact" = "删除联系人";
 "lng_info_share_contact" = "分享联系方式";
 "lng_profile_clear_history" = "清除历史记录";
@@ -1430,6 +1431,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_edit_sign_messages" = "对消息签名";
 "lng_edit_group" = "编辑群组";
 "lng_edit_self_title" = "编辑您的姓名";
+"lng_edit_his_title" = "编辑他的姓名";
 "lng_confirm_contact_data" = "添加联系人";
 "lng_add_contact" = "添加";
 "lng_add_contact_button" = "添加联系人";

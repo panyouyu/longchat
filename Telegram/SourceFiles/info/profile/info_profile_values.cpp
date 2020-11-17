@@ -135,6 +135,13 @@ rpl::producer<bool> IsContactValue(not_null<UserData*> user) {
 	) | rpl::map([user] { return user->isContact(); });
 }
 
+rpl::producer<bool> IsStrangerValue(not_null<UserData*> user) {
+	return Notify::PeerUpdateValue(
+		user,
+		Notify::PeerUpdate::Flag::UserIsContact
+	) | rpl::map([user] { return !user->isContact(); });
+}
+
 rpl::producer<bool> CanInviteBotToGroupValue(not_null<UserData*> user) {
 	if (!user->isBot() || user->isSupport()) {
 		return rpl::single(false);

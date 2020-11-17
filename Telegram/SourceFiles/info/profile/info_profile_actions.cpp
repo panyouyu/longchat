@@ -152,6 +152,7 @@ private:
 	void addInviteToGroupAction(not_null<UserData*> user);
 	void addShareContactAction(not_null<UserData*> user);
 	void addEditContactAction(not_null<UserData*> user);
+	void addEditStrangerAction(not_null<UserData*> user);
 	void addDeleteContactAction(not_null<UserData*> user);
 	void addClearHistoryAction(not_null<UserData*> user);
 	void addDeleteConversationAction(not_null<UserData*> user);
@@ -510,6 +511,14 @@ void ActionsFiller::addEditContactAction(not_null<UserData*> user) {
 		[user] { Ui::show(Box<AddContactBox>(user)); });
 }
 
+void ActionsFiller::addEditStrangerAction(not_null<UserData*> user) {
+	AddActionButton(
+		_wrap,
+		Lang::Viewer(lng_info_edit_stranger),
+		IsStrangerValue(user),
+		[user] { Ui::show(Box<EditNameBox>(user)); });
+}
+
 void ActionsFiller::addDeleteContactAction(
 		not_null<UserData*> user) {
 	AddActionButton(
@@ -669,6 +678,7 @@ void ActionsFiller::fillUserActions(not_null<UserData*> user) {
 	addShareContactAction(user);
 	if (!user->isSelf()) {
 		addEditContactAction(user);
+		addEditStrangerAction(user);
 		addDeleteContactAction(user);
 	}
 	addClearHistoryAction(user);

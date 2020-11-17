@@ -1051,7 +1051,7 @@ EditNameBox::EditNameBox(QWidget*, not_null<UserData*> user)
 void EditNameBox::prepare() {
 	auto newHeight = st::contactPadding.top() + _first->height();
 
-	setTitle(langFactory(lng_edit_self_title));
+	setTitle(langFactory(_user->isSelf() ? lng_edit_self_title : lng_edit_his_title));
 
 	newHeight += st::boxPadding.bottom() + st::contactPadding.bottom();
 	setDimensions(st::boxWideWidth, newHeight);
@@ -1099,16 +1099,28 @@ void EditNameBox::save() {
 		return;
 	}
 	_sentName = first;
-	auto flags = MTPaccount_UpdateProfile::Flag::f_first_name
-		| MTPaccount_UpdateProfile::Flag::f_last_name;
-	_requestId = MTP::send(
-		MTPaccount_UpdateProfile(
-			MTP_flags(flags),
-			MTP_string(first),
-			MTP_string(QString()),
-			MTPstring()),
-		rpcDone(&EditNameBox::saveSelfDone),
-		rpcFail(&EditNameBox::saveSelfFail));
+	if (_user->isSelf()) {
+		auto flags = MTPaccount_UpdateProfile::Flag::f_first_name
+			| MTPaccount_UpdateProfile::Flag::f_last_name;
+		_requestId = MTP::send(
+			MTPaccount_UpdateProfile(
+				MTP_flags(flags),
+				MTP_string(first),
+				MTP_string(QString()),
+				MTPstring()),
+			rpcDone(&EditNameBox::saveSelfDone),
+			rpcFail(&EditNameBox::saveSelfFail));
+	} else {
+		_requestId = MTP::send(
+			MTPcontacts_EditStrangerName(
+				MTP_flags(MTPcontacts_EditStrangerName::Flag(0)),
+				_user->input,
+				MTP_string(_sentName),
+				MTP_int(0)),
+			rpcDone(&EditNameBox::editStrangerDone),
+			rpcFail(&EditNameBox::editStrangerFail));
+	}
+	
 }
 
 void EditNameBox::saveSelfDone(const MTPUser &user) {
@@ -1118,6 +1130,8 @@ void EditNameBox::saveSelfDone(const MTPUser &user) {
 
 bool EditNameBox::saveSelfFail(const RPCError &error) {
 	if (MTP::isDefaultHandledError(error)) return false;
+
+	_requestId = 0;
 
 	auto err = error.type();
 	auto first = TextUtilities::SingleLine(_first->getLastText().trimmed());
@@ -1132,6 +1146,21 @@ bool EditNameBox::saveSelfFail(const RPCError &error) {
 	} else if (err == "LASTNAME_INVALID") {
 		return true;
 	}
+	_first->setFocus();
+	return true;
+}
+
+void EditNameBox::editStrangerDone(const MTPBool &data) {
+	if (mtpIsTrue(data)) {
+		_user->setName(_sentName, QString(), QString(), TextUtilities::SingleLine(_user->username));
+		closeBox();
+	}
+}
+
+bool EditNameBox::editStrangerFail(const RPCError &error) {
+	if (MTP::isDefaultHandledError(error)) return false;
+
+	_requestId = 0;
 	_first->setFocus();
 	return true;
 }

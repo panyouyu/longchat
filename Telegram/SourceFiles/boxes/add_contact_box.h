@@ -196,6 +196,9 @@ private:
 	void saveSelfDone(const MTPUser &user);
 	bool saveSelfFail(const RPCError &error);
 
+	void editStrangerDone(const MTPBool &data);
+	bool editStrangerFail(const RPCError &error);
+
 	not_null<UserData*> _user;
 
 	object_ptr<Ui::InputField> _first;
