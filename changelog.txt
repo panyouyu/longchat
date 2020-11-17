@@ -1,3 +1,8 @@
+2.4.1 (07.11.20)
+
+- 变更获取好友申请位置.
+- 编辑陌生人姓名.
+
 1.6.7 (13.04.19)
 
 - Replace media when editing messages with media content.

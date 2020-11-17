@@ -15,7 +15,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #define TDESKTOP_ALPHA_VERSION (0ULL)
 #endif // TDESKTOP_OFFICIAL_TARGET
 
-constexpr auto AppVersion = 2004000;
-constexpr auto AppVersionStr = "2.4.0";
+constexpr auto AppVersion = 2004001;
+constexpr auto AppVersionStr = "2.4.1";
 constexpr auto AppBetaVersion = false;
 constexpr auto AppAlphaVersion = TDESKTOP_ALPHA_VERSION;
