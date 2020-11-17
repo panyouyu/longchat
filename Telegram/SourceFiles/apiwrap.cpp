@@ -684,7 +684,23 @@ void ApiWrap::requestContacts() {
 	}).send();
 }
 
-void ApiWrap::requestFriendRequestList(int page) {	
+void ApiWrap::requestFriendRequestCount() {
+	if (_friendRequestCountId) return;
+
+	_friendRequestCountId = request(MTPcontacts_GetFriendRequestCount(
+		MTP_flags(MTPcontacts_GetFriendRequestCount::Flag(0)))
+	).done([=](const MTPcontacts_FriendsRequestCount &data) {
+		_friendRequestCountId = 0;
+		data.match([=](const MTPDcontacts_friendsRequestCount &count) {			
+			_session->data().updateFriendRequestCount(
+				count.vcount.v > 0 ? count.vcount.v : 0);
+		});
+	}).fail([=](const RPCError&) {
+		_friendRequestCountId = 0;
+	}).send();
+}
+
+void ApiWrap::requestFriendRequestList(Fn<void()> callback, int page) {
 	if (_friendRequestListId) return;
 	Ensures(page > 0);
 	constexpr auto kPageLimit = 12;
@@ -700,9 +716,12 @@ void ApiWrap::requestFriendRequestList(int page) {
 		const auto &friendRequests = result.c_contacts_friendRequestList().vusers;
 		_session->data().processFriendRequests(friendRequests);
 		if (friendRequests.v.size() == kPageLimit) {
-			requestFriendRequestList(page + 1);
+			requestFriendRequestList(callback, page + 1);
 		} else {
-			_session->data().notifyFriendRequestChanged();
+			_session->data().updateFriendRequestCount(0);
+			if (callback) {
+				callback();
+			}
 		}
 	}).fail([=](const RPCError &error) {
 		_friendRequestListId = 0;

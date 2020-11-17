@@ -1290,6 +1290,7 @@ contacts.resetTopPeerRating#1ae373ac category:TopPeerCategory peer:InputPeer = B
 contacts.resetSaved#879537f1 = Bool;
 contacts.getSaved#82f1e39f = Vector<SavedContact>;
 contacts.toggleTopPeers#8514bdda enabled:Bool = Bool;
+contacts.getFriendRequestCount#3b9aca30 flags:# = contacts.FriendsRequestCount;
 contacts.getFriendRequestList#3b9aca19 page:int limit:int = contacts.FriendRequestList;
 contacts.handelFriendRequest#3b9aca27 user_id:long state:int tag_ids:Vector<long> first_name:string = contacts.HandleFriendRequestResponse;
 

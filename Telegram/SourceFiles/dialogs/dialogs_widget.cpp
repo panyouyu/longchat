@@ -555,7 +555,7 @@ void DialogsWidget::dialogsReceived(
 		Auth().data().allChatsLoaded().set(true);
 	}
 	Auth().api().requestContacts();
-	Auth().api().requestFriendRequestList();
+	Auth().api().requestFriendRequestCount();
 	Auth().api().requestSavedGroups();
 	Auth().api().requestGroupNotifyUnReadCount();
 }

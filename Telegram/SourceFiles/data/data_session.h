@@ -220,9 +220,9 @@ public:
 	void notifySavedGifsUpdated();
 	[[nodiscard]] rpl::producer<> savedGifsUpdated() const;
 
-	void notifyFriendRequestChanged();
+	void updateFriendRequestCount(uint32 count);
 	[[nodiscard]] rpl::producer<int> friendRequestValue() const {
-		return _friendsRequestChanged.value();
+		return _friendsRequestCountViewer.value();
 	}
 
 	void setGroupUnReadCount(int count) {
@@ -759,7 +759,7 @@ private:
 
 	rpl::event_stream<> _stickersUpdated;
 	rpl::event_stream<> _savedGifsUpdated;
-	rpl::variable<int> _friendsRequestChanged = 0;
+	rpl::variable<int> _friendsRequestCountViewer = 0;
 	rpl::variable<int> _groupUnReadCount = 0;
 	rpl::event_stream<> _savedGroupsStream;
 	crl::time _lastStickersUpdate = 0;

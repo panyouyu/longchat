@@ -80,7 +80,8 @@ public:
 	QString exportDirectMessageLink(not_null<HistoryItem*> item);
 
 	void requestContacts();
-	void requestFriendRequestList(int page = 1);
+	void requestFriendRequestCount();
+	void requestFriendRequestList(Fn<void()> callback = nullptr, int page = 1);
 	void requestSavedGroups();
 	void requestGroupNotifyUnReadCount();
 	auto groupJoinApplyCurrent() const {
@@ -716,6 +717,7 @@ private:
 
 	mtpRequestId _contactsRequestId = 0;
 	mtpRequestId _contactsStatusesRequestId = 0;
+	mtpRequestId _friendRequestCountId = 0;
 	mtpRequestId _friendRequestListId = 0;
 	mtpRequestId _savedGroups = 0;
 	mtpRequestId _groupNotifyUnReadCountId = 0;

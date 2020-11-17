@@ -71,6 +71,7 @@ countedTypeIdExceptions['messageMediaTransfer#3b9aca2c'] = True
 countedTypeIdExceptions['messageActionTlv#209acdf6'] = True
 countedTypeIdExceptions['messageActionRedPacket#3b9aca2d'] = True
 countedTypeIdExceptions['contacts.friendsRequestCount#3b9aca31'] = True
+countedTypeIdExceptions['contacts.getFriendRequestCount#3b9aca30'] = True
 countedTypeIdExceptions['friendRequest#3b9aca1b'] = True
 countedTypeIdExceptions['contacts.friendRequestList#3b9aca1a'] = True
 countedTypeIdExceptions['contacts.getFriendRequestList#3b9aca19'] = True

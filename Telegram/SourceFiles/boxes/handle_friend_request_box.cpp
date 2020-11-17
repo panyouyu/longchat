@@ -142,7 +142,7 @@ void HandleFriendRequestBox::onAcceptDone(
 	auto &result = response.c_contacts_handleFriendRequestResponse().vsuccess.v;
 	if (result == int32(Response::Success)) {
 		_user->setContactStatus(UserData::ContactStatus::Contact);
-		Auth().api().requestFriendRequestList();
+		_user->setVerifyStatus(UserData::VerifyStatus::Accepted);
 		Ui::showPeerHistory(_user, ShowAtTheEndMsgId);
 	} else if (result == int32(Response::Fail)) {
 		_acceptRequest = 0;
@@ -163,7 +163,8 @@ void HandleFriendRequestBox::onRefuseDone(
 	const MTPcontacts_HandleFriendRequestResponse &response) {
 	auto &result = response.c_contacts_handleFriendRequestResponse().vsuccess.v;
 	if (result == int32(Response::Success)) {
-		Auth().api().requestFriendRequestList();
+		_user->setContactStatus(UserData::ContactStatus::CanAdd);
+		_user->setVerifyStatus(UserData::VerifyStatus::Refused);
 		closeBox();
 	} else if (result == int32(Response::Fail)) {
 		_refuseRequest = 0;

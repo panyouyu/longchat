@@ -824,6 +824,7 @@ FriendRequestBoxController::FriendRequestBoxController(
 
 void FriendRequestBoxController::prepare() {
 	prepareViewHook();
+	Auth().api().requestFriendRequestList([=] { rebuildRows(); });
 	rebuildRows();
 }
 

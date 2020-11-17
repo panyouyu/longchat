@@ -1418,12 +1418,8 @@ rpl::producer<> Session::savedGifsUpdated() const {
 	return _savedGifsUpdated.events();
 }
 
-void Session::notifyFriendRequestChanged() {
-	auto size = 0;
-	for (const auto &user : _friendRequests) {
-		size += user->verifyStatus() == UserData::VerifyStatus::UnDeal;
-	}
-	_friendsRequestChanged = size;
+void Session::updateFriendRequestCount(uint32 count) {
+	_friendsRequestCountViewer = count;
 }
 
 void Data::Session::addSavedGroups(std::list<not_null<PeerData*>> groups) {

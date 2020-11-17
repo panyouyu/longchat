@@ -3858,7 +3858,7 @@ void MainWidget::feedUpdates(const MTPUpdates &updates, uint64 randomId) {
 	case mtpc_updateOther: {
 		auto& d = updates.c_updateOther();
 		if (d.vother_id.v == int32(Other_ID::FriendsRequestCount)) {
-			Auth().api().requestFriendRequestList();
+			Auth().data().updateFriendRequestCount(d.vother_int.v);
 		} else if (d.vother_id.v == int32(Other_ID::AdminUnReadCount)) {
 			Auth().data().setGroupUnReadCount(d.vother_int.v);
 		} else if (d.vother_id.v == int32(Other_ID::SavedGroupsChanged)) {
