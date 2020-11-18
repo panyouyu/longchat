@@ -946,7 +946,10 @@ Media ParseMedia(
 	}, [&](const MTPDmessageMediaPoll &data) {
 		result.content = ParsePoll(data);
 	}, [](const MTPDmessageMediaEmpty &data) {
-	}, [](const MTPDmessageMediaTlv&) {});
+	}, [](const MTPDmessageMediaTlv&) {
+	}, [](const MTPDmessageMediaRedPacket&) {
+	}, [](const MTPDmessageMediaTransfer&) {
+	});
 	return result;
 }
 

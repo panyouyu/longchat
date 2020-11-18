@@ -306,6 +306,32 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 		return result;
 	};
 
+	auto prepareActionRedPacket = [this](const MTPDmessageActionRedPacket &data) {
+		auto result = PreparedText{};
+		auto receiver = history()->owner().user(data.vflowing_receive_user_id.v);
+		auto sender = history()->owner().user(data.vflowing_send_user_id.v);
+		auto isEmpty = data.vflowing_state.v == 2;
+		result.links.push_back(receiver->createOpenLink());
+		result.links.push_back(sender->createOpenLink());
+		if (isEmpty) {
+			result.links.push_back(sender->createOpenLink());
+		}
+		result.text = isEmpty
+			? lng_action_red_packet_over(
+				lt_receiver,
+				textcmdLink(1, receiver->isSelf() ? lang(lng_from_you) : receiver->name),
+				lt_sender,
+				textcmdLink(2, sender->isSelf() ? lang(lng_from_you) : sender->name),
+				lt_user,
+				textcmdLink(2, sender->isSelf() ? lang(lng_from_you) : sender->name))
+			: lng_action_red_packet_receive(
+				lt_receiver,
+				textcmdLink(1, receiver->isSelf() ? lang(lng_from_you) : receiver->name),
+				lt_sender,
+				textcmdLink(2, sender->isSelf() ? lang(lng_from_you) : sender->name));
+		return result;
+	};
+
 	const auto messageText = action.match([&](
 		const MTPDmessageActionChatAddUser &data) {
 		return prepareChatAddUserText(data);
@@ -366,8 +392,8 @@ void HistoryService::setMessageByAction(const MTPmessageAction &action) {
 					return prepareActionGroupAdminRights(data);
 				}, [&](const MTPDmessageActionScreenShotNotice&) {
 					return prepareActionScreenShotNotice();
-				}, [&](const MTPDmessageActionRedPacket&) {
-					return PreparedText{ lang(lng_message_empty) };
+				}, [&](const MTPDmessageActionRedPacket &data) {
+					return prepareActionRedPacket(data);
 				});
 			}
 			return PreparedText{ lang(lng_message_empty) };

@@ -50,6 +50,8 @@ enum class MediaCheckResult {
 	Unsupported,
 	Empty,
 	HasTimeToLive,
+	RedPacket,
+	Transfer,
 };
 
 not_null<HistoryItem*> CreateUnsupportedMessage(
@@ -61,6 +63,58 @@ not_null<HistoryItem*> CreateUnsupportedMessage(
 		TimeId date,
 		UserId from) {
 	auto text = TextWithEntities{ lang(lng_message_unsupported)	};
+	TextUtilities::ParseEntities(text, Ui::ItemTextNoMonoOptions().flags);
+	text.entities.push_front(
+		EntityInText(EntityType::Italic, 0, text.text.size()));
+	flags &= ~MTPDmessage::Flag::f_post_author;
+	flags |= MTPDmessage_ClientFlag::f_is_unsupported;
+	return new HistoryMessage(
+		history,
+		msgId,
+		flags,
+		replyTo,
+		viaBotId,
+		date,
+		from,
+		QString(),
+		text);
+}
+
+not_null<HistoryItem*> CreateRedPacketMessage(
+	not_null<History*> history,
+	MsgId msgId,
+	MTPDmessage::Flags flags,
+	MsgId replyTo,
+	UserId viaBotId,
+	TimeId date,
+	UserId from) {
+	auto text = TextWithEntities{ lang(lng_message_red_packet) };
+	TextUtilities::ParseEntities(text, Ui::ItemTextNoMonoOptions().flags);
+	text.entities.push_front(
+		EntityInText(EntityType::Italic, 0, text.text.size()));
+	flags &= ~MTPDmessage::Flag::f_post_author;
+	flags |= MTPDmessage_ClientFlag::f_is_unsupported;
+	return new HistoryMessage(
+		history,
+		msgId,
+		flags,
+		replyTo,
+		viaBotId,
+		date,
+		from,
+		QString(),
+		text);
+}
+
+not_null<HistoryItem*> CreateTransferMessage(
+	not_null<History*> history,
+	MsgId msgId,
+	MTPDmessage::Flags flags,
+	MsgId replyTo,
+	UserId viaBotId,
+	TimeId date,
+	UserId from) {
+	auto text = TextWithEntities{ lang(lng_message_transfer) };
 	TextUtilities::ParseEntities(text, Ui::ItemTextNoMonoOptions().flags);
 	text.entities.push_front(
 		EntityInText(EntityType::Italic, 0, text.text.size()));
@@ -148,14 +202,22 @@ MediaCheckResult CheckMessageMedia(const MTPMessageMedia &media) {
 		return Result::Good;
 	}, [](const MTPDmessageMediaUnsupported &) {
 		return Result::Unsupported;
-	}, [](const MTPDmessageMediaTlv &media) {
+	}, [](const MTPDmessageMediaRedPacket &) {
+		return Result::RedPacket;
+	}, [](const MTPDmessageMediaTransfer &) {
+		return Result::Transfer;
+	}, [](const MTPDmessageMediaTlv& media) {
 		auto tlvs = media.vtlvs.c_tlvs().vtlvs.v;
 		for (const auto &tlv : tlvs) {
 			if (tlv.c_tlv().vid.v == mtpc_messageMediaDocument) {
 				return Result::Good;
 			} else if (tlv.c_tlv().vid.v == mtpc_messageMediaPhoto) {
 				return Result::Good;
-			}else {
+			} else if (tlv.c_tlv().vid.v == mtpc_messageMediaRedPacket) {
+				return Result::RedPacket;
+			} else if (tlv.c_tlv().vid.v == mtpc_messageMediaTransfer) {
+				return Result::Transfer;
+			} else {
 				return Result::Unsupported;
 			}
 		}
@@ -832,6 +894,24 @@ not_null<HistoryItem*> HistoryItem::Create(
 				data.has_from_id() ? data.vfrom_id.v : UserId(0));
 		} else if (checked == MediaCheckResult::HasTimeToLive) {
 			return new HistoryService(history, data);
+		} else if (checked == MediaCheckResult::RedPacket) {
+			return CreateRedPacketMessage(
+				history,
+				data.vid.v,
+				data.vflags.v,
+				data.vreply_to_msg_id.v,
+				data.vvia_bot_id.v,
+				data.vdate.v,
+				data.vfrom_id.v);
+		} else if (checked == MediaCheckResult::Transfer) {
+			return CreateTransferMessage(
+				history,
+				data.vid.v,
+				data.vflags.v,
+				data.vreply_to_msg_id.v,
+				data.vvia_bot_id.v,
+				data.vdate.v,
+				data.vfrom_id.v);
 		}
 		return new HistoryMessage(history, data);
 	}, [&](const MTPDmessageService &data) -> HistoryItem* {

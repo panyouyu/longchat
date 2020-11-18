@@ -155,6 +155,13 @@ namespace App {
 			auto entities = m.has_entities()
 				? TextUtilities::EntitiesFromMTP(m.ventities.v)
 				: EntitiesInText();
+			if (m.has_media() && m.vmedia.type() == mtpc_messageMediaTlv) {
+				auto type = m.vmedia.c_messageMediaTlv().vtlvs.c_tlvs().vtlvs.v.first().c_tlv().vid.v;
+				if (type == mtpc_messageMediaRedPacket ||
+					type == mtpc_messageMediaTransfer) {
+					return true;
+				}
+			}
 			existing->setText({ text, entities });
 			existing->updateSentMedia(m.has_media() ? &m.vmedia : nullptr);
 			existing->updateReplyMarkup(m.has_reply_markup()

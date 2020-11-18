@@ -267,8 +267,8 @@ messageMediaInvoice#84551347 flags:# shipping_address_requested:flags.1?true tes
 messageMediaGeoLive#7c3c2609 geo:GeoPoint period:int = MessageMedia;
 messageMediaPoll#4bd6e798 poll:Poll results:PollResults = MessageMedia;
 messageMediaTlv#209acdf0 tlvs:TLVS = MessageMedia;
-messageMediaRedPacket#3b9aca2b id:int remarks:string state:int = TLVMedia;
-messageMediaTransfer#3b9aca2c id:int remarks:string state:int amount:int from_id:int = TLVMedia;
+messageMediaRedPacket#3b9aca2b id:int remarks:string state:int = MessageMedia;
+messageMediaTransfer#3b9aca2c id:int remarks:string state:int amount:int from_id:int = MessageMedia;
 
 messageActionEmpty#b6aef7b0 = MessageAction;
 messageActionChatCreate#a6638b9a title:string users:Vector<int> = MessageAction;
