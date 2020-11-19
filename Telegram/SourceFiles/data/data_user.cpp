@@ -108,7 +108,7 @@ void UserData::setCommonChatsCount(int count) {
 void UserData::setVerifyStatus(VerifyStatus status) {
 	if (_verifyStatus != status) {
 		_verifyStatus = status;
-		// no notify
+		Notify::peerUpdatedDelayed(this, UpdateFlag::UserVerifyStatusChanged);
 	}
 }
 

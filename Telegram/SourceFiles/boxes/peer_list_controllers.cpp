@@ -862,6 +862,13 @@ void FriendRequestBoxController::updateRowHook(not_null<PeerListRow*> row) {
 }
 
 std::unique_ptr<PeerListRow> FriendRequestBoxController::createRow(not_null<UserData*> user) {
+	Notify::PeerUpdateValue(user, Notify::PeerUpdate::Flag::UserVerifyStatusChanged
+	) | rpl::start_with_next([=](auto) {
+		if (auto row = delegate()->peerListFindRow(user->id)) {
+			static_cast<Row*>(row)->reFreshStatus();
+			delegate()->peerListUpdateRow(row);
+		}
+	}, lifetime());
 	return std::make_unique<Row>(user);
 }
 
