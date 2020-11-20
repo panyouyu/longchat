@@ -194,7 +194,7 @@ ApiWrap::ApiWrap(not_null<AuthSession*> session)
 , _proxyPromotionTimer([=] { refreshProxyPromotion(); })
 , _updateNotifySettingsTimer([=] { sendNotifySettingsUpdates(); }) {
 	crl::on_main([=] {
-		_session->uploader().photoReady(
+		_session->mtpUploader().photoReady(
 		) | rpl::start_with_next([=](const Storage::UploadedPhoto &data) {
 			photoUploadReady(data.fullId, data.file);
 		}, _session->lifetime());
@@ -5582,7 +5582,7 @@ void ApiWrap::uploadPeerPhoto(not_null<PeerData*> peer, QImage &&image) {
 		_peerPhotoUploads.erase(already);
 	}
 	_peerPhotoUploads.emplace(fakeId, peer);
-	_session->uploader().uploadMedia(fakeId, ready);
+	_session->mtpUploader().uploadMedia(fakeId, ready);
 }
 
 void ApiWrap::photoUploadReady(
