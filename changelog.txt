@@ -1,3 +1,7 @@
+2.3.1 (20.11.20)
+
+- 修复CDN模式修改头像失败问题
+
 1.6.7 (13.04.19)
 
 - Replace media when editing messages with media content.
