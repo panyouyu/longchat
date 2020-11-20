@@ -322,6 +322,9 @@ public:
 			? *_web_uploader
 			: *_mtp_uploader;
 	}
+	Storage::Uploader &mtpUploader() {
+		return *_mtp_uploader;
+	}
 	Storage::Facade &storage() {
 		return *_storage;
 	}
