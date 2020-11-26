@@ -824,8 +824,12 @@ FriendRequestBoxController::FriendRequestBoxController(
 
 void FriendRequestBoxController::prepare() {
 	prepareViewHook();
-	Auth().api().requestFriendRequestList([=] { rebuildRows(); });
+	Auth().api().requestFriendRequestList();
 	rebuildRows();
+	Auth().data().friendRequestUpdate(
+	) | rpl::start_with_next([=] {
+		rebuildRows();
+	}, lifetime());
 }
 
 std::unique_ptr<PeerListRow> FriendRequestBoxController::createSearchRow(

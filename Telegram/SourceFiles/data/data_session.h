@@ -117,6 +117,12 @@ public:
 	std::list<not_null<UserData*>> &friendRequests() {
 		return _friendRequests;
 	}
+	void notifyFriendRequestsChanged() {
+		_friendRequestsUpdates.fire({});
+	}
+	[[nodiscard]] rpl::producer<> friendRequestUpdate() const {
+		return _friendRequestsUpdates.events();
+	}
 	const std::list<not_null<PeerData*>> &savedGroups() const {
 		return _savedGroups;
 	}
@@ -855,6 +861,7 @@ private:
 	rpl::event_stream<> _defaultUserNotifyUpdates;
 	rpl::event_stream<> _defaultChatNotifyUpdates;
 	rpl::event_stream<> _defaultBroadcastNotifyUpdates;
+	rpl::event_stream<> _friendRequestsUpdates;
 	std::unordered_set<not_null<const PeerData*>> _mutedPeers;
 	base::Timer _unmuteByFinishedTimer;
 

@@ -219,6 +219,8 @@ private:
 	void rebuildRows();
 	void checkForEmptyRows();
 	bool appendRow(not_null<UserData*> user);
+
+	mtpRequestId _friendRequestId = 0;
 };
 
 class ChatsBoxController

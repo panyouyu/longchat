@@ -700,7 +700,7 @@ void ApiWrap::requestFriendRequestCount() {
 	}).send();
 }
 
-void ApiWrap::requestFriendRequestList(Fn<void()> callback, int page) {
+void ApiWrap::requestFriendRequestList(int page) {
 	if (_friendRequestListId) return;
 	Ensures(page > 0);
 	constexpr auto kPageLimit = 12;
@@ -716,13 +716,11 @@ void ApiWrap::requestFriendRequestList(Fn<void()> callback, int page) {
 		const auto &friendRequests = result.c_contacts_friendRequestList().vusers;
 		_session->data().processFriendRequests(friendRequests);
 		if (friendRequests.v.size() == kPageLimit) {
-			requestFriendRequestList(callback, page + 1);
+			requestFriendRequestList(page + 1);
 		} else {
 			_session->data().updateFriendRequestCount(0);
-			if (callback) {
-				callback();
-			}
-		}
+			_session->data().notifyFriendRequestsChanged();
+		}		
 	}).fail([=](const RPCError &error) {
 		_friendRequestListId = 0;
 	}).send();

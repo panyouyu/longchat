@@ -81,7 +81,7 @@ public:
 
 	void requestContacts();
 	void requestFriendRequestCount();
-	void requestFriendRequestList(Fn<void()> callback = nullptr, int page = 1);
+	void requestFriendRequestList(int page = 1);
 	void requestSavedGroups();
 	void requestGroupNotifyUnReadCount();
 	auto groupJoinApplyCurrent() const {
