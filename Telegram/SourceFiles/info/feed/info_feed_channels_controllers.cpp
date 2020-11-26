@@ -147,7 +147,7 @@ void ChannelsController::rebuildRows() {
 			--count;
 		}
 	}
-	for (const auto history : channels) {
+	for (const auto &history : channels) {
 		if (auto row = createRow(history)) {
 			delegate()->peerListAppendRow(std::move(row));
 		}

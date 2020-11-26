@@ -764,7 +764,7 @@ void ProxyBox::setupTypes() {
 		{ Type::Socks5, "SOCKS5" },
 		{ Type::Mtproto, "MTPROTO" },
 	};
-	for (const auto [type, label] : types) {
+    for (const auto &[type, label] : types) {
 		_content->add(
 			object_ptr<Ui::Radioenum<Type>>(
 				_content,

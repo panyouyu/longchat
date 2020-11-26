@@ -334,7 +334,7 @@ void InitMessageField(
 
 bool HasSendText(not_null<const Ui::InputField*> field) {
 	const auto &text = field->getTextWithTags().text;
-	for (const auto ch : text) {
+	for (const auto &ch : text) {
 		const auto code = ch.unicode();
 		if (code != ' '
 			&& code != '\n'

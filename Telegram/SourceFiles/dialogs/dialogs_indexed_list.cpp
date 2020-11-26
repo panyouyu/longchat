@@ -23,7 +23,7 @@ RowsByLetter IndexedList::addToEnd(Key key) {
 	RowsByLetter result;
 	if (!_list.contains(key)) {
 		result.emplace(0, _list.addToEnd(key));
-		for (const auto ch : key.entry()->chatListFirstLetters()) {
+        for (const auto &ch : key.entry()->chatListFirstLetters()) {
 			auto j = _index.find(ch);
 			if (j == _index.cend()) {
 				j = _index.emplace(
@@ -42,7 +42,7 @@ Row *IndexedList::addByName(Key key) {
 	}
 
 	Row *result = _list.addByName(key);
-	for (const auto ch : key.entry()->chatListFirstLetters()) {
+    for (const auto &ch : key.entry()->chatListFirstLetters()) {
 		auto j = _index.find(ch);
 		if (j == _index.cend()) {
 			j = _index.emplace(
@@ -55,7 +55,7 @@ Row *IndexedList::addByName(Key key) {
 }
 
 void IndexedList::adjustByPos(const RowsByLetter &links) {
-	for (const auto [ch, row] : links) {
+    for (const auto &[ch, row] : links) {
 		if (ch == QChar(0)) {
 			_list.adjustByPos(row);
 		} else {
@@ -68,7 +68,7 @@ void IndexedList::adjustByPos(const RowsByLetter &links) {
 
 void IndexedList::moveToTop(Key key) {
 	if (_list.moveToTop(key)) {
-		for (const auto ch : key.entry()->chatListFirstLetters()) {
+        for (const auto &ch : key.entry()->chatListFirstLetters()) {
 			if (auto it = _index.find(ch); it != _index.cend()) {
 				it->second->moveToTop(key);
 			}
@@ -123,7 +123,7 @@ void IndexedList::adjustByName(
 
 	auto toRemove = oldLetters;
 	auto toAdd = base::flat_set<QChar>();
-	for (const auto ch : key.entry()->chatListFirstLetters()) {
+    for (const auto &ch : key.entry()->chatListFirstLetters()) {
 		auto j = toRemove.find(ch);
 		if (j == toRemove.cend()) {
 			toAdd.insert(ch);
@@ -162,7 +162,7 @@ void IndexedList::adjustNames(
 
 	auto toRemove = oldLetters;
 	auto toAdd = base::flat_set<QChar>();
-	for (const auto ch : key.entry()->chatListFirstLetters()) {
+    for (const auto &ch : key.entry()->chatListFirstLetters()) {
 		auto j = toRemove.find(ch);
 		if (j == toRemove.cend()) {
 			toAdd.insert(ch);
@@ -194,7 +194,7 @@ void IndexedList::adjustNames(
 
 void IndexedList::del(Key key, Row *replacedBy) {
 	if (_list.del(key, replacedBy)) {
-		for (const auto ch : key.entry()->chatListFirstLetters()) {
+        for (const auto &ch : key.entry()->chatListFirstLetters()) {
 			if (auto it = _index.find(ch); it != _index.cend()) {
 				it->second->del(key, replacedBy);
 			}

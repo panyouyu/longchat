@@ -57,7 +57,7 @@ void SentCodeField::fix() {
 	auto newPos = -1;
 	auto oldLen = now.size();
 	auto digitCount = 0;
-	for (const auto ch : now) {
+    for (const auto &ch : now) {
 		if (ch.isDigit()) {
 			++digitCount;
 		}
@@ -71,7 +71,7 @@ void SentCodeField::fix() {
 
 	newText.reserve(oldLen);
 	int i = 0;
-	for (const auto ch : now) {
+    for (const auto &ch : now) {
 		if (i++ == oldPos) {
 			newPos = newText.length();
 		}

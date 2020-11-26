@@ -575,7 +575,7 @@ void DeleteMessagesBox::prepare() {
 
 PeerData *DeleteMessagesBox::checkFromSinglePeer() const {
 	auto result = (PeerData*)nullptr;
-	for (const auto fullId : std::as_const(_ids)) {
+    for (const auto &fullId : std::as_const(_ids)) {
 		if (const auto item = App::histItemById(fullId)) {
 			const auto peer = item->history()->peer;
 			if (!result) {
@@ -753,7 +753,7 @@ void DeleteMessagesBox::deleteAndClear() {
 	}
 
 	base::flat_map<not_null<PeerData*>, QVector<MTPint>> idsByPeer;
-	for (const auto itemId : _ids) {
+    for (const auto &itemId : _ids) {
 		if (const auto item = App::histItemById(itemId)) {
 			const auto history = item->history();
 			const auto wasOnServer = IsServerMsgId(item->id);

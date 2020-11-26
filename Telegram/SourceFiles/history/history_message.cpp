@@ -72,7 +72,7 @@ MTPDmessage::Flags NewForwardedFlags(
 }
 
 bool HasInlineItems(const HistoryItemsList &items) {
-	for (const auto item : items) {
+	for (const auto &item : items) {
 		if (item->viaBot()) {
 			return true;
 		}
@@ -170,7 +170,7 @@ void FastShareMessage(not_null<HistoryItem*> item) {
 				: MTPmessages_ForwardMessages::Flag(0));
 		auto msgIds = QVector<MTPint>();
 		msgIds.reserve(data->msgIds.size());
-		for (const auto fullId : data->msgIds) {
+		for (const auto &fullId : data->msgIds) {
 			msgIds.push_back(MTP_int(fullId.msg));
 		}
 		auto generateRandom = [&] {
@@ -254,7 +254,7 @@ QString GetErrorTextForForward(
 		return lang(lng_forward_cant);
 	}
 
-	for (const auto item : items) {
+	for (const auto &item : items) {
 		if (const auto media = item->media()) {
 			const auto error = media->errorTextForForward(peer);
 			if (!error.isEmpty() && error != qstr("skip")) {

@@ -769,7 +769,7 @@ void ApiWrap::requestGroupJoinApplies() {
 		_groupAppliesId = 0;
 		data.match([=](const MTPDgroupJoinApplies& applies) {
 			std::list<GroupJoinApplyId> applyList;
-			for (const auto apply : applies.vapplies.v) {
+            for (const auto &apply : applies.vapplies.v) {
 				apply.match([&applyList, this](const MTPDgroupJoinApplyInfo& applyInfo) {
 					auto groupJoinApply = _session->data().processGroupJionApply(applyInfo);
 					applyList.push_back(groupJoinApply->id());
@@ -934,7 +934,7 @@ void ApiWrap::sendDialogRequests() {
 	}
 
 	const auto finalize = [=] {
-		for (const auto history : histories) {
+        for (const auto &history : histories) {
 			dialogEntryApplied(history);
 			history->updateChatListExistence();
 		}
@@ -1470,7 +1470,7 @@ void ApiWrap::markMediaRead(
 		not_null<ChannelData*>,
 		QVector<MTPint>>();
 	markedIds.reserve(items.size());
-	for (const auto item : items) {
+    for (const auto &item : items) {
 		if ((!item->isUnreadMedia() || item->out())
 			&& !item->isUnreadMention()) {
 			continue;
@@ -3209,7 +3209,7 @@ void ApiWrap::gotWebPages(ChannelData *channel, const MTPmessages_Messages &msgs
 		indices.emplace((uint64(uint32(msgId)) << 32) | uint64(i), i);
 	}
 
-	for (const auto [position, index] : indices) {
+    for (const auto &[position, index] : indices) {
 		const auto item = _session->data().addNewMessage(
 			v->at(index),
 			NewMessageExisting);
@@ -4001,7 +4001,7 @@ void ApiWrap::addChatParticipants(
 		not_null<PeerData*> peer,
 		const std::vector<not_null<UserData*>> &users) {
 	if (const auto chat = peer->asChat()) {
-		for (const auto user : users) {
+        for (const auto &user : users) {
 			request(MTPmessages_AddChatUser(
 				chat->inputChat,
 				user->inputUser,
@@ -4033,7 +4033,7 @@ void ApiWrap::addChatParticipants(
 				ShowAddParticipantsError(error.type(), peer, users);
 			}).afterDelay(crl::time(5)).send();
 		};
-		for (const auto user : users) {
+        for (const auto &user : users) {
 			list.push_back(user->inputUser);
 			if (list.size() == kMaxUsersPerInvite) {
 				send();
@@ -5812,7 +5812,7 @@ auto ApiWrap::parsePrivacy(const QVector<MTPPrivacyRule> &rules)
 		}, [&](const MTPDprivacyValueAllowUsers &data) {
 			const auto &users = data.vusers.v;
 			always.reserve(always.size() + users.size());
-			for (const auto userId : users) {
+            for (const auto &userId : users) {
 				const auto user = _session->data().user(UserId(userId.v));
 				if (!base::contains(never, user)
 					&& !base::contains(always, user)) {
@@ -5826,7 +5826,7 @@ auto ApiWrap::parsePrivacy(const QVector<MTPPrivacyRule> &rules)
 		}, [&](const MTPDprivacyValueDisallowUsers &data) {
 			const auto &users = data.vusers.v;
 			never.reserve(never.size() + users.size());
-			for (const auto userId : users) {
+            for (const auto &userId : users) {
 				const auto user = _session->data().user(UserId(userId.v));
 				if (!base::contains(always, user)
 					&& !base::contains(never, user)) {

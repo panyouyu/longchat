@@ -1067,7 +1067,7 @@ void MainWidget::handleAudioUpdate(const Media::Player::TrackState &state) {
 	}
 	if (const auto items = InlineBots::Layout::documentItems()) {
 		if (const auto i = items->find(document); i != items->end()) {
-			for (const auto item : i->second) {
+			for (const auto &item : i->second) {
 				item->update();
 			}
 		}
@@ -3439,7 +3439,7 @@ void MainWidget::incrementSticker(DocumentData *sticker) {
 		}
 		it->stickers.push_front(sticker);
 		if (const auto emojiList = Stickers::GetEmojiListFromSet(sticker)) {
-			for (const auto emoji : *emojiList) {
+			for (const auto &emoji : *emojiList) {
 				it->emoji[emoji].push_front(sticker);
 			}
 		} else if (!removedFromEmoji.empty()) {

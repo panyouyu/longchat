@@ -148,7 +148,7 @@ void AutoDownloadBox::setupContent() {
 		}) != end(kHidden);
 
 		if (changed) {
-			for (const auto [type, enabled] : *values) {
+            for (const auto &[type, enabled] : *values) {
 				const auto value = enabled ? *limit : 0;
 				settings->setBytesLimit(_source, type, value);
 			}

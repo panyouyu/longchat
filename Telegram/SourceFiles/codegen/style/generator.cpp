@@ -1204,7 +1204,7 @@ QByteArray iconMaskValuePng(QString filepath) {
 			<< png3x.width() << "x" << png3x.height();
 		return result;
 	}
-	for (const auto modifierName : modifiers) {
+	for (const auto &modifierName : modifiers) {
 		if (const auto modifier = GetModifier(modifierName)) {
 			modifier(png1x);
 			modifier(png2x);

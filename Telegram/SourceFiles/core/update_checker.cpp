@@ -824,7 +824,7 @@ void HttpLoaderActor::sendRequest() {
 
 void HttpLoaderActor::gotMetaData() {
 	const auto pairs = _reply->rawHeaderPairs();
-	for (const auto pair : pairs) {
+	for (const auto &pair : pairs) {
 		if (QString::fromUtf8(pair.first).toLower() == "content-range") {
 			const auto m = QRegularExpression(qsl("/(\\d+)([^\\d]|$)")).match(QString::fromUtf8(pair.second));
 			if (m.hasMatch()) {

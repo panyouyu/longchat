@@ -183,7 +183,7 @@ void Feed::paintUserpic(
 	const auto small = (size - st::lineWidth) / 2;
 	const auto delta = size - small;
 	auto index = 0;
-	for (const auto channel : _channels) {
+    for (const auto &channel : _channels) {
 		channel->peer->paintUserpicRounded(p, x, y, small);
 		switch (++index) {
 		case 1:
@@ -250,7 +250,7 @@ void Feed::changeChannelsList(
 	_settingChannels = true;
 	const auto restore = gsl::finally([&] { _settingChannels = false; });
 
-	for (const auto channel : remove) {
+    for (const auto &channel : remove) {
 		channel->clearFeed();
 	}
 
@@ -258,7 +258,7 @@ void Feed::changeChannelsList(
 	// So we save it and don't allow channels from the list to change it.
 	// After that we restore it.
 	const auto oldChatListMessage = base::take(_chatListMessage);
-	for (const auto channel : add) {
+    for (const auto &channel : add) {
 		_chatListMessage = std::nullopt;
 		channel->setFeed(this);
 	}

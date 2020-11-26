@@ -114,7 +114,7 @@ TEST_CASE("flat_maps structured bindings", "[flat_map]") {
 		//for (auto [a, b] : second) { // #MSVC Bug, reported
 		//	REQUIRE(a == b);
 		//}
-		for (const auto [a, b] : second) {
+		for (const auto &[a, b] : second) {
 			REQUIRE(a == b);
 		}
 	}

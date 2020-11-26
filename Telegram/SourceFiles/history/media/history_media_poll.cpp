@@ -522,7 +522,7 @@ void HistoryPoll::draw(Painter &p, const QRect &r, TextSelection selection, crl:
 	auto &&answers = ranges::view::zip(
 		_answers,
 		ranges::view::ints(0, int(_answers.size())));
-	for (const auto &[answer, index] : answers) {
+	for (const auto [answer, index] : answers) {
 		const auto animation = _answersAnimation
 			? &_answersAnimation->data[index]
 			: nullptr;

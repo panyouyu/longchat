@@ -1289,7 +1289,7 @@ void FormController::decryptValue(Value &value) const {
 		}
 		const auto fields = DeserializeData(decrypted);
 		value.data.parsed.fields.clear();
-		for (const auto [key, text] : fields) {
+		for (const auto &[key, text] : fields) {
 			value.data.parsed.fields[key] = { text };
 		}
 	}
@@ -2537,7 +2537,7 @@ bool FormController::parseForm(const MTPaccount_AuthorizationForm &result) {
 	}
 	for (const auto &required : data.vrequired_types.v) {
 		const auto row = CollectRequestedRow(required);
-		for (const auto requested : row.values) {
+		for (const auto &requested : row.values) {
 			const auto type = requested.type;
 			const auto [i, ok] = _form.values.emplace(type, Value(type));
 			auto &value = i->second;

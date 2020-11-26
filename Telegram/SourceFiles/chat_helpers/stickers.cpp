@@ -664,7 +664,7 @@ void FeaturedSetsReceived(
 
 	if (!setsToRequest.empty()) {
 		auto &api = Auth().api();
-		for (const auto [setId, accessHash] : setsToRequest) {
+		for (const auto &[setId, accessHash] : setsToRequest) {
 			api.scheduleStickerSetRequest(setId, accessHash);
 		}
 		api.requestStickerSets();
@@ -816,7 +816,7 @@ std::vector<not_null<DocumentData*>> GetListByEmoji(
 	//	MTPDstickerSet::Flag::f_installed_date);
 
 	if (!setsToRequest.empty()) {
-		for (const auto [setId, accessHash] : setsToRequest) {
+		for (const auto &[setId, accessHash] : setsToRequest) {
 			Auth().api().scheduleStickerSetRequest(setId, accessHash);
 		}
 		Auth().api().requestStickerSets();

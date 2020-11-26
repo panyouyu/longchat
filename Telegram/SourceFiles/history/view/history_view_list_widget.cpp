@@ -725,7 +725,7 @@ bool ListWidget::overSelectedItems() const {
 bool ListWidget::isSelectedGroup(
 		const SelectedMap &applyTo,
 		not_null<const Data::Group*> group) const {
-	for (const auto other : group->items) {
+	for (const auto &other : group->items) {
 		if (!applyTo.contains(other->fullId())) {
 			return false;
 		}
@@ -814,7 +814,7 @@ void ListWidget::changeSelectionAsGroup(
 	}
 	auto already = int(applyTo.size());
 	const auto canSelect = [&] {
-		for (const auto other : group->items) {
+		for (const auto &other : group->items) {
 			if (!isGoodForSelection(applyTo, other, already)) {
 				return false;
 			}
@@ -822,11 +822,11 @@ void ListWidget::changeSelectionAsGroup(
 		return true;
 	}();
 	if (action == SelectAction::Select && canSelect) {
-		for (const auto other : group->items) {
+		for (const auto &other : group->items) {
 			addToSelection(applyTo, other);
 		}
 	} else {
-		for (const auto other : group->items) {
+		for (const auto &other : group->items) {
 			removeFromSelection(applyTo, other->fullId());
 		}
 	}
@@ -1378,7 +1378,7 @@ void ListWidget::applyDragSelection() {
 
 void ListWidget::applyDragSelection(SelectedMap &applyTo) const {
 	if (_dragSelectAction == DragSelectAction::Selecting) {
-		for (const auto itemId : _dragSelected) {
+		for (const auto &itemId : _dragSelected) {
 			if (applyTo.size() >= MaxSelectedItems) {
 				break;
 			} else if (!applyTo.contains(itemId)) {
@@ -1388,7 +1388,7 @@ void ListWidget::applyDragSelection(SelectedMap &applyTo) const {
 			}
 		}
 	} else if (_dragSelectAction == DragSelectAction::Deselecting) {
-		for (const auto itemId : _dragSelected) {
+		for (const auto &itemId : _dragSelected) {
 			removeFromSelection(applyTo, itemId);
 		}
 	}
@@ -1439,7 +1439,7 @@ TextForMimeData ListWidget::getSelectedText() const {
 		wrapItem(group->items.back(), HistoryGroupText(group));
 	};
 
-	for (const auto [itemId, data] : selected) {
+	for (const auto &[itemId, data] : selected) {
 		if (const auto item = App::histItemById(itemId)) {
 			if (const auto group = Auth().data().groups().find(item)) {
 				if (groups.contains(group)) {
@@ -1792,12 +1792,12 @@ void ListWidget::updateDragSelection(
 	};
 	const auto changeGroup = [&](not_null<HistoryItem*> item, bool add) {
 		if (const auto group = groups.find(item)) {
-			for (const auto item : group->items) {
+			for (const auto &item : group->items) {
 				if (!isGoodForSelection(item)) {
 					return;
 				}
 			}
-			for (const auto item : group->items) {
+			for (const auto &item : group->items) {
 				changeItem(item, add);
 			}
 		} else if (isGoodForSelection(item)) {

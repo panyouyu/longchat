@@ -360,7 +360,7 @@ QString CleanDocumentName(QString name) {
 		'/',
 #endif // Q_OS_WIN || Q_OS_MAC || Q_OS_LINUX
 	};
-	for (const auto ch : controls) {
+	for (const auto &ch : controls) {
 		name = std::move(name).replace(ch, '_');
 	}
 

@@ -39,7 +39,7 @@ void SingleChoiceBox::prepare() {
 		content,
 		st::boxOptionListPadding.top() + st::autolockButton.margin.top()));
 	auto &&ints = ranges::view::ints(0, ranges::unreachable);
-	for (const auto &[i, text] : ranges::view::zip(ints, _optionTexts)) {
+	for (const auto [i, text] : ranges::view::zip(ints, _optionTexts)) {
 		content->add(
 			object_ptr<Ui::Radiobutton>(
 				content,

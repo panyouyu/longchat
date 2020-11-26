@@ -244,7 +244,7 @@ namespace App {
 			const auto msgId = IdFromMessage(msg);
 			indices.emplace((uint64(uint32(msgId)) << 32) | uint64(i), i);
 		}
-		for (const auto [position, index] : indices) {
+        for (const auto &[position, index] : indices) {
 			Auth().data().addNewMessage(msgs[index], type);
 		}
 	}
@@ -292,7 +292,7 @@ namespace App {
 			: nullptr;
 
 		auto historiesToCheck = base::flat_set<not_null<History*>>();
-		for (const auto msgId : msgsIds) {
+        for (const auto &msgId : msgsIds) {
 			auto j = data->constFind(msgId.v);
 			if (j != data->cend()) {
 				const auto history = (*j)->history();
@@ -304,7 +304,7 @@ namespace App {
 				affectedHistory->unknownMessageDeleted(msgId.v);
 			}
 		}
-		for (const auto history : historiesToCheck) {
+        for (const auto &history : historiesToCheck) {
 			history->requestChatListMessage();
 		}
 	}

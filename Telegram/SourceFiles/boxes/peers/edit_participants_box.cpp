@@ -646,7 +646,7 @@ void ParticipantsAdditionalData::migrate(not_null<ChannelData*> channel) {
 	_peer = channel;
 	fillFromChannel(channel);
 
-	for (const auto user : _admins) {
+    for (const auto &user : _admins) {
 		_adminRights.emplace(
 			user,
 			MTP_chatAdminRights(MTP_flags(ChatData::DefaultAdminRights())));
@@ -1133,7 +1133,7 @@ void ParticipantsBoxController::rebuildChatParticipants(
 			--count;
 		}
 	}
-	for (const auto user : participants) {
+    for (const auto &user : participants) {
 		if (auto row = createRow(user)) {
 			delegate()->peerListAppendRow(std::move(row));
 		}

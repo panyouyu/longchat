@@ -1138,7 +1138,7 @@ void Session::documentLoadSettingsChanged() {
 
 void Session::notifyPhotoLayoutChanged(not_null<const PhotoData*> photo) {
 	if (const auto i = _photoItems.find(photo); i != end(_photoItems)) {
-		for (const auto item : i->second) {
+        for (const auto &item : i->second) {
 			notifyItemLayoutChange(item);
 		}
 	}
@@ -1148,13 +1148,13 @@ void Session::notifyDocumentLayoutChanged(
 		not_null<const DocumentData*> document) {
 	const auto i = _documentItems.find(document);
 	if (i != end(_documentItems)) {
-		for (const auto item : i->second) {
+        for (const auto &item : i->second) {
 			notifyItemLayoutChange(item);
 		}
 	}
 	if (const auto items = InlineBots::Layout::documentItems()) {
 		if (const auto i = items->find(document); i != items->end()) {
-			for (const auto item : i->second) {
+            for (const auto &item : i->second) {
 				item->layoutChanged();
 			}
 		}
@@ -1165,7 +1165,7 @@ void Session::requestDocumentViewRepaint(
 		not_null<const DocumentData*> document) {
 	const auto i = _documentItems.find(document);
 	if (i != end(_documentItems)) {
-		for (const auto item : i->second) {
+        for (const auto &item : i->second) {
 			requestItemRepaint(item);
 		}
 	}
@@ -1173,7 +1173,7 @@ void Session::requestDocumentViewRepaint(
 
 void Session::requestPollViewRepaint(not_null<const PollData*> poll) {
 	if (const auto i = _pollViews.find(poll); i != _pollViews.end()) {
-		for (const auto view : i->second) {
+        for (const auto &view : i->second) {
 			requestViewResize(view);
 		}
 	}
@@ -1345,7 +1345,7 @@ rpl::producer<not_null<History*>> Session::historyChanged() const {
 }
 
 void Session::sendHistoryChangeNotifications() {
-	for (const auto history : base::take(_historiesChanged)) {
+    for (const auto &history : base::take(_historiesChanged)) {
 		_historyChanged.fire_copy(history);
 	}
 }
@@ -1441,7 +1441,7 @@ void Data::Session::removeSavedGroups(not_null<PeerData*> group) {
 void Session::userIsContactUpdated(not_null<UserData*> user) {
 	const auto i = _contactViews.find(peerToUser(user->id));
 	if (i != _contactViews.end()) {
-		for (const auto view : i->second) {
+        for (const auto &view : i->second) {
 			requestViewResize(view);
 		}
 	}
@@ -2757,7 +2757,7 @@ void Session::applyUpdate(const MTPDupdateChatParticipants &update) {
 	});
 	if (const auto chat = chatLoaded(chatId)) {
 		ApplyChatUpdate(chat, update);
-		for (const auto user : chat->participants) {
+        for (const auto &user : chat->participants) {
 			if (user->botInfo && !user->botInfo->inited) {
 				_session->api().requestFullPeer(user);
 			}
@@ -3000,7 +3000,7 @@ void Session::unregisterAutoplayAnimation(
 }
 
 void Session::stopAutoplayAnimations() {
-	for (const auto [reader, view] : base::take(_autoplayAnimations)) {
+    for (const auto &[reader, view] : base::take(_autoplayAnimations)) {
 		if (const auto media = view->media()) {
 			media->stopAnimation();
 		}
@@ -3010,7 +3010,7 @@ void Session::stopAutoplayAnimations() {
 HistoryItem *Session::findWebPageItem(not_null<WebPageData*> page) const {
 	const auto i = _webpageItems.find(page);
 	if (i != _webpageItems.end()) {
-		for (const auto item : i->second) {
+        for (const auto &item : i->second) {
 			if (IsServerMsgId(item->id)) {
 				return item;
 			}
@@ -3069,24 +3069,24 @@ void Session::notifyPollUpdateDelayed(not_null<PollData*> poll) {
 }
 
 void Session::sendWebPageGamePollNotifications() {
-	for (const auto page : base::take(_webpagesUpdated)) {
+    for (const auto &page : base::take(_webpagesUpdated)) {
 		const auto i = _webpageViews.find(page);
 		if (i != _webpageViews.end()) {
-			for (const auto view : i->second) {
+            for (const auto &view : i->second) {
 				requestViewResize(view);
 			}
 		}
 	}
-	for (const auto game : base::take(_gamesUpdated)) {
+    for (const auto &game : base::take(_gamesUpdated)) {
 		if (const auto i = _gameViews.find(game); i != _gameViews.end()) {
-			for (const auto view : i->second) {
+            for (const auto &view : i->second) {
 				requestViewResize(view);
 			}
 		}
 	}
-	for (const auto poll : base::take(_pollsUpdated)) {
+    for (const auto &poll : base::take(_pollsUpdated)) {
 		if (const auto i = _pollViews.find(poll); i != _pollViews.end()) {
-			for (const auto view : i->second) {
+            for (const auto &view : i->second) {
 				requestViewResize(view);
 			}
 		}

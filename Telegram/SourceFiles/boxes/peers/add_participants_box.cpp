@@ -348,7 +348,7 @@ void AddSpecialBoxController::rebuildChatRows(not_null<ChatData*> chat) {
 			--count;
 		}
 	}
-	for (const auto user : participants) {
+    for (const auto &user : participants) {
 		if (auto row = createRow(user)) {
 			delegate()->peerListAppendRow(std::move(row));
 		}
@@ -1028,7 +1028,7 @@ void AddSpecialBoxSearchController::addChatMembers(
 		return true;
 	};
 
-	for (const auto user : chat->participants) {
+    for (const auto &user : chat->participants) {
 		if (allWordsAreFound(user->nameWords())) {
 			delegate()->peerListSearchAddRow(user);
 		}

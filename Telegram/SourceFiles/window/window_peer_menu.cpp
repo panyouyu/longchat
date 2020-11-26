@@ -94,7 +94,7 @@ private:
 
 History *FindWastedPin() {
 	const auto &order = Auth().data().pinnedDialogsOrder();
-	for (const auto pinned : order) {
+	for (const auto &pinned : order) {
 		if (const auto history = pinned.history()) {
 			if (history->peer->isChat()
 				&& history->peer->asChat()->isDeactivated()

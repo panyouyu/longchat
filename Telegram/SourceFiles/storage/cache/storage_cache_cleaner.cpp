@@ -54,7 +54,7 @@ CleanerObject::CleanerObject(
 void CleanerObject::start() {
 	const auto entries = QDir(_base).entryList(
 		QDir::Dirs | QDir::NoDotAndDotDot);
-	for (const auto entry : entries) {
+	for (const auto &entry : entries) {
 		_queue.push_back(entry);
 	}
 	if (const auto version = ReadVersionValue(_base)) {
