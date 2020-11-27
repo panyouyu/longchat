@@ -196,8 +196,7 @@ private:
 };
 
 class FriendRequestBoxController
-	: public PeerListController
-	, private MTP::Sender {
+	: public PeerListController {
 public:
 	FriendRequestBoxController(
 		std::unique_ptr<PeerListSearchController> searchController
@@ -219,8 +218,6 @@ private:
 	void rebuildRows();
 	void checkForEmptyRows();
 	bool appendRow(not_null<UserData*> user);
-
-	mtpRequestId _friendRequestId = 0;
 };
 
 class ChatsBoxController
