@@ -146,6 +146,23 @@ Open **x86 Native Tools Command Prompt for VS 2019.bat**, go to ***BuildPath*** 
     git apply ../../../longchat-tdesktop/Telegram/Patches/qtbase_5_6_2.diff
     cd ..
 
+/* *********************************************************************
+build qt
+https://zhuanlan.zhihu.com/p/42242300
+https://github.com/telegramdesktop/tdesktop/issues/3702
+   I faced this build error issue and I've found the workaround solution.
+It's dirty but maybe working well in your environment too.
+1.clean all (I think you'd better restart from github clone step.)
+2.open \TBuild\Libraries\qt5_6_2\qtbase\tools\configure\environment.cpp
+3.find QString Environment::msvcVersion() method.
+4.replace like below
+//QString version = execute(command, &returnValue);
+QString version = "Microsoft (R) C/C++ Optimizing Compiler Version 19.12.25835 for x86";
+! please check your compiler version to execute cl.exe in cmd.exe by yourself and then fix the version number text above. MUST BE ENGLISH TEXT!
+5.configure
+6.jom
+* ***********************************************************************/
+
     configure -debug-and-release -force-debug-info -opensource -confirm-license -static -I "%cd%\..\openssl\Release\include" -no-opengl -openssl-linked OPENSSL_LIBS_DEBUG="%cd%\..\openssl\Debug\lib\ssleay32.lib %cd%\..\openssl\Debug\lib\libeay32.lib" OPENSSL_LIBS_RELEASE="%cd%\..\openssl\Release\lib\ssleay32.lib %cd%\..\openssl\Release\lib\libeay32.lib" -mp -nomake examples -nomake tests -platform win32-msvc2015
 
     jom -j4
